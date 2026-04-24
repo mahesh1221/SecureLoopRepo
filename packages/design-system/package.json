@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@secureloop/design-system",
   "version": "0.1.0",
   "description": "SecureLoop Design System — tokens, themes, motion, elevation, data-viz",
@@ -25,7 +25,7 @@
   "files": ["dist", "src"],
   "sideEffects": ["*.css", "./src/global/**"],
   "scripts": {
-    "build": "tsup && vanilla-extract-build",
+    "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vanilla-extract/esbuild-plugin": "^2.3.0",
     "@vanilla-extract/vite-plugin": "^4.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.5.0"

@@ -46,7 +46,7 @@ export const SkeletonStack = forwardRef<HTMLDivElement, SkeletonStackProps>(
     return (
       <div ref={ref} className={cn(stack, className)} {...rest}>
         {Array.from({ length: lines }, (_, i) => (
-          <Skeleton key={i} shape="text" width={widths[i % widths.length]} />
+          <Skeleton key={i} shape="text" width={widths[i % widths.length]!} />
         ))}
       </div>
     );

@@ -4,6 +4,7 @@ import {
   useRef,
   type HTMLAttributes,
   type ReactNode,
+  type MutableRefObject,
 } from 'react';
 import { createPortal } from 'react-dom';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
@@ -60,7 +61,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     },
     ref
   ) => {
-    const dialogRef = useRef<HTMLDivElement>(null);
+    const dialogRef = useRef<HTMLDivElement | null>(null);
 
     // Body scroll lock while open
     useEffect(() => {
@@ -99,7 +100,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           ref={(node) => {
             dialogRef.current = node;
             if (typeof ref === 'function') ref(node);
-            else if (ref) ref.current = node;
+            else if (ref) (ref as MutableRefObject<HTMLDivElement | null>).current = node;
           }}
           role="dialog"
           aria-modal="true"

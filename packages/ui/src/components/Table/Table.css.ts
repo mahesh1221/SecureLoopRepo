@@ -1,4 +1,4 @@
-import { style, globalStyle } from '@vanilla-extract/css';
+﻿import { style, globalStyle } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { theme, transition, fontFamily } from '@secureloop/design-system';
 
@@ -30,9 +30,7 @@ export const table = style({
   background: theme.bg.raised,
 });
 
-export const thead = style({
-  // sticky behaviour on ths
-});
+export const thead = style({});
 
 export const th = recipe({
   base: {
@@ -84,10 +82,8 @@ export const chev = style({
   transition: transition('opacity', 'fast'),
 });
 
-// Upgrade chev visibility when in sortable/active th
-import { globalStyle as gs } from '@vanilla-extract/css';
-gs(`th[data-sortable="true"]:hover .${chev}`, { opacity: 1 });
-gs(`th[data-active="true"] .${chev}`, { opacity: 1, color: theme.brand.default });
+globalStyle(`th[data-sortable="true"]:hover .${chev}`, { opacity: 1 });
+globalStyle(`th[data-active="true"] .${chev}`, { opacity: 1, color: theme.brand.default });
 
 export const td = recipe({
   base: {
@@ -120,7 +116,6 @@ export const tr = recipe({
     transition: transition('background-color', 'fast'),
     selectors: {
       '&:hover': { background: theme.bg.hover },
-      '&:last-child td': { borderBottom: 'none' },
     },
   },
   variants: {
@@ -147,7 +142,10 @@ export const tr = recipe({
   },
 });
 
-// Checkbox primitive for selection column
+// Strip bottom border on last row's cells. Vanilla-extract requires globalStyle
+// for descendant selectors (td inside tr) rather than recipe selectors.
+globalStyle(`tbody tr:last-child td`, { borderBottom: 'none' });
+
 export const chk = style({
   width: '16px',
   height: '16px',

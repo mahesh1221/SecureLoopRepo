@@ -30,7 +30,7 @@ Card.displayName = 'Card';
 
 // ─── Slot components ────────────────────────────────────────────────
 
-export interface CardHeadProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardHeadProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title?: ReactNode;
   meta?: ReactNode;
 }

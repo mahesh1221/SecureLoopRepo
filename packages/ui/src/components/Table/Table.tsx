@@ -70,7 +70,7 @@ export const TableBody = ({ children, ...rest }: HTMLAttributes<HTMLTableSection
 type ThVariants = NonNullable<RecipeVariants<typeof th>>;
 
 export interface TableHeaderCellProps
-  extends ThHTMLAttributes<HTMLTableCellElement>,
+  extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'>,
     ThVariants {
   /** Show sort chevron */
   showChevron?: boolean;

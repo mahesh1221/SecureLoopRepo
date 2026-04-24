@@ -2,7 +2,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { root, illustration, title, description, cta } from './EmptyState.css';
 import { cn } from '../../utils/cn';
 
-export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
+export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Optional illustration — abstract SVG preferred over icons */
   illustration?: ReactNode;
   /** Short headline */
