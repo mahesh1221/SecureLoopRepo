@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SecureLoop · Platform Defaults · ADMIN-03</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DS v1 tokens — 4 themes via body class ============ */
+:root{
+  --font-display:'Space Grotesk',sans-serif;
+  --font-ui:'IBM Plex Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --text-micro:10px; --text-label:11px; --text-body:13px; --text-lg:15px;
+  --text-xl:20px; --text-2xl:28px; --text-3xl:44px;
+  --r-xs:3px; --r-sm:6px; --r-md:10px; --r-full:999px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px; --s-12:48px;
+}
+body.coffee.dark{
+  --bg-page:#120804; --bg-base:#1A0F08; --bg-raised:#25170D; --bg-overlay:#2B1810; --bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07); --line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2; --ink-80:#D4CBB0; --ink-60:#A69B80; --ink-40:#7A7058; --ink-20:#3D3428;
+  --brand:#F3EEE2; --brand-ink:#120804; --brand-dim:rgba(243,238,226,.12); --brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B; --sev-critical-bg:rgba(255,107,91,.14);
+  --sev-high:#FFB04D; --sev-high-bg:rgba(255,176,77,.14);
+  --sev-medium:#FFD97A; --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5; --sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#8FE5B3; --status-good-bg:rgba(143,229,179,.14);
+  --logo-weight:700;
+}
+body.coffee.light{
+  --bg-page:#F3EEE2; --bg-base:#FBF8F1; --bg-raised:#EDE7D8; --bg-overlay:#FFFDF7; --bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10); --line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810; --ink-80:#4A2E1D; --ink-60:#6B5544; --ink-40:#907D68; --ink-20:#C9C0AA;
+  --brand:#6F4E37; --brand-ink:#F3EEE2; --brand-dim:rgba(111,78,55,.14); --brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637; --sev-critical-bg:rgba(201,70,55,.14);
+  --sev-high:#B8651D; --sev-high-bg:rgba(184,101,29,.14);
+  --sev-medium:#9E7F10; --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1; --sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50; --status-good-bg:rgba(46,139,80,.14);
+  --logo-weight:600;
+}
+body.blue.dark{
+  --bg-page:#0A1628; --bg-base:#0F1E35; --bg-raised:#162B48; --bg-overlay:#1C3557; --bg-hover:#22406B;
+  --line:rgba(232,244,253,.08); --line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD; --ink-80:#C0D5E8; --ink-60:#7A96B4; --ink-40:#556F8A; --ink-20:#2C4058;
+  --brand:#E8F4FD; --brand-ink:#0A1628; --brand-dim:rgba(232,244,253,.12); --brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B; --sev-critical-bg:rgba(255,122,107,.14);
+  --sev-high:#FFB347; --sev-high-bg:rgba(255,179,71,.14);
+  --sev-medium:#FFD97A; --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5; --sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#7EE0A8; --status-good-bg:rgba(126,224,168,.14);
+  --logo-weight:700;
+}
+body.blue.light{
+  --bg-page:#F2F8FD; --bg-base:#FFFFFF; --bg-raised:#E5EFF8; --bg-overlay:#FFFFFF; --bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08); --line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628; --ink-80:#1F3A5C; --ink-60:#4A6380; --ink-40:#7A8FA8; --ink-20:#B5C5D8;
+  --brand:#1E5A8A; --brand-ink:#F2F8FD; --brand-dim:rgba(30,90,138,.14); --brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A; --sev-critical-bg:rgba(199,62,58,.14);
+  --sev-high:#C17A1A; --sev-high-bg:rgba(193,122,26,.14);
+  --sev-medium:#9E7F10; --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1; --sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50; --status-good-bg:rgba(46,139,80,.14);
+  --logo-weight:600;
+}
+
+/* ============ base ============ */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-ui); font-size:var(--text-body); font-weight:400;
+  background:var(--bg-page); color:var(--ink-100);
+  letter-spacing:-.003em; line-height:1.5;
+  min-height:100vh;
+  display:flex;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit; text-decoration:none}
+button{font-family:inherit}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px; border-radius:var(--r-xs)}
+
+/* universal svg guard */
+svg{ width:16px; height:16px; flex-shrink:0 }
+
+/* mono numerics */
+.mono{ font-family:var(--font-mono); font-feature-settings:'tnum' }
+
+/* ============ shell ============ */
+.shell{ display:flex; min-height:100vh }
+.rail{
+  width:64px; flex-shrink:0;
+  background:var(--bg-base); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center;
+  padding:var(--s-3) 0 var(--s-3);
+  position:sticky; top:0; height:100vh;
+}
+.rail .logo{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--brand); color:var(--brand-ink);
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:var(--logo-weight);
+  font-size:18px; letter-spacing:-.02em;
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-6);
+}
+.rail-item{
+  width:40px; height:40px; display:grid; place-items:center;
+  border-radius:var(--r-sm); color:var(--ink-60);
+  margin-bottom:var(--s-2); cursor:pointer; transition:all 140ms;
+  position:relative;
+}
+.rail-item svg{ width:18px; height:18px }
+.rail-item:hover{ background:var(--bg-raised); color:var(--ink-100) }
+.rail-item.active{ background:var(--brand-dim); color:var(--brand) }
+.rail-item.active::before{
+  content:""; position:absolute; left:-12px; top:8px; bottom:8px; width:2px;
+  background:var(--brand); border-radius:var(--r-xs);
+}
+
+.main{ flex:1; display:flex; flex-direction:column; min-width:0 }
+
+/* ============ topbar ============ */
+.topbar{
+  height:56px; flex-shrink:0;
+  background:var(--bg-base); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--s-6);
+  position:sticky; top:0; z-index:30;
+}
+.crumbs{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-label); color:var(--ink-60) }
+.crumbs .sep{ color:var(--ink-40) }
+.crumbs .current{ color:var(--ink-100); font-weight:500 }
+.id-pill{
+  padding:2px 6px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono);
+  font-size:var(--text-micro); letter-spacing:.04em; font-weight:600;
+}
+.top-right{ display:flex; align-items:center; gap:var(--s-3) }
+
+/* theme picker */
+.tp-btn{
+  height:32px; padding:0 var(--s-3); display:inline-flex; align-items:center; gap:var(--s-2);
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-size:var(--text-label); font-weight:500; cursor:pointer;
+  transition:all 140ms;
+}
+.tp-btn:hover{ background:var(--bg-hover); border-color:var(--line-strong) }
+.tp-swatches{ display:flex; flex-direction:column; gap:2px }
+.tp-sw{ width:14px; height:6px; border-radius:1px; border:1px solid var(--line-strong) }
+.tp-popover{
+  position:absolute; top:calc(100% + 8px); right:0;
+  width:340px; background:var(--bg-overlay); border:1px solid var(--line-strong);
+  border-radius:var(--r-md); padding:var(--s-4);
+  box-shadow:0 12px 48px rgba(0,0,0,.4);
+  z-index:80; display:none;
+}
+.tp-popover.open{ display:block }
+.tp-section{ margin-bottom:var(--s-4) }
+.tp-section:last-child{ margin-bottom:0 }
+.tp-label{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); margin-bottom:var(--s-2); font-weight:600;
+}
+.tp-families{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2) }
+.tp-card{
+  background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:var(--s-3); cursor:pointer; transition:all 140ms;
+  text-align:left;
+}
+.tp-card:hover{ border-color:var(--line-strong) }
+.tp-card.active{ box-shadow:0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,.12); border-color:transparent }
+.tp-card .tp-preview{ display:flex; gap:3px; margin-bottom:var(--s-2) }
+.tp-card .tp-preview span{ width:16px; height:16px; border-radius:var(--r-xs); border:1px solid var(--line-strong) }
+.tp-card .tp-name{ font-weight:600; font-size:var(--text-body); color:var(--ink-100) }
+.tp-card .tp-desc{ font-size:var(--text-micro); color:var(--ink-60); margin-top:2px }
+.tp-modes{ display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm) }
+.tp-mode{
+  flex:1; padding:6px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-size:var(--text-label); font-weight:500; cursor:pointer; transition:all 140ms;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.tp-mode:hover{ color:var(--ink-100) }
+.tp-mode.active{ background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12) }
+.tp-mode svg{ width:14px; height:14px }
+
+/* ============ buttons ============ */
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:8px var(--s-4); height:36px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-body); font-weight:500;
+  cursor:pointer; transition:all 140ms; white-space:nowrap;
+}
+.btn:hover{ background:var(--bg-hover); border-color:var(--line-strong) }
+.btn.primary{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600 }
+.btn.primary:hover{ filter:brightness(1.08) }
+.btn.primary:disabled{ opacity:.5; cursor:not-allowed; filter:none }
+.btn.ghost{ background:transparent }
+.btn.ghost:hover{ background:var(--bg-raised) }
+.btn svg{ width:14px; height:14px }
+.icon-btn{
+  width:36px; height:36px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer; transition:all 140ms;
+}
+.icon-btn:hover{ background:var(--bg-raised); color:var(--ink-100); border-color:var(--line) }
+
+/* ============ inputs ============ */
+.input, .select, .textarea{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-label); outline:none;
+  width:100%;
+}
+.input:focus, .select:focus, .textarea:focus{
+  border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim);
+}
+.select{ appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat:no-repeat; background-position:right 8px center; padding-right:28px }
+
+/* ============ badges ============ */
+.p-badge, .status-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  font-family:var(--font-ui); font-size:9px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
+}
+.crit{ background:var(--sev-critical-bg); color:var(--sev-critical) }
+.high{ background:var(--sev-high-bg); color:var(--sev-high) }
+.med{ background:var(--sev-medium-bg); color:var(--sev-medium) }
+.low{ background:var(--sev-low-bg); color:var(--sev-low) }
+.good{ background:var(--status-good-bg); color:var(--status-good) }
+.accepted{ background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong) }
+.dot{ width:8px; height:8px; border-radius:var(--r-full); display:inline-block; flex-shrink:0 }
+
+/* ============ cards ============ */
+.card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.card:hover{ border-color:var(--line-strong) }
+
+/* ============ segmented ============ */
+.segmented{ display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm) }
+.seg-btn{
+  padding:4px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; min-width:64px; text-align:center;
+}
+.seg-btn:hover{ color:var(--ink-100) }
+.seg-btn.active{ background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12) }
+
+/* ============ layout helpers ============ */
+.page{ padding:var(--s-6); flex:1; overflow-y:auto }
+.page-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-6);
+  margin-bottom:var(--s-6);
+}
+.page-title{
+  font-family:var(--font-display); font-size:var(--text-2xl); font-weight:600;
+  letter-spacing:-.02em; margin:0 0 var(--s-2); color:var(--ink-100);
+}
+.page-sub{ font-size:var(--text-body); color:var(--ink-60); margin:0 }
+
+.section-title{
+  font-family:var(--font-display); font-size:var(--text-xl); font-weight:600;
+  letter-spacing:-.015em; margin:0 0 var(--s-3); color:var(--ink-100);
+}
+.eyebrow{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+}
+
+/* ============ read-only auditor banner (persistent) ============ */
+/* solid bg (no transparency) via two-layer background: coloured tint over solid base */
+.ro-banner{
+  flex-shrink:0;
+  background:linear-gradient(var(--sev-low-bg), var(--sev-low-bg)), var(--bg-base);
+  border-bottom:1px solid var(--line-strong);
+  padding:10px var(--s-6);
+  display:flex; align-items:center; gap:var(--s-3);
+  color:var(--ink-100); font-size:var(--text-label);
+  position:sticky; top:56px; z-index:29;
+}
+.ro-banner .ro-eye{
+  width:28px; height:28px; display:grid; place-items:center;
+  background:var(--sev-low); color:var(--bg-page); border-radius:var(--r-full);
+  flex-shrink:0;
+}
+.ro-banner .ro-eye svg{ width:14px; height:14px; color:var(--bg-page) }
+.ro-banner .ro-text{ flex:1; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap }
+.ro-banner .ro-text strong{ color:var(--ink-100); font-weight:600; letter-spacing:.04em }
+.ro-banner .ro-text .ro-sep{ color:var(--ink-40) }
+.ro-banner .ro-meta{
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  font-family:var(--font-mono); font-size:var(--text-micro); color:var(--ink-80);
+  padding:3px 8px; background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs);
+}
+
+/* ============ tables ============ */
+.t{
+  width:100%; border-collapse:collapse;
+  font-size:var(--text-label);
+}
+.t thead th{
+  text-align:left; padding:10px var(--s-3);
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+  border-bottom:1px solid var(--line);
+  background:var(--bg-base);
+  position:sticky; top:0;
+}
+.t tbody td{
+  padding:10px var(--s-3);
+  border-bottom:1px solid var(--line);
+  color:var(--ink-100); vertical-align:middle;
+}
+.t tbody tr:hover{ background:var(--bg-raised) }
+.t tbody tr.selected{ background:var(--brand-dim) }
+.t tbody tr.selected td{ color:var(--ink-100) }
+.t tbody tr:last-child td{ border-bottom:none }
+.t tbody tr.expired td{ background:var(--sev-critical-bg) }
+.t tbody tr.expired:hover td{ background:var(--sev-critical-bg); filter:brightness(1.05) }
+
+/* ============ chips ============ */
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:var(--r-full);
+  background:var(--bg-raised); border:1px solid var(--line);
+  color:var(--ink-80); font-size:var(--text-label); font-weight:500;
+}
+.chip.brand{ background:var(--brand-dim); border-color:transparent; color:var(--brand) }
+.chip.ghost{ background:transparent }
+.chip svg{ width:12px; height:12px }
+
+/* ============ callout (chip + tint + all-sides border) ============ */
+.callout{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:var(--s-4) var(--s-6);
+  background:var(--brand-dim); border:1px solid var(--line-strong);
+  border-radius:var(--r-md);
+}
+.callout .co-chip{
+  width:30px; height:30px; border-radius:var(--r-full);
+  display:grid; place-items:center;
+  background:var(--brand); color:var(--brand-ink);
+  flex-shrink:0;
+}
+.callout .co-chip svg{ width:16px; height:16px }
+.callout.warn{ background:var(--sev-high-bg); border-color:var(--sev-high) }
+.callout.warn .co-chip{ background:var(--sev-high); color:var(--bg-page) }
+.callout.crit{ background:var(--sev-critical-bg); border-color:var(--sev-critical) }
+.callout.crit .co-chip{ background:var(--sev-critical); color:var(--bg-page) }
+.callout.good{ background:var(--status-good-bg); border-color:var(--status-good) }
+.callout.good .co-chip{ background:var(--status-good); color:var(--bg-page) }
+.callout .co-body{ flex:1 }
+.callout .co-title{ font-weight:600; color:var(--ink-100); font-size:var(--text-body); margin:0 0 2px }
+.callout .co-desc{ color:var(--ink-80); font-size:var(--text-label); margin:0 }
+
+/* ============ KPI cards ============ */
+.kpi-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--s-3); margin-bottom:var(--s-6) }
+.kpi{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4); display:flex; flex-direction:column; gap:var(--s-2);
+}
+.kpi .k-label{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+}
+.kpi .k-value{
+  font-family:var(--font-mono); font-size:var(--text-2xl); font-weight:700; letter-spacing:-.02em;
+  color:var(--ink-100); line-height:1;
+}
+.kpi .k-value.sev-crit{ color:var(--sev-critical) }
+.kpi .k-value.sev-high{ color:var(--sev-high) }
+.kpi .k-value.sev-good{ color:var(--status-good) }
+.kpi .k-meta{ font-size:var(--text-label); color:var(--ink-60) }
+
+/* ============ utility ============ */
+.row{ display:flex; align-items:center; gap:var(--s-3) }
+.row.between{ justify-content:space-between }
+.row.wrap{ flex-wrap:wrap }
+.col{ display:flex; flex-direction:column; gap:var(--s-3) }
+.spacer{ flex:1 }
+.muted{ color:var(--ink-60) }
+.strong{ font-weight:600; color:var(--ink-100) }
+.nowrap{ white-space:nowrap }
+
+/* grain overlay */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:200;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+  opacity:.025; mix-blend-mode:overlay;
+}
+body.coffee.light::before, body.blue.light::before{ opacity:.05 }
+
+/* ============ animations ============ */
+@keyframes riseIn{ from{ opacity:0; transform:translateY(16px) scale(.98) } to{ opacity:1; transform:none } }
+.rise{ animation:riseIn 320ms cubic-bezier(.2,.7,.2,1) both }
+</style>
+</head>
+<body class="coffee dark">
+<aside class="rail">
+  <div class="logo">S</div>
+  <div class="rail-item " title="Tenants"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="9" y1="12" x2="9.01" y2="12"/><line x1="9" y1="15" x2="9.01" y2="15"/><line x1="9" y1="18" x2="9.01" y2="18"/></svg></div>
+  <div class="rail-item " title="Frameworks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+  <div class="rail-item active" title="Platform defaults"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+  <div class="rail-item " title="Integrations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+  <div class="rail-item " title="Fix templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+  <div class="rail-item " title="Platform health"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+  <div class="rail-item " title="Audit annotations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+  <div class="spacer"></div>
+  <div class="rail-item" title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <nav class="crumbs">
+      <span>SecureLoop</span>
+      <span class="sep">/</span>
+      <span>Platform Admin</span>
+      <span class="sep">/</span>
+      <span class="current">Platform defaults</span>
+      <span class="id-pill">ADMIN-03-1</span>
+    </nav>
+    <div class="top-right">
+      <div class="chip brand" title="Signed in as Platform Admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Priya Sharma · Platform Admin</span>
+      </div>
+      <div style="position:relative">
+        <button class="tp-btn" id="tpToggle" aria-haspopup="true" aria-expanded="false">
+          <span class="tp-swatches">
+            <span class="tp-sw" id="tpSw1" style="background:var(--bg-raised)"></span>
+            <span class="tp-sw" id="tpSw2" style="background:var(--brand)"></span>
+          </span>
+          <span id="tpLabel">Coffee · Dark</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="tp-popover" id="tpPopover" role="dialog" aria-label="Theme picker">
+          <div class="tp-section">
+            <div class="tp-label">Palette family</div>
+            <div class="tp-families">
+              <button class="tp-card" data-family="coffee">
+                <div class="tp-preview">
+                  <span style="background:#1A0F08"></span>
+                  <span style="background:#F3EEE2"></span>
+                  <span style="background:#6F4E37"></span>
+                </div>
+                <div class="tp-name">Coffee</div>
+                <div class="tp-desc">Warm · Investigation</div>
+              </button>
+              <button class="tp-card" data-family="blue">
+                <div class="tp-preview">
+                  <span style="background:#0F1E35"></span>
+                  <span style="background:#E8F4FD"></span>
+                  <span style="background:#1E5A8A"></span>
+                </div>
+                <div class="tp-name">Blue</div>
+                <div class="tp-desc">Cool · Enterprise</div>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-label">Appearance</div>
+            <div class="tp-modes">
+              <button class="tp-mode" data-mode="dark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                Dark
+              </button>
+              <button class="tp-mode" data-mode="light">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                Light
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<style>
+.wrap{padding:var(--s-6) var(--s-8);max-width:1640px;margin:0 auto}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:var(--s-6);gap:var(--s-6)}
+.ph h1{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);margin:0 0 var(--s-1) 0;letter-spacing:-.5px}
+.ph .sub{color:var(--ink-60);font-size:var(--text-body)}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:9px 16px;border-radius:var(--r-sm);font-size:var(--text-body);font-family:var(--font-ui);font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .12s}
+.btn svg{width:14px;height:14px}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink-80);border-color:var(--line)}
+.btn.ghost:hover{background:var(--bg-hover);color:var(--ink-100);border-color:var(--line-strong)}
+
+/* persistent notice — locked callout pattern */
+.notice{display:flex;gap:var(--s-4);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);margin-bottom:var(--s-6);align-items:center}
+.notice .chip{width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.notice .chip svg{width:16px;height:16px}
+.notice .txt{flex:1}
+.notice .t{font-family:var(--font-display);font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px;letter-spacing:-.15px}
+.notice .d{font-size:var(--text-label);color:var(--ink-80);line-height:1.45}
+
+/* tabs */
+.tabs{display:flex;gap:0;margin-bottom:var(--s-6);border-bottom:1px solid var(--line)}
+.tab{padding:var(--s-3) var(--s-4);font-size:var(--text-body);color:var(--ink-60);cursor:pointer;border-bottom:2px solid transparent;font-weight:500;display:flex;align-items:center;gap:var(--s-2)}
+.tab:hover{color:var(--ink-80)}
+.tab.active{color:var(--ink-100);border-bottom-color:var(--brand)}
+.tab svg{width:14px;height:14px}
+
+.layout{display:grid;grid-template-columns:1fr 420px;gap:var(--s-6)}
+
+.card{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-4)}
+.card h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin:0 0 var(--s-3) 0;letter-spacing:-.2px}
+.card .desc{font-size:var(--text-label);color:var(--ink-60);margin-bottom:var(--s-4);line-height:1.5}
+
+/* SLA table */
+.sla-tbl{width:100%;border-collapse:separate;border-spacing:0}
+.sla-tbl th{background:var(--bg-overlay);border-bottom:1px solid var(--line);font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-60);font-weight:600;padding:var(--s-3);text-align:left}
+.sla-tbl td{padding:var(--s-3);border-bottom:1px solid var(--line);font-size:var(--text-body)}
+.sla-tbl tr:last-child td{border-bottom:none}
+.sla-tbl td:first-child{font-weight:500}
+.sev{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.sev .dot{width:10px;height:10px;border-radius:50%}
+.sev.crit{color:var(--sev-critical)}.sev.crit .dot{background:var(--sev-critical)}
+.sev.high{color:var(--sev-high)}.sev.high .dot{background:var(--sev-high)}
+.sev.med{color:var(--sev-medium)}.sev.med .dot{background:var(--sev-medium)}
+.sev.low{color:var(--sev-low)}.sev.low .dot{background:var(--sev-low)}
+
+.num-input{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-base);overflow:hidden}
+.num-input button{background:transparent;border:none;color:var(--ink-60);padding:6px 10px;cursor:pointer;font-size:var(--text-body)}
+.num-input button:hover{background:var(--bg-hover);color:var(--ink-100)}
+.num-input input{background:transparent;border:none;color:var(--ink-100);width:50px;text-align:center;font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;padding:6px 0;outline:none}
+.num-suffix{font-size:var(--text-label);color:var(--ink-60);margin-left:var(--s-2)}
+
+/* row bound */
+.bound{display:flex;gap:var(--s-3);align-items:center}
+
+/* escalation chain */
+.esc-chain{display:flex;gap:var(--s-2);align-items:center;flex-wrap:wrap;margin-top:var(--s-2)}
+.esc-lvl{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);display:flex;flex-direction:column;gap:4px;min-width:160px}
+.esc-lvl .l{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-60);font-weight:600}
+.esc-lvl .r{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;color:var(--ink-100);letter-spacing:-.15px}
+.esc-lvl .d{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--brand)}
+.esc-arr{color:var(--ink-40)}
+
+/* toggle row */
+.tr{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) 0;border-bottom:1px dashed var(--line)}
+.tr:last-child{border-bottom:none}
+.tr .l{display:flex;flex-direction:column;gap:2px}
+.tr .l .n{font-size:var(--text-body);color:var(--ink-100);font-weight:500}
+.tr .l .d{font-size:var(--text-micro);color:var(--ink-60)}
+.pill-seg{display:inline-flex;background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-full);padding:2px}
+.pill-seg button{background:transparent;border:none;padding:6px 14px;border-radius:var(--r-full);font-size:var(--text-label);color:var(--ink-60);cursor:pointer;font-family:var(--font-ui);font-weight:500}
+.pill-seg button.on{background:var(--brand);color:var(--brand-ink)}
+
+/* sidebar preview */
+.sb{position:sticky;top:calc(56px + 16px);align-self:start;display:flex;flex-direction:column;gap:var(--s-4)}
+.sb .card{margin-bottom:0}
+.impact-row{display:flex;justify-content:space-between;padding:var(--s-2) 0;border-bottom:1px dashed var(--line);font-size:var(--text-label)}
+.impact-row:last-child{border-bottom:none}
+.impact-row .k{color:var(--ink-60)}
+.impact-row .v{color:var(--ink-100);font-family:var(--font-mono);font-weight:600;text-align:right}
+.impact-row .v.warn{color:var(--sev-high)}
+.impact-row .v.good{color:var(--status-good)}
+
+.diff{font-family:var(--font-mono);font-size:var(--text-label);display:flex;justify-content:space-between;padding:var(--s-2) var(--s-3);background:var(--bg-base);border-radius:var(--r-sm);margin-bottom:6px}
+.diff .old{color:var(--ink-60);text-decoration:line-through}
+.diff .new{color:var(--status-good);font-weight:600}
+.diff .lbl{color:var(--ink-80);font-family:var(--font-ui);font-weight:500}
+
+/* change history */
+.hist{display:flex;flex-direction:column}
+.hist-row{padding:var(--s-3) 0;border-bottom:1px dashed var(--line)}
+.hist-row:last-child{border-bottom:none}
+.hist-row .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hist-row .when{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--brand)}
+.hist-row .by{font-size:var(--text-label);color:var(--ink-80)}
+.hist-row .by strong{color:var(--ink-100);font-weight:600}
+.hist-row .what{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+.hist-row .what code{font-family:var(--font-mono);background:var(--bg-base);padding:1px 5px;border-radius:var(--r-xs);font-size:var(--text-micro);color:var(--ink-100);border:1px solid var(--line)}
+
+.foot-actions{display:flex;gap:var(--s-3);margin-top:var(--s-6);padding-top:var(--s-4);border-top:1px solid var(--line);justify-content:flex-end}
+</style>
+<div class="wrap">
+  <div class="ph">
+    <div>
+      <h1>Platform defaults</h1>
+      <div class="sub">Global configuration inherited at tenant creation · full per-tenant override post-creation</div>
+    </div>
+  </div>
+
+  
+<div class="notice">
+  <div class="chip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  </div>
+  <div class="txt">
+    <div class="t">Changes apply to NEWLY CREATED tenants only · existing tenants are NOT affected</div>
+    <div class="d">These defaults are inherited at tenant creation. Existing tenants retain their current configuration unless explicitly migrated. Every tenant has full override capability after creation.</div>
+  </div>
+</div>
+
+  
+<div class="tabs">
+  <div class="tab active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    SLA defaults
+  </div>
+  <div class="tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    Escalation chains
+  </div>
+  <div class="tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Notification templates
+  </div>
+  <div class="tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    Access policies
+  </div>
+  <div class="tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    Integration defaults
+  </div>
+</div>
+
+
+  <div class="layout">
+    <div>
+      
+<div class="card">
+  <h3>Default SLA per severity tier</h3>
+  <div class="desc">Values pre-fill Step 3 of the tenant creation wizard (ADMIN-01-1). Critical and High SLAs trigger escalation chains in CISO-05. Each tenant can override post-creation.</div>
+  <table class="sla-tbl">
+    <thead><tr><th>Severity</th><th>Remediation SLA</th><th>Grace period</th><th>Clock</th></tr></thead>
+    <tbody>
+      
+    <tr>
+      <td><span class="sev crit"><span class="dot"></span>Critical</span></td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="7" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">days to remediate</span>
+      </td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="48" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">hours grace</span>
+      </td>
+      <td><span style="color:var(--status-good);font-weight:600">Business hours only</span></td>
+    </tr>
+      
+    <tr>
+      <td><span class="sev high"><span class="dot"></span>High</span></td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="14" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">days to remediate</span>
+      </td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="48" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">hours grace</span>
+      </td>
+      <td><span style="color:var(--status-good);font-weight:600">Business hours only</span></td>
+    </tr>
+      
+    <tr>
+      <td><span class="sev med"><span class="dot"></span>Medium</span></td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="30" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">days to remediate</span>
+      </td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="48" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">hours grace</span>
+      </td>
+      <td><span style="color:var(--status-good);font-weight:600">Business hours only</span></td>
+    </tr>
+      
+    <tr>
+      <td><span class="sev low"><span class="dot"></span>Low</span></td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="90" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">days to remediate</span>
+      </td>
+      <td>
+        <div class="num-input">
+          <button>−</button>
+          <input type="text" value="48" readonly>
+          <button>+</button>
+        </div>
+        <span class="num-suffix">hours grace</span>
+      </td>
+      <td><span style="color:var(--status-good);font-weight:600">Business hours only</span></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+      
+<div class="card">
+  <h3>Default escalation chain · Critical findings</h3>
+  <div class="desc">Applied when SLA is breached or approaches breach. Each escalation level receives notification after configured hours elapse without acknowledgement.</div>
+  <div class="esc-chain">
+    <div class="esc-lvl">
+      <div class="l">Level 1 · 0h</div>
+      <div class="r">Assigned team lead</div>
+      <div class="d">On SLA breach</div>
+    </div>
+    <div class="esc-arr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    <div class="esc-lvl">
+      <div class="l">Level 2 · +24h</div>
+      <div class="r">CISO</div>
+      <div class="d">No acknowledgement</div>
+    </div>
+    <div class="esc-arr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    <div class="esc-lvl">
+      <div class="l">Level 3 · +72h</div>
+      <div class="r">CTO</div>
+      <div class="d">No action taken</div>
+    </div>
+    <div class="esc-arr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    <div class="esc-lvl">
+      <div class="l">Level 4 · +168h</div>
+      <div class="r">CEO · Security Committee</div>
+      <div class="d">Final escalation</div>
+    </div>
+  </div>
+</div>
+
+      
+<div class="card">
+  <h3>Access policies · tenant defaults</h3>
+  <div class="tr">
+    <div class="l"><div class="n">MFA enforcement</div><div class="d">Required for all tenant users · applies at tenant admin creation</div></div>
+    <div class="pill-seg"><button class="on">Required</button><button>Optional</button></div>
+  </div>
+  <div class="tr">
+    <div class="l"><div class="n">Session timeout</div><div class="d">Idle timeout before auto-logout</div></div>
+    <div class="num-input"><button>−</button><input value="30" readonly><button>+</button><span class="num-suffix" style="margin-right:var(--s-3)">minutes</span></div>
+  </div>
+  <div class="tr">
+    <div class="l"><div class="n">Password complexity</div><div class="d">Minimum length · character classes</div></div>
+    <div class="pill-seg"><button>Standard</button><button class="on">Strict</button></div>
+  </div>
+  <div class="tr">
+    <div class="l"><div class="n">IP allowlist</div><div class="d">Restrict tenant access to specific IP ranges</div></div>
+    <div class="pill-seg"><button>Enabled</button><button class="on">Disabled</button></div>
+  </div>
+</div>
+
+    </div>
+    
+<aside class="sb">
+  <div class="card">
+    <h3>Impact preview</h3>
+    <div class="desc" style="margin-bottom:var(--s-3)">Effect of currently unsaved changes on new vs existing tenants.</div>
+    <div class="impact-row"><div class="k">New tenants (future)</div><div class="v">use new defaults</div></div>
+    <div class="impact-row"><div class="k">Existing tenants</div><div class="v good">unaffected (47)</div></div>
+    <div class="impact-row"><div class="k">Using current defaults</div><div class="v">32 tenants</div></div>
+    <div class="impact-row"><div class="k">With custom overrides</div><div class="v">15 tenants</div></div>
+    <div class="impact-row"><div class="k">Template changes/day</div><div class="v warn">~2,400 notifications</div></div>
+    <button class="btn ghost" style="width:100%;margin-top:var(--s-3);justify-content:center">Open full impact analysis</button>
+  </div>
+
+  <div class="card">
+    <h3>Pending changes · diff</h3>
+    <div class="diff"><span class="lbl">Critical SLA</span><span><span class="old">10d</span>&nbsp;→&nbsp;<span class="new">7d</span></span></div>
+    <div class="diff"><span class="lbl">High SLA</span><span><span class="old">21d</span>&nbsp;→&nbsp;<span class="new">14d</span></span></div>
+    <div class="diff"><span class="lbl">Grace period</span><span><span class="old">24h</span>&nbsp;→&nbsp;<span class="new">48h</span></span></div>
+    <div class="diff"><span class="lbl">Escalation L2</span><span><span class="old">+48h</span>&nbsp;→&nbsp;<span class="new">+24h</span></span></div>
+  </div>
+
+  <div class="card">
+    <h3>Recent changes</h3>
+    <div class="hist">
+      <div class="hist-row">
+        <div class="h"><span class="when">18 Apr · 14:08</span><span class="by">by <strong>Priya Sharma</strong></span></div>
+        <div class="what">Enabled <code>business_hours_only</code> SLA clock for all severity tiers</div>
+      </div>
+      <div class="hist-row">
+        <div class="h"><span class="when">02 Apr · 09:32</span><span class="by">by <strong>Daniel Okonkwo</strong></span></div>
+        <div class="what">Escalation L3 target changed: <code>CTO</code> → <code>CTO + Security Committee</code></div>
+      </div>
+      <div class="hist-row">
+        <div class="h"><span class="when">28 Mar · 16:45</span><span class="by">by <strong>Priya Sharma</strong></span></div>
+        <div class="what">Notification template <code>SLA_BREACH_WARNING</code> updated · new variable <code>{{tenant_tz}}</code></div>
+      </div>
+      <div class="hist-row">
+        <div class="h"><span class="when">15 Mar · 11:20</span><span class="by">by <strong>Priya Sharma</strong></span></div>
+        <div class="what">Password complexity: <code>Standard</code> → <code>Strict</code></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+  </div>
+
+  
+<div class="foot-actions">
+  <button class="btn ghost">Reset to platform standard</button>
+  <button class="btn ghost">Apply to selected tenants…</button>
+  <button class="btn ghost">Preview impact</button>
+  <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Save changes · new tenants only</button>
+</div>
+
+</div>
+</div><script>
+(function(){
+  const body=document.body;
+  const toggle=document.getElementById('tpToggle');
+  const pop=document.getElementById('tpPopover');
+  const label=document.getElementById('tpLabel');
+  const sw1=document.getElementById('tpSw1');
+  const sw2=document.getElementById('tpSw2');
+  const fams=pop.querySelectorAll('.tp-card');
+  const modes=pop.querySelectorAll('.tp-mode');
+  const SW={
+    coffee:{dark:['#1A0F08','#F3EEE2'],light:['#EDE7D8','#6F4E37']},
+    blue:{dark:['#162B48','#E8F4FD'],light:['#E5EFF8','#1E5A8A']}
+  };
+  function sync(){
+    const f=body.classList.contains('blue')?'blue':'coffee';
+    const m=body.classList.contains('light')?'light':'dark';
+    label.textContent=(f[0].toUpperCase()+f.slice(1))+' · '+(m[0].toUpperCase()+m.slice(1));
+    const s=SW[f][m];
+    sw1.style.background=s[0]; sw2.style.background=s[1];
+    fams.forEach(c=>c.classList.toggle('active', c.dataset.family===f));
+    modes.forEach(b=>b.classList.toggle('active', b.dataset.mode===m));
+  }
+  toggle.addEventListener('click',e=>{e.stopPropagation(); pop.classList.toggle('open'); toggle.setAttribute('aria-expanded', pop.classList.contains('open'));});
+  document.addEventListener('click',e=>{ if(!pop.contains(e.target) && e.target!==toggle) pop.classList.remove('open'); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') pop.classList.remove('open'); });
+  fams.forEach(c=>c.addEventListener('click',()=>{
+    const f=c.dataset.family;
+    body.classList.remove('coffee','blue'); body.classList.add(f);
+    sync();
+  }));
+  modes.forEach(b=>b.addEventListener('click',()=>{
+    const m=b.dataset.mode;
+    body.classList.remove('dark','light'); body.classList.add(m);
+    sync();
+  }));
+  sync();
+})();
+</script>
+</body></html>

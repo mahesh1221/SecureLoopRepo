@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · BO-01-1 · Risk Acceptance Approval (Portal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --font-display:"Space Grotesk",system-ui,sans-serif;
+    --font-ui:"IBM Plex Sans",system-ui,sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+    --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+    --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+  }
+  /* Coffee Dark (default) */
+  body.coffee.dark{
+    --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;
+    --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+    --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;
+    --brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+    --sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;
+    --sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);
+  }
+  body.coffee.light{
+    --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+    --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+    --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;
+    --brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+    --sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+    --sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);
+  }
+  body.blue.dark{
+    --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;
+    --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+    --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;
+    --brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+    --sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;
+    --sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);
+  }
+  body.blue.light{
+    --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+    --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+    --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;
+    --brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+    --sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+    --sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;
+    letter-spacing:-0.003em;line-height:1.55;
+    background:var(--bg-page);color:var(--ink-100);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+    opacity:.025;mix-blend-mode:overlay;
+  }
+  body.light::before{opacity:.05}
+
+  :focus:not(:focus-visible){outline:none}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+  /* ============ TOPBAR ============ */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    height:56px;display:flex;align-items:center;gap:var(--s-4);
+    padding:0 var(--s-6);
+    background:var(--bg-base);border-bottom:1px solid var(--line);
+  }
+  .logo{
+    width:36px;height:36px;border-radius:var(--r-sm);
+    background:var(--brand);color:var(--brand-ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);
+    box-shadow:0 0 16px var(--brand-glow);
+  }
+  body.light .logo{font-weight:600}
+  .brand-wrap{display:flex;align-items:center;gap:var(--s-3)}
+  .brand-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.015em}
+  .brand-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.08em;text-transform:uppercase}
+  .top-divider{width:1px;height:24px;background:var(--line-strong)}
+  .breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+  .breadcrumb .sep{color:var(--ink-40)}
+  .breadcrumb .current{color:var(--ink-100);font-weight:500}
+  .id-pill{
+    padding:2px 6px;background:var(--brand-dim);color:var(--brand);
+    border-radius:var(--r-xs);font-family:var(--font-mono);
+    font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600;
+  }
+  .spacer{flex:1}
+  .topbar-actions{display:flex;align-items:center;gap:var(--s-2)}
+
+  /* ============ BUTTONS ============ */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+    padding:8px var(--s-4);height:36px;
+    background:var(--bg-raised);border:1px solid var(--line);
+    border-radius:var(--r-sm);color:var(--ink-100);
+    font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;
+    cursor:pointer;transition:all 140ms;white-space:nowrap;
+  }
+  .btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+  .btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+  .btn.ghost{background:transparent;border-color:transparent}
+  .btn.ghost:hover{background:var(--bg-raised)}
+  .btn.sev-crit{background:var(--sev-critical);color:#fff;border-color:var(--sev-critical);font-weight:600}
+  .btn.sev-crit:hover{filter:brightness(1.1)}
+  .btn.sev-good{background:var(--status-good);color:var(--brand-ink);border-color:var(--status-good);font-weight:600}
+  body.dark .btn.sev-good{color:#0B1E14}
+  .btn.sev-good:hover{filter:brightness(1.1)}
+  .btn.large{height:48px;padding:12px var(--s-6);font-size:var(--text-lg)}
+  .btn-icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+  .btn-icon svg{width:16px;height:16px}
+  .btn .icon{width:16px;height:16px;display:inline-flex;align-items:center}
+
+  /* ============ SEGMENTED ============ */
+  .segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+  .seg-btn{
+    padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);
+    color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;
+    cursor:pointer;transition:all 140ms;min-width:56px;text-align:center;
+  }
+  .seg-btn:hover{color:var(--ink-100)}
+  .seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+  /* ============ THEME PICKER ============ */
+  .theme-picker{position:relative}
+  .theme-btn{
+    display:inline-flex;align-items:center;gap:var(--s-2);
+    padding:6px var(--s-3);height:36px;
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+    color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms;
+  }
+  .theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+  .theme-swatches{display:flex;flex-direction:column;gap:2px}
+  .theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+  .theme-pop{
+    position:absolute;top:calc(100% + 6px);right:0;z-index:40;
+    background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);
+    padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);
+    display:none;
+  }
+  .theme-pop.open{display:block}
+  .theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+  .family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+  .family-card{
+    padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+    cursor:pointer;text-align:left;transition:all 140ms;
+  }
+  .family-card:hover{border-color:var(--line-strong)}
+  .family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+  .family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+  .family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+  .family-card-swatches{display:flex;gap:2px}
+  .family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+  .mode-row{display:flex;gap:var(--s-2)}
+  .mode-btn{
+    flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);
+    border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);font-size:var(--text-body);
+  }
+  .mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+  /* ============ STATE SWITCHER (demo) ============ */
+  .state-switcher{
+    display:flex;gap:2px;padding:3px;background:var(--bg-raised);
+    border:1px solid var(--line);border-radius:var(--r-sm);
+  }
+  .state-switcher button{
+    padding:6px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);
+    color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;
+    cursor:pointer;transition:all 140ms;min-width:90px;
+  }
+  .state-switcher button:hover{color:var(--ink-100)}
+  .state-switcher button.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+  /* ============ PAGE LAYOUT ============ */
+  .page-wrap{max-width:880px;margin:0 auto;padding:var(--s-12) var(--s-6) var(--s-12)}
+  .view{display:none;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1)}
+  .view.active{display:block}
+  @keyframes riseIn{from{transform:translateY(16px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+
+  .page-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-8)}
+  .page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+  .page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.1}
+
+  /* ============ HERO ============ */
+  .hero-card{
+    background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:var(--s-8);margin-bottom:var(--s-6);
+  }
+  .hero-meta-row{display:flex;gap:var(--s-3);align-items:center;margin-bottom:var(--s-4);flex-wrap:wrap}
+  .sev-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px var(--s-3);border-radius:var(--r-xs);
+    font-family:var(--font-ui);font-size:var(--text-label);font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .sev-badge .dot{width:6px;height:6px;border-radius:50%}
+  .sev-badge.high{background:var(--sev-high-bg);color:var(--sev-high)}
+  .sev-badge.high .dot{background:var(--sev-high)}
+  .sev-badge.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+  .sev-badge.crit .dot{background:var(--sev-critical)}
+  .sev-badge.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+  .sev-badge.med .dot{background:var(--sev-medium)}
+  .biz-area-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px var(--s-3);background:var(--bg-raised);
+    border:1px solid var(--line);border-radius:var(--r-xs);
+    font-size:var(--text-label);color:var(--ink-80);font-weight:500;
+  }
+  .biz-area-tag svg{width:12px;height:12px;color:var(--ink-60)}
+  .hero-title{
+    font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;
+    letter-spacing:-0.02em;line-height:1.2;margin-bottom:var(--s-3);
+  }
+  .hero-sub{color:var(--ink-60);font-size:var(--text-lg);line-height:1.55}
+
+  /* ============ SECTION ============ */
+  .section{
+    background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:var(--s-6);margin-bottom:var(--s-4);
+  }
+  .section-title-row{display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-4)}
+  .section-title-row svg{width:16px;height:16px;color:var(--ink-60)}
+  .section-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.01em}
+  .section-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-1)}
+
+  /* Impact narrative */
+  .impact-narrative{
+    font-size:var(--text-lg);line-height:1.7;color:var(--ink-80);
+    padding-left:var(--s-4);border-left:2px solid var(--brand-dim);
+  }
+  .impact-narrative p{margin-bottom:var(--s-4)}
+  .impact-narrative p:last-child{margin-bottom:0}
+  .impact-narrative strong{color:var(--ink-100);font-weight:600}
+
+  /* Justification block */
+  .just-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+  .just-col-title{
+    font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2);
+  }
+  .just-body{color:var(--ink-80);line-height:1.55}
+  .ctrl-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--s-2)}
+  .ctrl-list li{
+    display:flex;align-items:flex-start;gap:var(--s-2);
+    font-size:var(--text-body);color:var(--ink-80);line-height:1.55;
+  }
+  .ctrl-list li svg{width:14px;height:14px;color:var(--status-good);flex-shrink:0;margin-top:3px}
+
+  /* Expiry row */
+  .expiry-row{
+    margin-top:var(--s-4);padding-top:var(--s-4);
+    border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:var(--s-3);
+  }
+  .expiry-row svg{width:16px;height:16px;color:var(--ink-60)}
+  .expiry-text{font-size:var(--text-body);color:var(--ink-80)}
+  .expiry-text strong{color:var(--ink-100);font-family:var(--font-mono);font-weight:600}
+
+  /* ============ LOCKED CALLOUT ============ */
+  .callout{
+    display:flex;align-items:center;gap:var(--s-3);
+    padding:var(--s-4) var(--s-6);
+    background:var(--brand-dim);
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-md);
+    margin-bottom:var(--s-4);
+  }
+  .callout .chip{
+    width:30px;height:30px;border-radius:50%;flex-shrink:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--brand);color:var(--brand-ink);
+  }
+  .callout .chip.warn{background:var(--sev-high);color:#fff}
+  .callout .chip.crit{background:var(--sev-critical);color:#fff}
+  .callout .chip.good{background:var(--status-good);color:#0B1E14}
+  body.light .callout .chip.good{color:#fff}
+  .callout .chip svg{width:16px;height:16px}
+  .callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+  .callout-sub{font-size:var(--text-label);color:var(--ink-60);line-height:1.5}
+
+  /* ============ TECHNICAL COLLAPSED ============ */
+  .tech-details{
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+    margin-bottom:var(--s-4);
+  }
+  .tech-toggle{
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    padding:var(--s-3) var(--s-4);background:transparent;border:none;
+    color:var(--ink-80);font-family:var(--font-ui);font-size:var(--text-body);
+    font-weight:500;cursor:pointer;text-align:left;
+  }
+  .tech-toggle:hover{color:var(--ink-100)}
+  .tech-toggle svg{width:14px;height:14px;transition:transform 180ms}
+  .tech-toggle.open svg{transform:rotate(90deg)}
+  .tech-body{display:none;padding:0 var(--s-4) var(--s-4);border-top:1px solid var(--line)}
+  .tech-body.open{display:block}
+  .tech-kv{display:grid;grid-template-columns:140px 1fr;gap:var(--s-2);padding-top:var(--s-3)}
+  .tech-k{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;color:var(--ink-60);text-transform:uppercase;padding-top:2px}
+  .tech-v{font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+
+  /* ============ DECISION BAR ============ */
+  .decision-bar{
+    display:flex;gap:var(--s-3);justify-content:center;
+    margin-top:var(--s-8);
+  }
+  .decision-bar .btn.large{min-width:280px;justify-content:center}
+
+  /* Reject panel (inline) */
+  .reject-panel{
+    background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:var(--s-6);margin-top:var(--s-6);
+  }
+  .reject-panel-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-4)}
+  .form-label{font-size:var(--text-label);font-weight:500;color:var(--ink-80);display:block;margin-bottom:var(--s-2)}
+  .form-textarea{
+    width:100%;min-height:120px;padding:var(--s-3);
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+    color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);
+    resize:vertical;transition:border-color 140ms;
+  }
+  .form-textarea:focus{outline:none;border-color:var(--line-strong)}
+  .form-textarea.error{border-color:var(--sev-critical);box-shadow:0 0 0 3px var(--sev-critical-bg)}
+  .form-footer-row{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s-2)}
+  .char-count{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60)}
+  .char-count.error{color:var(--sev-critical)}
+  .reject-actions{display:flex;gap:var(--s-3);justify-content:flex-end;margin-top:var(--s-4)}
+
+  /* ============ CONFIRMATION ============ */
+  .confirm-card{
+    background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:var(--s-12);text-align:center;margin-top:var(--s-8);
+  }
+  .confirm-icon{
+    width:72px;height:72px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    margin-bottom:var(--s-6);
+  }
+  .confirm-icon.good{background:var(--status-good-bg);color:var(--status-good)}
+  .confirm-icon.bad{background:var(--sev-critical-bg);color:var(--sev-critical)}
+  .confirm-icon svg{width:36px;height:36px}
+  .confirm-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;margin-bottom:var(--s-4)}
+  .confirm-body{font-size:var(--text-lg);color:var(--ink-80);line-height:1.6;max-width:560px;margin:0 auto var(--s-6)}
+  .confirm-summary{
+    display:inline-flex;flex-direction:column;gap:var(--s-2);align-items:flex-start;
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:var(--s-4) var(--s-6);margin:0 auto var(--s-6);text-align:left;
+  }
+  .confirm-kv{display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-body)}
+  .confirm-k{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-60);min-width:96px}
+  .confirm-v{color:var(--ink-100);font-weight:500}
+  .confirm-v.mono{font-family:var(--font-mono)}
+  .confirm-actions{display:flex;gap:var(--s-3);justify-content:center}
+  .audit-chip{
+    display:inline-flex;align-items:center;gap:var(--s-2);
+    padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);
+    border-radius:var(--r-full);font-family:var(--font-mono);
+    font-size:var(--text-micro);letter-spacing:0.04em;color:var(--ink-60);
+    margin-top:var(--s-6);
+  }
+  .audit-chip svg{width:12px;height:12px;color:var(--status-good)}
+
+  /* Rejection receipt block */
+  .reject-receipt{
+    text-align:left;
+    background:var(--sev-critical-bg);border:1px solid var(--sev-critical);
+    border-radius:var(--r-sm);padding:var(--s-4) var(--s-6);
+    margin:var(--s-6) auto;max-width:560px;
+  }
+  .reject-receipt-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--sev-critical);margin-bottom:var(--s-2);font-weight:600}
+  .reject-receipt-body{color:var(--ink-80);font-size:var(--text-body);line-height:1.55;font-style:italic}
+
+  .page-footer{text-align:center;color:var(--ink-40);font-size:var(--text-label);padding:var(--s-6) 0 0}
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- ========== TOPBAR ========== -->
+<header class="topbar">
+  <div class="brand-wrap">
+    <div class="logo">S</div>
+    <div>
+      <div class="brand-name">SecureLoop</div>
+      <div class="brand-sub">Portal · Business Owner</div>
+    </div>
+  </div>
+  <div class="top-divider"></div>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <span>Risk Governance</span>
+    <span class="sep">/</span>
+    <span>Acceptance Requests</span>
+    <span class="sep">/</span>
+    <span class="current">Review</span>
+    <span class="id-pill">BO-01-1</span>
+  </nav>
+  <div class="spacer"></div>
+
+  <div class="state-switcher" role="tablist" aria-label="Demo state">
+    <button class="active" data-view="review">Review</button>
+    <button data-view="reject-input">Reject (input)</button>
+    <button data-view="approved">Approved</button>
+    <button data-view="rejected">Rejected</button>
+  </div>
+
+  <div class="theme-picker">
+    <button class="theme-btn" id="themeBtn" aria-haspopup="dialog" aria-expanded="false">
+      <span class="theme-swatches" aria-hidden="true">
+        <span id="sw1" style="background:#120804"></span>
+        <span id="sw2" style="background:#F3EEE2"></span>
+      </span>
+      <span id="themeLabel">Coffee · Dark</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="theme-pop" id="themePop" role="dialog" aria-label="Theme picker">
+      <div class="theme-pop-label">Palette family</div>
+      <div class="family-cards">
+        <button class="family-card active" data-fam="coffee">
+          <div class="family-card-name">Coffee</div>
+          <div class="family-card-desc">Warm · Investigation</div>
+          <div class="family-card-swatches">
+            <span style="background:#120804"></span>
+            <span style="background:#F3EEE2"></span>
+            <span style="background:#6F4E37"></span>
+          </div>
+        </button>
+        <button class="family-card" data-fam="blue">
+          <div class="family-card-name">Blue</div>
+          <div class="family-card-desc">Cool · Enterprise</div>
+          <div class="family-card-swatches">
+            <span style="background:#0A1628"></span>
+            <span style="background:#E8F4FD"></span>
+            <span style="background:#1E5A8A"></span>
+          </div>
+        </button>
+      </div>
+      <div class="theme-pop-label">Appearance</div>
+      <div class="mode-row">
+        <button class="mode-btn active" data-mode="dark">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Dark
+        </button>
+        <button class="mode-btn" data-mode="light">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          Light
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== PAGE ========== -->
+<main class="page-wrap">
+
+  <!-- ========== VIEW 1: REVIEW ========== -->
+  <section class="view active" id="view-review" aria-label="Risk acceptance review">
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Risk Acceptance Review · Action Required</div>
+        <h1 class="page-title">A business risk needs your decision</h1>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero-card">
+      <div class="hero-meta-row">
+        <span class="sev-badge high"><span class="dot"></span>High Risk</span>
+        <span class="biz-area-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          Customer Payment Processing
+        </span>
+        <span class="biz-area-tag">Requested by Priya Menon · Control Owner</span>
+      </div>
+      <h2 class="hero-title">Payment gateway is running on software the vendor no longer patches.</h2>
+      <p class="hero-sub">Keeping it live while we migrate means customers can keep paying — but an attacker finding a new flaw in this software would face fewer defences than on a current version.</p>
+    </div>
+
+    <!-- BUSINESS IMPACT -->
+    <div class="section">
+      <div class="section-title-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <div>
+          <div class="section-eyebrow">CISO Business Impact Summary</div>
+          <div class="section-title">What this means for the business</div>
+        </div>
+      </div>
+      <div class="impact-narrative">
+        <p><strong>What's wrong.</strong> The software powering our checkout runs a version the vendor stopped supporting last quarter. There are no new security fixes available for it.</p>
+        <p><strong>Why it's still running.</strong> Finance and Ops need the quarterly close cycle to finish before we can swap this component without freezing card processing. The replacement is already in staging; go-live window is week 37.</p>
+        <p><strong>What could happen.</strong> If an attacker discovers a new flaw in this software before we migrate, customer card data in transit could be exposed. Best estimate of fallout: <strong>£1.8M – £2.4M</strong> (customer notification, regulator fine, short-term gateway swap). Card processing would pause for roughly <strong>18–36 hours</strong> during response.</p>
+        <p><strong>What we've done to reduce the odds.</strong> Gateway is now behind a WAF tuned to block known exploits for this version, outbound egress is restricted, and the security team has a watch rule live 24/7.</p>
+      </div>
+    </div>
+
+    <!-- CALLOUT -->
+    <div class="callout">
+      <span class="chip warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </span>
+      <div>
+        <div class="callout-title">If you approve, this risk is accepted for 90 days — until 20 Jul 2026.</div>
+        <div class="callout-sub">After that, it auto-escalates to the Security Committee unless remediated or extended.</div>
+      </div>
+    </div>
+
+    <!-- JUSTIFICATION + CONTROLS -->
+    <div class="section">
+      <div class="section-title-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9z"></path><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div class="section-title">Acceptance details</div>
+      </div>
+      <div class="just-grid">
+        <div>
+          <div class="just-col-title">Control Owner's justification</div>
+          <p class="just-body">Quarterly close cycle blocks any planned downtime on the payments path until week 37. Replacement component is built, tested in staging, and holding a firm go-live date. Early migration forfeits full reconciliation of Q2.</p>
+        </div>
+        <div>
+          <div class="just-col-title">Compensating controls in place</div>
+          <ul class="ctrl-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>WAF rule tuned to block known exploits</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>Outbound egress restricted from gateway</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>24/7 SOC watch-rule on gateway traffic</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>Replacement component signed off in staging</li>
+          </ul>
+        </div>
+      </div>
+      <div class="expiry-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <div class="expiry-text">This acceptance will expire on <strong>20 Jul 2026</strong> · 90 days from today</div>
+      </div>
+    </div>
+
+    <!-- TECH DETAILS (collapsed) -->
+    <div class="tech-details">
+      <button class="tech-toggle" id="techToggle" aria-expanded="false">
+        <span>Technical details (for transparency — not required to decide)</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+      <div class="tech-body" id="techBody">
+        <div class="tech-kv"><div class="tech-k">CVE ID</div><div class="tech-v">CVE-2026-0481</div></div>
+        <div class="tech-kv"><div class="tech-k">CVSS v4</div><div class="tech-v">8.2 · High</div></div>
+        <div class="tech-kv"><div class="tech-k">Attack vector</div><div class="tech-v">Network · Low complexity · No auth</div></div>
+        <div class="tech-kv"><div class="tech-k">Affected asset</div><div class="tech-v">pg-proxy-prod-01 · 10.42.8.14</div></div>
+        <div class="tech-kv"><div class="tech-k">Finding ID</div><div class="tech-v">FND-2026-00482</div></div>
+      </div>
+    </div>
+
+    <!-- DECISION BAR -->
+    <div class="decision-bar">
+      <button class="btn large sev-good" id="approveBtn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Approve Risk Acceptance
+      </button>
+      <button class="btn large sev-crit" id="rejectOpenBtn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        Reject Risk Acceptance
+      </button>
+    </div>
+
+    <div class="page-footer">Reviewing as <strong>Daniel Hartley</strong> · VP Product, Digital Payments · Authenticated via SSO</div>
+  </section>
+
+  <!-- ========== VIEW 2: REJECT INPUT ========== -->
+  <section class="view" id="view-reject-input" aria-label="Rejection reason">
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Risk Acceptance Review · Rejecting</div>
+        <h1 class="page-title">Tell the CISO why this shouldn't be accepted</h1>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="chip crit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </span>
+      <div>
+        <div class="callout-title">You're rejecting: "Payment gateway is running on software the vendor no longer patches."</div>
+        <div class="callout-sub">Rejection sends this back to the Control Owner and CISO to plan alternative remediation. Nothing is accepted yet.</div>
+      </div>
+    </div>
+
+    <div class="reject-panel">
+      <div class="reject-panel-title">Reason for rejection</div>
+      <label class="form-label" for="rejectReason">Why shouldn't this risk be accepted? (minimum 200 characters)</label>
+      <textarea class="form-textarea" id="rejectReason" placeholder="e.g., Business exposure exceeds what's defensible during peak billing week. Prefer to stand up a temporary gateway on the supported version now, even with partial reconciliation impact, rather than carry this for 90 days."></textarea>
+      <div class="form-footer-row">
+        <span class="char-count" id="charCount">0 / 200 min</span>
+        <span class="char-count" id="charHint" style="color:var(--ink-60)">Sent to CISO + Control Owner on submit</span>
+      </div>
+      <div class="reject-actions">
+        <button class="btn" id="rejectCancelBtn">Back to review</button>
+        <button class="btn sev-crit" id="rejectSubmitBtn" disabled>Submit rejection</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== VIEW 3: APPROVED ========== -->
+  <section class="view" id="view-approved" aria-label="Approval confirmation">
+    <div class="confirm-card">
+      <div class="confirm-icon good">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <h2 class="confirm-title">Risk acceptance approved</h2>
+      <p class="confirm-body">Your decision has been logged. The CISO and Control Owner have been notified. This acceptance is now active.</p>
+
+      <div class="confirm-summary">
+        <div class="confirm-kv"><span class="confirm-k">Finding</span><span class="confirm-v">Payment gateway on unsupported software</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Business area</span><span class="confirm-v">Customer Payment Processing</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Expires</span><span class="confirm-v mono">20 Jul 2026</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Decided at</span><span class="confirm-v mono">21 Apr 2026 · 14:22 GST</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Decided by</span><span class="confirm-v">Daniel Hartley · VP Product</span></div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn" data-goto="review">Back to queue</button>
+        <button class="btn primary">View in Risk Dashboard</button>
+      </div>
+
+      <div class="audit-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Immutable audit entry · AUD-2026-04-21-00814
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== VIEW 4: REJECTED ========== -->
+  <section class="view" id="view-rejected" aria-label="Rejection confirmation">
+    <div class="confirm-card">
+      <div class="confirm-icon bad">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <h2 class="confirm-title">Risk acceptance rejected</h2>
+      <p class="confirm-body">The CISO and Control Owner have been notified and will review alternative remediation options.</p>
+
+      <div class="reject-receipt">
+        <div class="reject-receipt-label">Your reason</div>
+        <div class="reject-receipt-body">"Business exposure exceeds what's defensible during peak billing week. Prefer to stand up a temporary gateway on the supported version now, even with partial reconciliation impact, rather than carry this for 90 days."</div>
+      </div>
+
+      <div class="confirm-summary">
+        <div class="confirm-kv"><span class="confirm-k">Finding</span><span class="confirm-v">Payment gateway on unsupported software</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Decided at</span><span class="confirm-v mono">21 Apr 2026 · 14:22 GST</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Decided by</span><span class="confirm-v">Daniel Hartley · VP Product</span></div>
+        <div class="confirm-kv"><span class="confirm-k">Next step</span><span class="confirm-v">Alternative remediation planning</span></div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn" data-goto="review">Back to queue</button>
+        <button class="btn primary">View rejection in audit log</button>
+      </div>
+
+      <div class="audit-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Immutable audit entry · AUD-2026-04-21-00815
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============ THEME ============ */
+const themeBtn=document.getElementById('themeBtn');
+const themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel');
+const sw1=document.getElementById('sw1'), sw2=document.getElementById('sw2');
+let fam='coffee', mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');
+  document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode]; sw1.style.background=a; sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();const open=themePop.classList.toggle('open');themeBtn.setAttribute('aria-expanded',open)});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* ============ VIEW SWITCHER (state-switcher sync) ============ */
+function setView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  document.querySelectorAll('.state-switcher button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.state-switcher button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.goto)));
+
+/* ============ DECISION BUTTONS ============ */
+document.getElementById('approveBtn').addEventListener('click',()=>setView('approved'));
+document.getElementById('rejectOpenBtn').addEventListener('click',()=>setView('reject-input'));
+document.getElementById('rejectCancelBtn').addEventListener('click',()=>setView('review'));
+document.getElementById('rejectSubmitBtn').addEventListener('click',()=>setView('rejected'));
+
+/* ============ TECH TOGGLE ============ */
+const tt=document.getElementById('techToggle'),tb=document.getElementById('techBody');
+tt.addEventListener('click',()=>{const on=tb.classList.toggle('open');tt.classList.toggle('open',on);tt.setAttribute('aria-expanded',on)});
+
+/* ============ CHAR COUNT ============ */
+const ra=document.getElementById('rejectReason');
+const cc=document.getElementById('charCount');
+const rs=document.getElementById('rejectSubmitBtn');
+ra.addEventListener('input',()=>{
+  const n=ra.value.trim().length;
+  cc.textContent=n+' / 200 min';
+  const ok=n>=200;
+  cc.classList.toggle('error',!ok && n>0);
+  ra.classList.toggle('error',!ok && n>0);
+  rs.disabled=!ok;
+});
+
+applyTheme();
+</script>
+</body>
+</html>

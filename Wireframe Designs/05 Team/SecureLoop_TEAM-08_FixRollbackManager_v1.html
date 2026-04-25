@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-08 · Fix Rollback Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:"Space Grotesk",system-ui,sans-serif;--font-ui:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);--backdrop:rgba(10,22,40,.30)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body.modal-open{overflow:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn.destructive{background:var(--sev-critical);color:#fff;border-color:var(--sev-critical);font-weight:600}
+.btn.destructive:hover{filter:brightness(1.08)}
+.btn.destructive:disabled{background:var(--bg-raised);color:var(--ink-40);border-color:var(--line);cursor:not-allowed;filter:none}
+.btn.large{height:44px;padding:0 var(--s-6);font-size:var(--text-lg)}
+.btn svg.icon{width:14px;height:14px}
+.btn.icon-only{width:36px;height:36px;padding:0;flex:0 0 36px}
+.btn.icon-only svg{width:14px;height:14px}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* state switcher */
+.state-switcher{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.state-switcher button{padding:6px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:92px}
+.state-switcher button:hover{color:var(--ink-100)}
+.state-switcher button.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* content */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1280px;margin:0 auto;width:100%}
+.page-head{margin-bottom:var(--s-4)}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.2}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+
+/* fix-applied strip */
+.applied-strip{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--status-good-bg);border-radius:var(--r-sm);margin-bottom:var(--s-4);font-size:var(--text-label)}
+.applied-strip svg{width:14px;height:14px;color:var(--status-good);flex-shrink:0}
+.applied-strip .tag{color:var(--status-good);font-weight:700;font-family:var(--font-mono);letter-spacing:0.06em;text-transform:uppercase}
+.applied-strip .msg{color:var(--ink-80)}
+.applied-strip .mono{font-family:var(--font-mono);color:var(--ink-100)}
+
+/* ROLLBACK HERO — badge + expiry bar + method */
+.rb-hero{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-6);display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-6);align-items:center}
+.rb-chip{width:52px;height:52px;border-radius:50%;background:var(--status-good-bg);color:var(--status-good);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rb-chip.warn{background:var(--sev-high-bg);color:var(--sev-high)}
+.rb-chip.expired{background:var(--bg-raised);color:var(--ink-40)}
+.rb-chip svg{width:24px;height:24px}
+.rb-h-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:4px}
+.rb-h-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:var(--s-2)}
+.rb-h-tags{display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.tested-badge{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+.tested-badge svg{width:10px;height:10px}
+.tested-badge.untested{background:var(--sev-high-bg);color:var(--sev-high)}
+.expiry-chip{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);background:var(--bg-raised);border:1px solid var(--line);color:var(--ink-80);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+.expiry-chip svg{width:10px;height:10px;color:var(--ink-60)}
+.expiry-chip.near{background:var(--sev-high-bg);color:var(--sev-high);border-color:transparent}
+.expiry-chip.near svg{color:var(--sev-high)}
+.expiry-chip.expired{background:var(--bg-raised);color:var(--ink-40);border-color:var(--line)}
+.rb-h-right{text-align:right;display:flex;flex-direction:column;gap:var(--s-2);align-items:flex-end}
+.rb-method-val{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.rb-method-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+
+/* expiry progress bar */
+.expiry-bar-wrap{grid-column:1 / -1;margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--line)}
+.expiry-bar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-2);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;color:var(--ink-60)}
+.expiry-bar{height:4px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden;position:relative}
+.expiry-fill{height:100%;border-radius:var(--r-full);background:var(--status-good);transition:width 280ms,background 180ms}
+.expiry-fill.warn{background:var(--sev-high)}
+.expiry-fill.crit{background:var(--sev-critical)}
+.expiry-fill.expired{background:var(--ink-40)}
+
+/* 2-col instruction panels */
+.rb-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);margin-bottom:var(--s-6)}
+.rb-panel{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column}
+.rb-panel-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-2)}
+.rb-panel-h-icon{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rb-panel-h-icon.auto{background:var(--brand-dim);color:var(--brand)}
+.rb-panel-h-icon.manual{background:var(--bg-raised);color:var(--ink-80)}
+.rb-panel-h-icon svg{width:14px;height:14px}
+.rb-panel-h-title{font-family:var(--font-display);font-size:var(--text-body);font-weight:600}
+.rb-panel-h-tag{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-left:auto}
+.rb-panel-body{padding:var(--s-4) var(--s-6);flex:1}
+
+/* code block */
+.code-block{background:var(--bg-raised);border-radius:var(--r-xs);padding:var(--s-3) var(--s-4);font-family:var(--font-mono);font-size:var(--text-label);line-height:1.7;color:var(--ink-80);overflow-x:auto;white-space:pre;letter-spacing:0.01em}
+.code-block .com{color:var(--ink-40)}
+.code-block .kw{color:var(--sev-low)}
+.code-block .str{color:var(--status-good)}
+.code-block .hl{color:var(--ink-100);font-weight:700}
+
+.sub-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin:var(--s-4) 0 var(--s-2)}
+.sub-label:first-child{margin-top:0}
+
+.bullet-list{list-style:none;display:flex;flex-direction:column;gap:var(--s-2)}
+.bullet-list li{display:flex;align-items:flex-start;gap:var(--s-2);font-size:var(--text-label);color:var(--ink-80);line-height:1.55}
+.bullet-list li svg{width:12px;height:12px;color:var(--sev-critical);flex-shrink:0;margin-top:4px}
+
+.auto-meta{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-top:var(--s-3)}
+.auto-meta-item{padding:var(--s-2) var(--s-3);background:var(--bg-raised);border-radius:var(--r-xs)}
+.auto-meta-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:2px}
+.auto-meta-val{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-100);font-weight:600}
+
+/* manual step list */
+.step-list{list-style:none;display:flex;flex-direction:column;gap:var(--s-3)}
+.step-list li{display:grid;grid-template-columns:24px 1fr;gap:var(--s-3);align-items:flex-start}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--bg-raised);color:var(--ink-80);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:var(--text-label);font-weight:700;flex-shrink:0}
+.step-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.6;padding-top:3px}
+.step-code{display:inline-block;margin-top:6px;padding:4px var(--s-2);background:var(--bg-raised);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-100);letter-spacing:0.02em}
+
+/* config values table */
+.cfg-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:var(--text-label)}
+.cfg-table th{text-align:left;padding:var(--s-2) var(--s-3);background:var(--bg-raised);color:var(--ink-60);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;font-weight:600;border-bottom:1px solid var(--line-strong)}
+.cfg-table td{padding:var(--s-2) var(--s-3);border-bottom:1px solid var(--line);color:var(--ink-80)}
+.cfg-table td:first-child{color:var(--ink-100);font-weight:500}
+.cfg-table .arrow{color:var(--ink-40);text-align:center}
+
+/* execute strip */
+.execute-strip{background:var(--bg-base);border:1px solid var(--sev-critical);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-4);align-items:center;margin-bottom:var(--s-6)}
+.execute-strip.expired{border-color:var(--line-strong)}
+.es-chip{width:40px;height:40px;border-radius:50%;background:var(--sev-critical-bg);color:var(--sev-critical);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.es-chip.expired{background:var(--bg-raised);color:var(--ink-40)}
+.es-chip svg{width:18px;height:18px}
+.es-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin-bottom:2px}
+.es-sub{font-size:var(--text-label);color:var(--ink-60);line-height:1.5}
+
+/* execution log timeline */
+.log-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.log-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.log-head h3{font-family:var(--font-display);font-size:var(--text-body);font-weight:600}
+.log-count{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+.log-item{display:grid;grid-template-columns:12px 1fr auto;gap:var(--s-3);padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);align-items:flex-start}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0;border:2px solid var(--bg-base)}
+.log-dot.ok{background:var(--status-good);box-shadow:0 0 0 3px var(--status-good-bg)}
+.log-dot.fail{background:var(--sev-critical);box-shadow:0 0 0 3px var(--sev-critical-bg)}
+.log-dot.applied{background:var(--sev-low);box-shadow:0 0 0 3px var(--sev-low-bg)}
+.log-title{font-size:var(--text-body);color:var(--ink-100);font-weight:500;margin-bottom:4px}
+.log-meta{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-bottom:var(--s-2)}
+.log-meta .sep{color:var(--ink-40);margin:0 6px}
+.log-reason{font-size:var(--text-label);color:var(--ink-80);padding:var(--s-2) var(--s-3);background:var(--bg-raised);border-radius:var(--r-xs);line-height:1.55}
+.log-time{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;white-space:nowrap}
+.immutable-tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:10px;color:var(--ink-60);letter-spacing:0.06em;text-transform:uppercase;font-weight:600;margin-top:var(--s-2)}
+.immutable-tag svg{width:10px;height:10px}
+
+/* ============ DESTRUCTIVE CONFIRMATION MODAL ============ */
+.modal-backdrop{position:fixed;inset:0;background:var(--backdrop);backdrop-filter:blur(8px);z-index:50;display:none;align-items:center;justify-content:center;padding:var(--s-6)}
+.modal-backdrop.open{display:flex;animation:fadeIn 200ms}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{width:880px;max-width:100%;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);max-height:90vh}
+@keyframes riseIn{from{transform:translateY(16px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4)}
+.modal-title-wrap{flex:1;min-width:0}
+.modal-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--sev-critical);font-weight:700;margin-bottom:2px}
+.modal-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.modal-close{width:32px;height:32px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{padding:var(--s-6);overflow-y:auto}
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;justify-content:flex-end;align-items:center;gap:var(--s-2);background:var(--bg-base)}
+
+/* locked callout pattern */
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-md);margin-bottom:var(--s-4)}
+.callout .chip{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:var(--sev-critical);color:#fff}
+.callout .chip svg{width:16px;height:16px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-sub{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+.m-section{margin-bottom:var(--s-4)}
+.m-section-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.m-what{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.m-what li{display:flex;align-items:flex-start;gap:var(--s-2);padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);font-size:var(--text-body);color:var(--ink-80);line-height:1.55;list-style:none}
+.m-what li:last-child{border-bottom:none}
+.m-what li svg{width:14px;height:14px;flex-shrink:0;margin-top:3px;color:var(--sev-critical)}
+
+/* ack card */
+.ack-card{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line-strong);border-radius:var(--r-sm);cursor:pointer;margin-bottom:var(--s-4);transition:all 140ms}
+.ack-card:hover{border-color:var(--sev-critical);background:var(--bg-hover)}
+.ack-card.checked{border-color:var(--sev-critical);background:var(--sev-critical-bg)}
+.ack-check{appearance:none;width:20px;height:20px;border:2px solid var(--line-strong);border-radius:var(--r-xs);background:var(--bg-raised);cursor:pointer;position:relative;flex-shrink:0;transition:all 140ms}
+.ack-check:checked{background:var(--sev-critical);border-color:var(--sev-critical)}
+.ack-check:checked::after{content:"";position:absolute;left:5px;top:1px;width:6px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ack-label{font-size:var(--text-body);color:var(--ink-100);font-weight:500;line-height:1.4}
+.ack-label strong{color:var(--sev-critical)}
+
+.form-label{font-size:var(--text-label);font-weight:500;color:var(--ink-80);margin-bottom:var(--s-2);display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);letter-spacing:0.04em;text-transform:uppercase}
+.form-label .req{color:var(--sev-critical);font-family:var(--font-ui);text-transform:none;letter-spacing:0;font-weight:600}
+.form-label .counter{color:var(--ink-60);font-family:var(--font-mono);font-size:10px;font-weight:500}
+.form-label .counter.ok{color:var(--status-good)}
+.form-label .counter.short{color:var(--sev-critical)}
+.form-textarea{width:100%;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);min-height:96px;resize:vertical;line-height:1.55;transition:border-color 140ms}
+.form-textarea:focus{outline:none;border-color:var(--line-strong)}
+.form-textarea.error{border-color:var(--sev-critical)}
+.form-helper{margin-top:6px;font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono);letter-spacing:0.02em}
+.form-helper.error{color:var(--sev-critical)}
+
+.kv{display:grid;grid-template-columns:140px 1fr;gap:var(--s-2) var(--s-4);font-size:var(--text-label);padding:var(--s-3);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm)}
+.kv dt{color:var(--ink-60);font-family:var(--font-mono);letter-spacing:0.04em}
+.kv dd{color:var(--ink-80);font-family:var(--font-mono)}
+.kv dd strong{color:var(--ink-100)}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>My Findings</span><span class="sep">/</span>
+        <span class="current">FND-2026-00476 · Rollback</span>
+        <span class="id-pill">TEAM-08</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="state-switcher" id="stateSwitcher">
+        <button class="active" data-demo="tested">Tested · Active</button>
+        <button data-demo="untested">Untested</button>
+        <button data-demo="expired">Expired</button>
+      </div>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row"><button class="mode-btn active" data-mode="dark">Dark</button><button class="mode-btn" data-mode="light">Light</button></div>
+        </div>
+      </div>
+      <div class="user-chip"><span class="avatar">NR</span><div><div class="user-chip-name">Nikhil Rao</div><div class="user-chip-role">Cloud Team</div></div></div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div class="page-eyebrow">Finding detail · Fix Rollback Manager</div>
+        <h1 class="page-title">Roll back the IAM fix if something downstream broke</h1>
+        <div class="page-sub">
+          <span class="sev-pill crit"><span class="dot"></span>Critical</span>
+          <span style="font-family:var(--font-mono)">FND-2026-00476 · IAM role has * S3 permissions</span>
+          <span>·</span>
+          <span>eks-node-role · AWS us-east-1</span>
+        </div>
+      </div>
+
+      <!-- fix applied strip -->
+      <div class="applied-strip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span class="tag">Fix applied</span>
+        <span class="msg">via <span class="mono">IaC · Terraform reverse-apply</span> on <span class="mono">20 Apr 2026 · 14:22 GST</span> by <span class="mono">Nikhil Rao</span></span>
+      </div>
+
+      <!-- ROLLBACK HERO -->
+      <div class="rb-hero" id="rbHero">
+        <div class="rb-chip" id="rbChip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        </div>
+        <div>
+          <div class="rb-h-label">Rollback availability</div>
+          <div class="rb-h-title" id="rbTitle">Automated rollback available</div>
+          <div class="rb-h-tags">
+            <span class="tested-badge" id="testedBadge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Tested
+            </span>
+            <span class="expiry-chip" id="expiryChip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="expiryText">Expires in 29 days · 19 May 2026</span>
+            </span>
+          </div>
+        </div>
+        <div class="rb-h-right">
+          <div class="rb-h-label">Rollback method</div>
+          <div class="rb-method-val">Terraform reverse-apply</div>
+          <div class="rb-method-sub">≈ 3 min · affects 1 IAM resource</div>
+        </div>
+
+        <!-- expiry progress bar -->
+        <div class="expiry-bar-wrap">
+          <div class="expiry-bar-head">
+            <span>30-day rollback window · applied 20 Apr 2026</span>
+            <span id="expiryRatio">Day 1 of 30</span>
+          </div>
+          <div class="expiry-bar"><div class="expiry-fill" id="expiryFill" style="width:97%"></div></div>
+        </div>
+      </div>
+
+      <!-- 2-COL INSTRUCTIONS -->
+      <div class="rb-grid">
+
+        <!-- AUTOMATED -->
+        <div class="rb-panel">
+          <div class="rb-panel-head">
+            <span class="rb-panel-h-icon auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></span>
+            <span class="rb-panel-h-title">Automated rollback</span>
+            <span class="rb-panel-h-tag">read-only · Terraform</span>
+          </div>
+          <div class="rb-panel-body">
+            <div class="sub-label">Rollback script (reverse-apply)</div>
+            <div class="code-block"><span class="com"># Restores pre-fix IAM policy · scoped S3 wildcard</span>
+<span class="kw">resource</span> <span class="str">"aws_iam_role_policy"</span> <span class="str">"eks_node_role_s3"</span> {
+  <span class="kw">name</span> = <span class="str">"eks-node-s3-access"</span>
+  <span class="kw">role</span> = aws_iam_role.eks_node_role.id
+
+  policy = jsonencode({
+    Version = <span class="str">"2012-10-17"</span>
+    Statement = [{
+      Effect   = <span class="str">"Allow"</span>
+      <span class="hl">Action   = <span class="str">"s3:*"</span></span>   <span class="com"># ← rollback target</span>
+      <span class="hl">Resource = <span class="str">"*"</span></span>
+    }]
+  })
+}</div>
+
+            <div class="sub-label">What will be reverted</div>
+            <ul class="bullet-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>IAM role policy restored to <code style="font-family:var(--font-mono)">s3:*</code> on <code style="font-family:var(--font-mono)">*</code></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Policy version tagged <code style="font-family:var(--font-mono)">v14</code> will become active (current: v15)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>CloudTrail event emitted, CISO &amp; SE notified</li>
+            </ul>
+
+            <div class="auto-meta">
+              <div class="auto-meta-item"><div class="auto-meta-label">Systems affected</div><div class="auto-meta-val">1 · AWS IAM</div></div>
+              <div class="auto-meta-item"><div class="auto-meta-label">Est. duration</div><div class="auto-meta-val">≈ 3 min</div></div>
+              <div class="auto-meta-item"><div class="auto-meta-label">Dependency impact</div><div class="auto-meta-val">0 downstream</div></div>
+              <div class="auto-meta-item"><div class="auto-meta-label">Sandbox tested</div><div class="auto-meta-val" style="color:var(--status-good)">15 Apr 2026</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANUAL -->
+        <div class="rb-panel">
+          <div class="rb-panel-head">
+            <span class="rb-panel-h-icon manual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></span>
+            <span class="rb-panel-h-title">Manual rollback steps</span>
+            <span class="rb-panel-h-tag">always available · no expiry</span>
+          </div>
+          <div class="rb-panel-body">
+            <div class="sub-label">Step-by-step checklist</div>
+            <ol class="step-list">
+              <li><span class="step-num">1</span><div class="step-body">Open AWS IAM console → Roles → <code style="font-family:var(--font-mono)">eks-node-role</code>. <span class="step-code">aws iam get-role --role-name eks-node-role</span></div></li>
+              <li><span class="step-num">2</span><div class="step-body">Locate the inline policy <code style="font-family:var(--font-mono)">eks-node-s3-access</code> and note its current version (v15).</div></li>
+              <li><span class="step-num">3</span><div class="step-body">Roll back to previous version v14 using the JSON from the pre-fix snapshot. <span class="step-code">aws iam put-role-policy --role-name eks-node-role --policy-document file://v14.json</span></div></li>
+              <li><span class="step-num">4</span><div class="step-body">Verify the Action and Resource fields match the rollback target.</div></li>
+            </ol>
+
+            <div class="sub-label">Configuration to revert</div>
+            <table class="cfg-table">
+              <thead><tr><th>Field</th><th>From</th><th></th><th>To</th></tr></thead>
+              <tbody>
+                <tr><td>Action</td><td>s3:GetObject, s3:PutObject</td><td class="arrow">→</td><td>s3:*</td></tr>
+                <tr><td>Resource</td><td>arn:aws:s3:::payments-*</td><td class="arrow">→</td><td>*</td></tr>
+                <tr><td>Policy version</td><td>v15</td><td class="arrow">→</td><td>v14</td></tr>
+              </tbody>
+            </table>
+
+            <div class="sub-label">Verify rollback success</div>
+            <ul class="bullet-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--status-good)"><polyline points="20 6 9 17 4 12"></polyline></svg>Run <code style="font-family:var(--font-mono)">aws iam get-role-policy</code> — confirm Action is <code style="font-family:var(--font-mono)">s3:*</code></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--status-good)"><polyline points="20 6 9 17 4 12"></polyline></svg>Confirm CloudTrail event <code style="font-family:var(--font-mono)">PutRolePolicy</code> was logged</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--status-good)"><polyline points="20 6 9 17 4 12"></polyline></svg>Mark the finding as <strong>Open</strong> again in SecureLoop</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXECUTE STRIP -->
+      <div class="execute-strip" id="executeStrip">
+        <span class="es-chip" id="esChip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+        <div>
+          <div class="es-title" id="esTitle">Execute automated rollback</div>
+          <div class="es-sub" id="esSub">Destructive action · you will be asked to confirm and provide a reason. Team Manager, Security Engineer, and the original executor will be notified.</div>
+        </div>
+        <button class="btn destructive large" id="openModalBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          Execute Rollback
+        </button>
+      </div>
+
+      <!-- EXECUTION LOG -->
+      <div class="log-card">
+        <div class="log-head">
+          <h3>Fix &amp; rollback execution log</h3>
+          <span class="log-count">Immutable · 1 execution on record</span>
+        </div>
+        <div class="log-item">
+          <span class="log-dot applied"></span>
+          <div>
+            <div class="log-title">Fix applied · IAM policy scoped from <code style="font-family:var(--font-mono)">s3:*</code> to <code style="font-family:var(--font-mono)">s3:GetObject, s3:PutObject on payments-*</code></div>
+            <div class="log-meta">Method: <strong style="color:var(--ink-100)">IaC · Terraform</strong><span class="sep">·</span>Executor: <strong style="color:var(--ink-100)">Nikhil Rao</strong><span class="sep">·</span>Outcome: <strong style="color:var(--status-good)">Success</strong><span class="sep">·</span>Policy v14 → v15</div>
+            <div class="immutable-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Immutable · admin annotation only
+            </div>
+          </div>
+          <div class="log-time">20 Apr 2026<br>14:22 GST</div>
+        </div>
+        <div style="padding:var(--s-4) var(--s-6);text-align:center;color:var(--ink-60);font-size:var(--text-label);background:var(--bg-raised)">
+          No rollbacks executed yet. If a rollback is performed, a new immutable entry will be appended here with timestamp, user, method, outcome, and reason.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== DESTRUCTIVE CONFIRMATION MODAL ===== -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-eyebrow">Destructive action · requires confirmation</div>
+        <div class="modal-title" id="modalTitle">Execute rollback for FND-2026-00476</div>
+      </div>
+      <button class="modal-close" id="closeBtn" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="callout">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+        <div>
+          <div class="callout-title">This will revert <span style="font-family:var(--font-mono)">eks-node-role</span> to its pre-fix state</div>
+          <div class="callout-sub">The critical finding will reopen and the SLA clock will resume from the remaining time at the moment of the original fix.</div>
+        </div>
+      </div>
+
+      <div class="m-section">
+        <div class="m-section-label">What will change</div>
+        <ul class="m-what">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>IAM policy for <strong style="color:var(--ink-100)">eks-node-role</strong> reverts to <code style="font-family:var(--font-mono)">s3:*</code> on <code style="font-family:var(--font-mono)">*</code></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Finding <strong style="color:var(--ink-100)">FND-2026-00476</strong> reopens (Fix Applied → Open)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Notifications sent to Team Manager (Priya Menon), Security Engineer (Aaliyah Khan), and original executor (Nikhil Rao)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Immutable rollback entry added to execution log</li>
+        </ul>
+      </div>
+
+      <div class="m-section">
+        <div class="m-section-label">Audit metadata</div>
+        <dl class="kv">
+          <dt>Finding</dt><dd><strong>FND-2026-00476</strong></dd>
+          <dt>Asset</dt><dd>eks-node-role · AWS us-east-1</dd>
+          <dt>Rollback of</dt><dd>Fix execution · 20 Apr 2026 14:22 GST</dd>
+          <dt>Triggered by</dt><dd><strong>Nikhil Rao</strong> · Cloud Team</dd>
+          <dt>Method</dt><dd>Terraform reverse-apply</dd>
+        </dl>
+      </div>
+
+      <!-- ACK CARD -->
+      <label class="ack-card" id="ackCard">
+        <input type="checkbox" class="ack-check" id="ackCheck">
+        <span class="ack-label">I understand this is a <strong>destructive action</strong> and will revert the applied fix. I accept responsibility for the consequences.</span>
+      </label>
+
+      <!-- REQUIRED REASON -->
+      <div class="m-section" style="margin-bottom:0">
+        <label class="form-label">
+          Rollback reason
+          <span>
+            <span class="req">required · min 100 chars</span>
+            <span class="counter short" id="reasonCounter" style="margin-left:var(--s-2)">0 / 100</span>
+          </span>
+        </label>
+        <textarea class="form-textarea error" id="reasonInput" placeholder="Why is this rollback necessary? Describe the downstream impact observed, any linked incidents, and the expected path forward. Minimum 100 characters."></textarea>
+        <div class="form-helper error" id="reasonHelper">100 more characters needed to enable Execute</div>
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn ghost" id="cancelBtn">Cancel</button>
+      <button class="btn destructive" id="confirmBtn" disabled>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        Execute rollback now
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* theme picker */
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePop.classList.remove('open');closeModal();}});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* state switcher — central mutator for rollback availability states */
+const StateConfig={
+  tested:{chipCls:'rb-chip',title:'Automated rollback available',badgeText:'Tested',badgeCls:'tested-badge',expiryText:'Expires in 29 days · 19 May 2026',expiryCls:'expiry-chip',fillWidth:'97%',fillCls:'expiry-fill',ratio:'Day 1 of 30',execDisabled:false,execCls:'execute-strip',esTitle:'Execute automated rollback',esSub:'Destructive action · you will be asked to confirm and provide a reason. Team Manager, Security Engineer, and the original executor will be notified.'},
+  untested:{chipCls:'rb-chip warn',title:'Rollback available — proceed with caution',badgeText:'Untested',badgeCls:'tested-badge untested',expiryText:'Expires in 12 days · 02 May 2026',expiryCls:'expiry-chip near',fillWidth:'40%',fillCls:'expiry-fill warn',ratio:'Day 18 of 30',execDisabled:false,execCls:'execute-strip',esTitle:'Execute automated rollback · Untested',esSub:'This rollback script has NOT been validated in sandbox. The Platform Admin recommends manual rollback unless you have verified behaviour yourself.'},
+  expired:{chipCls:'rb-chip expired',title:'Rollback window expired',badgeText:'Tested',badgeCls:'tested-badge',expiryText:'Expired on 19 May 2026',expiryCls:'expiry-chip expired',fillWidth:'100%',fillCls:'expiry-fill expired',ratio:'Day 30 of 30 · expired',execDisabled:true,execCls:'execute-strip expired',esTitle:'Automated rollback unavailable',esSub:'The 30-day rollback window has expired. Contact your Security Engineer for recovery assistance or follow the manual steps above.'}
+};
+function setDemo(key){
+  const cfg=StateConfig[key];if(!cfg)return;
+  document.querySelectorAll('#stateSwitcher button').forEach(b=>b.classList.toggle('active',b.dataset.demo===key));
+  document.getElementById('rbChip').className=cfg.chipCls;
+  document.getElementById('rbChip').innerHTML = key==='expired'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
+  document.getElementById('rbTitle').textContent=cfg.title;
+  const tb=document.getElementById('testedBadge');tb.className=cfg.badgeCls;
+  tb.innerHTML=(key==='untested'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>')+cfg.badgeText;
+  const ec=document.getElementById('expiryChip');ec.className=cfg.expiryCls;
+  ec.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>'+cfg.expiryText+'</span>';
+  document.getElementById('expiryFill').className=cfg.fillCls;
+  document.getElementById('expiryFill').style.width=cfg.fillWidth;
+  document.getElementById('expiryRatio').textContent=cfg.ratio;
+  document.getElementById('executeStrip').className=cfg.execCls;
+  document.getElementById('esChip').className='es-chip'+(key==='expired'?' expired':'');
+  document.getElementById('esTitle').textContent=cfg.esTitle;
+  document.getElementById('esSub').textContent=cfg.esSub;
+  document.getElementById('openModalBtn').disabled=cfg.execDisabled;
+}
+document.querySelectorAll('#stateSwitcher button').forEach(b=>b.addEventListener('click',()=>setDemo(b.dataset.demo)));
+
+/* modal */
+const modal=document.getElementById('modal');
+const openBtn=document.getElementById('openModalBtn'),closeBtn=document.getElementById('closeBtn'),cancelBtn=document.getElementById('cancelBtn'),confirmBtn=document.getElementById('confirmBtn');
+const ackCheck=document.getElementById('ackCheck'),ackCard=document.getElementById('ackCard');
+const reasonInput=document.getElementById('reasonInput'),reasonCounter=document.getElementById('reasonCounter'),reasonHelper=document.getElementById('reasonHelper');
+
+function openModal(){if(openBtn.disabled)return;modal.classList.add('open');document.body.classList.add('modal-open');updateConfirm();}
+function closeModal(){modal.classList.remove('open');document.body.classList.remove('modal-open');}
+openBtn.addEventListener('click',openModal);
+closeBtn.addEventListener('click',closeModal);
+cancelBtn.addEventListener('click',closeModal);
+modal.addEventListener('click',(e)=>{if(e.target===modal)closeModal()});
+
+function updateConfirm(){
+  const len=reasonInput.value.length;
+  const remaining=100-len;
+  reasonCounter.textContent=len+' / 100';
+  if(len>=100){reasonCounter.className='counter ok';reasonInput.classList.remove('error');reasonHelper.textContent='Valid · minimum length met';reasonHelper.classList.remove('error')}
+  else{reasonCounter.className='counter short';reasonInput.classList.add('error');reasonHelper.textContent=remaining+' more characters needed to enable Execute';reasonHelper.classList.add('error')}
+  ackCard.classList.toggle('checked',ackCheck.checked);
+  confirmBtn.disabled=!(ackCheck.checked && len>=100);
+}
+ackCheck.addEventListener('change',updateConfirm);
+reasonInput.addEventListener('input',updateConfirm);
+
+applyTheme();
+</script>
+</body>
+</html>

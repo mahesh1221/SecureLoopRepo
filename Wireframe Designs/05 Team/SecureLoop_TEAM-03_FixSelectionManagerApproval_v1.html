@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-03 · Fix Selection with Manager Approval</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-ui:"IBM Plex Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);--backdrop:rgba(10,22,40,.30)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+/* backdrop + faded shell */
+.shell-dim{position:fixed;inset:0;background:var(--bg-page);z-index:0;display:flex}
+.shell-dim::after{content:"";position:absolute;inset:0;background:var(--backdrop);backdrop-filter:blur(8px);z-index:1}
+.shell-rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);opacity:.5}
+.shell-main{flex:1;padding:var(--s-12);opacity:.4}
+.shell-topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);opacity:.5}
+
+/* topbar (real, in front) */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);z-index:30}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow)}
+body.light .logo{font-weight:600}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body);margin-left:var(--s-4)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+
+/* role switcher + state switcher */
+.role-switcher{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.role-switcher button{padding:6px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:104px}
+.role-switcher button:hover{color:var(--ink-100)}
+.role-switcher button.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)} .family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* MODAL */
+.modal-stage{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:calc(var(--s-12) + var(--s-6)) var(--s-6) var(--s-6);animation:riseIn 320ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{transform:translateY(16px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal{width:900px;max-width:100%;max-height:calc(100vh - 88px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+
+.modal-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4)}
+.modal-title-wrap{flex:1;min-width:0}
+.modal-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:2px}
+.modal-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.01em}
+.modal-close{width:32px;height:32px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}
+.modal-close svg{width:16px;height:16px}
+
+/* stepper */
+.stepper{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);background:var(--bg-base)}
+.step{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-label);cursor:pointer;transition:color 140ms}
+.step:hover{color:var(--ink-100)}
+.step.active{color:var(--ink-100)}
+.step.done{color:var(--status-good)}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--bg-raised);color:var(--ink-60);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:var(--text-label);font-weight:600;flex-shrink:0}
+.step.active .step-num{background:var(--brand);color:var(--brand-ink)}
+.step.done .step-num{background:var(--status-good);color:#0B1E14}
+body.light .step.done .step-num{color:#fff}
+.step-label{font-weight:500}
+.step-conn{flex:1;height:1px;background:var(--line-strong);max-width:64px;min-width:24px}
+.step.done ~ .step-conn, .step-conn.done{background:var(--status-good)}
+
+/* modal body + foot */
+.modal-body{padding:var(--s-6);overflow-y:auto;flex:1}
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--bg-base)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn.sev-good{background:var(--status-good);border-color:var(--status-good);color:var(--brand-ink);font-weight:600}
+body.dark .btn.sev-good{color:#0B1E14}
+.btn.sev-crit{background:var(--sev-critical);border-color:var(--sev-critical);color:#fff;font-weight:600}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg.icon{width:14px;height:14px}
+
+/* finding summary (collapsed pill) */
+.find-sum{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-6);display:flex;align-items:center;gap:var(--s-3)}
+.find-sum svg{width:14px;height:14px;color:var(--ink-60);flex-shrink:0}
+.find-sum-title{font-size:var(--text-body);font-weight:500;color:var(--ink-100);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+.find-sum-asset{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+
+/* fix options cards */
+.fix-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.fix-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-4);cursor:pointer;transition:all 140ms;position:relative}
+.fix-card:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.fix-card.selected{border-color:var(--brand);background:var(--brand-dim);box-shadow:0 0 0 2px var(--brand-dim)}
+.fix-card-rec{position:absolute;top:-8px;right:var(--s-3);padding:2px var(--s-2);background:var(--brand);color:var(--brand-ink);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;font-weight:700}
+.fix-card-head{display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-2)}
+.fix-card-icon{width:32px;height:32px;border-radius:var(--r-sm);background:var(--bg-raised);color:var(--ink-80);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fix-card.selected .fix-card-icon{background:var(--brand);color:var(--brand-ink)}
+.fix-card-icon svg{width:16px;height:16px}
+.fix-card-type{font-weight:600;font-size:var(--text-body);color:var(--ink-100)}
+.fix-card-method{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:2px}
+.fix-card-meta{display:flex;flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-3)}
+.fc-tag{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);background:var(--bg-raised);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-80);letter-spacing:0.04em}
+.fc-tag svg{width:10px;height:10px;color:var(--ink-60)}
+.fc-tag.yes{background:var(--status-good-bg);color:var(--status-good)}
+.fc-tag.no{background:var(--sev-medium-bg);color:var(--sev-medium)}
+
+/* waiting state */
+.waiting-block{padding:var(--s-12);text-align:center}
+.waiting-spin{width:56px;height:56px;margin:0 auto var(--s-6);border-radius:50%;border:3px solid var(--line-strong);border-top-color:var(--brand);animation:spin 900ms linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.waiting-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:var(--s-2)}
+.waiting-sub{color:var(--ink-60);max-width:440px;margin:0 auto var(--s-6)}
+.waiting-chain{display:flex;align-items:center;justify-content:center;gap:var(--s-3);padding:var(--s-4);background:var(--bg-raised);border-radius:var(--r-sm);max-width:560px;margin:0 auto}
+.chain-node{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);color:var(--ink-80)}
+.chain-node .avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.chain-node.done .avatar{background:var(--status-good-bg);color:var(--status-good)}
+.chain-node.active .avatar{background:var(--brand-dim);color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
+.chain-node.pending .avatar{background:var(--bg-base);color:var(--ink-40);border:1px dashed var(--line-strong)}
+.chain-arrow{color:var(--ink-40)}
+
+/* manager review interface */
+.mgr-review-block{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-4);margin-bottom:var(--s-4)}
+.mgr-block-head{display:flex;align-items:center;gap:var(--s-2);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-3)}
+.code-preview{background:var(--bg-raised);border-radius:var(--r-xs);padding:var(--s-3);font-family:var(--font-mono);font-size:var(--text-label);line-height:1.65;color:var(--ink-80);overflow-x:auto;white-space:pre;letter-spacing:0.02em}
+.code-preview .kw{color:var(--sev-low)}
+.code-preview .str{color:var(--status-good)}
+.code-preview .com{color:var(--ink-40)}
+.code-preview .num{color:var(--sev-medium)}
+
+/* impact checkboxes */
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.impact-item{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.impact-item:hover{border-color:var(--line-strong)}
+.impact-item input{appearance:none;width:16px;height:16px;border:1.5px solid var(--line-strong);border-radius:var(--r-xs);background:var(--bg-base);cursor:pointer;position:relative;flex-shrink:0}
+.impact-item input:checked{background:var(--brand);border-color:var(--brand)}
+.impact-item input:checked::after{content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid var(--brand-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.impact-label{font-size:var(--text-body);color:var(--ink-80)}
+
+/* form */
+.form-row{margin-bottom:var(--s-4)}
+.form-label{font-size:var(--text-label);font-weight:500;color:var(--ink-80);margin-bottom:var(--s-2);display:block;font-family:var(--font-mono);letter-spacing:0.04em;text-transform:uppercase}
+.form-input,.form-textarea{width:100%;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);transition:border-color 140ms}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--line-strong)}
+.form-textarea{min-height:80px;resize:vertical}
+
+/* confirm (stage 3) */
+.confirm-list{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-4);margin-bottom:var(--s-4)}
+.confirm-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.confirm-list ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--s-2)}
+.confirm-list li{display:flex;align-items:flex-start;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+.confirm-list li svg{width:14px;height:14px;flex-shrink:0;margin-top:3px}
+.confirm-list.will li svg{color:var(--status-good)}
+.confirm-list.will-not li svg{color:var(--ink-40)}
+
+/* ack callout */
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md);margin-bottom:var(--s-4)}
+.callout .chip{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:var(--sev-medium);color:#120804}
+body.light .callout .chip{color:#fff}
+.callout .chip svg{width:16px;height:16px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-sub{font-size:var(--text-label);color:var(--ink-60);line-height:1.5}
+
+.ack-check{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;margin-bottom:var(--s-4)}
+.ack-check input{appearance:none;width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:var(--r-xs);background:var(--bg-base);cursor:pointer;position:relative;flex-shrink:0}
+.ack-check input:checked{background:var(--brand);border-color:var(--brand)}
+.ack-check input:checked::after{content:"";position:absolute;left:5px;top:1px;width:6px;height:10px;border:solid var(--brand-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ack-label{font-size:var(--text-body);color:var(--ink-100);font-weight:500}
+
+/* stage body visibility */
+.stage{display:none}
+.stage.active{display:block;animation:fadeIn 180ms ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* fix selected summary strip */
+.selected-strip{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-4);display:flex;align-items:center;gap:var(--s-3)}
+.selected-strip svg{width:14px;height:14px;color:var(--status-good);flex-shrink:0}
+.selected-strip-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-right:var(--s-2)}
+.selected-strip-val{color:var(--ink-100);font-weight:500;font-size:var(--text-body)}
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- dim shell behind modal -->
+<div class="shell-dim" aria-hidden="true">
+  <div class="shell-rail"></div>
+  <div style="flex:1"><div class="shell-topbar"></div><div class="shell-main"></div></div>
+</div>
+
+<!-- real topbar in front -->
+<header class="topbar">
+  <div class="logo">S</div>
+  <nav class="breadcrumb">
+    <span>SecureLoop Portal</span><span class="sep">/</span>
+    <span>My Findings</span><span class="sep">/</span>
+    <span>FND-2026-00476</span><span class="sep">/</span>
+    <span class="current">Trigger Fix</span>
+    <span class="id-pill">TEAM-03</span>
+  </nav>
+  <div class="spacer"></div>
+
+  <div class="role-switcher" id="roleSwitcher">
+    <button class="active" data-role="member-stage1">TM · Stage 1</button>
+    <button data-role="member-waiting">TM · Waiting</button>
+    <button data-role="manager">Manager review</button>
+    <button data-role="member-stage3">TM · Stage 3</button>
+  </div>
+
+  <div class="theme-picker">
+    <button class="theme-btn" id="themeBtn">
+      <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+      <span id="themeLabel">Coffee · Dark</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="theme-pop" id="themePop">
+      <div class="theme-pop-label">Palette family</div>
+      <div class="family-cards">
+        <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+        <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+      </div>
+      <div class="theme-pop-label">Appearance</div>
+      <div class="mode-row"><button class="mode-btn active" data-mode="dark">Dark</button><button class="mode-btn" data-mode="light">Light</button></div>
+    </div>
+  </div>
+</header>
+
+<!-- modal -->
+<div class="modal-stage">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-eyebrow" id="modalEyebrow">Trigger Fix · Team Member</div>
+        <div class="modal-title" id="modalTitle">Choose a fix method</div>
+      </div>
+      <button class="modal-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+
+    <div class="stepper" id="stepper">
+      <div class="step active" data-step="1"><span class="step-num">1</span><span class="step-label">Select fix method</span></div>
+      <div class="step-conn"></div>
+      <div class="step" data-step="2"><span class="step-num">2</span><span class="step-label">Manager impact review</span></div>
+      <div class="step-conn"></div>
+      <div class="step" data-step="3"><span class="step-num">3</span><span class="step-label">Confirm &amp; execute</span></div>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- STAGE 1 · member chooses fix -->
+      <div class="stage active" id="stage-1">
+        <div class="find-sum">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <div class="find-sum-title">IAM role "eks-node-role" has * permissions on S3</div>
+          <span class="sev-pill crit"><span class="dot"></span>Critical</span>
+          <span class="find-sum-asset">eks-node-role · AWS us-east-1</span>
+        </div>
+
+        <div style="margin-bottom:var(--s-3);color:var(--ink-60);font-size:var(--text-label)">Pick one fix method below. <span style="color:var(--brand);font-weight:600">Cloud Team recommendation</span> is highlighted.</div>
+
+        <div class="fix-grid">
+          <div class="fix-card selected" data-fix="iac">
+            <span class="fix-card-rec">Recommended · Cloud</span>
+            <div class="fix-card-head">
+              <div class="fix-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              </div>
+              <div><div class="fix-card-type">IaC template</div><div class="fix-card-method">Terraform · aws_iam_role_policy</div></div>
+            </div>
+            <div class="fix-card-meta">
+              <span class="fc-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 hrs</span>
+              <span class="fc-tag">Depends on: eks-node-role, s3:* scope</span>
+              <span class="fc-tag yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Rollback available · tested</span>
+            </div>
+          </div>
+
+          <div class="fix-card" data-fix="script">
+            <div class="fix-card-head">
+              <div class="fix-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+              </div>
+              <div><div class="fix-card-type">Script</div><div class="fix-card-method">aws-cli · update-role-policy</div></div>
+            </div>
+            <div class="fix-card-meta">
+              <span class="fc-tag">2 hrs</span>
+              <span class="fc-tag">Depends on: aws-cli creds scope</span>
+              <span class="fc-tag yes">Rollback available</span>
+            </div>
+          </div>
+
+          <div class="fix-card" data-fix="api">
+            <div class="fix-card-head">
+              <div class="fix-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <div><div class="fix-card-type">API call</div><div class="fix-card-method">IAM PutRolePolicy · direct</div></div>
+            </div>
+            <div class="fix-card-meta">
+              <span class="fc-tag">1 hr</span>
+              <span class="fc-tag">Depends on: IAM admin token</span>
+              <span class="fc-tag no">No automated rollback</span>
+            </div>
+          </div>
+
+          <div class="fix-card" data-fix="manual">
+            <div class="fix-card-head">
+              <div class="fix-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              </div>
+              <div><div class="fix-card-type">Manual instructions</div><div class="fix-card-method">AWS console · 7 steps</div></div>
+            </div>
+            <div class="fix-card-meta">
+              <span class="fc-tag">3 hrs</span>
+              <span class="fc-tag">Depends on: console access</span>
+              <span class="fc-tag no">No rollback (manual revert only)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2a · TEAM MEMBER waiting -->
+      <div class="stage" id="stage-member-waiting">
+        <div class="selected-strip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span class="selected-strip-label">Selected</span>
+          <span class="selected-strip-val">IaC template · Terraform · aws_iam_role_policy</span>
+        </div>
+        <div class="waiting-block">
+          <div class="waiting-spin" role="status" aria-label="Waiting"></div>
+          <div class="waiting-title">Waiting for manager approval</div>
+          <div class="waiting-sub">Your manager is reviewing the potential impact of this fix. You'll be notified when they respond — usually within 30 min for Critical findings.</div>
+          <div class="waiting-chain">
+            <div class="chain-node done"><span class="avatar">NR</span>You · submitted</div>
+            <svg class="chain-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <div class="chain-node active"><span class="avatar">PM</span>Priya Menon · reviewing</div>
+            <svg class="chain-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <div class="chain-node pending"><span class="avatar">—</span>Stage 3 · execute</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2b · MANAGER view -->
+      <div class="stage" id="stage-manager">
+        <div class="find-sum">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <div class="find-sum-title">IAM role "eks-node-role" has * permissions on S3</div>
+          <span class="sev-pill crit"><span class="dot"></span>Critical</span>
+          <span class="find-sum-asset">by Nikhil Rao · Cloud</span>
+        </div>
+
+        <div class="mgr-review-block">
+          <div class="mgr-block-head">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            Selected fix · IaC Terraform (read-only)
+          </div>
+          <pre class="code-preview"><span class="com"># Restrict eks-node-role S3 access to ONLY payments-logs-prod bucket</span>
+<span class="kw">resource</span> <span class="str">"aws_iam_role_policy"</span> <span class="str">"eks_node_s3"</span> {
+  <span class="kw">name</span> = <span class="str">"eks-node-s3-scoped"</span>
+  <span class="kw">role</span> = aws_iam_role.eks_node.<span class="kw">id</span>
+
+  <span class="kw">policy</span> = <span class="kw">jsonencode</span>({
+    <span class="kw">Version</span> = <span class="str">"2012-10-17"</span>
+    <span class="kw">Statement</span> = [{
+      <span class="kw">Effect</span>   = <span class="str">"Allow"</span>
+      <span class="kw">Action</span>   = [<span class="str">"s3:GetObject"</span>, <span class="str">"s3:PutObject"</span>]
+      <span class="kw">Resource</span> = <span class="str">"arn:aws:s3:::payments-logs-prod/*"</span>
+    }]
+  })
+}</pre>
+        </div>
+
+        <div class="mgr-review-block">
+          <div class="mgr-block-head">Impact analysis — check what applies</div>
+          <div class="impact-grid">
+            <label class="impact-item"><input type="checkbox"><span class="impact-label">Requires service restart</span></label>
+            <label class="impact-item"><input type="checkbox" checked><span class="impact-label">Affects production systems</span></label>
+            <label class="impact-item"><input type="checkbox" checked><span class="impact-label">Has downstream dependencies</span></label>
+            <label class="impact-item"><input type="checkbox"><span class="impact-label">Requires customer communication</span></label>
+          </div>
+          <div class="form-row" style="margin-top:var(--s-4)">
+            <label class="form-label">Dependencies (freeform list)</label>
+            <textarea class="form-textarea">EKS worker nodes consuming this role; payment-reconciler-cron job may fail if applied during 02:00–02:30 UTC window</textarea>
+          </div>
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)">
+            <div><label class="form-label">Est. downtime</label><input class="form-input" type="text" value="0 min (no restart)"></div>
+            <div><label class="form-label">Apply window</label><input class="form-input" type="text" value="Off-cron, 10:00–18:00 UTC"></div>
+          </div>
+          <div class="form-row" style="margin-bottom:0">
+            <label class="form-label">Notes to Nikhil (optional · 200 chars)</label>
+            <textarea class="form-textarea">Approved — but please run during off-cron window and watch the reconciler for 1 hour after apply. Rollback plan is clean.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3 · member confirms + executes -->
+      <div class="stage" id="stage-3">
+        <div class="selected-strip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span class="selected-strip-label">Approved by</span>
+          <span class="selected-strip-val">Priya Menon · 14:08 GST · with notes</span>
+        </div>
+
+        <div class="callout">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+          <div>
+            <div class="callout-title">Manager note: Run during off-cron window. Watch reconciler for 1 hour after apply.</div>
+            <div class="callout-sub">Rollback plan clean · applies immediately · creates immutable execution record on click</div>
+          </div>
+        </div>
+
+        <div class="confirm-list will">
+          <div class="confirm-label">What will change</div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Replace wildcard s3:* with scoped s3:GetObject + s3:PutObject</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Restrict Resource scope to arn:aws:s3:::payments-logs-prod/*</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Create new policy version; previous policy kept for rollback (30 days)</li>
+          </ul>
+        </div>
+
+        <div class="confirm-list will-not">
+          <div class="confirm-label">What will NOT change</div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>EKS worker nodes (no restart)</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Other IAM roles (eks-admin, eks-cluster)</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Application workloads or pod schedules</li>
+          </ul>
+        </div>
+
+        <label class="ack-check">
+          <input type="checkbox" id="ackBox">
+          <span class="ack-label">I understand these changes. Execute will create an immutable record and notify Security Engineer.</span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- FOOTER · state-switcher-sync keeps these in sync with stages -->
+    <div class="modal-foot" id="modalFoot">
+      <button class="btn ghost" id="backBtn" style="display:none">← Back</button>
+      <div style="flex:1"></div>
+      <button class="btn primary" id="primaryBtn">Request manager approval →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* THEME */
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');
+  document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePop.classList.remove('open')});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* fix card selection */
+document.querySelectorAll('.fix-card').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.fix-card').forEach(x=>x.classList.remove('selected'));
+  c.classList.add('selected');
+}));
+
+/* central role/state mutator — single source of truth for active class sync */
+const RoleConfig={
+  'member-stage1':{
+    eyebrow:'Trigger Fix · Team Member',title:'Choose a fix method',stage:'stage-1',step:1,
+    primary:{label:'Request manager approval →',cls:'btn primary',icon:''},
+    back:false
+  },
+  'member-waiting':{
+    eyebrow:'Trigger Fix · Team Member',title:'Waiting for manager approval',stage:'stage-member-waiting',step:2,
+    primary:{label:'Cancel request',cls:'btn',icon:''},
+    back:false
+  },
+  'manager':{
+    eyebrow:'Trigger Fix · Impact Review · Manager',title:'Review Nikhil\'s fix request',stage:'stage-manager',step:2,
+    primary:{label:'Approve fix →',cls:'btn sev-good',icon:'check'},
+    back:true,backLabel:'Reject with reason',backCls:'btn'
+  },
+  'member-stage3':{
+    eyebrow:'Trigger Fix · Team Member',title:'Confirm &amp; execute',stage:'stage-3',step:3,
+    primary:{label:'Confirm &amp; Execute',cls:'btn sev-crit',icon:''},
+    back:true,backLabel:'← Back',backCls:'btn ghost'
+  }
+};
+
+function setRole(role){
+  const cfg=RoleConfig[role];
+  if(!cfg) return;
+  // stages
+  document.querySelectorAll('.stage').forEach(s=>s.classList.toggle('active',s.id===cfg.stage));
+  // stepper
+  document.querySelectorAll('.step').forEach(s=>{
+    const n=parseInt(s.dataset.step);
+    s.classList.remove('active','done');
+    if(n<cfg.step)s.classList.add('done');
+    else if(n===cfg.step)s.classList.add('active');
+  });
+  // header
+  document.getElementById('modalEyebrow').textContent=cfg.eyebrow;
+  document.getElementById('modalTitle').innerHTML=cfg.title;
+  // footer primary button
+  const pb=document.getElementById('primaryBtn');
+  pb.className=cfg.primary.cls;
+  pb.innerHTML=cfg.primary.label;
+  // back button
+  const bb=document.getElementById('backBtn');
+  if(cfg.back){
+    bb.style.display='';
+    bb.className=cfg.backCls||'btn ghost';
+    bb.textContent=cfg.backLabel||'← Back';
+  } else {
+    bb.style.display='none';
+  }
+  // role switcher highlight (sync)
+  document.querySelectorAll('#roleSwitcher button').forEach(b=>b.classList.toggle('active',b.dataset.role===role));
+}
+document.querySelectorAll('#roleSwitcher button').forEach(b=>b.addEventListener('click',()=>setRole(b.dataset.role)));
+
+/* primary forward flow (when clicking it from each stage) */
+document.getElementById('primaryBtn').addEventListener('click',()=>{
+  const active=document.querySelector('#roleSwitcher button.active').dataset.role;
+  const order=['member-stage1','member-waiting','manager','member-stage3'];
+  const idx=order.indexOf(active);
+  if(idx>=0 && idx<order.length-1)setRole(order[idx+1]);
+});
+
+/* ack checkbox enables final execute — optional demo */
+document.getElementById('ackBox').addEventListener('change',(e)=>{
+  const active=document.querySelector('#roleSwitcher button.active').dataset.role;
+  if(active==='member-stage3'){
+    document.getElementById('primaryBtn').disabled=!e.target.checked;
+  }
+});
+
+applyTheme();
+setRole('member-stage1');
+</script>
+</body>
+</html>

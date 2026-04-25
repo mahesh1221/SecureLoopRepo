@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISO-05 v2 · SLA Escalation · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* TOKENS */
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* LAYOUT — top bar + centered content */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-3) var(--s-6);
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--line);
+  height: 56px;
+}
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill {
+  padding: 2px 6px; background: var(--brand-dim); color: var(--brand);
+  border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro);
+  letter-spacing: 0.04em; font-weight: 600; margin-left: 2px;
+}
+
+/* Layout toggles */
+.variant-switcher {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  align-items: center;
+}
+.var-label { padding: 0 var(--s-2); color: var(--ink-60); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; font-family: var(--font-mono); }
+.var-btn {
+  padding: 5px var(--s-3); background: transparent; border: none;
+  border-radius: var(--r-xs); color: var(--ink-60);
+  font-size: var(--text-label); font-weight: 500; cursor: pointer;
+  transition: all 140ms;
+}
+.var-btn:hover { color: var(--ink-100); }
+.var-btn.active {
+  background: var(--bg-base); color: var(--ink-100);
+  box-shadow: 0 1px 2px rgba(0,0,0,.12);
+}
+
+/* MAIN CANVAS */
+.canvas {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - 56px);
+  padding: var(--s-8) var(--s-6);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* NOTIFICATION CARD base (shared) */
+.noti-card {
+  width: 640px;
+  max-width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.noti-card.exec { width: 720px; }
+.noti-card.email-mode { box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+
+/* BANNER */
+.banner {
+  padding: var(--s-3) var(--s-4);
+  display: flex; align-items: center; gap: var(--s-3);
+  color: #FFFFFF;
+}
+.banner.breach { background: var(--sev-critical); }
+.banner.warning { background: var(--sev-high); }
+.banner-icon {
+  width: 36px; height: 36px;
+  background: rgba(0,0,0,.22);
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.banner-text { min-width: 0; flex: 1; }
+.banner-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.15;
+}
+.banner-subtitle {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  opacity: .9;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.banner-subtitle a { color: inherit; text-decoration: underline; font-weight: 600; }
+.banner-meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(0,0,0,.22);
+  padding: 5px 9px;
+  border-radius: var(--r-xs);
+}
+
+/* BODY */
+.noti-body { padding: var(--s-4) var(--s-6) var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: var(--s-2);
+}
+
+/* ========== L1 TECHNICAL LAYOUT ========== */
+.summary {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3) var(--s-6);
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 500;
+}
+.field-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 500;
+}
+.field-value.mono { font-family: var(--font-mono); letter-spacing: -.01em; }
+.field-value.crit-text { color: var(--sev-critical); font-weight: 700; }
+.field-value.warn-text { color: var(--sev-high); font-weight: 700; }
+.owner-row { display: flex; align-items: center; gap: var(--s-2); }
+.avatar {
+  width: 20px; height: 20px; border-radius: var(--r-full);
+  background: var(--brand-dim); color: var(--brand);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+.sev-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: var(--r-xs);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  width: fit-content;
+}
+.sev-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.escalation {
+  background: var(--bg-raised);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  display: flex; align-items: center; gap: var(--s-3);
+}
+.escal-icon { color: var(--ink-60); flex-shrink: 0; }
+.escal-text { flex: 1; min-width: 0; }
+.escal-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 500;
+}
+.escal-name {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 600;
+  margin-top: 2px;
+}
+.escal-link {
+  color: var(--brand);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  text-decoration: none;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 10px;
+  background: var(--brand-dim);
+  border-radius: var(--r-xs);
+  transition: all 140ms;
+}
+.escal-link:hover { background: var(--brand); color: var(--brand-ink); }
+
+/* ========== L2 EXECUTIVE LAYOUT ========== */
+
+/* Headline block */
+.exec-headline {
+  padding: var(--s-4) 0 var(--s-3);
+  border-bottom: 1px solid var(--line);
+}
+.exec-headline h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink-100);
+  letter-spacing: -.015em;
+}
+.exec-headline h2 em { font-style: normal; font-weight: 700; color: var(--sev-critical); }
+.exec-headline p {
+  margin-top: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  line-height: 1.55;
+}
+
+/* Business impact tiles */
+.impact-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-3);
+}
+.impact-tile {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-1);
+}
+.impact-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 500;
+}
+.impact-value {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.impact-value.crit { color: var(--sev-critical); }
+.impact-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 400;
+}
+
+/* Why escalated block */
+.why-block {
+  background: var(--bg-raised);
+  border-left: 3px solid var(--sev-high);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+}
+.why-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  margin-bottom: var(--s-2);
+  letter-spacing: -.01em;
+}
+.why-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.why-list li {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  line-height: 1.5;
+  padding-left: var(--s-4);
+  position: relative;
+}
+.why-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--sev-high);
+  font-weight: 700;
+}
+.why-list li strong { color: var(--ink-100); font-weight: 600; }
+
+/* Decision prompt */
+.decision-block {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+}
+.decision-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 500;
+  margin-bottom: var(--s-2);
+}
+.decision-prompt {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--ink-100);
+  line-height: 1.45;
+  letter-spacing: -.01em;
+}
+.decision-deadline {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+}
+.decision-deadline strong { color: var(--sev-critical); font-weight: 700; font-size: var(--text-body); }
+
+/* Reference block (less emphasis, for who-wants-it) */
+.reference-block {
+  background: var(--bg-raised);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.reference-row {
+  display: flex; gap: var(--s-2);
+  font-size: var(--text-label);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+}
+.reference-row .rk {
+  color: var(--ink-60);
+  min-width: 120px;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 500;
+  padding-top: 2px;
+}
+.reference-row .rv {
+  color: var(--ink-80);
+  font-weight: 400;
+}
+.reference-row .rv a { color: var(--brand); text-decoration: none; }
+.reference-row .rv a:hover { text-decoration: underline; }
+
+/* Actions */
+.actions {
+  display: flex; gap: var(--s-3); justify-content: center;
+  margin-top: var(--s-2);
+  flex-wrap: wrap;
+}
+.actions.exec { justify-content: stretch; }
+.actions.exec .btn { flex: 1; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 9px var(--s-4); height: 40px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  min-width: 160px;
+  justify-content: center;
+  text-decoration: none;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+
+/* EMAIL FRAME */
+.email-frame {
+  width: 760px;
+  max-width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.email-header {
+  background: var(--bg-raised);
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  flex-wrap: wrap;
+}
+.email-header-field { display: flex; gap: 6px; align-items: baseline; min-width: 0; }
+.email-header-label { color: var(--ink-40); font-weight: 500; flex-shrink: 0; }
+.email-header-value { color: var(--ink-80); font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.email-header-sep { color: var(--ink-20); }
+
+.email-card-inner {
+  padding: var(--s-6);
+  background: var(--bg-page);
+}
+.email-card-inner .noti-card { width: 100%; }
+
+.email-footer {
+  padding: var(--s-4) var(--s-6);
+  background: var(--bg-base);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  text-align: center;
+  line-height: 1.6;
+}
+.email-footer a { color: var(--brand); text-decoration: none; }
+.email-footer a:hover { text-decoration: underline; }
+
+/* THEME PICKER */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms;
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; }
+body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; }
+body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; }
+body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; }
+body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); }
+.tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40;
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* Hide/show groups */
+.view { display: none; }
+.view.active { display: block; }
+</style>
+</head>
+
+<body class="coffee dark">
+
+<div class="topbar">
+  <div class="crumb">
+    <span>SecureLoop</span>
+    <span class="sep">/</span>
+    <span class="current">SLA Escalation</span>
+    <span class="id-pill">CISO-05</span>
+  </div>
+
+  <div style="width: var(--s-6)"></div>
+
+  <!-- Audience switcher -->
+  <div class="variant-switcher">
+    <span class="var-label">Audience</span>
+    <button class="var-btn active" data-audience="l1">L1 Technical</button>
+    <button class="var-btn" data-audience="l2">L2 Executive</button>
+  </div>
+
+  <!-- Channel switcher -->
+  <div class="variant-switcher">
+    <span class="var-label">Channel</span>
+    <button class="var-btn active" data-channel="app">In-App</button>
+    <button class="var-btn" data-channel="email">Email</button>
+  </div>
+
+  <!-- Stage switcher -->
+  <div class="variant-switcher">
+    <span class="var-label">Stage</span>
+    <button class="var-btn active" data-stage="breach">Breach</button>
+    <button class="var-btn" data-stage="warning">Warning</button>
+  </div>
+
+  <!-- Theme picker -->
+  <div class="theme-picker-wrap">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+      <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+      <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+      <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="theme-popover" id="themePopover" role="dialog">
+      <div class="tp-section">
+        <div class="tp-section-label">Palette family</div>
+        <div class="tp-family-grid">
+          <button class="tp-family-card active" data-family="coffee">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+            <span class="tp-family-name">Coffee</span>
+            <span class="tp-family-desc">Warm · Investigation</span>
+          </button>
+          <button class="tp-family-card" data-family="blue">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+            <span class="tp-family-name">Blue</span>
+            <span class="tp-family-desc">Cool · Enterprise</span>
+          </button>
+        </div>
+      </div>
+      <div class="tp-section">
+        <div class="tp-section-label">Appearance</div>
+        <div class="tp-mode-row">
+          <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+          <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="canvas">
+
+  <!-- ========================================= -->
+  <!-- L1 TECHNICAL · IN-APP -->
+  <!-- ========================================= -->
+  <div class="view active" data-view="l1-app">
+    <div class="noti-card">
+      <div class="banner breach">
+        <div class="banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/><line x1="12" y1="6" x2="12" y2="11"/><circle cx="12" cy="14" r="1" fill="currentColor"/></svg>
+        </div>
+        <div class="banner-text">
+          <div class="banner-title">SLA Breach</div>
+          <div class="banner-subtitle">Unpatched remote code execution in payment gateway…<a href="#" style="margin-left:4px;">View finding →</a></div>
+        </div>
+        <div class="banner-meta">3 days overdue</div>
+      </div>
+      <div class="noti-body">
+        <div>
+          <div class="eyebrow">Finding summary</div>
+          <div class="summary">
+            <div class="field"><span class="field-label">Finding ID</span><span class="field-value mono">FND-2026-0847</span></div>
+            <div class="field"><span class="field-label">Due date</span><span class="field-value mono">Mon, Jan 15 2026</span></div>
+            <div class="field"><span class="field-label">Severity</span><span class="sev-badge crit">Critical</span></div>
+            <div class="field"><span class="field-label">Days overdue</span><span class="field-value mono crit-text">+3 days</span></div>
+            <div class="field"><span class="field-label">Asset</span><span class="field-value">payment-gateway-prod-01</span></div>
+            <div class="field"><span class="field-label">SLA policy</span><span class="field-value">Critical: 7 days</span></div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <span class="field-label">Current owner</span>
+              <span class="field-value owner-row"><span class="avatar">SC</span>Sarah Chen · Security Operations</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow">Escalated to</div>
+          <div class="escalation">
+            <div class="escal-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg></div>
+            <div class="escal-text">
+              <div class="escal-label">Level 1 · Security Engineering Lead</div>
+              <div class="escal-name">Marcus Park · Head of SecOps</div>
+            </div>
+            <a href="#" class="escal-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Message</a>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>Reassign finding</button>
+          <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Extend SLA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- L1 TECHNICAL · EMAIL -->
+  <!-- ========================================= -->
+  <div class="view" data-view="l1-email">
+    <div class="email-frame">
+      <div class="email-header">
+        <div class="email-header-field"><span class="email-header-label">From</span><span class="email-header-value">alerts@secureloop.io</span></div>
+        <span class="email-header-sep">·</span>
+        <div class="email-header-field"><span class="email-header-label">To</span><span class="email-header-value">sarah.chen@acme-corp.com</span></div>
+        <span class="email-header-sep">·</span>
+        <div class="email-header-field"><span class="email-header-label">Subject</span><span class="email-header-value">[SLA BREACH] Critical: Unpatched RCE · 3 days overdue · Action required</span></div>
+      </div>
+      <div class="email-card-inner">
+        <div class="noti-card email-mode">
+          <div class="banner breach">
+            <div class="banner-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/><line x1="12" y1="6" x2="12" y2="11"/><circle cx="12" cy="14" r="1" fill="currentColor"/></svg></div>
+            <div class="banner-text">
+              <div class="banner-title">SLA Breach</div>
+              <div class="banner-subtitle">Unpatched remote code execution in payment gateway…<a href="#" style="margin-left:4px;">View finding →</a></div>
+            </div>
+            <div class="banner-meta">3 days overdue</div>
+          </div>
+          <div class="noti-body">
+            <div>
+              <div class="eyebrow">Finding summary</div>
+              <div class="summary">
+                <div class="field"><span class="field-label">Finding ID</span><span class="field-value mono">FND-2026-0847</span></div>
+                <div class="field"><span class="field-label">Due date</span><span class="field-value mono">Mon, Jan 15 2026</span></div>
+                <div class="field"><span class="field-label">Severity</span><span class="sev-badge crit">Critical</span></div>
+                <div class="field"><span class="field-label">Days overdue</span><span class="field-value mono crit-text">+3 days</span></div>
+                <div class="field"><span class="field-label">Asset</span><span class="field-value">payment-gateway-prod-01</span></div>
+                <div class="field"><span class="field-label">SLA policy</span><span class="field-value">Critical: 7 days</span></div>
+                <div class="field" style="grid-column: 1 / -1;">
+                  <span class="field-label">Current owner</span>
+                  <span class="field-value owner-row"><span class="avatar">SC</span>Sarah Chen · Security Operations</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="eyebrow">Escalated to</div>
+              <div class="escalation">
+                <div class="escal-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg></div>
+                <div class="escal-text">
+                  <div class="escal-label">Level 1 · Security Engineering Lead</div>
+                  <div class="escal-name">Marcus Park · Head of SecOps</div>
+                </div>
+                <a href="#" class="escal-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Message</a>
+              </div>
+            </div>
+            <div class="actions">
+              <a href="#" class="btn primary" role="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>Reassign finding</a>
+              <a href="#" class="btn" role="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Extend SLA</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="email-footer">
+        Automated escalation from SecureLoop. <a href="#">Manage channel preferences</a><br>
+        <span style="color: var(--ink-40); font-size: 9px; letter-spacing: .04em;">Delivered via PTOps Suite · SecureLoop Platform</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- L2 EXECUTIVE · IN-APP -->
+  <!-- ========================================= -->
+  <div class="view" data-view="l2-app">
+    <div class="noti-card exec">
+      <div class="banner breach">
+        <div class="banner-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></div>
+        <div class="banner-text">
+          <div class="banner-title">Executive Escalation Required</div>
+          <div class="banner-subtitle">Critical security SLA breached · Decision needed from Security Committee</div>
+        </div>
+        <div class="banner-meta">3 days overdue</div>
+      </div>
+
+      <div class="noti-body">
+        <div class="exec-headline">
+          <h2>A <em>critical vulnerability</em> in the payment gateway has been unaddressed for 10 days.</h2>
+          <p>This issue exposes cardholder data and credit flows. It should have been remediated within the 7-day SLA for Critical findings. No remediation or extension request has been filed. It has now been auto-escalated to the Security Committee for a decision.</p>
+        </div>
+
+        <div>
+          <div class="eyebrow">Business exposure</div>
+          <div class="impact-row">
+            <div class="impact-tile">
+              <span class="impact-label">Financial impact</span>
+              <span class="impact-value crit">$4.2M</span>
+              <span class="impact-sub">Est. breach cost + fines</span>
+            </div>
+            <div class="impact-tile">
+              <span class="impact-label">Regulatory</span>
+              <span class="impact-value">PCI-DSS</span>
+              <span class="impact-sub">Req 6.2 non-compliant</span>
+            </div>
+            <div class="impact-tile">
+              <span class="impact-label">Operational</span>
+              <span class="impact-value">4.1M users</span>
+              <span class="impact-sub">Active cardholders at risk</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-block">
+          <div class="why-title">Why this reached the Committee</div>
+          <ul class="why-list">
+            <li><strong>Owner did not act:</strong> Sarah Chen (Security Ops) was notified 3 times over 10 days. No ticket updates logged.</li>
+            <li><strong>L1 escalation ignored:</strong> Marcus Park (Head of SecOps) was copied from day 8. No response within the 48-hour window.</li>
+            <li><strong>No extension requested:</strong> Platform requires a signed extension with business justification. None was submitted.</li>
+          </ul>
+        </div>
+
+        <div class="decision-block">
+          <div class="decision-label">Decision required</div>
+          <div class="decision-prompt">The Committee must decide: authorise an extension with justification, formally accept the residual risk, or direct immediate remediation resources.</div>
+          <div class="decision-deadline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Decision required by <strong>Fri, Jan 22 · 17:00 UTC</strong> — then escalates to Board
+          </div>
+        </div>
+
+        <div>
+          <div class="eyebrow">Technical reference</div>
+          <div class="reference-block">
+            <div class="reference-row"><span class="rk">Finding</span><span class="rv">FND-2026-0847 · Unpatched RCE (CVE-2025-48291) · <a href="#">Full technical detail →</a></span></div>
+            <div class="reference-row"><span class="rk">Asset</span><span class="rv">payment-gateway-prod-01 · Tier 1 · PCI scope</span></div>
+            <div class="reference-row"><span class="rk">SLA policy</span><span class="rv">Critical severity — 7 days to remediate</span></div>
+            <div class="reference-row"><span class="rk">Control owner</span><span class="rv">Sarah Chen · Security Operations</span></div>
+            <div class="reference-row"><span class="rk">L1 escalation</span><span class="rv">Marcus Park · Head of SecOps (notified Jan 13, no response)</span></div>
+          </div>
+        </div>
+
+        <div class="actions exec">
+          <button class="btn primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Authorise extension</button>
+          <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Accept risk</button>
+          <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Direct remediation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- L2 EXECUTIVE · EMAIL -->
+  <!-- ========================================= -->
+  <div class="view" data-view="l2-email">
+    <div class="email-frame">
+      <div class="email-header">
+        <div class="email-header-field"><span class="email-header-label">From</span><span class="email-header-value">ciso@acme-corp.com</span></div>
+        <span class="email-header-sep">·</span>
+        <div class="email-header-field"><span class="email-header-label">To</span><span class="email-header-value">security-committee@acme-corp.com</span></div>
+        <span class="email-header-sep">·</span>
+        <div class="email-header-field"><span class="email-header-label">Subject</span><span class="email-header-value">[Decision required by Jan 22] Critical security SLA breach · $4.2M exposure</span></div>
+      </div>
+      <div class="email-card-inner">
+        <div class="noti-card exec email-mode">
+          <div class="banner breach">
+            <div class="banner-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></div>
+            <div class="banner-text">
+              <div class="banner-title">Executive Escalation Required</div>
+              <div class="banner-subtitle">Critical security SLA breached · Decision needed from Security Committee</div>
+            </div>
+            <div class="banner-meta">3 days overdue</div>
+          </div>
+
+          <div class="noti-body">
+            <div class="exec-headline">
+              <h2>A <em>critical vulnerability</em> in the payment gateway has been unaddressed for 10 days.</h2>
+              <p>This issue exposes cardholder data and credit flows. It should have been remediated within the 7-day SLA for Critical findings. No remediation or extension request has been filed. It has now been auto-escalated to the Security Committee for a decision.</p>
+            </div>
+            <div>
+              <div class="eyebrow">Business exposure</div>
+              <div class="impact-row">
+                <div class="impact-tile"><span class="impact-label">Financial impact</span><span class="impact-value crit">$4.2M</span><span class="impact-sub">Est. breach cost + fines</span></div>
+                <div class="impact-tile"><span class="impact-label">Regulatory</span><span class="impact-value">PCI-DSS</span><span class="impact-sub">Req 6.2 non-compliant</span></div>
+                <div class="impact-tile"><span class="impact-label">Operational</span><span class="impact-value">4.1M users</span><span class="impact-sub">Active cardholders at risk</span></div>
+              </div>
+            </div>
+            <div class="why-block">
+              <div class="why-title">Why this reached the Committee</div>
+              <ul class="why-list">
+                <li><strong>Owner did not act:</strong> Sarah Chen (Security Ops) was notified 3 times over 10 days. No ticket updates logged.</li>
+                <li><strong>L1 escalation ignored:</strong> Marcus Park (Head of SecOps) was copied from day 8. No response within the 48-hour window.</li>
+                <li><strong>No extension requested:</strong> Platform requires a signed extension with business justification. None was submitted.</li>
+              </ul>
+            </div>
+            <div class="decision-block">
+              <div class="decision-label">Decision required</div>
+              <div class="decision-prompt">The Committee must decide: authorise an extension with justification, formally accept the residual risk, or direct immediate remediation resources.</div>
+              <div class="decision-deadline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Decision required by <strong>Fri, Jan 22 · 17:00 UTC</strong> — then escalates to Board
+              </div>
+            </div>
+            <div>
+              <div class="eyebrow">Technical reference</div>
+              <div class="reference-block">
+                <div class="reference-row"><span class="rk">Finding</span><span class="rv">FND-2026-0847 · Unpatched RCE (CVE-2025-48291) · <a href="#">Full technical detail →</a></span></div>
+                <div class="reference-row"><span class="rk">Asset</span><span class="rv">payment-gateway-prod-01 · Tier 1 · PCI scope</span></div>
+                <div class="reference-row"><span class="rk">SLA policy</span><span class="rv">Critical severity — 7 days to remediate</span></div>
+                <div class="reference-row"><span class="rk">Control owner</span><span class="rv">Sarah Chen · Security Operations</span></div>
+                <div class="reference-row"><span class="rk">L1 escalation</span><span class="rv">Marcus Park · Head of SecOps (notified Jan 13, no response)</span></div>
+              </div>
+            </div>
+            <div class="actions exec">
+              <a href="#" class="btn primary" role="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Authorise extension</a>
+              <a href="#" class="btn" role="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Accept risk</a>
+              <a href="#" class="btn" role="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Direct remediation</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="email-footer">
+        Automated executive escalation from SecureLoop. <a href="#">Manage channel preferences</a><br>
+        <span style="color: var(--ink-40); font-size: 9px; letter-spacing: .04em;">Delivered via PTOps Suite · SecureLoop Platform · Confidential</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Theme picker
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // View switchers
+  let currentAudience = 'l1', currentChannel = 'app', currentStage = 'breach';
+  function applyView() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelector(`.view[data-view="${currentAudience}-${currentChannel}"]`).classList.add('active');
+    // Apply stage to all banners
+    document.querySelectorAll('.banner').forEach(b => {
+      b.classList.remove('breach','warning');
+      b.classList.add(currentStage === 'breach' ? 'breach' : 'warning');
+    });
+  }
+  document.querySelectorAll('[data-audience]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-audience]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentAudience = btn.dataset.audience;
+      applyView();
+    });
+  });
+  document.querySelectorAll('[data-channel]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-channel]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentChannel = btn.dataset.channel;
+      applyView();
+    });
+  });
+  document.querySelectorAll('[data-stage]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-stage]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStage = btn.dataset.stage;
+      applyView();
+    });
+  });
+</script>
+</body>
+</html>

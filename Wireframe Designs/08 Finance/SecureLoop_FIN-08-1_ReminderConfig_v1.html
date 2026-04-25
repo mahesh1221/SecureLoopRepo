@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-08-1 Reminder Config</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}button{cursor:pointer;border:none;background:none;font:inherit}input,select,textarea{font:inherit}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30)}
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px}
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.rail{width:64px;min-height:100vh;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.topbar{position:fixed;left:64px;right:0;top:0;height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);z-index:90}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}.breadcrumb .sep{color:var(--ink-40);font-size:var(--text-micro)}.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:relative}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+.theme-popover{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.content{margin-left:64px;margin-top:56px;flex:1;display:flex;height:calc(100vh - 56px);overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.p3-badge{padding:2px 8px;background:var(--sev-medium-bg);color:var(--sev-medium);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600}
+.field-label{font-size:var(--text-label);font-weight:500;color:var(--ink-60);margin-bottom:var(--s-1);display:block}
+.field-input{width:100%;padding:8px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);transition:border-color 140ms}
+.field-input:focus{border-color:var(--brand);outline:none}
+.field-group{margin-bottom:var(--s-4)}.field-group:last-child{margin-bottom:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+
+/* layout */
+.main-scroll{flex:1;overflow-y:auto;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.split-layout{display:flex;gap:var(--s-4)}
+.left-col{flex:1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0}
+.right-col{width:360px;flex-shrink:0;display:flex;flex-direction:column;gap:var(--s-4)}
+.section-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.section-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-4)}
+
+/* timeline builder */
+.timeline-builder{display:flex;flex-direction:column;gap:var(--s-1)}
+.tl-rule{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);position:relative}
+.tl-rule:not(:last-child)::after{content:'';position:absolute;left:22px;bottom:-var(--s-1);height:var(--s-1);width:1px;background:var(--line-strong)}
+.tl-dot-outer{width:16px;height:16px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot-before{background:var(--status-good-bg);border:1.5px solid var(--status-good)}
+.dot-due{background:var(--sev-medium-bg);border:1.5px solid var(--sev-medium)}
+.dot-overdue{background:var(--sev-critical-bg);border:1.5px solid var(--sev-critical)}
+.tl-connector{width:1px;height:var(--s-3);background:var(--line-strong);margin-left:7px}
+.tl-day-input{width:60px;padding:4px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-100);font-family:var(--font-mono);font-size:var(--text-body);text-align:center}
+.tl-day-input:focus{border-color:var(--brand);outline:none}
+.tl-desc{flex:1;font-size:var(--text-body);color:var(--ink-80)}
+.tl-remove{width:22px;height:22px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.tl-remove:hover{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.tl-remove svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* escalation chain */
+.chain-node{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);position:relative}
+.chain-arrow{display:flex;align-items:center;justify-content:center;padding:var(--s-1) 0;color:var(--ink-40)}
+.chain-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.chain-num{width:22px;height:22px;border-radius:var(--r-full);background:var(--brand-dim);color:var(--brand);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:var(--text-label);font-weight:700;flex-shrink:0}
+.chain-label{font-size:var(--text-label);color:var(--ink-40);margin-bottom:2px;font-weight:500}
+.chain-role{font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+.chain-days{font-size:var(--text-label);color:var(--ink-60)}
+
+/* email template */
+.template-area{padding:var(--s-4);background:var(--bg-raised);border-radius:var(--r-sm);border:1px solid var(--line)}
+.template-vars{display:flex;flex-wrap:wrap;gap:var(--s-1);margin-bottom:var(--s-2)}
+.var-chip{padding:2px 7px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600;cursor:pointer;transition:all 140ms}
+.var-chip:hover{background:var(--brand);color:var(--brand-ink)}
+.payment-plan-note{display:flex;align-items:flex-start;gap:var(--s-2);padding:var(--s-3);background:var(--sev-low-bg);border:1px solid var(--sev-low);border-radius:var(--r-sm)}
+.payment-plan-note svg{width:14px;height:14px;stroke:var(--sev-low);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+<nav class="rail">
+  <div class="logo">S</div><div class="nav-sep"></div>
+  <button class="nav-item active" title="Finance" aria-label="Finance"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg></button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <button class="nav-item" title="Settings" aria-label="Settings"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14"/></svg></button>
+</nav>
+<header class="topbar">
+  <div class="breadcrumb"><span>Finance</span><span class="sep">›</span><span class="current">Reminder &amp; Escalation Config</span></div>
+  <div class="topbar-right">
+    <button class="btn">Preview Test Email</button>
+    <button class="btn primary">Save Configuration</button>
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches"><div class="swatch" id="sw1" style="background:#1A0F08"></div><div class="swatch" id="sw2" style="background:#F3EEE2"></div></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')"><div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div><div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div></div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')"><div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div><div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div></div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark</button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="content">
+  <div class="main-scroll">
+    <div style="display:flex;align-items:center;gap:var(--s-3)">
+      <div class="id-pill">FIN-08-1</div>
+      <h1 style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.020em">Reminder &amp; Escalation Configuration</h1>
+      <span class="p3-badge">Phase 3</span>
+    </div>
+
+    <div class="split-layout">
+      <div class="left-col">
+        <!-- Reminder schedule -->
+        <div class="section-card">
+          <div style="display:flex;align-items:center;margin-bottom:var(--s-4)">
+            <div class="section-title" style="margin-bottom:0">Reminder Schedule</div>
+            <span style="font-size:var(--text-label);color:var(--ink-40);margin-left:var(--s-3)">T = Invoice due date</span>
+            <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3);margin-left:auto">
+              <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Add Rule
+            </button>
+          </div>
+          <div class="timeline-builder">
+            <div class="tl-rule">
+              <div class="tl-dot-outer dot-before"></div>
+              <span style="font-size:var(--text-label);color:var(--ink-60);font-weight:500;min-width:24px">T−</span>
+              <input type="number" class="tl-day-input" value="7">
+              <span style="font-size:var(--text-label);color:var(--ink-60)">days</span>
+              <span class="tl-desc">Friendly reminder · 7 days before due date</span>
+              <select style="padding:3px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui)"><option>Template: Upcoming Due</option><option>Template: Final Notice</option></select>
+              <button class="tl-remove" aria-label="Remove"><svg viewBox="0 0 11 11"><path d="M2 2l7 7M9 2L2 9"/></svg></button>
+            </div>
+            <div style="padding-left:7px;height:var(--s-3);border-left:1px dashed var(--line-strong)"></div>
+            <div class="tl-rule">
+              <div class="tl-dot-outer dot-due"></div>
+              <span style="font-size:var(--text-label);color:var(--ink-60);font-weight:500;min-width:24px">T±</span>
+              <input type="number" class="tl-day-input" value="0" disabled style="opacity:.5">
+              <span style="font-size:var(--text-label);color:var(--ink-60)">days</span>
+              <span class="tl-desc">Due date reminder · on due date (locked)</span>
+              <select style="padding:3px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui)"><option>Template: Due Today</option></select>
+              <button class="tl-remove" disabled style="opacity:.3;cursor:not-allowed" aria-label="Remove (locked)"><svg viewBox="0 0 11 11"><path d="M2 2l7 7M9 2L2 9"/></svg></button>
+            </div>
+            <div style="padding-left:7px;height:var(--s-3);border-left:1px dashed var(--line-strong)"></div>
+            <div class="tl-rule">
+              <div class="tl-dot-outer dot-overdue"></div>
+              <span style="font-size:var(--text-label);color:var(--sev-critical);font-weight:500;min-width:24px">T+</span>
+              <input type="number" class="tl-day-input" value="7" style="border-color:var(--sev-critical)">
+              <span style="font-size:var(--text-label);color:var(--ink-60)">days</span>
+              <span class="tl-desc" style="color:var(--sev-critical)">Overdue notice · 7 days past due</span>
+              <select style="padding:3px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui)"><option>Template: Overdue Notice</option></select>
+              <button class="tl-remove" aria-label="Remove"><svg viewBox="0 0 11 11"><path d="M2 2l7 7M9 2L2 9"/></svg></button>
+            </div>
+            <div style="padding-left:7px;height:var(--s-3);border-left:1px dashed var(--line-strong)"></div>
+            <div class="tl-rule">
+              <div class="tl-dot-outer dot-overdue"></div>
+              <span style="font-size:var(--text-label);color:var(--sev-critical);font-weight:500;min-width:24px">T+</span>
+              <input type="number" class="tl-day-input" value="14" style="border-color:var(--sev-critical)">
+              <span style="font-size:var(--text-label);color:var(--ink-60)">days</span>
+              <span class="tl-desc" style="color:var(--sev-critical)">Second notice · 14 days past due</span>
+              <select style="padding:3px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui)"><option>Template: Escalation Warning</option></select>
+              <button class="tl-remove" aria-label="Remove"><svg viewBox="0 0 11 11"><path d="M2 2l7 7M9 2L2 9"/></svg></button>
+            </div>
+            <div style="padding-left:7px;height:var(--s-3);border-left:1px dashed var(--line-strong)"></div>
+            <div class="tl-rule" style="border-color:var(--sev-critical)">
+              <div class="tl-dot-outer dot-overdue"></div>
+              <span style="font-size:var(--text-label);color:var(--sev-critical);font-weight:500;min-width:24px">T+</span>
+              <input type="number" class="tl-day-input" value="30" style="border-color:var(--sev-critical)">
+              <span style="font-size:var(--text-label);color:var(--ink-60)">days</span>
+              <span class="tl-desc" style="color:var(--sev-critical)">Final notice → triggers escalation chain</span>
+              <select style="padding:3px var(--s-2);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui)"><option>Template: Final Demand</option></select>
+              <button class="tl-remove" aria-label="Remove"><svg viewBox="0 0 11 11"><path d="M2 2l7 7M9 2L2 9"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment plan exception -->
+        <div class="section-card">
+          <div class="payment-plan-note">
+            <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 10.5v.5"/></svg>
+            <div>
+              <div style="font-size:var(--text-body);font-weight:600;color:var(--sev-low);margin-bottom:3px">Payment Plan Exception (Required)</div>
+              <div style="font-size:var(--text-label);color:var(--ink-60);line-height:1.5">Reminders are automatically <strong style="color:var(--ink-80)">paused</strong> when a customer has an active payment plan to avoid harassment. Payment plans tracked manually or via accounting system integration.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <!-- Escalation chain -->
+        <div class="section-card">
+          <div class="section-title">Escalation Chain</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div class="chain-node">
+              <div class="chain-num">1</div>
+              <div>
+                <div class="chain-label">First escalation</div>
+                <div class="chain-role">Customer Admin Contact</div>
+                <div class="chain-days">At T+30 (with final reminder)</div>
+              </div>
+            </div>
+            <div class="chain-arrow" style="padding-left:11px"><svg viewBox="0 0 14 14"><path d="M7 2v10M4 9l3 3 3-3"/></svg></div>
+            <div class="chain-node">
+              <div class="chain-num">2</div>
+              <div>
+                <div class="chain-label">Second escalation</div>
+                <div class="chain-role">Customer Finance Contact</div>
+                <div class="chain-days">+7 days after step 1</div>
+              </div>
+            </div>
+            <div class="chain-arrow" style="padding-left:11px"><svg viewBox="0 0 14 14"><path d="M7 2v10M4 9l3 3 3-3"/></svg></div>
+            <div class="chain-node" style="border-color:var(--sev-critical)">
+              <div class="chain-num" style="background:var(--sev-critical-bg);color:var(--sev-critical)">3</div>
+              <div>
+                <div class="chain-label">Final escalation</div>
+                <div class="chain-role" style="color:var(--sev-critical)">Legal / Internal Collections</div>
+                <div class="chain-days">+14 days after step 2</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn" style="width:100%;justify-content:center;margin-top:var(--s-3);height:32px;font-size:var(--text-label)">Edit Chain</button>
+        </div>
+
+        <!-- Email template preview -->
+        <div class="section-card">
+          <div class="section-title">Template Editor</div>
+          <div class="field-group">
+            <label class="field-label">Select Template</label>
+            <select class="field-input">
+              <option>Upcoming Due (T−7)</option>
+              <option>Due Today (T+0)</option>
+              <option>Overdue Notice (T+7)</option>
+              <option>Final Demand (T+30)</option>
+            </select>
+          </div>
+          <div class="template-vars">
+            <span class="var-chip">{{customer_name}}</span>
+            <span class="var-chip">{{invoice_num}}</span>
+            <span class="var-chip">{{amount}}</span>
+            <span class="var-chip">{{due_date}}</span>
+            <span class="var-chip">{{days_overdue}}</span>
+            <span class="var-chip">{{payment_link}}</span>
+          </div>
+          <div class="template-area">
+            <div style="font-size:var(--text-label);font-weight:600;color:var(--ink-60);margin-bottom:var(--s-2)">Subject Line</div>
+            <input class="field-input" value="Payment Reminder: {{invoice_num}} — {{amount}} due {{due_date}}" style="margin-bottom:var(--s-3)">
+            <div style="font-size:var(--text-label);font-weight:600;color:var(--ink-60);margin-bottom:var(--s-2)">Body</div>
+            <textarea class="field-input" rows="6" style="resize:vertical;line-height:1.5">Dear {{customer_name}},
+
+This is a friendly reminder that Invoice {{invoice_num}} for {{amount}} is due on {{due_date}}.
+
+Please arrange payment at your convenience: {{payment_link}}
+
+If you have any questions, reply to this email.
+
+Regards,
+SecureLoop Finance Team</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+let currentFamily='coffee',currentMode='dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){document.body.className=currentFamily+' '+currentMode;document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');document.getElementById('mb-light').classList.toggle('active',currentMode==='light')}
+function setFamily(f){currentFamily=f;applyTheme()}function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn'),themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')themePopover.classList.remove('open')});
+</script>
+</body>
+</html>

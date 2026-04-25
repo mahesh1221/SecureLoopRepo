@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISO-09 · Cyber Posture Score · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease;
+  overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* APP SHELL */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail {
+  background: var(--bg-base); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1);
+}
+.rail-logo {
+  width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink);
+  border-radius: var(--r-sm); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl);
+  margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow);
+}
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer;
+  transition: all 140ms; position: relative;
+}
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before {
+  content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar {
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line);
+  background: var(--bg-base); height: 56px; flex-shrink: 0;
+}
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill {
+  padding: 2px 6px; background: var(--brand-dim); color: var(--brand);
+  border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro);
+  letter-spacing: 0.04em; font-weight: 600; margin-left: 2px;
+}
+
+/* THEME PICKER */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms;
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40;
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* CONTENT */
+.content {
+  flex: 1; overflow-y: auto; padding: var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-6);
+}
+.content::-webkit-scrollbar { width: 10px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.content::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+/* HERO */
+.hero {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: var(--s-12);
+  align-items: center;
+  padding: var(--s-6);
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  position: relative;
+}
+
+.gauge-wrap {
+  width: 300px; height: 300px;
+  position: relative;
+  margin: 0 auto;
+}
+.gauge-wrap svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.gauge-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.gauge-value {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+.gauge-max {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--ink-60);
+  font-weight: 500;
+  margin-top: 4px;
+  letter-spacing: .04em;
+}
+
+.hero-info {
+  display: flex; flex-direction: column; gap: var(--s-4);
+  min-width: 0;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
+.hero-eyebrow::before {
+  content: ""; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--status-good);
+  box-shadow: 0 0 6px var(--status-good);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -.025em;
+  line-height: 1.05;
+}
+.hero-title em { font-style: normal; font-weight: 700; color: var(--brand); }
+.hero-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* Target block */
+.target-block {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  flex-wrap: wrap;
+}
+.target-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.target-input {
+  width: 70px;
+  padding: 6px var(--s-3);
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-100);
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 700;
+  outline: none;
+  text-align: center;
+  letter-spacing: -.01em;
+}
+.target-input:focus { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-dim); }
+.target-alert {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--r-xs);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.target-alert.below { background: var(--sev-high-bg); color: var(--sev-high); }
+.target-alert.above { background: var(--status-good-bg); color: var(--status-good); }
+.target-alert.critical { background: var(--sev-critical-bg); color: var(--sev-critical); }
+
+/* Gear button — CISO formula config */
+.gear-btn {
+  position: absolute;
+  top: var(--s-4); right: var(--s-4);
+  width: 36px; height: 36px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-60);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: all 140ms;
+}
+.gear-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); color: var(--ink-100); }
+
+/* FACTOR CARDS */
+.factors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4);
+}
+.factor-card {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  cursor: pointer;
+  transition: all 180ms;
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.factor-card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.fc-head {
+  display: flex; align-items: flex-start; gap: var(--s-3);
+}
+.fc-mini-gauge {
+  width: 64px; height: 64px;
+  flex-shrink: 0;
+  position: relative;
+}
+.fc-mini-gauge svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.fc-mini-value {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+}
+.fc-title-block { flex: 1; min-width: 0; }
+.fc-title {
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.fc-weight {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.fc-metrics {
+  display: flex; flex-direction: column; gap: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.fc-metric {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+}
+.fc-metric-label { color: var(--ink-60); font-weight: 400; }
+.fc-metric-val {
+  font-family: var(--font-mono);
+  color: var(--ink-100);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.fc-metric-val.good { color: var(--status-good); }
+.fc-metric-val.warn { color: var(--sev-high); }
+.fc-metric-val.crit { color: var(--sev-critical); }
+
+.fc-drill {
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--brand);
+}
+
+/* TREND CHART */
+.section-card {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-6);
+}
+.section-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  margin-bottom: var(--s-4);
+  flex-wrap: wrap;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+
+.chart-controls {
+  display: flex; align-items: center; gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.chart-toggles { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.toggle-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  color: var(--ink-80);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms;
+  user-select: none;
+}
+.toggle-chip:hover { border-color: var(--line-strong); }
+.toggle-chip.active {
+  background: var(--brand-dim);
+  border-color: var(--brand);
+  color: var(--ink-100);
+}
+.toggle-dot { width: 8px; height: 8px; border-radius: 50%; }
+.toggle-dot.overall { background: var(--brand); }
+.toggle-dot.risk { background: var(--sev-critical); }
+.toggle-dot.compliance { background: var(--status-good); }
+.toggle-dot.remediation { background: var(--sev-low); }
+
+.period-select {
+  padding: 6px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+}
+body.coffee.light .period-select, body.blue.light .period-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.chart-wrap {
+  position: relative;
+  height: 260px;
+  width: 100%;
+}
+.chart-wrap svg { width: 100%; height: 100%; }
+
+/* Framework tabs */
+.tabs {
+  display: flex; gap: var(--s-4);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--s-4);
+  overflow-x: auto;
+}
+.tab {
+  padding: 10px 2px;
+  border: none; background: transparent;
+  color: var(--ink-60);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color 140ms;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--ink-100); }
+.tab.active { color: var(--ink-100); font-weight: 600; }
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px; background: var(--brand);
+}
+
+/* Framework content */
+.fw-detail-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--s-6);
+  align-items: center;
+}
+.fw-pie-wrap {
+  width: 180px; height: 180px;
+  margin: 0 auto;
+  position: relative;
+}
+.fw-pie-wrap svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.fw-pie-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.fw-pie-value {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.fw-pie-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.fw-data-rows {
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.fw-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.fw-row:last-child { border-bottom: none; }
+.fw-row-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.fw-row-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 500;
+}
+.fw-row-value.mono { font-family: var(--font-mono); letter-spacing: -.01em; font-weight: 700; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: var(--r-xs);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.status-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.status-badge.good { background: var(--status-good-bg); color: var(--status-good); }
+.status-badge.warn { background: var(--sev-high-bg); color: var(--sev-high); }
+
+/* Alert settings collapsible */
+.alert-settings {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.alert-head {
+  padding: var(--s-4) var(--s-6);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  cursor: pointer;
+  transition: background 140ms;
+  user-select: none;
+}
+.alert-head:hover { background: var(--bg-raised); }
+.alert-title-row {
+  display: flex; align-items: center; gap: var(--s-3);
+}
+.alert-title-row svg { color: var(--ink-60); }
+.alert-head-text { display: flex; flex-direction: column; gap: 2px; }
+.alert-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 600;
+}
+.alert-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 400;
+}
+.alert-chevron {
+  color: var(--ink-60);
+  transition: transform 180ms;
+}
+.alert-settings.open .alert-chevron { transform: rotate(180deg); }
+.alert-body {
+  padding: 0 var(--s-6);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 240ms, padding 240ms;
+}
+.alert-settings.open .alert-body {
+  padding: var(--s-4) var(--s-6) var(--s-6);
+  max-height: 400px;
+  border-top: 1px solid var(--line);
+}
+
+.alert-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+.field-block { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Segmented pill (for toggle & other binaries) */
+.segmented {
+  display: inline-flex;
+  gap: 2px; padding: 3px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+.seg-btn {
+  padding: 5px var(--s-3);
+  background: transparent; border: none;
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  min-width: 56px;
+  text-align: center;
+}
+.seg-btn:hover { color: var(--ink-100); }
+.seg-btn.active {
+  background: var(--bg-base);
+  color: var(--ink-100);
+  box-shadow: 0 1px 2px rgba(0,0,0,.12);
+}
+
+.select {
+  padding: 8px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--s-3) center;
+  background-size: 14px;
+}
+body.coffee.light .select, body.blue.light .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.alert-actions {
+  display: flex; gap: var(--s-3);
+  padding-top: var(--s-4);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 8px var(--s-4); height: 36px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+
+/* MODAL (formula editor) */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: var(--backdrop);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+  display: none;
+  padding: var(--s-6);
+  overflow-y: auto;
+}
+.modal-backdrop.open { display: grid; place-items: center; animation: fadeIn 200ms; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  width: 560px;
+  max-width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  animation: riseIn 320ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-head {
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-4);
+}
+.modal-title-block { flex: 1; min-width: 0; }
+.modal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.modal-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--ink-60);
+  cursor: pointer;
+  transition: all 140ms;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--bg-raised); color: var(--ink-100); }
+.modal-body { padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+
+.slider-block {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.slider-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.slider-label {
+  display: flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 600;
+}
+.slider-label .dot { width: 10px; height: 10px; border-radius: 50%; }
+.slider-label .dot.risk { background: var(--sev-critical); }
+.slider-label .dot.compliance { background: var(--status-good); }
+.slider-label .dot.remediation { background: var(--sev-low); }
+.slider-val {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%; height: 6px;
+  background: var(--bg-base);
+  border-radius: var(--r-full);
+  outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px; height: 18px;
+  background: var(--brand);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.slider::-moz-range-thumb {
+  width: 18px; height: 18px;
+  background: var(--brand);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+.sum-indicator {
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+}
+.sum-indicator.valid { border-color: var(--status-good); background: var(--status-good-bg); }
+.sum-indicator.invalid { border-color: var(--sev-critical); background: var(--sev-critical-bg); }
+.sum-label { color: var(--ink-80); font-weight: 500; }
+.sum-value {
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.sum-indicator.valid .sum-value { color: var(--status-good); }
+.sum-indicator.invalid .sum-value { color: var(--sev-critical); }
+
+.modal-foot {
+  padding: var(--s-3) var(--s-6);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: flex-end; gap: var(--s-3);
+  background: var(--bg-base);
+}
+</style>
+</head>
+
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="rail-logo">S</div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+    <div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg></div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <span>SecureLoop</span>
+        <span class="sep">/</span>
+        <span class="current">Cyber Posture Score</span>
+        <span class="id-pill">CISO-09</span>
+      </div>
+      <div class="theme-picker-wrap">
+        <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+          <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+          <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+          <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-popover" id="themePopover" role="dialog">
+          <div class="tp-section">
+            <div class="tp-section-label">Palette family</div>
+            <div class="tp-family-grid">
+              <button class="tp-family-card active" data-family="coffee">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+                <span class="tp-family-name">Coffee</span>
+                <span class="tp-family-desc">Warm · Investigation</span>
+              </button>
+              <button class="tp-family-card" data-family="blue">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+                <span class="tp-family-name">Blue</span>
+                <span class="tp-family-desc">Cool · Enterprise</span>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-section-label">Appearance</div>
+            <div class="tp-mode-row">
+              <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- HERO with gauge + info -->
+      <div class="hero">
+        <button class="gear-btn" id="openFormula" aria-label="Configure score formula" title="Configure formula">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--sev-high)"/>
+                <stop offset="100%" stop-color="var(--status-good)"/>
+              </linearGradient>
+            </defs>
+            <!-- Background ring -->
+            <circle cx="150" cy="150" r="130" fill="none" stroke="var(--bg-raised)" stroke-width="16"/>
+            <!-- Progress -->
+            <circle cx="150" cy="150" r="130" fill="none" stroke="url(#gauge-grad)" stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="816.81" stroke-dashoffset="196.03"/>
+            <!-- Target indicator (at 75 = 75% of circle) -->
+            <line x1="150" y1="8" x2="150" y2="28" stroke="var(--ink-60)" stroke-width="2" stroke-linecap="round"
+              transform="rotate(270 150 150)"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-value">76</div>
+            <div class="gauge-max">/ 100</div>
+          </div>
+        </div>
+
+        <div class="hero-info">
+          <span class="hero-eyebrow">Live · Last recalculated 2m ago</span>
+          <h1 class="hero-title">Cyber <em>posture score</em></h1>
+          <p class="hero-sub">Unified 0–100 health indicator combining security risk, compliance status, and remediation performance. Weighted formula configurable by CISO.</p>
+
+          <div class="target-block">
+            <span class="target-label">Target</span>
+            <input type="number" class="target-input" value="75" min="0" max="100">
+            <button class="btn">Set</button>
+            <span class="target-alert above">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Above target by 1 point
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FACTOR CARDS -->
+      <div class="factors-grid">
+
+        <!-- Security Risk -->
+        <div class="factor-card">
+          <div class="fc-head">
+            <div class="fc-mini-gauge">
+              <svg viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--bg-raised)" stroke-width="5"/>
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--sev-critical)" stroke-width="5" stroke-linecap="round"
+                  stroke-dasharray="163.36" stroke-dashoffset="48.01"/>
+              </svg>
+              <div class="fc-mini-value">71</div>
+            </div>
+            <div class="fc-title-block">
+              <div class="fc-title">Security Risk</div>
+              <div class="fc-weight">Weight 40%</div>
+            </div>
+          </div>
+          <div class="fc-metrics">
+            <div class="fc-metric"><span class="fc-metric-label">Open findings</span><span class="fc-metric-val">127</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">Critical &amp; High</span><span class="fc-metric-val crit">34</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">30-day trend</span><span class="fc-metric-val good">−18%</span></div>
+          </div>
+          <div class="fc-drill">
+            <span>View Risk Dashboard</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Compliance Status -->
+        <div class="factor-card">
+          <div class="fc-head">
+            <div class="fc-mini-gauge">
+              <svg viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--bg-raised)" stroke-width="5"/>
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--status-good)" stroke-width="5" stroke-linecap="round"
+                  stroke-dasharray="163.36" stroke-dashoffset="26.14"/>
+              </svg>
+              <div class="fc-mini-value">84</div>
+            </div>
+            <div class="fc-title-block">
+              <div class="fc-title">Compliance Status</div>
+              <div class="fc-weight">Weight 30%</div>
+            </div>
+          </div>
+          <div class="fc-metrics">
+            <div class="fc-metric"><span class="fc-metric-label">Frameworks tracked</span><span class="fc-metric-val">5</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">Avg compliance</span><span class="fc-metric-val good">84%</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">Audit readiness</span><span class="fc-metric-val warn">1 at risk</span></div>
+          </div>
+          <div class="fc-drill">
+            <span>View Compliance Dashboard</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Remediation Performance -->
+        <div class="factor-card">
+          <div class="fc-head">
+            <div class="fc-mini-gauge">
+              <svg viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--bg-raised)" stroke-width="5"/>
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--sev-low)" stroke-width="5" stroke-linecap="round"
+                  stroke-dasharray="163.36" stroke-dashoffset="40.84"/>
+              </svg>
+              <div class="fc-mini-value">75</div>
+            </div>
+            <div class="fc-title-block">
+              <div class="fc-title">Remediation Performance</div>
+              <div class="fc-weight">Weight 30%</div>
+            </div>
+          </div>
+          <div class="fc-metrics">
+            <div class="fc-metric"><span class="fc-metric-label">Org MTTR</span><span class="fc-metric-val">9.4d</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">SLA compliance</span><span class="fc-metric-val good">88%</span></div>
+            <div class="fc-metric"><span class="fc-metric-label">Team velocity</span><span class="fc-metric-val good">+12%</span></div>
+          </div>
+          <div class="fc-drill">
+            <span>View Team Performance</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TREND CHART -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">Historical trend</div>
+          <div class="chart-controls">
+            <div class="chart-toggles">
+              <label class="toggle-chip active"><span class="toggle-dot overall"></span>Overall Posture</label>
+              <label class="toggle-chip active"><span class="toggle-dot risk"></span>Security Risk</label>
+              <label class="toggle-chip active"><span class="toggle-dot compliance"></span>Compliance</label>
+              <label class="toggle-chip"><span class="toggle-dot remediation"></span>Remediation</label>
+            </div>
+            <select class="period-select">
+              <option>Last 90 days</option>
+              <option>Last 30 days</option>
+              <option>Last 60 days</option>
+              <option>Last 180 days</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Chart SVG -->
+        <div class="chart-wrap">
+          <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
+            <!-- Y axis grid lines -->
+            <line x1="40" y1="40" x2="980" y2="40" stroke="var(--line)" stroke-width="1"/>
+            <line x1="40" y1="90" x2="980" y2="90" stroke="var(--line)" stroke-width="1"/>
+            <line x1="40" y1="140" x2="980" y2="140" stroke="var(--line)" stroke-width="1"/>
+            <line x1="40" y1="190" x2="980" y2="190" stroke="var(--line)" stroke-width="1"/>
+            <line x1="40" y1="240" x2="980" y2="240" stroke="var(--line)" stroke-width="1"/>
+
+            <!-- Y labels -->
+            <text x="32" y="44" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">100</text>
+            <text x="32" y="94" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">75</text>
+            <text x="32" y="144" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">50</text>
+            <text x="32" y="194" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">25</text>
+            <text x="32" y="244" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">0</text>
+
+            <!-- Target line at 75 = y 90 -->
+            <line x1="40" y1="90" x2="980" y2="90" stroke="var(--ink-60)" stroke-width="1" stroke-dasharray="4 4"/>
+            <text x="985" y="94" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)">Target 75</text>
+
+            <!-- Compliance line (green, thin) -->
+            <polyline points="40,78 120,82 200,70 280,75 360,68 440,72 520,65 600,72 680,68 760,62 840,60 920,58 980,62"
+              fill="none" stroke="var(--status-good)" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Security Risk line (red, thin) — lower = worse, so we plot 100-risk to show improving -->
+            <polyline points="40,120 120,122 200,118 280,115 360,112 440,108 520,104 600,102 680,100 760,98 840,95 920,92 980,88"
+              fill="none" stroke="var(--sev-critical)" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Remediation line (hidden by default — off) -->
+            <!-- Overall (thick brand-colored) -->
+            <polyline points="40,100 120,102 200,96 280,98 360,92 440,94 520,88 600,92 680,86 760,84 840,82 920,80 980,82"
+              fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Current point marker on Overall -->
+            <circle cx="980" cy="82" r="5" fill="var(--brand)" stroke="var(--bg-base)" stroke-width="2"/>
+
+            <!-- X labels -->
+            <text x="40" y="258" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)">Nov 18</text>
+            <text x="250" y="258" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="middle">Dec 8</text>
+            <text x="510" y="258" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="middle">Dec 28</text>
+            <text x="760" y="258" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="middle">Jan 12</text>
+            <text x="970" y="258" font-family="JetBrains Mono" font-size="10" fill="var(--ink-60)" text-anchor="end">Today</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- FRAMEWORK TABS -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">Per-framework breakdown</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="nist">NIST-CSF</button>
+          <button class="tab" data-tab="cis">CIS v8</button>
+          <button class="tab" data-tab="soc2">SOC 2 Type II</button>
+          <button class="tab" data-tab="asvs">OWASP ASVS</button>
+          <button class="tab" data-tab="csa">CSA CCM</button>
+        </div>
+
+        <div class="fw-detail-grid">
+          <div class="fw-pie-wrap">
+            <svg viewBox="0 0 180 180">
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--bg-raised)" stroke-width="14"/>
+              <!-- 4 slices -->
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--status-good)" stroke-width="14"
+                stroke-dasharray="350 440" transform="rotate(-90 90 90)"/>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--sev-critical)" stroke-width="14"
+                stroke-dasharray="20 420" stroke-dashoffset="-350" transform="rotate(-90 90 90)"/>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--sev-medium)" stroke-width="14"
+                stroke-dasharray="12 428" stroke-dashoffset="-370" transform="rotate(-90 90 90)"/>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--ink-60)" stroke-width="14"
+                stroke-dasharray="58 382" stroke-dashoffset="-382" transform="rotate(-90 90 90)"/>
+            </svg>
+            <div class="fw-pie-center">
+              <div class="fw-pie-value">89</div>
+              <div class="fw-pie-label">/ 100</div>
+            </div>
+          </div>
+
+          <div class="fw-data-rows">
+            <div class="fw-row">
+              <span class="fw-row-label">Framework score</span>
+              <span class="fw-row-value mono">89 / 100</span>
+            </div>
+            <div class="fw-row">
+              <span class="fw-row-label">Weight in compliance factor</span>
+              <span class="fw-row-value mono">20%</span>
+            </div>
+            <div class="fw-row">
+              <span class="fw-row-label">Compliance status</span>
+              <span class="status-badge good">Compliant</span>
+            </div>
+            <div class="fw-row">
+              <span class="fw-row-label">Controls</span>
+              <span class="fw-row-value mono">98 / 108 compliant</span>
+            </div>
+            <div class="fw-row">
+              <span class="fw-row-label">Trend vs last quarter</span>
+              <span class="fw-row-value mono" style="color: var(--status-good);">+4 points</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERT SETTINGS (collapsible) -->
+      <div class="alert-settings" id="alertSettings">
+        <div class="alert-head">
+          <div class="alert-title-row">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <div class="alert-head-text">
+              <div class="alert-title">Alert me when score drops below target</div>
+              <div class="alert-sub">Email + In-App · Immediate</div>
+            </div>
+          </div>
+          <svg class="alert-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-field-grid">
+            <div class="field-block">
+              <span class="field-label">Alerts enabled</span>
+              <div class="segmented">
+                <button class="seg-btn active">On</button>
+                <button class="seg-btn">Off</button>
+              </div>
+            </div>
+            <div class="field-block">
+              <span class="field-label">Notification channel</span>
+              <select class="select">
+                <option>Email + In-App</option>
+                <option>Email only</option>
+                <option>In-App only</option>
+              </select>
+            </div>
+            <div class="field-block">
+              <span class="field-label">Alert frequency</span>
+              <select class="select">
+                <option>Immediate</option>
+                <option>Daily digest</option>
+                <option>Weekly digest</option>
+              </select>
+            </div>
+            <div class="field-block">
+              <span class="field-label">Trigger threshold</span>
+              <select class="select">
+                <option>Below target (any amount)</option>
+                <option>Below target by 3+ points</option>
+                <option>Below target by 5+ points</option>
+              </select>
+            </div>
+          </div>
+          <div class="alert-actions">
+            <button class="btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send test alert
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FORMULA MODAL (CISO-only) -->
+<div class="modal-backdrop" id="formulaModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-block">
+        <div class="modal-eyebrow">CISO · Score formula</div>
+        <div class="modal-title">Configure posture score weights</div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-family: var(--font-ui); font-size: var(--text-body); color: var(--ink-80); line-height: 1.55; margin-bottom: var(--s-2);">
+        Weights must sum to 100%. Changes apply immediately. Historical data is not recalculated — only forward from save.
+      </p>
+
+      <div class="slider-block">
+        <div class="slider-head">
+          <span class="slider-label"><span class="dot risk"></span>Security Risk</span>
+          <span class="slider-val" id="w1Val">40%</span>
+        </div>
+        <input type="range" class="slider" id="w1" min="0" max="100" value="40">
+      </div>
+
+      <div class="slider-block">
+        <div class="slider-head">
+          <span class="slider-label"><span class="dot compliance"></span>Compliance Status</span>
+          <span class="slider-val" id="w2Val">30%</span>
+        </div>
+        <input type="range" class="slider" id="w2" min="0" max="100" value="30">
+      </div>
+
+      <div class="slider-block">
+        <div class="slider-head">
+          <span class="slider-label"><span class="dot remediation"></span>Remediation Performance</span>
+          <span class="slider-val" id="w3Val">30%</span>
+        </div>
+        <input type="range" class="slider" id="w3" min="0" max="100" value="30">
+      </div>
+
+      <div class="sum-indicator valid" id="sumIndicator">
+        <span class="sum-label">Total weight</span>
+        <span class="sum-value" id="sumVal">100%</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="resetFormula">Reset to default</button>
+      <button class="btn primary" id="saveFormula">Save &amp; recalculate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Theme picker
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Chart toggles
+  document.querySelectorAll('.toggle-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('active'));
+  });
+
+  // Alert settings collapsible
+  document.getElementById('alertSettings').querySelector('.alert-head').addEventListener('click', () => {
+    document.getElementById('alertSettings').classList.toggle('open');
+  });
+
+  // Segmented buttons
+  document.querySelectorAll('.segmented').forEach(seg => {
+    seg.querySelectorAll('.seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+
+  // Formula modal
+  const modal = document.getElementById('formulaModal');
+  document.getElementById('openFormula').addEventListener('click', () => modal.classList.add('open'));
+  document.getElementById('modalClose').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+  // Sliders & sum indicator
+  const w1 = document.getElementById('w1');
+  const w2 = document.getElementById('w2');
+  const w3 = document.getElementById('w3');
+  const w1Val = document.getElementById('w1Val');
+  const w2Val = document.getElementById('w2Val');
+  const w3Val = document.getElementById('w3Val');
+  const sumVal = document.getElementById('sumVal');
+  const sumIndicator = document.getElementById('sumIndicator');
+
+  function updateSum() {
+    const v1 = parseInt(w1.value), v2 = parseInt(w2.value), v3 = parseInt(w3.value);
+    w1Val.textContent = v1 + '%';
+    w2Val.textContent = v2 + '%';
+    w3Val.textContent = v3 + '%';
+    const sum = v1 + v2 + v3;
+    sumVal.textContent = sum + '%';
+    sumIndicator.classList.remove('valid','invalid');
+    sumIndicator.classList.add(sum === 100 ? 'valid' : 'invalid');
+  }
+  [w1, w2, w3].forEach(s => s.addEventListener('input', updateSum));
+
+  document.getElementById('resetFormula').addEventListener('click', () => {
+    w1.value = 40; w2.value = 30; w3.value = 30; updateSum();
+  });
+</script>
+</body>
+</html>

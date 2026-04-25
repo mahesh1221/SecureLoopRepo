@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-05-1 AI Credit Usage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}button{cursor:pointer;border:none;background:none;font:inherit}input,select,textarea{font:inherit}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30)}
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.rail{width:64px;min-height:100vh;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.topbar{position:fixed;left:64px;right:0;top:0;height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);z-index:90}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.breadcrumb .sep{color:var(--ink-40);font-size:var(--text-micro)}.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:relative}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+.theme-popover{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.content{margin-left:64px;margin-top:56px;flex:1;display:flex;height:calc(100vh - 56px);overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+
+/* layout */
+.main-scroll{flex:1;overflow-y:auto;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.detail-sidebar{width:340px;flex-shrink:0;background:var(--bg-base);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;transform:translateX(100%);transition:transform 280ms cubic-bezier(.2,.7,.2,1)}
+.detail-sidebar.open{transform:translateX(0)}
+
+/* agg cards */
+.agg-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3)}
+.agg-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.agg-label{font-size:var(--text-label);color:var(--ink-60);font-weight:500;margin-bottom:var(--s-1)}
+.agg-value{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);line-height:1.1}
+.agg-sub{font-size:var(--text-label);color:var(--ink-40);margin-top:4px}
+
+/* filter bar */
+.filter-bar{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap}
+.filter-select{padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);cursor:pointer}
+.filter-select:focus{border-color:var(--brand);outline:none}
+.search-inp{flex:1;max-width:240px;padding:7px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui)}
+.search-inp:focus{border-color:var(--brand);outline:none}
+
+/* bulk bar */
+.bulk-bar{display:none;align-items:center;gap:var(--s-3);padding:var(--s-2) var(--s-4);background:var(--brand-dim);border:1px solid var(--brand);border-radius:var(--r-sm)}
+.bulk-bar.visible{display:flex}
+
+/* table */
+.table-wrap{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0}
+.table-scroll{overflow-y:auto;flex:1}
+table{width:100%;border-collapse:collapse}
+thead th{padding:var(--s-2) var(--s-3);font-size:var(--text-label);font-weight:600;color:var(--ink-60);letter-spacing:0.04em;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--line);background:var(--bg-raised);position:sticky;top:0;z-index:2;white-space:nowrap}
+thead th.r{text-align:right}
+tbody tr{border-bottom:1px solid var(--line);transition:background 140ms;cursor:pointer}
+tbody tr:hover{background:var(--bg-hover)}tbody tr.active-row{background:var(--brand-dim)}tbody tr:last-child{border-bottom:none}
+td{padding:var(--s-2) var(--s-3);font-size:var(--text-body);color:var(--ink-80);vertical-align:middle}
+td.mono{font-family:var(--font-mono);font-size:var(--text-body)}td.r{text-align:right}
+.feature-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--r-full);font-size:var(--text-micro);font-weight:600}
+.chip-impact{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.chip-remediation{background:var(--sev-high-bg);color:var(--sev-high)}
+.chip-report{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.chip-sidekick{background:var(--sev-low-bg);color:var(--sev-low)}
+.chip-internal{background:var(--bg-raised);color:var(--ink-60);border:1px solid var(--line-strong)}
+.billable-toggle{display:flex;gap:2px;padding:2px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs)}
+.btog-btn{padding:2px 7px;background:transparent;border:none;border-radius:2px;color:var(--ink-60);font-size:var(--text-micro);font-weight:500;cursor:pointer;transition:all 140ms;font-family:var(--font-ui)}
+.btog-btn:hover{color:var(--ink-100)}
+.btog-btn.yes.active{background:var(--status-good-bg);color:var(--status-good)}
+.btog-btn.no.active{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.locked-badge{font-size:var(--text-micro);padding:1px 6px;border-radius:var(--r-xs);background:var(--ink-20);color:var(--ink-60)}
+
+/* sidebar */
+.sb-head{display:flex;align-items:center;padding:var(--s-4);border-bottom:1px solid var(--line);flex-shrink:0;background:var(--bg-raised)}
+.sb-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;flex:1}
+.sb-close{width:28px;height:28px;border-radius:var(--r-sm);background:var(--bg-overlay);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.sb-close:hover{background:var(--bg-hover);color:var(--ink-100)}.sb-close svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.sb-body{overflow-y:auto;flex:1;padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-3)}
+.sb-section-title{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2);padding-bottom:var(--s-1);border-bottom:1px solid var(--line)}
+.kv-row{display:flex;justify-content:space-between;gap:var(--s-4);padding:2px 0}
+.kv-l{font-size:var(--text-label);color:var(--ink-40);font-weight:500}
+.kv-r{font-size:var(--text-body);color:var(--ink-80);font-weight:500;text-align:right}
+.kv-r.mono{font-family:var(--font-mono)}
+.ai-preview{padding:var(--s-3);background:var(--bg-raised);border-radius:var(--r-sm);font-size:var(--text-label);color:var(--ink-60);line-height:1.6;position:relative}
+.reveal-btn{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);border-radius:var(--r-sm);cursor:pointer;font-size:var(--text-label);font-weight:600;color:var(--ink-100);backdrop-filter:blur(3px);border:none;font-family:var(--font-ui)}
+.reveal-btn:hover{background:rgba(0,0,0,.3)}
+
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+<nav class="rail">
+  <div class="logo">S</div><div class="nav-sep"></div>
+  <button class="nav-item active" title="Finance" aria-label="Finance"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg></button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <button class="nav-item" title="Settings" aria-label="Settings"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14"/></svg></button>
+</nav>
+<header class="topbar">
+  <div class="breadcrumb"><span>Finance</span><span class="sep">›</span><span class="current">AI Credit Usage</span></div>
+  <div class="topbar-right">
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches"><div class="swatch" id="sw1" style="background:#1A0F08"></div><div class="swatch" id="sw2" style="background:#F3EEE2"></div></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')"><div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div><div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div></div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')"><div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div><div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div></div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark</button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="content">
+  <div class="main-scroll">
+    <div style="display:flex;align-items:center;gap:var(--s-3)">
+      <div class="id-pill">FIN-05-1</div>
+      <h1 style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.020em">AI Credit Usage</h1>
+      <div style="margin-left:auto;display:flex;gap:var(--s-2)">
+        <button class="btn"><svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>Export CSV</button>
+        <button class="btn primary" onclick="">Add to Invoice</button>
+      </div>
+    </div>
+
+    <!-- Aggregation cards -->
+    <div class="agg-cards">
+      <div class="agg-card">
+        <div class="agg-label">Total Sessions (period)</div>
+        <div class="agg-value">127</div>
+        <div class="agg-sub">All engagements · Apr 2026</div>
+      </div>
+      <div class="agg-card">
+        <div class="agg-label">Billable Sessions</div>
+        <div class="agg-value" style="color:var(--status-good)">89</div>
+        <div class="agg-sub" style="color:var(--status-good)">$7,240 unbilled</div>
+      </div>
+      <div class="agg-card">
+        <div class="agg-label">Non-Billable (Internal)</div>
+        <div class="agg-value" style="color:var(--ink-60)">38</div>
+        <div class="agg-sub">$1,820 absorbed</div>
+      </div>
+      <div class="agg-card" style="border-color:var(--sev-high)">
+        <div class="agg-label">Already Billed</div>
+        <div class="agg-value" style="color:var(--sev-high)">24</div>
+        <div class="agg-sub">Locked — on INV-2026-031</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <select class="filter-select" aria-label="Engagement"><option>All Engagements</option><option>ENG-2026-041 · Nexus Financial</option><option>ENG-2026-038 · Orion HealthTech</option></select>
+      <select class="filter-select" aria-label="Feature type"><option>All Feature Types</option><option>Impact Generation</option><option>Remediation Suggestion</option><option>Report Generation</option><option>AI Sidekick</option></select>
+      <select class="filter-select" aria-label="Billable status"><option>All</option><option>Billable</option><option>Non-Billable</option><option>Already Billed</option></select>
+      <select class="filter-select" aria-label="User"><option>All Users</option><option>S. Khan (TSTR)</option><option>A. Nair (SENG)</option><option>J. Reeves (DM)</option></select>
+      <input type="date" class="filter-select" value="2026-04-01" aria-label="From">
+      <input type="date" class="filter-select" value="2026-04-22" aria-label="To">
+      <button class="btn" style="height:32px;font-size:var(--text-label);padding:0 var(--s-3)">Reset</button>
+    </div>
+
+    <!-- Bulk bar -->
+    <div class="bulk-bar" id="bulkBar">
+      <span style="font-size:var(--text-body);font-weight:600;color:var(--brand)">3 selected · $480 total</span>
+      <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3)">Mark Billable</button>
+      <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3)">Mark Non-Billable</button>
+      <button class="btn primary" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3)">Add to Invoice</button>
+      <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3);margin-left:auto" onclick="clearSel()">Deselect All</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="checkAll" onclick="toggleAll()" style="accent-color:var(--brand);width:14px;height:14px"></th>
+              <th>Session ID</th>
+              <th>Date</th>
+              <th>Engagement</th>
+              <th>User</th>
+              <th>Feature Type</th>
+              <th>Context</th>
+              <th class="r">Credits</th>
+              <th class="r">Cost</th>
+              <th>Billable</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsBody">
+            <tr onclick="openDetail('AI-SES-2026-0421')">
+              <td onclick="event.stopPropagation()"><input type="checkbox" onclick="updateBulk()" style="accent-color:var(--brand);width:14px;height:14px"></td>
+              <td class="mono" style="color:var(--brand);font-size:var(--text-label)">AI-SES-0421</td>
+              <td style="font-size:var(--text-label);color:var(--ink-60)">Apr 21, 14:32</td>
+              <td class="mono" style="font-size:var(--text-label);color:var(--ink-60)">ENG-2026-041</td>
+              <td style="font-size:var(--text-body)">S. Khan</td>
+              <td><span class="feature-chip chip-impact">Impact Gen</span></td>
+              <td style="font-size:var(--text-label);color:var(--ink-60);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Finding F-041-012 · Critical RCE</td>
+              <td class="mono r">240</td>
+              <td class="mono r" style="color:var(--sev-high)">$60.00</td>
+              <td onclick="event.stopPropagation()">
+                <div class="billable-toggle"><button class="btog-btn yes active" onclick="setBillable(this,'yes')">Yes</button><button class="btog-btn no" onclick="setBillable(this,'no')">No</button></div>
+              </td>
+            </tr>
+            <tr onclick="openDetail('AI-SES-2026-0420')">
+              <td onclick="event.stopPropagation()"><input type="checkbox" onclick="updateBulk()" style="accent-color:var(--brand);width:14px;height:14px"></td>
+              <td class="mono" style="color:var(--brand);font-size:var(--text-label)">AI-SES-0420</td>
+              <td style="font-size:var(--text-label);color:var(--ink-60)">Apr 20, 10:18</td>
+              <td class="mono" style="font-size:var(--text-label);color:var(--ink-60)">ENG-2026-041</td>
+              <td style="font-size:var(--text-body)">A. Nair</td>
+              <td><span class="feature-chip chip-remediation">Remediation</span></td>
+              <td style="font-size:var(--text-label);color:var(--ink-60);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Finding F-041-009 · SQL Injection</td>
+              <td class="mono r">180</td>
+              <td class="mono r" style="color:var(--sev-high)">$40.00</td>
+              <td onclick="event.stopPropagation()">
+                <div class="billable-toggle"><button class="btog-btn yes active" onclick="setBillable(this,'yes')">Yes</button><button class="btog-btn no" onclick="setBillable(this,'no')">No</button></div>
+              </td>
+            </tr>
+            <tr onclick="openDetail('AI-SES-2026-0419')">
+              <td onclick="event.stopPropagation()"><input type="checkbox" onclick="updateBulk()" style="accent-color:var(--brand);width:14px;height:14px"></td>
+              <td class="mono" style="color:var(--brand);font-size:var(--text-label)">AI-SES-0419</td>
+              <td style="font-size:var(--text-label);color:var(--ink-60)">Apr 19, 09:45</td>
+              <td class="mono" style="font-size:var(--text-label);color:var(--ink-60)">ENG-2026-041</td>
+              <td style="font-size:var(--text-body)">A. Nair</td>
+              <td><span class="feature-chip chip-internal">Internal</span></td>
+              <td style="font-size:var(--text-label);color:var(--ink-60);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">SE internal analysis · not customer-facing</td>
+              <td class="mono r">92</td>
+              <td class="mono r" style="color:var(--ink-60)">$18.40</td>
+              <td onclick="event.stopPropagation()">
+                <div class="billable-toggle"><button class="btog-btn yes" onclick="setBillable(this,'yes')">Yes</button><button class="btog-btn no active" onclick="setBillable(this,'no')">No</button></div>
+              </td>
+            </tr>
+            <tr onclick="openDetail('AI-SES-2026-0415')">
+              <td onclick="event.stopPropagation()"><input type="checkbox" onclick="updateBulk()" style="accent-color:var(--brand);width:14px;height:14px" disabled></td>
+              <td class="mono" style="color:var(--ink-60);font-size:var(--text-label)">AI-SES-0415</td>
+              <td style="font-size:var(--text-label);color:var(--ink-60)">Apr 15, 16:02</td>
+              <td class="mono" style="font-size:var(--text-label);color:var(--ink-60)">ENG-2026-041</td>
+              <td style="font-size:var(--text-body)">S. Khan</td>
+              <td><span class="feature-chip chip-report">Report Gen</span></td>
+              <td style="font-size:var(--text-label);color:var(--ink-60);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Final VAPT Report v3</td>
+              <td class="mono r">400</td>
+              <td class="mono r" style="color:var(--sev-high)">$400.00</td>
+              <td onclick="event.stopPropagation()"><span class="locked-badge">Billed · INV-031</span></td>
+            </tr>
+            <tr onclick="openDetail('AI-SES-2026-0414')">
+              <td onclick="event.stopPropagation()"><input type="checkbox" onclick="updateBulk()" style="accent-color:var(--brand);width:14px;height:14px"></td>
+              <td class="mono" style="color:var(--brand);font-size:var(--text-label)">AI-SES-0414</td>
+              <td style="font-size:var(--text-label);color:var(--ink-60)">Apr 14, 11:20</td>
+              <td class="mono" style="font-size:var(--text-label);color:var(--ink-60)">ENG-2026-038</td>
+              <td style="font-size:var(--text-body)">M. Torres</td>
+              <td><span class="feature-chip chip-sidekick">AI Sidekick</span></td>
+              <td style="font-size:var(--text-label);color:var(--ink-60);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chat session · compliance mapping</td>
+              <td class="mono r">60</td>
+              <td class="mono r" style="color:var(--sev-high)">$20.00</td>
+              <td onclick="event.stopPropagation()">
+                <div class="billable-toggle"><button class="btog-btn yes active" onclick="setBillable(this,'yes')">Yes</button><button class="btog-btn no" onclick="setBillable(this,'no')">No</button></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail sidebar -->
+  <div class="detail-sidebar" id="detailSidebar">
+    <div class="sb-head">
+      <div><div class="sb-title">AI-SES-0421</div><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:2px">Impact Generation · Apr 21</div></div>
+      <button class="sb-close" onclick="closeSidebar()" aria-label="Close"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div class="sb-body">
+      <div>
+        <div class="sb-section-title">Session Details</div>
+        <div class="kv-row"><span class="kv-l">Session ID</span><span class="kv-r mono">AI-SES-0421</span></div>
+        <div class="kv-row"><span class="kv-l">Engagement</span><span class="kv-r mono">ENG-2026-041</span></div>
+        <div class="kv-row"><span class="kv-l">User</span><span class="kv-r">S. Khan (TSTR)</span></div>
+        <div class="kv-row"><span class="kv-l">Feature</span><span class="kv-r">Impact Generation</span></div>
+        <div class="kv-row"><span class="kv-l">Finding</span><span class="kv-r" style="color:var(--brand);cursor:pointer">F-041-012 · Critical RCE</span></div>
+      </div>
+      <div>
+        <div class="sb-section-title">Credit Breakdown</div>
+        <div class="kv-row"><span class="kv-l">Input Tokens</span><span class="kv-r mono">142,800</span></div>
+        <div class="kv-row"><span class="kv-l">Output Tokens</span><span class="kv-r mono">38,400</span></div>
+        <div class="kv-row"><span class="kv-l">Model</span><span class="kv-r" style="font-size:var(--text-label)">claude-sonnet-4-6</span></div>
+        <div class="kv-row"><span class="kv-l">Total Credits</span><span class="kv-r mono" style="font-weight:700">240</span></div>
+        <div class="kv-row"><span class="kv-l">Cost</span><span class="kv-r mono" style="color:var(--sev-high);font-weight:700">$60.00</span></div>
+      </div>
+      <div>
+        <div class="sb-section-title">AI Input Preview</div>
+        <div class="ai-preview" id="aiInputPreview">
+          <span style="filter:blur(4px);user-select:none">Finding description: Critical Remote Code Execution vulnerability discovered in `/api/upload` endpoint. Unauthenticated attacker can upload malicious file and execute arbitrary commands as www-data. CVSS 9.8…</span>
+          <button class="reveal-btn" id="revealBtn" onclick="revealContent()">🔒 Click to Reveal</button>
+        </div>
+      </div>
+      <div>
+        <div class="sb-section-title">Billing Decision</div>
+        <div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-3)">
+          <button class="btn" style="flex:1;justify-content:center;height:32px;font-size:var(--text-label);background:var(--status-good-bg);color:var(--status-good);border-color:var(--status-good)">Mark Billable</button>
+          <button class="btn" style="flex:1;justify-content:center;height:32px;font-size:var(--text-label)">Mark Non-Billable</button>
+        </div>
+        <textarea style="width:100%;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui);resize:none;line-height:1.5" rows="3" placeholder="Internal reason for exclusion (not visible to customer)…"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFamily='coffee',currentMode='dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){document.body.className=currentFamily+' '+currentMode;document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');document.getElementById('mb-light').classList.toggle('active',currentMode==='light')}
+function setFamily(f){currentFamily=f;applyTheme()}function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn'),themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')themePopover.classList.remove('open')});
+
+function setBillable(btn,val){const parent=btn.parentElement;parent.querySelectorAll('.btog-btn').forEach(b=>{b.classList.remove('active')});btn.classList.add('active')}
+function openDetail(id){document.getElementById('detailSidebar').classList.add('open')}
+function closeSidebar(){document.getElementById('detailSidebar').classList.remove('open')}
+function revealContent(){document.getElementById('revealBtn').remove();document.querySelector('#aiInputPreview span').style.filter='none'}
+function updateBulk(){const n=document.querySelectorAll('#sessionsBody input[type=checkbox]:checked').length;document.getElementById('bulkBar').classList.toggle('visible',n>0)}
+function clearSel(){document.querySelectorAll('#sessionsBody input[type=checkbox]').forEach(c=>c.checked=false);updateBulk()}
+function toggleAll(){const c=document.getElementById('checkAll').checked;document.querySelectorAll('#sessionsBody input[type=checkbox]:not([disabled])').forEach(cb=>cb.checked=c);updateBulk()}
+</script>
+</body>
+</html>

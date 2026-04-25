@@ -1,0 +1,131 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "The session has just started. Invoke /claude-mem:mem-search to search persistent project memory for context relevant to this project and session. Make the results available to the main conversation.",
+            "timeout": 60,
+            "statusMessage": "Loading persistent project context..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "agent",
+            "if": "Write(*.ts)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Read the file. Check for: (1) redundancy, missed reuse opportunities, efficiency issues; (2) bugs, type safety issues, best-practice violations. Report concrete, actionable findings as bullet points. Omit praise. Produce no output if no issues are found.",
+            "timeout": 60,
+            "statusMessage": "Reviewing TypeScript changes..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*.tsx)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Read the file. Check for: (1) redundancy, missed reuse opportunities, efficiency issues; (2) bugs, type safety issues, best-practice violations. Report concrete, actionable findings as bullet points. Omit praise. Produce no output if no issues are found.",
+            "timeout": 60,
+            "statusMessage": "Reviewing TypeScript changes..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*SecureLoop_*.html)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Audit the wireframe against: (1) design tokens in packages/design-system (exact hex values, only allowed type/spacing/radius scales); (2) locked UI patterns in CLAUDE.md §7 (validation, toggles, wizards, modals, shell layout, callouts); (3) exclusions in CLAUDE.md §8. Report concrete violations as bullet points citing the specific rule. Produce no output if fully compliant.",
+            "timeout": 60,
+            "statusMessage": "Auditing wireframe against design system..."
+          },
+          {
+            "type": "command",
+            "command": "b=$(git branch --show-current 2>/dev/null); if [[ \"$b\" == remediation/* ]]; then printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"SKILL-GUARD [branch: %s]: Code written on remediation branch. Check for: hardcoded credentials, command injection, insecure execution patterns, missing input validation, privilege escalation vectors.\"}}' \"$b\"; fi",
+            "statusMessage": "Checking remediation branch..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*packages/ui/*)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. When the path ends in .tsx or .ts: invoke /playwright-skill with the file path to generate E2E tests for this component.",
+            "timeout": 120,
+            "statusMessage": "Generating E2E tests for UI component..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*services/*)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /engineering-skills and /engineering-advanced-skills to review and enhance the implementation at this path.",
+            "timeout": 120,
+            "statusMessage": "Applying engineering review to service file..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*contracts/*)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. When the file matches schema/contract patterns (*.schema.ts, *.schema.json, *.yaml, or any file under contracts/): invoke /engineering-skills and /engineering-advanced-skills to review the schema definition.",
+            "timeout": 120,
+            "statusMessage": "Applying engineering review to schema file..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*SecureLoop_SprintPlan_v1.docx)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /pm-skills and /product-skills to analyze the updated sprint plan and surface relevant insights for the SecureLoop GRC platform.",
+            "timeout": 120,
+            "statusMessage": "Analyzing updated sprint plan..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*SecureLoop_User_Stories_v3_0_Complete.docx)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /pm-skills and /product-skills to analyze the updated user stories document and surface relevant insights for the SecureLoop GRC platform.",
+            "timeout": 120,
+            "statusMessage": "Analyzing updated user stories..."
+          },
+          {
+            "type": "agent",
+            "if": "Write(*SecureLoop_*.html)",
+            "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /ui-ux-pro-max:ui-ux-pro-max to assess design quality across styles, colour, and typography. Then invoke /impeccable:audit to run technical quality checks covering accessibility, performance, theming, and anti-patterns. Report findings from both.",
+            "timeout": 120,
+            "statusMessage": "Running UI/UX quality review on new screen..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "agent",
+            "if": "Bash(git commit *)",
+            "prompt": "A git commit was just executed. Run 'git diff HEAD~1 --stat' then 'git diff HEAD~1' to see what changed. Check for: (1) exposed secrets or API keys; (2) SQL/command/XSS injection vulnerabilities; (3) missing authentication or authorization checks; (4) tenant isolation violations — any DB query missing tenant_id filter; (5) missing Zod validation at API boundaries; (6) OWASP top 10 issues. Report concrete findings as bullet points. Produce no output if clean.",
+            "timeout": 90,
+            "statusMessage": "Running security review on commit..."
+          },
+          {
+            "type": "agent",
+            "if": "Bash(pnpm build)",
+            "prompt": "A pnpm build just completed. Read tool_response from $ARGUMENTS to confirm the build exited with code 0 (success). If it succeeded, invoke /stress-test to run business assumption stress testing on the work just built and report concrete findings.",
+            "timeout": 120,
+            "statusMessage": "Running stress-test analysis after successful build..."
+          },
+          {
+            "type": "agent",
+            "if": "Bash(git checkout *)",
+            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name — if '-b' is present the branch name follows it; otherwise it is the last non-flag argument. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
+            "timeout": 120,
+            "statusMessage": "Creating implementation plan for new branch..."
+          },
+          {
+            "type": "agent",
+            "if": "Bash(git switch *)",
+            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name — if '-c' or '--create' is present the branch name follows it. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
+            "timeout": 120,
+            "statusMessage": "Creating implementation plan for new branch..."
+          },
+          {
+            "type": "agent",
+            "if": "Bash(git tag *)",
+            "prompt": "Read tool_input.command from $ARGUMENTS to get the tag name. Invoke /claude-mem:version-bump to run the semantic versioning and release workflow for this new tag in the SecureLoop monorepo.",
+            "timeout": 120,
+            "statusMessage": "Running version bump workflow for new tag..."
+          }
+        ]
+      }
+    ]
+  }
+}

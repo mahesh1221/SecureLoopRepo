@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-01 Engagement Dashboard</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Theme tokens ---------- */
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;
+  --text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{
+  --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;
+  --brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);
+  --grain-opacity:.025;
+}
+body.coffee.light{
+  --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;
+  --brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);
+  --grain-opacity:.05;
+}
+body.blue.dark{
+  --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;
+  --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;
+  --brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);
+  --grain-opacity:.025;
+}
+body.blue.light{
+  --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;
+  --brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);
+  --grain-opacity:.05;
+}
+
+/* ---------- Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;
+  background:var(--bg-page);color:var(--ink-100);
+  letter-spacing:-0.003em;line-height:1.5;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");
+  opacity:var(--grain-opacity);mix-blend-mode:overlay;
+}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button{font-family:inherit;color:inherit}
+
+/* ---------- Shell ---------- */
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+
+/* Left rail */
+.rail{
+  background:var(--bg-base);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);
+  position:sticky;top:0;height:100vh;
+}
+.logo{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  background:var(--brand);color:var(--brand-ink);
+  display:grid;place-items:center;
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);
+  box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2);
+}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{
+  width:40px;height:40px;display:grid;place-items:center;
+  background:transparent;border:none;border-radius:var(--r-sm);
+  color:var(--ink-60);cursor:pointer;transition:all 140ms;
+}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+/* Topbar */
+.topbar{
+  height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);
+  position:sticky;top:0;z-index:10;
+}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{
+  padding:2px 6px;background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-xs);font-family:var(--font-mono);
+  font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;
+}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.search{
+  display:flex;align-items:center;gap:var(--s-2);padding:0 var(--s-3);height:32px;
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-60);font-size:var(--text-body);min-width:240px;
+}
+.search svg{width:14px;height:14px}
+.search .k{
+  margin-left:auto;padding:1px 5px;background:var(--bg-base);border:1px solid var(--line);
+  border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-40);
+}
+.topbar-btn{
+  height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);font-size:var(--text-body);cursor:pointer;transition:all 140ms;
+}
+.topbar-btn:hover{background:var(--bg-hover);border-color:var(--line-strong);color:var(--ink-100)}
+.topbar-btn svg{width:13px;height:13px}
+
+/* Theme picker */
+.theme-pick{position:relative}
+.theme-btn{
+  height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);font-size:var(--text-body);cursor:pointer;transition:all 140ms;
+}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:inline-flex;gap:2px}
+.theme-swatches span{width:10px;height:14px;border-radius:2px;border:1px solid var(--line-strong)}
+.theme-sw-1{background:var(--bg-base)}
+.theme-sw-2{background:var(--brand)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pop{
+  position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);
+  background:var(--bg-overlay);border:1px solid var(--line-strong);
+  border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);
+  display:none;flex-direction:column;gap:var(--s-4);z-index:100;
+}
+.theme-pop.open{display:flex}
+.theme-pop h4{
+  margin:0;font-family:var(--font-ui);font-size:var(--text-micro);font-weight:600;
+  color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em;
+}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.fam-card{
+  padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);cursor:pointer;transition:all 140ms;text-align:left;
+}
+.fam-card:hover{border-color:var(--line-strong)}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}
+.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{
+  flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;
+}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+/* Content */
+.content{padding:var(--s-6) var(--s-8);max-width:1440px;width:100%}
+
+/* Page header */
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-4)}
+.page-head .eyebrow{
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2);
+  display:flex;align-items:center;gap:var(--s-2);
+}
+.role-chip{
+  padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);
+  border-radius:var(--r-xs);font-family:var(--font-ui);font-size:var(--text-micro);
+  font-weight:600;letter-spacing:.04em;
+}
+.page-title{
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);
+  letter-spacing:-0.02em;margin:0;color:var(--ink-100);
+}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+.page-actions{display:flex;gap:var(--s-2);align-items:center}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;
+  cursor:pointer;transition:all 140ms;white-space:nowrap;
+}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn svg{width:13px;height:13px}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--bg-hover)}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn.icon-only{width:36px;height:36px;padding:0;justify-content:center}
+.btn.icon-only svg{width:14px;height:14px}
+
+/* ---------- Metric tiles ---------- */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-6)}
+.tile{
+  background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:var(--s-4) var(--s-6);cursor:pointer;transition:all 140ms;
+  display:flex;flex-direction:column;gap:var(--s-3);position:relative;overflow:hidden;
+}
+.tile:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.tile-top{display:flex;align-items:center;justify-content:space-between}
+.tile-label{
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;
+}
+.tile-icon{
+  width:28px;height:28px;display:grid;place-items:center;border-radius:var(--r-sm);
+  background:var(--brand-dim);color:var(--brand);
+}
+.tile-icon svg{width:14px;height:14px}
+.tile-value{
+  font-family:var(--font-mono);font-size:var(--text-3xl);font-weight:500;
+  line-height:1;letter-spacing:-0.02em;color:var(--ink-100);
+}
+.tile-meta{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);color:var(--ink-60)}
+.trend{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-weight:600;font-size:var(--text-label)}
+.trend.up{color:var(--status-good)}
+.trend.down{color:var(--sev-critical)}
+.trend.flat{color:var(--ink-60)}
+.trend svg{width:11px;height:11px}
+
+/* Severity accents on tiles */
+.tile.sev-crit .tile-icon{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.tile.sev-crit .tile-value{color:var(--sev-critical)}
+.tile.sev-high .tile-icon{background:var(--sev-high-bg);color:var(--sev-high)}
+.tile.sev-good .tile-icon{background:var(--status-good-bg);color:var(--status-good)}
+
+/* Spark bars under tiles */
+.spark{display:flex;align-items:flex-end;gap:2px;height:22px;margin-top:2px}
+.spark span{flex:1;background:var(--brand-dim);border-radius:1px;min-height:2px}
+.tile.sev-crit .spark span{background:var(--sev-critical-bg)}
+
+/* ---------- Section shell ---------- */
+.section{
+  background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+  margin-bottom:var(--s-6);overflow:hidden;
+}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);
+  padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);
+}
+.sec-head-left{display:flex;align-items:center;gap:var(--s-3)}
+.sec-title{
+  font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;
+  letter-spacing:-0.015em;margin:0;color:var(--ink-100);
+}
+.sec-sub{font-size:var(--text-label);color:var(--ink-60)}
+.sec-actions{display:flex;align-items:center;gap:var(--s-2)}
+
+/* Segmented pill */
+.segmented{
+  display:flex;gap:2px;padding:3px;background:var(--bg-raised);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+}
+.seg-btn{
+  padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);
+  color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;
+  cursor:pointer;transition:all 140ms;min-width:72px;text-align:center;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.seg-btn svg{width:11px;height:11px}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Filter chips */
+.chip-row{display:flex;gap:var(--s-2);align-items:center;flex-wrap:wrap}
+.chip{
+  padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-full);color:var(--ink-80);font-size:var(--text-label);font-weight:500;
+  cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;gap:4px;
+}
+.chip:hover{background:var(--bg-hover)}
+.chip.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.chip-count{
+  padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);
+  font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro);
+}
+.chip.active .chip-count{background:rgba(0,0,0,.16)}
+
+/* ---------- List view table ---------- */
+.table-wrap{overflow:auto}
+.eng-table{
+  width:100%;border-collapse:collapse;font-size:var(--text-body);
+}
+.eng-table thead th{
+  padding:var(--s-3) var(--s-6);text-align:left;
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;border-bottom:1px solid var(--line);
+  background:var(--bg-raised);position:sticky;top:0;white-space:nowrap;
+}
+.eng-table tbody td{
+  padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);vertical-align:middle;
+}
+.eng-table tbody tr{cursor:pointer;transition:background 140ms}
+.eng-table tbody tr:hover{background:var(--bg-hover)}
+.eng-table tbody tr:last-child td{border-bottom:none}
+
+.eng-name{display:flex;flex-direction:column;gap:2px}
+.eng-name-t{font-weight:500;color:var(--ink-100)}
+.eng-name-s{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+.mono{font-family:var(--font-mono);font-weight:500;letter-spacing:.02em}
+
+/* RAG badge */
+.rag{
+  display:inline-flex;align-items:center;gap:var(--s-2);padding:3px var(--s-2);
+  border-radius:var(--r-xs);font-size:var(--text-label);font-weight:600;
+}
+.rag::before{content:"";width:6px;height:6px;border-radius:50%}
+.rag.good{background:var(--status-good-bg);color:var(--status-good)}
+.rag.good::before{background:var(--status-good)}
+.rag.amber{background:var(--sev-high-bg);color:var(--sev-high)}
+.rag.amber::before{background:var(--sev-high)}
+.rag.red{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.rag.red::before{background:var(--sev-critical)}
+
+/* Completion bar */
+.pct{display:flex;align-items:center;gap:var(--s-2);min-width:120px}
+.pct-bar{flex:1;height:6px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden}
+.pct-bar-fill{height:100%;background:var(--brand);border-radius:var(--r-full);transition:width 280ms}
+.pct-val{font-family:var(--font-mono);font-weight:600;font-size:var(--text-label);min-width:36px;text-align:right;color:var(--ink-80)}
+
+/* Finding counts mini */
+.fc{display:inline-flex;align-items:center;gap:var(--s-1);font-family:var(--font-mono);font-size:var(--text-label)}
+.fc .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.fc.crit{color:var(--sev-critical)}.fc.crit .dot{background:var(--sev-critical)}
+.fc.high{color:var(--sev-high)}.fc.high .dot{background:var(--sev-high)}
+.fc-group{display:flex;gap:var(--s-3);align-items:center}
+
+/* Tester avatar */
+.ava{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+}
+.ava-badge{
+  width:26px;height:26px;border-radius:var(--r-full);
+  background:var(--brand-dim);color:var(--brand);
+  display:grid;place-items:center;font-family:var(--font-display);
+  font-size:var(--text-label);font-weight:600;letter-spacing:0;
+}
+.ava-name{font-size:var(--text-body);color:var(--ink-100)}
+
+/* Row actions */
+.row-actions{display:flex;gap:var(--s-1);justify-content:flex-end}
+
+/* ---------- Card view ---------- */
+.cards{display:none;grid-template-columns:repeat(3,1fr);gap:var(--s-4);padding:var(--s-6)}
+.cards.active{display:grid}
+.e-card{
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:var(--s-4) var(--s-6);display:flex;flex-direction:column;gap:var(--s-3);
+  cursor:pointer;transition:all 140ms;
+}
+.e-card:hover{border-color:var(--line-strong);transform:translateY(-2px)}
+.e-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-2)}
+.e-card-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);letter-spacing:-0.01em;margin:0}
+.e-card-id{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.e-card-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-4);margin-top:var(--s-2)}
+.e-meta-l{font-size:var(--text-micro);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:2px}
+.e-meta-v{font-size:var(--text-body);color:var(--ink-100);font-weight:500}
+.e-card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:var(--s-3);border-top:1px solid var(--line);margin-top:auto}
+
+/* Toggle views */
+.view-list{display:block}
+.view-card{display:none}
+body.is-card .view-list{display:none}
+body.is-card .view-card{display:block}
+
+/* ---------- Action queue ---------- */
+.aq-head-bar{
+  padding:var(--s-3) var(--s-6);background:var(--bg-raised);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-label);
+}
+.aq-pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--sev-critical);
+  box-shadow:0 0 0 0 var(--sev-critical);animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,107,91,.6)}
+  70%{box-shadow:0 0 0 8px rgba(255,107,91,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,107,91,0)}
+}
+
+.act-type{
+  display:inline-flex;align-items:center;gap:var(--s-2);padding:3px var(--s-2);
+  border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.act-type.sla-breach{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.act-type.milestone{background:var(--sev-low-bg);color:var(--sev-low)}
+.act-type.report{background:var(--brand-dim);color:var(--brand)}
+.act-type.retest{background:var(--sev-high-bg);color:var(--sev-high)}
+
+.priority{
+  display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:var(--text-label);font-weight:600;
+}
+.priority.p1{color:var(--sev-critical)}
+.priority.p2{color:var(--sev-high)}
+.priority.p3{color:var(--sev-medium)}
+.priority::before{content:"";width:6px;height:6px;border-radius:2px;background:currentColor}
+
+.age{font-family:var(--font-mono);font-weight:500;color:var(--ink-80)}
+.age.over{color:var(--sev-critical)}
+
+/* Inline confirm */
+.inline-toast{
+  display:inline-flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);
+  background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);
+  font-size:var(--text-label);font-weight:500;
+  animation:fadein 180ms ease-out;
+}
+@keyframes fadein{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
+.inline-toast svg{width:12px;height:12px}
+
+/* Callout (locked pattern) */
+.callout{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-4) var(--s-6);background:var(--brand-dim);
+  border:1px solid var(--line-strong);border-radius:var(--r-md);
+  margin:var(--s-6) 0;
+}
+.callout-chip{
+  width:30px;height:30px;flex-shrink:0;border-radius:50%;
+  background:var(--brand);color:var(--brand-ink);
+  display:grid;place-items:center;
+}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+/* ---------- Utility ---------- */
+.sr{position:absolute;left:-9999px}
+.hide{display:none !important}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40);background-clip:content-box;border:2px solid transparent}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="shell">
+
+  <!-- Left rail -->
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav" aria-label="Primary">
+      <button class="rail-btn active" aria-label="Dashboard" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="rail-btn" aria-label="Engagements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      </button>
+      <button class="rail-btn" aria-label="Testers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+      </button>
+      <button class="rail-btn" aria-label="Findings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+      </button>
+      <button class="rail-btn" aria-label="Reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </button>
+    </nav>
+    <div class="rail-spacer"></div>
+    <button class="rail-btn" aria-label="Help">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+    </button>
+    <button class="rail-btn" aria-label="Profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>SecureLoop</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <span>Delivery</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <span class="current">Engagement Dashboard</span>
+        <span class="id-pill" style="margin-left:var(--s-2)">DM-01</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search" role="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span>Search engagements, testers, customers…</span>
+          <span class="k">⌘K</span>
+        </div>
+        <button class="topbar-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>3</span>
+        </button>
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn" aria-haspopup="true" aria-expanded="false">
+            <span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span>
+            <span id="themeLabel">Coffee · Dark</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="theme-pop" id="themePop" role="menu">
+            <div>
+              <h4>Palette family</h4>
+              <div class="fam-grid" style="margin-top:var(--s-2)">
+                <button class="fam-card active" data-fam="coffee">
+                  <div class="fam-swatch"><span></span><span></span><span></span></div>
+                  <div class="fam-name">Coffee</div>
+                  <div class="fam-sub">Warm · investigation</div>
+                </button>
+                <button class="fam-card" data-fam="blue">
+                  <div class="fam-swatch"><span></span><span></span><span></span></div>
+                  <div class="fam-name">Blue</div>
+                  <div class="fam-sub">Cool · enterprise</div>
+                </button>
+              </div>
+            </div>
+            <div>
+              <h4>Appearance</h4>
+              <div class="mode-row" style="margin-top:var(--s-2)">
+                <button class="mode-btn active" data-mode="dark">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  Dark
+                </button>
+                <button class="mode-btn" data-mode="light">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                  Light
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Page head -->
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">
+            <span class="role-chip">DELIVERY MANAGER</span>
+            <span>COMMAND DASHBOARD</span>
+          </div>
+          <h1 class="page-title">Good afternoon, Priya — 3 items need your attention</h1>
+          <div class="page-sub">Tuesday · 21 Apr 2026 · 14:32 GST · <span style="color:var(--ink-80);font-weight:500">12 active engagements</span> across 8 customers</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export
+          </button>
+          <button class="btn primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New engagement
+          </button>
+        </div>
+      </div>
+
+      <!-- METRIC TILES -->
+      <div class="metrics">
+        <!-- 1 Active Engagements -->
+        <div class="tile" tabindex="0" role="button" aria-label="Active engagements — drill down">
+          <div class="tile-top">
+            <span class="tile-label">Active engagements</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            </div>
+          </div>
+          <div class="tile-value">12</div>
+          <div class="tile-meta">
+            <span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/></svg>+2</span>
+            <span>vs last week</span>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <span style="height:40%"></span><span style="height:55%"></span><span style="height:45%"></span>
+            <span style="height:62%"></span><span style="height:58%"></span><span style="height:72%"></span>
+            <span style="height:80%"></span><span style="height:75%"></span><span style="height:90%"></span>
+            <span style="height:100%"></span>
+          </div>
+        </div>
+
+        <!-- 2 Tester Utilization -->
+        <div class="tile" tabindex="0" role="button" aria-label="Tester utilization — drill down">
+          <div class="tile-top">
+            <span class="tile-label">Tester utilization</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+          </div>
+          <div class="tile-value">78<span style="font-size:var(--text-xl);color:var(--ink-60);font-weight:400">%</span></div>
+          <div class="tile-meta">
+            <span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/></svg>+4pp</span>
+            <span>target band 70–85%</span>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <span style="height:60%"></span><span style="height:55%"></span><span style="height:65%"></span>
+            <span style="height:70%"></span><span style="height:68%"></span><span style="height:72%"></span>
+            <span style="height:75%"></span><span style="height:78%"></span><span style="height:82%"></span>
+            <span style="height:78%"></span>
+          </div>
+        </div>
+
+        <!-- 3 SLA Breaches — RED because >0 -->
+        <div class="tile sev-crit" tabindex="0" role="button" aria-label="SLA breaches — drill down">
+          <div class="tile-top">
+            <span class="tile-label">SLA breaches</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            </div>
+          </div>
+          <div class="tile-value">3</div>
+          <div class="tile-meta">
+            <span class="trend down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>+1</span>
+            <span>2 breached · 1 pre-breach warning</span>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <span style="height:20%"></span><span style="height:15%"></span><span style="height:25%"></span>
+            <span style="height:30%"></span><span style="height:20%"></span><span style="height:40%"></span>
+            <span style="height:35%"></span><span style="height:60%"></span><span style="height:75%"></span>
+            <span style="height:100%"></span>
+          </div>
+        </div>
+
+        <!-- 4 Pending Approvals -->
+        <div class="tile sev-high" tabindex="0" role="button" aria-label="Pending approvals — drill down">
+          <div class="tile-top">
+            <span class="tile-label">Pending approvals</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+            </div>
+          </div>
+          <div class="tile-value">7</div>
+          <div class="tile-meta">
+            <span class="trend flat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>0</span>
+            <span>4 reports · 2 milestones · 1 retest</span>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <span style="height:50%"></span><span style="height:60%"></span><span style="height:55%"></span>
+            <span style="height:70%"></span><span style="height:65%"></span><span style="height:60%"></span>
+            <span style="height:75%"></span><span style="height:70%"></span><span style="height:72%"></span>
+            <span style="height:70%"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENGAGEMENT VIEW SECTION -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="sec-head-left">
+            <h2 class="sec-title">Engagement view</h2>
+            <span class="sec-sub">12 active · sorted by SLA health</span>
+          </div>
+          <div class="sec-actions">
+            <div class="chip-row">
+              <button class="chip active">All <span class="chip-count">12</span></button>
+              <button class="chip">At-risk <span class="chip-count">3</span></button>
+              <button class="chip">On track <span class="chip-count">8</span></button>
+              <button class="chip">Draft <span class="chip-count">1</span></button>
+            </div>
+            <div class="segmented" role="group" aria-label="View toggle">
+              <button class="seg-btn active" data-view="list" aria-pressed="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+                List
+              </button>
+              <button class="seg-btn" data-view="card" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Cards
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIST VIEW -->
+        <div class="view-list table-wrap">
+          <table class="eng-table">
+            <thead>
+              <tr>
+                <th>Engagement</th>
+                <th>SLA</th>
+                <th>Completion</th>
+                <th>Days left</th>
+                <th>Critical</th>
+                <th>Tester</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Aurora Financial · Web App Pentest</div>
+                    <div class="eng-name-s">ENG-2026-0412 · Web application</div>
+                  </div>
+                </td>
+                <td><span class="rag red">Breached</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:72%;background:var(--sev-critical)"></div></div><span class="pct-val">72%</span></div></td>
+                <td><span class="mono" style="color:var(--sev-critical)">−2d</span></td>
+                <td><div class="fc-group"><span class="fc crit"><span class="dot"></span>3</span><span class="fc high"><span class="dot"></span>5</span></div></td>
+                <td><div class="ava"><span class="ava-badge">NR</span><span class="ava-name">Nikhil Rao</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Meridian Health · API Security</div>
+                    <div class="eng-name-s">ENG-2026-0408 · API &amp; integrations</div>
+                  </div>
+                </td>
+                <td><span class="rag red">Breached</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:88%;background:var(--sev-critical)"></div></div><span class="pct-val">88%</span></div></td>
+                <td><span class="mono" style="color:var(--sev-critical)">−1d</span></td>
+                <td><div class="fc-group"><span class="fc crit"><span class="dot"></span>2</span><span class="fc high"><span class="dot"></span>4</span></div></td>
+                <td><div class="ava"><span class="ava-badge">LK</span><span class="ava-name">Lee Kwan</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Bayview Retail · Network Pentest</div>
+                    <div class="eng-name-s">ENG-2026-0401 · Internal network</div>
+                  </div>
+                </td>
+                <td><span class="rag amber">At risk</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:54%;background:var(--sev-high)"></div></div><span class="pct-val">54%</span></div></td>
+                <td><span class="mono">3d</span></td>
+                <td><div class="fc-group"><span class="fc crit"><span class="dot"></span>1</span><span class="fc high"><span class="dot"></span>7</span></div></td>
+                <td><div class="ava"><span class="ava-badge">MF</span><span class="ava-name">Maya Ferreira</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button><button class="btn sm">Reassign</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Solaris Cloud · Cloud Security Assessment</div>
+                    <div class="eng-name-s">ENG-2026-0398 · AWS · 47 assets</div>
+                  </div>
+                </td>
+                <td><span class="rag good">On track</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:62%"></div></div><span class="pct-val">62%</span></div></td>
+                <td><span class="mono">11d</span></td>
+                <td><div class="fc-group"><span class="fc high"><span class="dot"></span>2</span><span style="color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-label)">0 crit</span></div></td>
+                <td><div class="ava"><span class="ava-badge">JT</span><span class="ava-name">Jamal Toure</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Kestrel Defense · Red Team Exercise</div>
+                    <div class="eng-name-s">ENG-2026-0393 · Full-scope red team</div>
+                  </div>
+                </td>
+                <td><span class="rag good">On track</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:35%"></div></div><span class="pct-val">35%</span></div></td>
+                <td><span class="mono">22d</span></td>
+                <td><div class="fc-group"><span style="color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-label)">— pending</span></div></td>
+                <td><div class="ava"><span class="ava-badge">SK</span><span class="ava-name">Sana Karim</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Helix Biotech · Web App Pentest</div>
+                    <div class="eng-name-s">ENG-2026-0387 · PCI-DSS scope</div>
+                  </div>
+                </td>
+                <td><span class="rag amber">Pre-breach</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:78%;background:var(--sev-high)"></div></div><span class="pct-val">78%</span></div></td>
+                <td><span class="mono" style="color:var(--sev-high)">1d</span></td>
+                <td><div class="fc-group"><span class="fc high"><span class="dot"></span>3</span></div></td>
+                <td><div class="ava"><span class="ava-badge">TO</span><span class="ava-name">Tomás Olivera</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Orion Logistics · API Security</div>
+                    <div class="eng-name-s">ENG-2026-0376 · 3rd-party connectors</div>
+                  </div>
+                </td>
+                <td><span class="rag good">On track</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:48%"></div></div><span class="pct-val">48%</span></div></td>
+                <td><span class="mono">14d</span></td>
+                <td><div class="fc-group"><span class="fc high"><span class="dot"></span>1</span></div></td>
+                <td><div class="ava"><span class="ava-badge">CM</span><span class="ava-name">Claire Moreau</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Vanta Ltd · Network Pentest</div>
+                    <div class="eng-name-s">ENG-2026-0369 · Perimeter &amp; DMZ</div>
+                  </div>
+                </td>
+                <td><span class="rag good">On track</span></td>
+                <td><div class="pct"><div class="pct-bar"><div class="pct-bar-fill" style="width:91%"></div></div><span class="pct-val">91%</span></div></td>
+                <td><span class="mono">5d</span></td>
+                <td><div class="fc-group"><span class="fc high"><span class="dot"></span>2</span></div></td>
+                <td><div class="ava"><span class="ava-badge">NR</span><span class="ava-name">Nikhil Rao</span></div></td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CARD VIEW -->
+        <div class="view-card">
+          <div class="cards active">
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Aurora Financial</h3>
+                  <div class="e-card-id">ENG-2026-0412 · Web App Pentest</div>
+                </div>
+                <span class="rag red">Breached</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">72%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono" style="color:var(--sev-critical)">−2d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v"><span class="fc crit"><span class="dot"></span>3</span> <span class="fc high"><span class="dot"></span>5</span></div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Nikhil Rao</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 12m ago</span>
+                <button class="btn sm primary">Extend SLA</button>
+              </div>
+            </div>
+
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Meridian Health</h3>
+                  <div class="e-card-id">ENG-2026-0408 · API Security</div>
+                </div>
+                <span class="rag red">Breached</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">88%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono" style="color:var(--sev-critical)">−1d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v"><span class="fc crit"><span class="dot"></span>2</span> <span class="fc high"><span class="dot"></span>4</span></div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Lee Kwan</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 4m ago</span>
+                <button class="btn sm primary">Extend SLA</button>
+              </div>
+            </div>
+
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Bayview Retail</h3>
+                  <div class="e-card-id">ENG-2026-0401 · Network Pentest</div>
+                </div>
+                <span class="rag amber">At risk</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">54%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono">3d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v"><span class="fc crit"><span class="dot"></span>1</span> <span class="fc high"><span class="dot"></span>7</span></div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Maya Ferreira</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 1h ago</span>
+                <button class="btn sm">Reassign</button>
+              </div>
+            </div>
+
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Solaris Cloud</h3>
+                  <div class="e-card-id">ENG-2026-0398 · Cloud Assessment</div>
+                </div>
+                <span class="rag good">On track</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">62%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono">11d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v"><span class="fc high"><span class="dot"></span>2</span></div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Jamal Toure</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 3h ago</span>
+                <button class="btn sm">View</button>
+              </div>
+            </div>
+
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Kestrel Defense</h3>
+                  <div class="e-card-id">ENG-2026-0393 · Red Team</div>
+                </div>
+                <span class="rag good">On track</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">35%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono">22d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v" style="color:var(--ink-60);font-size:var(--text-label)">— pending</div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Sana Karim</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 6h ago</span>
+                <button class="btn sm">View</button>
+              </div>
+            </div>
+
+            <div class="e-card">
+              <div class="e-card-top">
+                <div>
+                  <h3 class="e-card-title">Helix Biotech</h3>
+                  <div class="e-card-id">ENG-2026-0387 · Web App PCI</div>
+                </div>
+                <span class="rag amber">Pre-breach</span>
+              </div>
+              <div class="e-card-meta-grid">
+                <div><div class="e-meta-l">Completion</div><div class="e-meta-v mono">78%</div></div>
+                <div><div class="e-meta-l">Days left</div><div class="e-meta-v mono" style="color:var(--sev-high)">1d</div></div>
+                <div><div class="e-meta-l">Critical</div><div class="e-meta-v"><span class="fc high"><span class="dot"></span>3</span></div></div>
+                <div><div class="e-meta-l">Tester</div><div class="e-meta-v">Tomás Olivera</div></div>
+              </div>
+              <div class="e-card-foot">
+                <span style="font-size:var(--text-label);color:var(--ink-60)">Updated 45m ago</span>
+                <button class="btn sm primary">Extend SLA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTION QUEUE SECTION -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="sec-head-left">
+            <h2 class="sec-title">Prioritised action queue</h2>
+            <span class="sec-sub">6 items · auto-sorted by priority × age</span>
+          </div>
+          <div class="sec-actions">
+            <div class="chip-row">
+              <button class="chip active">All <span class="chip-count">6</span></button>
+              <button class="chip">SLA breach <span class="chip-count">2</span></button>
+              <button class="chip">Approvals <span class="chip-count">3</span></button>
+              <button class="chip">Retests <span class="chip-count">1</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="aq-head-bar">
+          <div class="aq-pulse" aria-hidden="true"></div>
+          <span style="color:var(--ink-80);font-weight:500">Live feed</span>
+          <span style="color:var(--ink-60)">· quick actions execute inline — no navigation required</span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="eng-table">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Engagement</th>
+                <th>Priority</th>
+                <th>Age</th>
+                <th style="text-align:right">Quick action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="act-type sla-breach">SLA Breach</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Finding SEC-4812 · Critical · scoping phase</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Aurora Financial</div>
+                    <div class="eng-name-s">ENG-2026-0412</div>
+                  </div>
+                </td>
+                <td><span class="priority p1">P1</span></td>
+                <td><span class="age over">2d overdue</span></td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="act-type sla-breach">SLA Breach</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Finding SEC-4798 · High · exploitation</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Meridian Health</div>
+                    <div class="eng-name-s">ENG-2026-0408</div>
+                  </div>
+                </td>
+                <td><span class="priority p1">P1</span></td>
+                <td><span class="age over">1d overdue</span></td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+              <tr data-ack="pending">
+                <td><span class="act-type report">Report Approval</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Final report · awaiting DM sign-off (tester+SE approved)</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Vanta Ltd</div>
+                    <div class="eng-name-s">ENG-2026-0369</div>
+                  </div>
+                </td>
+                <td><span class="priority p2">P2</span></td>
+                <td><span class="age">6h</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button class="btn sm">Review</button>
+                    <button class="btn sm primary" data-approve>Approve</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="act-type milestone">Milestone Approval</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Subcontractor Kestrel · Phase 2 deliverable</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Kestrel Defense</div>
+                    <div class="eng-name-s">ENG-2026-0393</div>
+                  </div>
+                </td>
+                <td><span class="priority p2">P2</span></td>
+                <td><span class="age">1d</span></td>
+                <td><div class="row-actions"><button class="btn sm">Review</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="act-type report">Report Approval</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Executive summary · Orion Logistics</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Orion Logistics</div>
+                    <div class="eng-name-s">ENG-2026-0376</div>
+                  </div>
+                </td>
+                <td><span class="priority p3">P3</span></td>
+                <td><span class="age">2d</span></td>
+                <td><div class="row-actions"><button class="btn sm">Review</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="act-type retest">Retest Overdue</span><div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Retest of SEC-4721 · SLA 48h expired</div></td>
+                <td>
+                  <div class="eng-name">
+                    <div class="eng-name-t">Bayview Retail</div>
+                    <div class="eng-name-s">ENG-2026-0401</div>
+                  </div>
+                </td>
+                <td><span class="priority p2">P2</span></td>
+                <td><span class="age over">12h overdue</span></td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary">Extend SLA</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Callout -->
+      <div class="callout">
+        <div class="callout-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <div>
+          <div class="callout-title">Each metric tile and action row is click-through</div>
+          <div class="callout-body">Clicking a tile opens a filtered drill-down (engagements list, tester roster, SLA breach queue, approvals inbox). Action-queue quick actions execute inline — extend SLA, approve, reassign — without leaving this dashboard. Changes log to the audit trail automatically.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* ---------- Theme picker ---------- */
+const themeBtn = document.getElementById('themeBtn');
+const themePop = document.getElementById('themePop');
+const themeLabel = document.getElementById('themeLabel');
+
+themeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = themePop.classList.toggle('open');
+  themeBtn.setAttribute('aria-expanded', isOpen);
+});
+document.addEventListener('click', (e) => {
+  if (!themePop.contains(e.target) && e.target !== themeBtn) {
+    themePop.classList.remove('open');
+    themeBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    themePop.classList.remove('open');
+    themeBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+function applyTheme(){
+  const fam = document.querySelector('.fam-card.active').dataset.fam;
+  const mode = document.querySelector('.mode-btn.active').dataset.mode;
+  document.body.className = '';
+  document.body.classList.add(fam, mode);
+  if (document.body.classList.contains('is-card')) document.body.classList.add('is-card');
+  themeLabel.textContent = fam.charAt(0).toUpperCase()+fam.slice(1) + ' · ' + mode.charAt(0).toUpperCase()+mode.slice(1);
+}
+
+document.querySelectorAll('.fam-card').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.fam-card').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    applyTheme();
+  });
+});
+document.querySelectorAll('.mode-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    applyTheme();
+  });
+});
+
+/* ---------- List / Card toggle ---------- */
+document.querySelectorAll('.seg-btn[data-view]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.seg-btn[data-view]').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
+    b.classList.add('active');
+    b.setAttribute('aria-pressed','true');
+    if (b.dataset.view === 'card') document.body.classList.add('is-card');
+    else document.body.classList.remove('is-card');
+  });
+});
+
+/* ---------- Chip filters (visual only for prototype) ---------- */
+document.querySelectorAll('.chip-row').forEach(row => {
+  row.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      row.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+});
+
+/* ---------- Inline Approve demo ---------- */
+document.querySelectorAll('[data-approve]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const td = btn.closest('td');
+    td.innerHTML = '<span class="inline-toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Approved · logged to audit trail</span>';
+  });
+});
+
+/* Keyboard: make tile Enter/Space trigger a placeholder */
+document.querySelectorAll('.tile').forEach(t => {
+  t.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.click(); }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-06 · External System Sync Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:"Space Grotesk",system-ui,sans-serif;--font-ui:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)} .rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg.icon{width:14px;height:14px}
+.btn.icon-only{width:36px;height:36px;padding:0;flex:0 0 36px}
+.btn.icon-only svg{width:14px;height:14px}
+.btn.small{padding:4px var(--s-2);height:auto;font-size:var(--text-label)}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)} .family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* sync demo switcher */
+.state-switcher{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.state-switcher button{padding:6px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:92px}
+.state-switcher button:hover{color:var(--ink-100)} .state-switcher button.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* content: finding detail layout */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1440px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 360px;gap:var(--s-6)}
+.page-head{margin-bottom:var(--s-4);grid-column:1 / -1}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.2}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+.status-inline{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:500;font-family:var(--font-ui);background:var(--sev-low-bg);color:var(--sev-low)}
+.status-inline .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* LEFT: finding detail card (abridged - only enough context to feel full) */
+.detail-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-4)}
+.dc-head{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-3)}
+.dc-h2{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-2)}
+.dc-p{color:var(--ink-80);line-height:1.65;margin-bottom:var(--s-4)}
+.dc-kv{display:grid;grid-template-columns:140px 1fr;gap:var(--s-2) var(--s-4);font-size:var(--text-label)}
+.dc-kv dt{color:var(--ink-60);font-family:var(--font-mono);letter-spacing:0.04em}
+.dc-kv dd{color:var(--ink-80)}
+
+/* RIGHT: sticky sync sidebar */
+.sync-sidebar{position:sticky;top:calc(56px + var(--s-6));align-self:flex-start}
+.sync-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;margin-bottom:var(--s-4)}
+.sync-card-head{padding:var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-3)}
+.system-icon{width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);flex-shrink:0}
+.system-icon.jira{background:#2684FF20;color:#2684FF}
+.system-icon.svnow{background:#81B5A120;color:#81B5A1}
+.system-icon.azdo{background:#0078D420;color:#0078D4}
+.sys-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:2px}
+.sys-ticket{font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;color:var(--ink-100);display:flex;align-items:center;gap:6px}
+.sys-ticket svg{width:12px;height:12px;color:var(--ink-60)}
+
+/* sync status dot + pill */
+.sync-status{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-bottom:1px solid var(--line)}
+.sync-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sync-dot.ok{background:var(--status-good);box-shadow:0 0 0 3px var(--status-good-bg)}
+.sync-dot.warn{background:var(--sev-high);box-shadow:0 0 0 3px var(--sev-high-bg)}
+.sync-dot.err{background:var(--sev-critical);box-shadow:0 0 0 3px var(--sev-critical-bg);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.sync-dot.offline{background:var(--ink-40)}
+.sync-status-label{font-weight:600;font-size:var(--text-label)}
+.sync-status-label.ok{color:var(--status-good)} .sync-status-label.warn{color:var(--sev-high)} .sync-status-label.err{color:var(--sev-critical)} .sync-status-label.offline{color:var(--ink-60)}
+.sync-status-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-left:auto}
+
+/* ticket link block */
+.ticket-block{padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-3)}
+.tb-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)}
+.tb-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600}
+.tb-value{font-size:var(--text-label);color:var(--ink-100);text-align:right}
+.tb-value a{color:var(--brand);text-decoration:none;font-family:var(--font-mono)}
+.tb-value a:hover{text-decoration:underline}
+.tb-value .mono{font-family:var(--font-mono);color:var(--ink-80)}
+.tb-value.status-pill{display:inline-flex;align-items:center;gap:6px;padding:2px var(--s-2);background:var(--bg-raised);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:500}
+.tb-value.status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--sev-low)}
+
+/* sync-now action */
+.sync-now-row{padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-top:1px solid var(--line);display:flex;align-items:center;gap:var(--s-2)}
+.sync-now-row .btn{flex:1}
+
+/* timeline */
+.timeline{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.tl-head{padding:var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.tl-head h3{font-family:var(--font-display);font-size:var(--text-body);font-weight:600}
+.tl-filter{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+.tl-body{padding:0 var(--s-4);max-height:440px;overflow-y:auto}
+.tl-item{padding:var(--s-3) 0;display:grid;grid-template-columns:12px 1fr;gap:var(--s-3);position:relative;border-bottom:1px solid var(--line)}
+.tl-item:last-child{border-bottom:none}
+.tl-item::before{content:"";position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--line-strong)}
+.tl-item:first-child::before{top:var(--s-3)}
+.tl-item:last-child::before{bottom:calc(100% - 16px)}
+.tl-node{width:12px;height:12px;border-radius:50%;margin-top:2px;flex-shrink:0;position:relative;z-index:1;border:2px solid var(--bg-base)}
+.tl-node.out{background:var(--sev-low)}
+.tl-node.in{background:var(--status-good)}
+.tl-node.err{background:var(--sev-critical)}
+.tl-node.retry{background:var(--sev-high)}
+.tl-content{min-width:0}
+.tl-meta{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--ink-60);letter-spacing:0.04em;margin-bottom:2px}
+.tl-meta .dir{font-weight:700;text-transform:uppercase}
+.tl-meta .dir.out{color:var(--sev-low)} .tl-meta .dir.in{color:var(--status-good)} .tl-meta .dir.err{color:var(--sev-critical)} .tl-meta .dir.retry{color:var(--sev-high)}
+.tl-msg{font-size:var(--text-label);color:var(--ink-100);line-height:1.5;margin-bottom:4px}
+.tl-detail{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);background:var(--bg-raised);padding:6px var(--s-2);border-radius:var(--r-xs);white-space:pre-wrap;line-height:1.5;letter-spacing:0.02em}
+.tl-retry-chain{display:inline-flex;align-items:center;gap:6px;padding:2px var(--s-2);background:var(--sev-high-bg);color:var(--sev-high);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:10px;font-weight:600;margin-top:var(--s-1)}
+.tl-retry-chain svg{width:10px;height:10px}
+
+/* failure callout */
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md);margin-bottom:var(--s-4)}
+.callout .chip{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:var(--sev-critical);color:#fff}
+body.light .callout .chip{background:var(--sev-critical)}
+.callout .chip svg{width:16px;height:16px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-sub{font-size:var(--text-label);color:var(--ink-60);line-height:1.5}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>My Findings</span><span class="sep">/</span>
+        <span class="current">FND-2026-00476 · External Sync</span>
+        <span class="id-pill">TEAM-06</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="state-switcher" id="stateSwitcher">
+        <button class="active" data-demo="synced">Synced OK</button>
+        <button data-demo="failed">Sync failed</button>
+        <button data-demo="offline">Offline</button>
+      </div>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row"><button class="mode-btn active" data-mode="dark">Dark</button><button class="mode-btn" data-mode="light">Light</button></div>
+        </div>
+      </div>
+      <div class="user-chip"><span class="avatar">NR</span><div><div class="user-chip-name">Nikhil Rao</div><div class="user-chip-role">Cloud Team</div></div></div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div class="page-eyebrow">Finding detail · External System Sync</div>
+        <h1 class="page-title">IAM role "eks-node-role" has * permissions on S3</h1>
+        <div class="page-sub">
+          <span class="sev-pill crit"><span class="dot"></span>Critical</span>
+          <span style="font-family:var(--font-mono)">FND-2026-00476</span>
+          <span>·</span>
+          <span>Assigned: Nikhil Rao</span>
+          <span>·</span>
+          <span class="status-inline"><span class="dot"></span>In Progress</span>
+        </div>
+      </div>
+
+      <!-- LEFT: finding detail (abridged) -->
+      <div>
+        <div class="detail-card">
+          <div class="dc-head">Finding</div>
+          <h2 class="dc-h2">Over-permissive IAM role</h2>
+          <p class="dc-p">The eks-node-role in us-east-1 is granted <code style="font-family:var(--font-mono);padding:2px 4px;background:var(--bg-raised);border-radius:var(--r-xs);font-size:var(--text-label)">s3:*</code> on all buckets. Scope should be narrowed to specific buckets and actions required by the workload.</p>
+          <dl class="dc-kv">
+            <dt>Asset</dt><dd style="font-family:var(--font-mono)">eks-node-role · AWS us-east-1</dd>
+            <dt>Detected by</dt><dd>Cloud posture scanner · 18 Apr 2026</dd>
+            <dt>Due</dt><dd>24 Apr 2026 (in 3 days)</dd>
+            <dt>Compliance</dt><dd>NIST-CSF PR.AC-4 · CIS 1.16 · SOC2 CC6.1</dd>
+          </dl>
+        </div>
+
+        <!-- failure callout (visible only when demo=failed) -->
+        <div class="callout" id="failCallout" style="display:none">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg></span>
+          <div>
+            <div class="callout-title">Sync to Jira failed — retrying with exponential backoff</div>
+            <div class="callout-sub">Next retry in <span style="color:var(--sev-high);font-weight:600;font-family:var(--font-mono)">04:38</span> · 3 of 5 retries exhausted · Platform Admin notified on 4th failure</div>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="timeline">
+          <div class="tl-head">
+            <h3>Bi-directional sync log</h3>
+            <span class="tl-filter">Last 14 days · 12 events</span>
+          </div>
+          <div class="tl-body">
+
+            <div class="tl-item">
+              <div class="tl-node in"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir in">← IN</span><span>Jira</span><span>·</span><span>21 Apr 14:22 GST</span></div>
+                <div class="tl-msg">Jira ticket status changed <strong>In Review → In Progress</strong> — SecureLoop status synced automatically</div>
+                <div class="tl-detail">webhook: jira_issue_updated  assignee=nikhil.rao@co  status=In_Progress  sl_status_before=Open  sl_status_after=In_Progress</div>
+              </div>
+            </div>
+
+            <div class="tl-item" id="tlRetry" style="display:none">
+              <div class="tl-node retry"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir retry">↻ RETRY</span><span>Jira</span><span>·</span><span>21 Apr 13:58 GST</span></div>
+                <div class="tl-msg">Retry 2 of 5 — backoff 2 min → 4 min</div>
+                <div class="tl-retry-chain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Exponential backoff · 1m → 2m → 4m → 8m → 16m</div>
+              </div>
+            </div>
+
+            <div class="tl-item" id="tlFail" style="display:none">
+              <div class="tl-node err"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir err">FAIL</span><span>Jira</span><span>·</span><span>21 Apr 13:54 GST</span></div>
+                <div class="tl-msg">POST /rest/api/3/issue/SEC-2045/comment returned 401</div>
+                <div class="tl-detail">error: authentication_expired  api_token_expires_at=2026-04-21T13:50:00Z  action_required=rotate_token  scope=team_workspace</div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <div class="tl-node out"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir out">OUT →</span><span>Jira</span><span>·</span><span>21 Apr 10:03 GST</span></div>
+                <div class="tl-msg">Pushed status change <strong>Open → In Progress</strong> + comment with progress note</div>
+                <div class="tl-detail">ticket: SEC-2045  field_updates: status, assignee, labels[+"secureloop-synced"]  latency_ms: 340</div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <div class="tl-node in"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir in">← IN</span><span>Jira</span><span>·</span><span>19 Apr 09:44 GST</span></div>
+                <div class="tl-msg">Jira comment added by teammate — mirrored to SecureLoop as finding note</div>
+                <div class="tl-detail">author: priya.menon@co  body_preview: "Please coordinate with the Payments team before applying the fix…"</div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <div class="tl-node out"></div>
+              <div class="tl-content">
+                <div class="tl-meta"><span class="dir out">OUT →</span><span>Jira</span><span>·</span><span>18 Apr 15:20 GST</span></div>
+                <div class="tl-msg">Created ticket <strong>SEC-2045</strong> — linked to FND-2026-00476</div>
+                <div class="tl-detail">project: SEC  issuetype: Security Finding  fields: summary, description, severity, due_date, assignee, labels</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: sticky sync sidebar -->
+      <aside class="sync-sidebar">
+
+        <!-- Jira -->
+        <div class="sync-card">
+          <div class="sync-card-head">
+            <div class="system-icon jira">J</div>
+            <div>
+              <div class="sys-label">Linked ticket</div>
+              <div class="sys-ticket">SEC-2045 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></div>
+            </div>
+          </div>
+
+          <div class="sync-status">
+            <span class="sync-dot ok" id="jiraDot"></span>
+            <span class="sync-status-label ok" id="jiraLabel">Synced</span>
+            <span class="sync-status-sub" id="jiraSub">Last synced · 12s ago</span>
+          </div>
+
+          <div class="ticket-block">
+            <div class="tb-row"><span class="tb-label">System</span><span class="tb-value"><a href="#">Atlassian Jira Cloud</a></span></div>
+            <div class="tb-row"><span class="tb-label">URL</span><span class="tb-value"><a href="#">cybrilliant.atlassian.net/…/SEC-2045</a></span></div>
+            <div class="tb-row"><span class="tb-label">Status (remote)</span><span class="tb-value status-pill"><span class="dot"></span>In Progress</span></div>
+            <div class="tb-row"><span class="tb-label">Assignee (remote)</span><span class="tb-value mono">nikhil.rao@co</span></div>
+            <div class="tb-row"><span class="tb-label">Direction</span><span class="tb-value mono">↔ bi-directional</span></div>
+          </div>
+
+          <div class="sync-now-row">
+            <button class="btn" id="syncNow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Sync now</button>
+            <button class="btn ghost icon-only" title="Open in Jira"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+          </div>
+        </div>
+
+        <!-- ServiceNow -->
+        <div class="sync-card">
+          <div class="sync-card-head">
+            <div class="system-icon svnow">S</div>
+            <div>
+              <div class="sys-label">Change record</div>
+              <div class="sys-ticket">CHG0042891</div>
+            </div>
+          </div>
+          <div class="sync-status">
+            <span class="sync-dot ok"></span>
+            <span class="sync-status-label ok">Synced</span>
+            <span class="sync-status-sub">1 min ago</span>
+          </div>
+          <div class="ticket-block">
+            <div class="tb-row"><span class="tb-label">System</span><span class="tb-value"><a href="#">ServiceNow · CMDB</a></span></div>
+            <div class="tb-row"><span class="tb-label">Status (remote)</span><span class="tb-value status-pill"><span class="dot" style="background:var(--sev-medium)"></span>Scheduled</span></div>
+            <div class="tb-row"><span class="tb-label">Direction</span><span class="tb-value mono">→ push-only</span></div>
+          </div>
+        </div>
+
+        <!-- Azure DevOps -->
+        <div class="sync-card">
+          <div class="sync-card-head">
+            <div class="system-icon azdo">A</div>
+            <div>
+              <div class="sys-label">Work item</div>
+              <div class="sys-ticket">#4812</div>
+            </div>
+          </div>
+          <div class="sync-status">
+            <span class="sync-dot offline"></span>
+            <span class="sync-status-label offline">Not linked</span>
+            <span class="sync-status-sub">—</span>
+          </div>
+          <div class="ticket-block">
+            <div class="tb-row"><span class="tb-label">System</span><span class="tb-value"><a href="#">Azure DevOps</a></span></div>
+            <div class="tb-row" style="justify-content:flex-start"><button class="btn small" style="width:100%">Link existing work item…</button></div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePop.classList.remove('open')});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* demo state switcher */
+const StateConfig={
+  synced:{dot:'ok',label:'Synced',labelCls:'sync-status-label ok',sub:'Last synced · 12s ago',showFail:false,showTlFail:false,showTlRetry:false},
+  failed:{dot:'err',label:'Sync failed — retrying',labelCls:'sync-status-label err',sub:'Retry 3 of 5 · next in 04:38',showFail:true,showTlFail:true,showTlRetry:true},
+  offline:{dot:'offline',label:'Offline',labelCls:'sync-status-label offline',sub:'Integration disabled',showFail:false,showTlFail:false,showTlRetry:false}
+};
+function setState(key){
+  const cfg=StateConfig[key];if(!cfg)return;
+  document.querySelectorAll('#stateSwitcher button').forEach(b=>b.classList.toggle('active',b.dataset.demo===key));
+  const dot=document.getElementById('jiraDot'),label=document.getElementById('jiraLabel'),sub=document.getElementById('jiraSub');
+  dot.className='sync-dot '+cfg.dot;label.className=cfg.labelCls;label.textContent=cfg.label;sub.textContent=cfg.sub;
+  document.getElementById('failCallout').style.display=cfg.showFail?'flex':'none';
+  document.getElementById('tlFail').style.display=cfg.showTlFail?'grid':'none';
+  document.getElementById('tlRetry').style.display=cfg.showTlRetry?'grid':'none';
+}
+document.querySelectorAll('#stateSwitcher button').forEach(b=>b.addEventListener('click',()=>setState(b.dataset.demo)));
+
+applyTheme();
+</script>
+</body>
+</html>

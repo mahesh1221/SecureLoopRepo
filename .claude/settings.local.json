@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash -c 'echo \"{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"SessionStart\\\\\",\\\\\"additionalContext\\\\\":\\\\\"Run /claude-mem:mem-search to load persistent project context before starting work.\\\\\"}}\"')",
+      "Bash(bash -c 'echo \"{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"BUILD COMPLETE: pnpm build finished. If the build succeeded, run /stress-test to validate business assumptions before declaring the feature complete.\\\\\"}}\"')",
+      "Bash(bash -c 'b=$\\(git branch --show-current 2>/dev/null\\); if [[ \"$b\" == remediation/* ]]; then printf \"{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"SKILL-GUARD [branch: %s]: Code written on remediation branch. Check for: hardcoded credentials, command injection, insecure execution patterns, missing input validation, privilege escalation.\\\\\"}}\\\\\\\\n\" \"$b\"; fi')",
+      "Bash(bash -c 'b=\"remediation/fix-auth-bypass\"; if [[ \"$b\" == remediation/* ]]; then printf \"{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"SKILL-GUARD [branch: %s]: Code written on remediation branch. Check for: hardcoded credentials, command injection, insecure execution patterns, missing input validation, privilege escalation.\\\\\"}}\\\\\\\\n\" \"$b\"; fi')",
+      "Bash(node *)",
+      "Bash(bash -c 'day=$\\(date +%u 2>/dev/null\\); if [ \"$day\" = \"1\" ]; then echo \"{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"SessionStart\\\\\",\\\\\"additionalContext\\\\\":\\\\\"MONDAY: Run /claude-mem:timeline-report to generate the weekly development narrative for SecureLoop.\\\\\"}}\"; fi')",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); cmd=d.get\\('tool_input',{}\\).get\\('command',''\\); \\(cmd=='pnpm build' or cmd.startswith\\('pnpm build '\\)\\) and print\\('{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"BUILD COMPLETE: pnpm build finished. If the build succeeded, run /stress-test to validate business assumptions before declaring the feature complete.\\\\\"}}'\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); cmd=d.get\\('tool_input',{}\\).get\\('command',''\\); \\(cmd=='pnpm build' or cmd.startswith\\('pnpm build '\\)\\) and print\\('{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"BUILD COMPLETE.\\\\\"}}'\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); cmd=d.get\\('tool_input',{}\\).get\\('command',''\\); \\(cmd.startswith\\('git tag '\\) and len\\(cmd\\)>8\\) and print\\('{\\\\\"hookSpecificOutput\\\\\":{\\\\\"hookEventName\\\\\":\\\\\"PostToolUse\\\\\",\\\\\"additionalContext\\\\\":\\\\\"GIT TAG: New tag created. Run /claude-mem:version-bump to verify version consistency across all package.json files in the monorepo and check release notes are present.\\\\\"}}'\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); cmd=d.get\\('tool_input',{}\\).get\\('command',''\\); \\(cmd.startswith\\('git tag '\\) and len\\(cmd\\)>8\\) and print\\('MATCH'\\)\")",
+      "Skill(update-config)"
+    ]
+  }
+}

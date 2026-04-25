@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-04 Unified SLA Alerts</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--grain-opacity:.025}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--grain-opacity:.025}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-0.003em;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");opacity:var(--grain-opacity);mix-blend-mode:overlay}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button,input,select,textarea{font-family:inherit;color:inherit}
+
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+.rail{background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{width:40px;height:40px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+.topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.search{display:flex;align-items:center;gap:var(--s-2);padding:0 var(--s-3);height:32px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-60);font-size:var(--text-body);min-width:240px}
+.search svg{width:14px;height:14px}.search .k{margin-left:auto;padding:1px 5px;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-40)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+
+.theme-pick{position:relative}.theme-btn{height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);cursor:pointer}
+.theme-swatches{display:inline-flex;gap:2px}.theme-swatches span{width:10px;height:14px;border-radius:3px;border:1px solid var(--line-strong)}.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.theme-pop{position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);display:none;flex-direction:column;gap:var(--s-4);z-index:100}
+.theme-pop.open{display:flex}.theme-pop h4{margin:0;font-size:var(--text-micro);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}.fam-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}.mode-btn{flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+.content{padding:var(--s-6) var(--s-8);max-width:1440px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-4)}
+.eyebrow{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.role-chip{padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;margin-right:var(--s-2)}
+.page-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);letter-spacing:-0.02em;margin:0;color:var(--ink-100)}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+.page-actions{display:flex;gap:var(--s-2)}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn svg{width:13px;height:13px}
+
+/* Summary tiles */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-6)}
+.s-tile{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);display:flex;flex-direction:column;gap:var(--s-2)}
+.s-tile.crit{border-color:rgba(255,107,91,.3)}
+.s-tile.warn{border-color:rgba(255,176,77,.3)}
+.s-tile-label{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.s-tile-icon{width:24px;height:24px;display:grid;place-items:center;border-radius:var(--r-sm);background:var(--brand-dim);color:var(--brand)}
+.s-tile.crit .s-tile-icon{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.s-tile.warn .s-tile-icon{background:var(--sev-high-bg);color:var(--sev-high)}
+.s-tile-icon svg{width:12px;height:12px}
+.s-tile-val{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:500;line-height:1;color:var(--ink-100)}
+.s-tile.crit .s-tile-val{color:var(--sev-critical)}
+.s-tile.warn .s-tile-val{color:var(--sev-high)}
+.s-tile-meta{font-size:var(--text-label);color:var(--ink-60)}
+
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4);padding:var(--s-3) var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);flex-wrap:wrap}
+.chip-row{display:flex;gap:var(--s-2);align-items:center;flex-wrap:wrap}
+.chip{padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);color:var(--ink-80);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;gap:4px}
+.chip:hover{background:var(--bg-hover)}
+.chip.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.chip-count{padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro)}
+.chip.active .chip-count{background:rgba(0,0,0,.16)}
+
+.section{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-6);overflow:hidden}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.sec-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.sec-sub{font-size:var(--text-label);color:var(--ink-60);margin-left:var(--s-3)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{padding:var(--s-3) var(--s-6);text-align:left;font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;border-bottom:1px solid var(--line);background:var(--bg-raised);white-space:nowrap}
+.tbl tbody td{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr:hover{background:var(--bg-hover)}
+.tbl tbody tr.breached{box-shadow:inset 3px 0 0 var(--sev-critical)}
+.tbl tbody tr.warning{box-shadow:inset 3px 0 0 var(--sev-high)}
+.tbl tbody tr.ontrack{box-shadow:inset 3px 0 0 var(--status-good)}
+
+.alert-type{display:inline-flex;align-items:center;gap:var(--s-2);padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.alert-type.milestone{background:var(--sev-low-bg);color:var(--sev-low)}
+.alert-type.finding{background:var(--brand-dim);color:var(--brand)}
+
+.sev-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sev-pill::before{content:"";width:6px;height:6px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}.sev-pill.crit::before{background:var(--sev-critical)}
+.sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)}.sev-pill.high::before{background:var(--sev-high)}
+.sev-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}.sev-pill.med::before{background:var(--sev-medium)}
+.sev-pill.low{background:var(--sev-low-bg);color:var(--sev-low)}.sev-pill.low::before{background:var(--sev-low)}
+.sev-pill.na{background:var(--bg-raised);color:var(--ink-60);border:1px solid var(--line)}
+
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.status-pill.breached{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.status-pill.warning{background:var(--sev-high-bg);color:var(--sev-high)}
+.status-pill.ontrack{background:var(--status-good-bg);color:var(--status-good)}
+
+.mono{font-family:var(--font-mono);font-weight:500}
+.over{color:var(--sev-critical);font-weight:600}
+.warn-text{color:var(--sev-high);font-weight:600}
+
+.row-actions{display:flex;gap:var(--s-1);justify-content:flex-end}
+
+.item-cell{display:flex;flex-direction:column;gap:2px}
+.item-name{font-weight:500;color:var(--ink-100)}
+.item-sub{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+
+/* MODAL */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;animation:fade 180ms ease}
+.backdrop.open{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{width:880px;max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column;animation:rise 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.modal-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.modal-close{width:36px;height:36px;display:grid;place-items:center;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms}
+.modal-close:hover{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.modal-close svg{width:14px;height:14px}
+.modal-body{padding:var(--s-6);overflow-y:auto;display:flex;flex-direction:column;gap:var(--s-4)}
+.modal-foot{display:flex;justify-content:flex-end;gap:var(--s-2);padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);background:var(--bg-base)}
+
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md)}
+.callout-chip{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+.field{display:flex;flex-direction:column;gap:var(--s-2)}
+.field-label{font-size:var(--text-label);font-weight:600;color:var(--ink-80)}
+.field-label .req{color:var(--sev-critical)}
+.input,.select,.textarea{width:100%;padding:0 var(--s-3);height:40px;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);transition:all 140ms}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-dim)}
+.textarea{height:auto;min-height:80px;padding:var(--s-3);line-height:1.5;resize:vertical}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A69B80' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right var(--s-3) center;background-size:14px}
+
+.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-6);padding:var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.kv-row .k{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);font-weight:600;margin-bottom:2px}
+.kv-row .v{font-size:var(--text-body);color:var(--ink-100);font-weight:500}
+
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body class="coffee dark">
+<div class="shell">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav">
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></button>
+      <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></button>
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></button>
+    </nav>
+    <div class="rail-spacer"></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb"><span>SecureLoop</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Delivery</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span class="current">SLA Alerts</span><span class="id-pill">DM-04</span></div>
+      <div class="topbar-right">
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>Search alerts…</span><span class="k">⌘K</span></div>
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn"><span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span><span id="themeLabel">Coffee · Dark</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="theme-pop" id="themePop">
+            <div><h4>Palette family</h4><div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Coffee</div><div class="fam-sub">Warm · investigation</div></button>
+              <button class="fam-card" data-fam="blue"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Blue</div><div class="fam-sub">Cool · enterprise</div></button>
+            </div></div>
+            <div><h4>Appearance</h4><div class="mode-row">
+              <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2"/></svg>Light</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow"><span class="role-chip">DELIVERY MANAGER</span>UNIFIED SLA ALERTS</div>
+          <h1 class="page-title">11 active alerts · 4 breached, 3 in pre-breach window</h1>
+          <div class="page-sub">Pre-breach window: 2 days · Breach notifications via email + in-app · last refresh 12s ago</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>Notification settings</button>
+        </div>
+      </div>
+
+      <!-- Summary tiles -->
+      <div class="summary">
+        <div class="s-tile crit">
+          <div class="s-tile-label">Breached <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div></div>
+          <div class="s-tile-val">4</div>
+          <div class="s-tile-meta">2 milestones · 2 findings</div>
+        </div>
+        <div class="s-tile warn">
+          <div class="s-tile-label">Pre-breach window <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div></div>
+          <div class="s-tile-val">3</div>
+          <div class="s-tile-meta">≤ 2 days to breach</div>
+        </div>
+        <div class="s-tile">
+          <div class="s-tile-label">On track <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div></div>
+          <div class="s-tile-val">4</div>
+          <div class="s-tile-meta">Healthy · all engagements</div>
+        </div>
+        <div class="s-tile">
+          <div class="s-tile-label">Resolved (7d) <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+          <div class="s-tile-val">12</div>
+          <div class="s-tile-meta">Avg time-to-resolve 18h</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="chip-row">
+          <button class="chip active">All <span class="chip-count">11</span></button>
+          <button class="chip">Milestones <span class="chip-count">5</span></button>
+          <button class="chip">Findings <span class="chip-count">6</span></button>
+          <button class="chip">Critical <span class="chip-count">3</span></button>
+          <button class="chip">High <span class="chip-count">4</span></button>
+        </div>
+        <div style="display:flex;gap:var(--s-2);align-items:center">
+          <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>Filters</button>
+          <button class="btn ghost sm">Sort: Breached first</button>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="sec-head">
+          <h2 class="sec-title">Unified alerts <span class="sec-sub">milestones + findings · breached first, then pre-breach</span></h2>
+          <button class="btn sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+        </div>
+        <div style="overflow:auto">
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>Item</th><th>Engagement</th><th>Severity</th><th>Due</th><th>Status</th><th>Days overdue</th><th>Assigned</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody>
+              <tr class="breached">
+                <td><span class="alert-type finding">Finding</span></td>
+                <td><div class="item-cell"><div class="item-name">Privilege escalation via IAM policy</div><div class="item-sub">SEC-4812 · scoping phase</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Aurora Financial</div><div class="item-sub">ENG-2026-0412</div></div></td>
+                <td><span class="sev-pill crit">Critical</span></td>
+                <td class="mono">19 Apr</td>
+                <td><span class="status-pill breached">Breached</span></td>
+                <td><span class="mono over">2d</span></td>
+                <td>Nikhil Rao</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="breached">
+                <td><span class="alert-type finding">Finding</span></td>
+                <td><div class="item-cell"><div class="item-name">SQLi in payment gateway</div><div class="item-sub">SEC-4798 · exploitation</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Meridian Health</div><div class="item-sub">ENG-2026-0408</div></div></td>
+                <td><span class="sev-pill high">High</span></td>
+                <td class="mono">20 Apr</td>
+                <td><span class="status-pill breached">Breached</span></td>
+                <td><span class="mono over">1d</span></td>
+                <td>Lee Kwan</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="breached">
+                <td><span class="alert-type milestone">Milestone</span></td>
+                <td><div class="item-cell"><div class="item-name">Phase 2 deliverable · Internal scan</div><div class="item-sub">milestone #4 of 6</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Bayview Retail</div><div class="item-sub">ENG-2026-0401</div></div></td>
+                <td><span class="sev-pill na">N/A</span></td>
+                <td class="mono">21 Apr</td>
+                <td><span class="status-pill breached">Breached</span></td>
+                <td><span class="mono over">12h</span></td>
+                <td>Maya Ferreira</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="breached">
+                <td><span class="alert-type milestone">Milestone</span></td>
+                <td><div class="item-cell"><div class="item-name">Retest delivery</div><div class="item-sub">retest of SEC-4721</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Bayview Retail</div><div class="item-sub">ENG-2026-0401</div></div></td>
+                <td><span class="sev-pill na">N/A</span></td>
+                <td class="mono">21 Apr</td>
+                <td><span class="status-pill breached">Breached</span></td>
+                <td><span class="mono over">12h</span></td>
+                <td>Maya Ferreira</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="warning">
+                <td><span class="alert-type finding">Finding</span></td>
+                <td><div class="item-cell"><div class="item-name">XSS in admin panel</div><div class="item-sub">SEC-4830 · validation</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Helix Biotech</div><div class="item-sub">ENG-2026-0387</div></div></td>
+                <td><span class="sev-pill high">High</span></td>
+                <td class="mono">23 Apr</td>
+                <td><span class="status-pill warning">Warning</span></td>
+                <td><span class="warn-text">1d to breach</span></td>
+                <td>Tomás Olivera</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="warning">
+                <td><span class="alert-type finding">Finding</span></td>
+                <td><div class="item-cell"><div class="item-name">Insecure direct object reference</div><div class="item-sub">SEC-4831 · validation</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Helix Biotech</div><div class="item-sub">ENG-2026-0387</div></div></td>
+                <td><span class="sev-pill med">Medium</span></td>
+                <td class="mono">24 Apr</td>
+                <td><span class="status-pill warning">Warning</span></td>
+                <td><span class="warn-text">2d to breach</span></td>
+                <td>Tomás Olivera</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="warning">
+                <td><span class="alert-type milestone">Milestone</span></td>
+                <td><div class="item-cell"><div class="item-name">Final report draft</div><div class="item-sub">milestone #5 of 6</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Vanta Ltd</div><div class="item-sub">ENG-2026-0369</div></div></td>
+                <td><span class="sev-pill na">N/A</span></td>
+                <td class="mono">23 Apr</td>
+                <td><span class="status-pill warning">Warning</span></td>
+                <td><span class="warn-text">1d to breach</span></td>
+                <td>Nikhil Rao</td>
+                <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary" onclick="openExtend()">Extend SLA</button></div></td>
+              </tr>
+              <tr class="ontrack">
+                <td><span class="alert-type finding">Finding</span></td>
+                <td><div class="item-cell"><div class="item-name">Weak TLS cipher suite</div><div class="item-sub">SEC-4845</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Solaris Cloud</div><div class="item-sub">ENG-2026-0398</div></div></td>
+                <td><span class="sev-pill med">Medium</span></td>
+                <td class="mono">28 Apr</td>
+                <td><span class="status-pill ontrack">On track</span></td>
+                <td class="mono" style="color:var(--ink-60)">5d remaining</td>
+                <td>Jamal Toure</td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+              <tr class="ontrack">
+                <td><span class="alert-type milestone">Milestone</span></td>
+                <td><div class="item-cell"><div class="item-name">Test plan approval</div><div class="item-sub">milestone #2 of 5</div></div></td>
+                <td><div class="item-cell"><div class="item-name">Kestrel Defense</div><div class="item-sub">ENG-2026-0393</div></div></td>
+                <td><span class="sev-pill na">N/A</span></td>
+                <td class="mono">02 May</td>
+                <td><span class="status-pill ontrack">On track</span></td>
+                <td class="mono" style="color:var(--ink-60)">10d remaining</td>
+                <td>Sana Karim</td>
+                <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="callout">
+        <div class="callout-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+        <div>
+          <div class="callout-title">All SLA actions log to the audit trail</div>
+          <div class="callout-body">Reassign and Extend SLA both record DM identity, before/after values, timestamp, and reason. Breach + pre-breach notifications are configurable per role under Notification settings — defaults: pre-breach 2 days, breach immediate via email + in-app.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- EXTEND SLA MODAL -->
+<div class="backdrop" id="extendModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Extend SLA</h2>
+        <div class="modal-sub">SEC-4812 · Privilege escalation via IAM policy · Aurora Financial</div>
+      </div>
+      <button class="modal-close" onclick="closeExtend()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="kv-grid">
+        <div class="kv-row"><div class="k">Current due date</div><div class="v mono">19 Apr 2026 · 17:00 GST</div></div>
+        <div class="kv-row"><div class="k">Status</div><div class="v"><span class="status-pill breached">Breached · 2d overdue</span></div></div>
+        <div class="kv-row"><div class="k">Assigned tester</div><div class="v">Nikhil Rao</div></div>
+        <div class="kv-row"><div class="k">SLA template</div><div class="v">Standard · Critical 3d</div></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">New due date<span class="req">*</span></label>
+        <input class="input" type="date" value="2026-04-25" />
+      </div>
+      <div class="field">
+        <label class="field-label">Reason for extension<span class="req">*</span></label>
+        <textarea class="textarea" placeholder="Required. Reason will be visible to CISO and customer in audit trail." rows="3">Tester investigating root cause; production change-window restricts remediation window. Customer notified.</textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Notify</label>
+        <select class="select">
+          <option>Customer + CISO + assigned tester (default)</option>
+          <option>CISO + assigned tester only</option>
+          <option>Assigned tester only</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeExtend()">Cancel</button>
+      <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Extend &amp; log</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop'),themeLabel=document.getElementById('themeLabel');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){themePop.classList.remove('open');closeExtend()}});
+function applyTheme(){const fam=document.querySelector('.fam-card.active').dataset.fam,mode=document.querySelector('.mode-btn.active').dataset.mode;document.body.className='';document.body.classList.add(fam,mode);themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1)}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.chip-row .chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.chip-row .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active')})});
+function openExtend(){document.getElementById('extendModal').classList.add('open')}
+function closeExtend(){document.getElementById('extendModal').classList.remove('open')}
+document.getElementById('extendModal').addEventListener('click',e=>{if(e.target.id==='extendModal')closeExtend()});
+</script>
+</body></html>

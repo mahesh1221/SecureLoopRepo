@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureLoop · LGL-01-1 · Auto-Generated Contract Wizard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;font-weight:400;font-size:13px;line-height:1.5;letter-spacing:-0.003em;overflow:hidden;height:100vh}
+
+/* ═══ THEME TOKENS ═══ */
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+
+/* Coffee Dark */
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52);--grain-opacity:0.025}
+/* Coffee Light */
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35);--grain-opacity:0.05}
+/* Blue Dark */
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52);--grain-opacity:0.025}
+/* Blue Light */
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30);--grain-opacity:0.05}
+
+body{background:var(--bg-page);color:var(--ink-100)}
+
+/* ═══ SHELL ═══ */
+.shell{display:flex;height:100vh;overflow:hidden}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0}
+.rail-logo{width:36px;height:36px;background:var(--brand);border-radius:var(--r-sm);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);color:var(--brand-ink);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-6)}
+.light .rail-logo{font-weight:600}
+.rail-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms;border:1px solid transparent}
+.rail-icon:hover{background:var(--bg-raised);color:var(--ink-100);border-color:var(--line)}
+.rail-icon.active{background:var(--brand-dim);color:var(--brand)}
+.main-col{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.topbar{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 var(--s-6);gap:var(--s-4);flex-shrink:0}
+.topbar-breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.topbar-breadcrumb span.current{color:var(--ink-100);font-weight:500}
+.topbar-breadcrumb svg{width:14px;height:14px;color:var(--ink-40)}
+.topbar-spacer{flex:1}
+.content{flex:1;overflow-y:auto;padding:var(--s-6);position:relative}
+
+/* ═══ GRAIN ═══ */
+.main-col::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ═══ ID PILL ═══ */
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600;display:inline-flex;align-items:center}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised);border-color:var(--line)}
+.btn.danger{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.btn svg{width:16px;height:16px}
+
+/* ═══ BADGES ═══ */
+.p-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:var(--r-xs);font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap}
+.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.high{background:var(--sev-high-bg);color:var(--sev-high)}
+.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.low{background:var(--sev-low-bg);color:var(--sev-low)}
+.good{background:var(--status-good-bg);color:var(--status-good)}
+.neutral{background:var(--bg-raised);color:var(--ink-60);border:1px solid var(--line-strong)}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.card:hover{border-color:var(--line-strong)}
+
+/* ═══ THEME PICKER ═══ */
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-family:var(--font-ui);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatch{width:12px;height:6px;border-radius:2px}
+.theme-pop{position:absolute;top:52px;right:var(--s-6);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);width:320px;z-index:100;display:none;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.theme-pop.open{display:block;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1)}
+.theme-pop h4{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-3);color:var(--ink-100)}
+.theme-families{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.theme-family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms;text-align:center}
+.theme-family-card:hover{border-color:var(--line-strong)}
+.theme-family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.theme-family-card .swatches{display:flex;gap:4px;justify-content:center;margin-bottom:var(--s-2)}
+.theme-family-card .swatches span{width:24px;height:16px;border-radius:var(--r-xs)}
+.theme-family-card .label{font-size:var(--text-label);font-weight:500;color:var(--ink-80)}
+.theme-modes{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.theme-mode-btn{flex:1;padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;text-align:center;transition:all 140ms}
+.theme-mode-btn:hover{color:var(--ink-100)}
+.theme-mode-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* ═══ TRIGGER BANNER ═══ */
+.trigger-banner{background:var(--status-good-bg);border:1px solid var(--status-good);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-6)}
+.trigger-banner svg{width:20px;height:20px;color:var(--status-good);flex-shrink:0}
+.trigger-banner .tb-text{flex:1}
+.trigger-banner .tb-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100)}
+.trigger-banner .tb-meta{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono);margin-top:2px}
+.trigger-banner .tb-dismiss{width:28px;height:28px;display:grid;place-items:center;background:transparent;border:none;color:var(--ink-60);cursor:pointer;border-radius:var(--r-xs)}
+.trigger-banner .tb-dismiss:hover{color:var(--ink-100);background:var(--bg-hover)}
+
+/* ═══ GENERATION PROGRESS ═══ */
+.gen-progress{margin-bottom:var(--s-6)}
+.gen-progress h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-3)}
+.gen-steps{display:flex;gap:var(--s-4);flex-wrap:wrap}
+.gen-step{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body)}
+.gen-step .gs-dot{width:20px;height:20px;border-radius:var(--r-full);display:grid;place-items:center;flex-shrink:0}
+.gen-step .gs-dot.done{background:var(--status-good-bg);color:var(--status-good)}
+.gen-step .gs-dot.active{background:var(--brand-dim);color:var(--brand);animation:pulse 1.5s ease infinite}
+.gen-step .gs-dot.pending{background:var(--bg-raised);color:var(--ink-40)}
+.gen-step .gs-label{color:var(--ink-80)}
+.gen-step .gs-label.done{color:var(--status-good)}
+.gen-step .gs-label.active{color:var(--brand);font-weight:500}
+.gen-step .gs-connector{width:24px;height:1px;background:var(--line-strong)}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ═══ CLAUSE INVENTORY ═══ */
+.clause-inv{margin-bottom:var(--s-6)}
+.clause-inv h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--s-3)}
+.clause-chips{display:flex;gap:var(--s-2);flex-wrap:wrap}
+.clause-chip{display:inline-flex;align-items:center;gap:var(--s-1);padding:4px var(--s-3);background:var(--status-good-bg);border:1px solid var(--status-good);border-radius:var(--r-full);font-size:var(--text-label);color:var(--status-good);font-weight:500}
+.clause-chip svg{width:14px;height:14px}
+.clause-chip.mandatory{border-style:solid}
+.clause-chip .cv{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-left:var(--s-1)}
+
+/* ═══ DUAL PREVIEW ═══ */
+.dual-preview{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);margin-bottom:var(--s-6)}
+.contract-pane{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);display:flex;flex-direction:column;overflow:hidden}
+.cp-header{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.cp-header .cp-type{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.cp-header .cp-parties{font-size:var(--text-label);color:var(--ink-60);display:flex;align-items:center;gap:var(--s-2)}
+.cp-body{padding:var(--s-4);flex:1;overflow-y:auto;max-height:420px}
+.cp-body .section{margin-bottom:var(--s-6)}
+.cp-body .section-title{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:var(--s-2);color:var(--ink-80);text-transform:uppercase;letter-spacing:0.04em;font-size:var(--text-label)}
+.cp-body .section-content{font-size:var(--text-body);color:var(--ink-80);line-height:1.55}
+.cp-body .section-content p{margin-bottom:var(--s-2)}
+
+/* ═══ ALIGNMENT INDICATORS ═══ */
+.align-indicator{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-3);border-radius:var(--r-xs);font-size:var(--text-label);margin-bottom:var(--s-3)}
+.align-indicator.matched{background:var(--status-good-bg);color:var(--status-good)}
+.align-indicator.mismatch{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.align-indicator svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ INLINE TOOLBAR ═══ */
+.inline-toolbar{display:flex;align-items:center;gap:2px;padding:var(--s-1);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-3)}
+.it-btn{width:32px;height:28px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.it-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.it-btn.active{background:var(--brand-dim);color:var(--brand)}
+.it-sep{width:1px;height:20px;background:var(--line-strong);margin:0 var(--s-1)}
+.it-btn svg{width:16px;height:16px}
+
+/* ═══ LINKED INDICATOR ═══ */
+.linked-footer{padding:var(--s-3) var(--s-4);border-top:1px solid var(--line);font-size:var(--text-label);color:var(--ink-60);display:flex;align-items:center;gap:var(--s-2)}
+.linked-footer svg{width:14px;height:14px;color:var(--brand)}
+
+/* ═══ ACTION PANEL ═══ */
+.action-panel{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md)}
+.action-panel .ap-spacer{flex:1}
+
+/* ═══ VERSION COMPARE TOGGLE ═══ */
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:64px;text-align:center}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* ═══ TRACK CHANGES HIGHLIGHT ═══ */
+.tc-insert{background:var(--status-good-bg);color:var(--status-good);padding:0 2px;border-radius:2px}
+.tc-delete{background:var(--sev-critical-bg);color:var(--sev-critical);text-decoration:line-through;padding:0 2px;border-radius:2px}
+
+/* ═══ FOCUS ═══ */
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes riseIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ═══ SCROLL ═══ */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+
+/* ═══ PAGE HEADER ═══ */
+.page-header{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-6)}
+.page-header h1{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.025em;line-height:1.1}
+.page-header .subtitle{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+
+/* ═══ QUOTE DETAILS ═══ */
+.quote-details{display:flex;gap:var(--s-6);margin-bottom:var(--s-4)}
+.qd-item{display:flex;flex-direction:column;gap:2px}
+.qd-item .qd-label{font-size:var(--text-micro);color:var(--ink-40);text-transform:uppercase;letter-spacing:0.08em;font-weight:500}
+.qd-item .qd-val{font-family:var(--font-mono);font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+
+/* ═══ AUTO-SAVE ═══ */
+.autosave{font-size:var(--text-label);color:var(--ink-40);display:flex;align-items:center;gap:var(--s-1)}
+.autosave svg{width:12px;height:12px;color:var(--status-good)}
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- ═══ SHELL ═══ -->
+<div class="shell">
+  <!-- Left Rail -->
+  <nav class="rail" aria-label="Main navigation">
+    <div class="rail-logo" aria-label="SecureLoop">S</div>
+    <div class="rail-icon" title="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="rail-icon active" title="Legal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+    <div class="rail-icon" title="Engagements"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+    <div class="rail-icon" title="Finance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+    <div class="rail-icon" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+  </nav>
+
+  <!-- Main Column -->
+  <div class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-breadcrumb">
+        <span>SecureLoop</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Legal</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="current">Contract Generation</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="autosave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Auto-saved 12s ago</div>
+      <button class="theme-btn" onclick="toggleThemePop()" aria-label="Change theme">
+        <div class="theme-swatches"><span class="theme-swatch" id="ts1"></span><span class="theme-swatch" id="ts2"></span></div>
+        <span id="theme-label">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="theme-pop" id="themePop">
+        <h4>Theme</h4>
+        <div class="theme-families">
+          <div class="theme-family-card active" data-family="coffee" onclick="setFamily('coffee')">
+            <div class="swatches"><span style="background:#1A0F08;border:1px solid rgba(243,238,226,.14)"></span><span style="background:#F3EEE2"></span><span style="background:#25170D;border:1px solid rgba(243,238,226,.14)"></span></div>
+            <div class="label">Coffee</div>
+          </div>
+          <div class="theme-family-card" data-family="blue" onclick="setFamily('blue')">
+            <div class="swatches"><span style="background:#0F1E35;border:1px solid rgba(232,244,253,.15)"></span><span style="background:#E8F4FD"></span><span style="background:#162B48;border:1px solid rgba(232,244,253,.15)"></span></div>
+            <div class="label">Blue</div>
+          </div>
+        </div>
+        <div class="theme-modes">
+          <button class="theme-mode-btn active" data-mode="dark" onclick="setMode('dark')">Dark</button>
+          <button class="theme-mode-btn" data-mode="light" onclick="setMode('light')">Light</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-1)">
+            <span class="id-pill">LGL-01-1</span>
+          </div>
+          <h1>Auto-Generated Contract Wizard</h1>
+          <div class="subtitle">Triggered by quote approval — generates customer + subcontractor contracts together</div>
+        </div>
+      </div>
+
+      <!-- Trigger Banner -->
+      <div class="trigger-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="tb-text">
+          <div class="tb-title">Quote Q-2026-047 approved by Nexus Technologies. Generating draft contracts...</div>
+          <div class="tb-meta">ENG-2026-047 · Nexus Technologies · $42,500 · Sub: RedTeam Sec (assigned)</div>
+        </div>
+        <button class="tb-dismiss" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+
+      <!-- Generation Progress -->
+      <div class="gen-progress">
+        <h3>Generation Progress</h3>
+        <div class="gen-steps">
+          <div class="gen-step">
+            <div class="gs-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="gs-label done">Loading scope</span>
+          </div>
+          <div class="gen-step"><div class="gs-connector"></div></div>
+          <div class="gen-step">
+            <div class="gs-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="gs-label done">Selecting clauses</span>
+          </div>
+          <div class="gen-step"><div class="gs-connector"></div></div>
+          <div class="gen-step">
+            <div class="gs-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="gs-label done">Customer contract</span>
+          </div>
+          <div class="gen-step"><div class="gs-connector"></div></div>
+          <div class="gen-step">
+            <div class="gs-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="gs-label done">Subcontractor contract</span>
+          </div>
+          <div class="gen-step"><div class="gs-connector"></div></div>
+          <div class="gen-step">
+            <div class="gs-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="gs-label done">Back-to-back alignment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote Details -->
+      <div class="quote-details">
+        <div class="qd-item"><span class="qd-label">Engagement</span><span class="qd-val">ENG-2026-047</span></div>
+        <div class="qd-item"><span class="qd-label">Customer</span><span class="qd-val">Nexus Technologies</span></div>
+        <div class="qd-item"><span class="qd-label">Value</span><span class="qd-val">$42,500</span></div>
+        <div class="qd-item"><span class="qd-label">Type</span><span class="qd-val">Web App VAPT</span></div>
+        <div class="qd-item"><span class="qd-label">Subcontractor</span><span class="qd-val">RedTeam Sec</span></div>
+      </div>
+
+      <!-- Clause Inventory Checklist -->
+      <div class="clause-inv">
+        <h3>Mandatory Clauses Inserted</h3>
+        <div class="clause-chips">
+          <div class="clause-chip mandatory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> NDA <span class="cv">v2.1</span></div>
+          <div class="clause-chip mandatory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Scope of Work <span class="cv">v3.0</span></div>
+          <div class="clause-chip mandatory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Liability Limitation <span class="cv">v1.4</span></div>
+          <div class="clause-chip mandatory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> IP Ownership <span class="cv">v2.0</span></div>
+          <div class="clause-chip mandatory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Data Protection <span class="cv">v3.2</span></div>
+        </div>
+      </div>
+
+      <!-- Editing toolbar -->
+      <div style="display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-3)">
+        <div class="inline-toolbar">
+          <button class="it-btn" title="Bold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"/><path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/></svg></button>
+          <button class="it-btn" title="Italic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+          <button class="it-btn" title="Underline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg></button>
+          <div class="it-sep"></div>
+          <button class="it-btn" title="Add Clause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="it-btn" title="Remove Clause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="it-sep"></div>
+          <button class="it-btn" id="tcToggle" title="Track Changes" onclick="toggleTC()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        </div>
+        <div class="segmented">
+          <button class="seg-btn active" onclick="setView('preview',this)">Preview</button>
+          <button class="seg-btn" onclick="setView('compare',this)">Compare Versions</button>
+        </div>
+      </div>
+
+      <!-- Dual Contract Preview -->
+      <div class="dual-preview">
+        <!-- Customer Contract -->
+        <div class="contract-pane">
+          <div class="cp-header">
+            <div>
+              <div class="cp-type">Customer Contract</div>
+              <div class="cp-parties">Nexus Technologies ↔ Cybrilliant Ltd</div>
+            </div>
+            <span class="p-badge med">DRAFT</span>
+          </div>
+          <div class="cp-body" id="custPane">
+            <div class="align-indicator matched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Back-to-back alignment: All clauses matched</div>
+            <div class="section">
+              <div class="section-title">1. Recitals</div>
+              <div class="section-content"><p>This Professional Services Agreement ("Agreement") is entered into as of April 22, 2026, by and between Nexus Technologies Inc. ("Client") and Cybrilliant Ltd ("Service Provider").</p><p>WHEREAS, Client desires to engage Service Provider to perform vulnerability assessment and penetration testing services as described in the Scope of Work attached hereto.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">2. Scope of Work</div>
+              <div class="section-content"><p>Service Provider shall conduct a comprehensive Web Application Vulnerability Assessment and Penetration Test ("VAPT") covering the assets listed in Appendix A. Testing methodology shall follow OWASP Testing Guide v4.2 and PTES standards.</p><p>Duration: 4 weeks from commencement date. Deliverables include Executive Summary, Technical Report, and Remediation Guidance Document.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">3. Liability Limitation</div>
+              <div class="section-content"><p>The aggregate liability of Service Provider under this Agreement shall not exceed <strong>$1,000,000</strong> (One Million US Dollars). Neither party shall be liable for any indirect, incidental, consequential, or punitive damages.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">4. Data Protection</div>
+              <div class="section-content"><p>Service Provider shall comply with GDPR, CCPA, and applicable data protection laws. All client data accessed during testing shall be encrypted at rest (AES-256) and in transit (TLS 1.3). Data retention: 90 days post-engagement, then secure deletion with certificate.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">5. IP Ownership</div>
+              <div class="section-content"><p>All reports, findings, and deliverables produced under this Agreement shall be the exclusive property of Client upon full payment. Service Provider retains rights to methodologies, tools, and pre-existing IP.</p></div>
+            </div>
+          </div>
+          <div class="linked-footer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            Linked to Engagement ENG-2026-047
+          </div>
+        </div>
+
+        <!-- Subcontractor Contract -->
+        <div class="contract-pane">
+          <div class="cp-header">
+            <div>
+              <div class="cp-type">Subcontractor Contract</div>
+              <div class="cp-parties">RedTeam Sec ↔ Cybrilliant Ltd</div>
+            </div>
+            <span class="p-badge med">DRAFT</span>
+          </div>
+          <div class="cp-body" id="subPane">
+            <div class="align-indicator mismatch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Liability cap mismatch: Customer $1M, Subcontractor $500K — flow-through risk</div>
+            <div class="section">
+              <div class="section-title">1. Recitals</div>
+              <div class="section-content"><p>This Subcontractor Services Agreement ("Agreement") is entered into as of April 22, 2026, by and between Cybrilliant Ltd ("Company") and RedTeam Sec ("Subcontractor").</p><p>WHEREAS, Company has been engaged by its client to perform security assessment services and desires to subcontract a portion of such work to Subcontractor.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">2. Scope of Work</div>
+              <div class="section-content"><p>Subcontractor shall perform Web Application Penetration Testing on assets assigned by Company, in accordance with the methodology and rules of engagement defined in the prime engagement. Testing scope limited to assets explicitly assigned per SUB-01 scope acknowledgement.</p><p>Duration: 3 weeks. Deliverables: Raw finding reports submitted via SecureLoop portal for DM review.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">3. Liability Limitation</div>
+              <div class="section-content"><p>The aggregate liability of Subcontractor under this Agreement shall not exceed <strong style="color:var(--sev-critical)">$500,000</strong> (Five Hundred Thousand US Dollars). <span style="background:var(--sev-critical-bg);padding:0 4px;border-radius:3px;color:var(--sev-critical);font-size:var(--text-label)">⚠ Mismatch with customer contract — $500K gap in flow-through coverage</span></p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">4. Data Protection</div>
+              <div class="section-content"><p>Subcontractor shall adhere to data protection obligations equivalent to those imposed on Company by its client agreement. All findings and client data must remain within SecureLoop platform. No data extraction, local storage, or third-party sharing permitted.</p></div>
+            </div>
+            <div class="section">
+              <div class="section-title">5. IP Ownership</div>
+              <div class="section-content"><p>All work product including findings, reports, and documentation produced under this Agreement shall be assigned to Company upon creation. Subcontractor retains no rights to deliverables. Pre-existing tools and methodologies remain Subcontractor's property.</p></div>
+            </div>
+          </div>
+          <div class="linked-footer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            Linked to Engagement ENG-2026-047
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="action-panel">
+        <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Draft</button>
+        <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Generate PDFs</button>
+        <div class="ap-spacer"></div>
+        <button class="btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Discard Drafts</button>
+        <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Submit for Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ THEME SYSTEM ═══
+let currentFamily = 'coffee', currentMode = 'dark';
+
+function applyTheme() {
+  document.body.className = currentFamily + ' ' + currentMode;
+  document.getElementById('theme-label').textContent =
+    (currentFamily === 'coffee' ? 'Coffee' : 'Blue') + ' · ' + (currentMode === 'dark' ? 'Dark' : 'Light');
+  document.querySelectorAll('.theme-family-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.family === currentFamily);
+  });
+  document.querySelectorAll('.theme-mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === currentMode);
+  });
+  updateSwatches();
+}
+
+function setFamily(f) { currentFamily = f; applyTheme(); }
+function setMode(m) { currentMode = m; applyTheme(); }
+
+function toggleThemePop() {
+  document.getElementById('themePop').classList.toggle('open');
+}
+
+function updateSwatches() {
+  const s = getComputedStyle(document.body);
+  document.getElementById('ts1').style.background = s.getPropertyValue('--bg-base').trim();
+  document.getElementById('ts1').style.border = '1px solid ' + s.getPropertyValue('--line-strong').trim();
+  document.getElementById('ts2').style.background = s.getPropertyValue('--brand').trim();
+}
+
+document.addEventListener('click', e => {
+  const pop = document.getElementById('themePop');
+  const btn = document.querySelector('.theme-btn');
+  if (!pop.contains(e.target) && !btn.contains(e.target)) pop.classList.remove('open');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('themePop').classList.remove('open');
+});
+
+// ═══ VIEW TOGGLE ═══
+function setView(view, btn) {
+  btn.parentNode.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ═══ TRACK CHANGES ═══
+function toggleTC() {
+  document.getElementById('tcToggle').classList.toggle('active');
+}
+
+// ═══ SYNCHRONIZED SCROLLING ═══
+const custPane = document.getElementById('custPane');
+const subPane = document.getElementById('subPane');
+let syncing = false;
+custPane.addEventListener('scroll', () => {
+  if (syncing) return;
+  syncing = true;
+  const ratio = custPane.scrollTop / (custPane.scrollHeight - custPane.clientHeight);
+  subPane.scrollTop = ratio * (subPane.scrollHeight - subPane.clientHeight);
+  syncing = false;
+});
+subPane.addEventListener('scroll', () => {
+  if (syncing) return;
+  syncing = true;
+  const ratio = subPane.scrollTop / (subPane.scrollHeight - subPane.clientHeight);
+  custPane.scrollTop = ratio * (custPane.scrollHeight - custPane.clientHeight);
+  syncing = false;
+});
+
+// Init
+applyTheme();
+</script>
+</body>
+</html>

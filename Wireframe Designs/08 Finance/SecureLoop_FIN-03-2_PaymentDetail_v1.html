@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-03-2 Payment Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select,textarea{font:inherit}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30)}
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.rail{width:64px;min-height:100vh;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}
+.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.topbar{position:fixed;left:64px;right:0;top:0;height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);z-index:90}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.breadcrumb .sep{color:var(--ink-40);font-size:var(--text-micro)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.bc-link{color:var(--brand);cursor:pointer;text-decoration:none}
+.bc-link:hover{opacity:.7}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:relative}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+.theme-popover{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}
+.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.content{margin-left:64px;margin-top:56px;flex:1;display:flex;height:calc(100vh - 56px);overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r-full);font-size:var(--text-label);font-weight:600}
+.badge-pending{background:var(--sev-high-bg);color:var(--sev-high)}
+
+/* ── PAGE LAYOUT ── */
+.page-scroll{flex:1;overflow-y:auto;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+
+/* ── HEADER BAR ── */
+.detail-header{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);display:flex;align-items:center;gap:var(--s-6)}
+.header-kv{display:flex;flex-direction:column;gap:3px}
+.hkv-label{font-size:var(--text-label);color:var(--ink-40);font-weight:500}
+.hkv-value{font-size:var(--text-body);color:var(--ink-80);font-weight:600}
+.header-sep{width:1px;height:40px;background:var(--line)}
+
+/* ── THREE-COL ── */
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-4)}
+.detail-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.card-title{font-size:var(--text-label);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-3);padding-bottom:var(--s-2);border-bottom:1px solid var(--line)}
+.kv-pair{display:flex;flex-direction:column;gap:3px;margin-bottom:var(--s-3)}
+.kv-pair:last-child{margin-bottom:0}
+.kv-label{font-size:var(--text-label);color:var(--ink-40);font-weight:500}
+.kv-value{font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+.kv-value.mono{font-family:var(--font-mono)}
+.masked{font-family:var(--font-mono);letter-spacing:0.1em;color:var(--ink-60)}
+.compliance-dot{width:8px;height:8px;border-radius:var(--r-full);display:inline-block;margin-right:5px}
+.comp-ok{background:var(--status-good)}
+.comp-warn{background:var(--sev-high)}
+
+/* ── ADJUSTMENT WIDGET ── */
+.adjustment-widget{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.adj-header{display:flex;align-items:center;gap:var(--s-4);margin-bottom:var(--s-4)}
+.adj-amount-display{font-family:var(--font-mono);font-size:var(--text-3xl);font-weight:700;color:var(--ink-100)}
+.adj-edit-zone{display:none;gap:var(--s-3);align-items:flex-start;margin-top:var(--s-3)}
+.adj-edit-zone.visible{display:flex}
+.adj-input{padding:8px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-mono);font-size:var(--text-xl);font-weight:600;width:180px}
+.adj-input:focus{border-color:var(--brand);outline:none}
+.delta-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-label);font-weight:600}
+.delta-neg{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.delta-pos{background:var(--status-good-bg);color:var(--status-good)}
+
+/* ── DOCUMENTS ── */
+.doc-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.doc-item{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:border-color 140ms}
+.doc-item:hover{border-color:var(--line-strong)}
+.doc-icon{width:32px;height:32px;border-radius:var(--r-xs);background:var(--brand-dim);display:flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0}
+.doc-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.doc-name{font-size:var(--text-body);font-weight:500;color:var(--ink-80)}
+.doc-meta{font-size:var(--text-label);color:var(--ink-40);margin-top:2px}
+.doc-size{margin-left:auto;font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60)}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:var(--s-3);position:relative;padding-bottom:var(--s-4)}
+.tl-item:last-child{padding-bottom:0}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:18px;bottom:0;width:1px;background:var(--line)}
+.tl-dot{width:16px;height:16px;border-radius:var(--r-full);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:8px}
+.tl-dot.done{background:var(--status-good-bg);border:1.5px solid var(--status-good)}
+.tl-dot.pending{background:var(--sev-high-bg);border:1.5px solid var(--sev-high)}
+.tl-dot.future{background:var(--bg-raised);border:1.5px solid var(--line-strong)}
+.tl-event{font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+.tl-time{font-size:var(--text-label);color:var(--ink-40);margin-top:2px}
+.tl-note{font-size:var(--text-label);color:var(--ink-60);margin-top:4px;font-style:italic}
+
+/* ── STICKY BOTTOM BAR ── */
+.sticky-bar{flex-shrink:0;display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--bg-base);border-top:1px solid var(--line)}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:var(--backdrop);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{width:880px;max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);display:flex;flex-direction:column;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+.modal-head{display:flex;align-items:center;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);flex-shrink:0}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--ink-100)}
+.modal-sub{font-size:var(--text-body);color:var(--ink-60);margin-left:var(--s-2)}
+.modal-close{margin-left:auto;width:32px;height:32px;border-radius:var(--r-sm);background:var(--bg-raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}
+.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.modal-body{overflow-y:auto;flex:1;padding:var(--s-6)}
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;gap:var(--s-3);justify-content:flex-end;flex-shrink:0}
+.callout{display:flex;align-items:flex-start;gap:var(--s-3);padding:var(--s-4);border-radius:var(--r-sm);border:1px solid}
+.callout.crit{background:var(--sev-critical-bg);border-color:var(--sev-critical)}
+.callout svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+.callout p{font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+.field-label{font-size:var(--text-label);font-weight:500;color:var(--ink-60);margin-bottom:var(--s-1);display:block}
+.field-label .req{color:var(--sev-critical);margin-left:2px}
+.field-input{width:100%;padding:8px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);transition:border-color 140ms}
+.field-input:focus{border-color:var(--brand);outline:none}
+.field-group{margin-bottom:var(--s-4)}
+.field-group:last-child{margin-bottom:0}
+.push-progress{display:flex;flex-direction:column;gap:var(--s-3)}
+.push-step{display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-body)}
+.push-step svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.step-done{color:var(--status-good)}
+.step-active{color:var(--brand)}
+.step-pending{color:var(--ink-40)}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+
+<nav class="rail">
+  <div class="logo">S</div>
+  <div class="nav-sep"></div>
+  <button class="nav-item active" title="Finance" aria-label="Finance"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg></button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <button class="nav-item" title="Settings" aria-label="Settings"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14"/></svg></button>
+</nav>
+
+<header class="topbar">
+  <div class="breadcrumb">
+    <span>Finance</span><span class="sep">›</span>
+    <a class="bc-link">Subcontractor Payments</a><span class="sep">›</span>
+    <span class="current">PAY-2026-089</span>
+  </div>
+  <div class="topbar-right">
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches"><div class="swatch" id="sw1" style="background:#1A0F08"></div><div class="swatch" id="sw2" style="background:#F3EEE2"></div></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')"><div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div><div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div></div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')"><div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div><div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div></div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark</button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="content" style="flex-direction:column">
+  <div class="page-scroll">
+    <!-- Page header -->
+    <div style="display:flex;align-items:center;gap:var(--s-3)">
+      <div class="id-pill">FIN-03-2</div>
+      <h1 style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.020em">Payment Detail &amp; Adjustment</h1>
+      <span class="status-badge badge-pending" style="margin-left:var(--s-2)">⏱ Pending Finance Approval</span>
+      <div style="margin-left:auto;display:flex;gap:var(--s-2)">
+        <button class="btn" onclick="">
+          <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>
+          Print Summary
+        </button>
+        <button class="btn" onclick="">Share with DM</button>
+      </div>
+    </div>
+
+    <!-- Header bar -->
+    <div class="detail-header">
+      <div class="header-kv">
+        <span class="hkv-label">Subcontractor</span>
+        <span class="hkv-value">CyberSec Partners</span>
+      </div>
+      <div class="header-sep"></div>
+      <div class="header-kv">
+        <span class="hkv-label">Engagement</span>
+        <span class="hkv-value" style="font-family:var(--font-mono)">ENG-2026-041</span>
+      </div>
+      <div class="header-sep"></div>
+      <div class="header-kv">
+        <span class="hkv-label">Request ID</span>
+        <span class="hkv-value" style="font-family:var(--font-mono)">PAY-2026-089</span>
+      </div>
+      <div class="header-sep"></div>
+      <div class="header-kv">
+        <span class="hkv-label">Created</span>
+        <span class="hkv-value">Apr 19, 2026</span>
+      </div>
+      <div class="header-sep"></div>
+      <div class="header-kv">
+        <span class="hkv-label">Days in Status</span>
+        <span class="hkv-value" style="color:var(--sev-high)">3 days</span>
+      </div>
+    </div>
+
+    <!-- Three-col detail -->
+    <div class="three-col">
+      <!-- Milestone Details -->
+      <div class="detail-card">
+        <div class="card-title">Milestone Details</div>
+        <div class="kv-pair">
+          <span class="kv-label">Milestone Name</span>
+          <span class="kv-value">Phase 2 Pentest Completion</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Completion Date</span>
+          <span class="kv-value">Apr 18, 2026</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">DM Approved By</span>
+          <span class="kv-value">James Reeves</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">DM Approval Date</span>
+          <span class="kv-value">Apr 19, 2026 · 3:41 PM</span>
+        </div>
+        <div class="kv-pair" style="margin-bottom:0">
+          <span class="kv-label">DM Comment</span>
+          <span class="kv-value" style="font-style:italic;color:var(--ink-60)">"All deliverables verified against scope. External retest passed."</span>
+        </div>
+      </div>
+
+      <!-- Payment Information -->
+      <div class="detail-card">
+        <div class="card-title">Payment Information</div>
+        <div class="kv-pair">
+          <span class="kv-label">Requested Amount</span>
+          <span class="kv-value mono" style="font-size:var(--text-xl);font-weight:700;color:var(--ink-100)">$28,000</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Pricing Model</span>
+          <span class="kv-value">Fixed Milestone</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Contract Reference</span>
+          <span class="kv-value mono" style="color:var(--brand);cursor:pointer">CTR-2026-CP-002</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Payment Method</span>
+          <span class="kv-value">ACH Transfer</span>
+        </div>
+        <div class="kv-pair" style="margin-bottom:0">
+          <span class="kv-label">Currency</span>
+          <span class="kv-value">USD</span>
+        </div>
+      </div>
+
+      <!-- Banking Details -->
+      <div class="detail-card">
+        <div class="card-title">Subcontractor Banking</div>
+        <div class="kv-pair">
+          <span class="kv-label">Bank Name</span>
+          <span class="kv-value">Chase Bank N.A.</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Account Holder</span>
+          <span class="kv-value">CyberSec Partners LLC</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Account Number</span>
+          <span class="masked">•••• •••• •••• 8821</span>
+        </div>
+        <div class="kv-pair">
+          <span class="kv-label">Routing (ABA)</span>
+          <span class="masked">•••••• 9423</span>
+        </div>
+        <div class="kv-pair" style="margin-bottom:0">
+          <span class="kv-label">Compliance Status</span>
+          <span class="kv-value"><span class="compliance-dot comp-ok"></span>All certs valid · expires Dec 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount adjustment widget -->
+    <div class="adjustment-widget">
+      <div style="display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap">
+        <div>
+          <div style="font-size:var(--text-label);color:var(--ink-40);font-weight:500;margin-bottom:var(--s-1)">Current Requested Amount</div>
+          <div class="adj-amount-display" id="adjDisplay">$28,000</div>
+        </div>
+        <button class="btn" id="editBtn" onclick="toggleAdjEdit()">
+          <svg viewBox="0 0 16 16"><path d="M11 2l3 3-9 9H2v-3l9-9z"/></svg>
+          Edit Amount
+        </button>
+        <div id="deltaArea" style="display:none">
+          <div style="font-size:var(--text-label);color:var(--ink-40);margin-bottom:4px">Before → After</div>
+          <div style="display:flex;align-items:center;gap:var(--s-2);font-family:var(--font-mono);font-size:var(--text-body)">
+            <span style="color:var(--ink-60)">$28,000</span>
+            <span style="color:var(--ink-40)">→</span>
+            <span id="newAmtDisplay" style="color:var(--ink-100);font-weight:600">$28,000</span>
+            <span class="delta-chip delta-neg" id="deltaChip" style="display:none">−$0</span>
+          </div>
+        </div>
+      </div>
+      <div class="adj-edit-zone" id="adjEditZone">
+        <div>
+          <label class="field-label" style="margin-bottom:var(--s-1)">New Amount<span class="field-label .req" style="color:var(--sev-critical)">*</span></label>
+          <input class="adj-input field-input" type="text" id="adjInput" value="28,000" oninput="updateDelta()" placeholder="0.00" style="width:160px">
+        </div>
+        <div style="flex:1">
+          <label class="field-label" style="margin-bottom:var(--s-1)">Adjustment Reason<span style="color:var(--sev-critical);margin-left:2px">*</span></label>
+          <select class="field-input" style="width:100%">
+            <option>Select reason…</option>
+            <option>Disputed Hours</option>
+            <option>Scope Expansion</option>
+            <option>Performance Adjustment</option>
+            <option>Currency Conversion</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:var(--s-2);align-items:flex-end;padding-bottom:1px">
+          <button class="btn primary" onclick="saveAdjustment()">Save Adjustment</button>
+          <button class="btn" onclick="cancelAdjEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supporting documents + Timeline side by side -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)">
+      <!-- Documents -->
+      <div class="detail-card">
+        <div class="card-title">Supporting Documents</div>
+        <div class="doc-list">
+          <div class="doc-item">
+            <div class="doc-icon"><svg viewBox="0 0 16 16"><path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6L9 2z"/><path d="M9 2v4h4"/></svg></div>
+            <div><div class="doc-name">CyberSec_Invoice_Apr2026.pdf</div><div class="doc-meta">Uploaded Apr 19 · by M. Khan (Sub)</div></div>
+            <span class="doc-size">184 KB</span>
+          </div>
+          <div class="doc-item">
+            <div class="doc-icon"><svg viewBox="0 0 16 16"><path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6L9 2z"/><path d="M9 2v4h4"/></svg></div>
+            <div><div class="doc-name">DeliveryReceipt_Phase2.pdf</div><div class="doc-meta">Uploaded Apr 18 · by M. Khan (Sub)</div></div>
+            <span class="doc-size">94 KB</span>
+          </div>
+          <div class="doc-item">
+            <div class="doc-icon" style="background:var(--status-good-bg);color:var(--status-good)"><svg viewBox="0 0 16 16"><path d="M14 3H2l5 7v4l2-1V10l5-7z"/></svg></div>
+            <div><div class="doc-name">SignedSOW_CyberSecPartners.pdf</div><div class="doc-meta">Contract ref · Uploaded Jan 12</div></div>
+            <span class="doc-size">241 KB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval Timeline -->
+      <div class="detail-card">
+        <div class="card-title">Approval History</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot pending"></div>
+            <div><div class="tl-event">Pending Finance Review</div><div class="tl-time">Apr 19, 2026 → now (3 days)</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div><div class="tl-event">DM Approved</div><div class="tl-time">Apr 19, 2026 · 3:41 PM · James Reeves</div><div class="tl-note">"All deliverables verified against scope."</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div><div class="tl-event">Milestone Submitted by Subcontractor</div><div class="tl-time">Apr 18, 2026 · 11:22 AM · M. Khan</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot future"></div>
+            <div><div class="tl-event" style="color:var(--ink-40)">Finance Approval</div><div class="tl-time" style="color:var(--ink-40)">Pending</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot future"></div>
+            <div><div class="tl-event" style="color:var(--ink-40)">Push to Accounting (Xero)</div><div class="tl-time" style="color:var(--ink-40)">After approval</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot future"></div>
+            <div><div class="tl-event" style="color:var(--ink-40)">Payment Confirmed</div><div class="tl-time" style="color:var(--ink-40)">Est. 3–5 days after push</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky bottom bar -->
+  <div class="sticky-bar">
+    <button class="btn" onclick="window.history.back()">← Back to Queue</button>
+    <div style="flex:1"></div>
+    <button class="btn danger" onclick="openRejectModal()">
+      <svg viewBox="0 0 16 16"><path d="M2 2l12 12M14 2L2 14"/></svg>
+      Reject
+    </button>
+    <button class="btn primary" onclick="openApproveModal()">
+      <svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8"/></svg>
+      Approve Payment
+    </button>
+  </div>
+</div>
+
+<!-- APPROVE MODAL -->
+<div class="modal-overlay" id="approveModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width:560px;width:560px">
+    <div class="modal-head">
+      <div class="modal-title">Approve Payment</div>
+      <div class="modal-sub">CyberSec Partners · $28,000</div>
+      <button class="modal-close" onclick="closeModal('approveModal')" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:var(--s-4);display:flex;flex-direction:column;gap:var(--s-2)">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-60);font-size:var(--text-body)">Subcontractor</span><span style="font-weight:500">CyberSec Partners</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-60);font-size:var(--text-body)">Amount</span><span style="font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;color:var(--status-good)">$28,000</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-60);font-size:var(--text-body)">Push to</span><span style="font-weight:500">Xero (connected ✓)</span></div>
+      </div>
+      <div class="push-progress" id="pushProgress" style="display:none">
+        <div class="push-step step-done"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8"/></svg> Validating connection…</div>
+        <div class="push-step step-done"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8"/></svg> Formatting payment instruction…</div>
+        <div class="push-step step-active"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M8 5v3l2 2"/></svg> Sending to Xero…</div>
+        <div class="push-step step-pending"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" stroke-dasharray="2"/></svg> Confirming receipt…</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('approveModal')">Cancel</button>
+      <button class="btn primary" onclick="simulatePush()">
+        <svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8"/></svg>
+        Approve &amp; Push to Xero
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="modal-overlay" id="rejectModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width:600px;width:600px">
+    <div class="modal-head">
+      <div class="modal-title">Reject Payment</div>
+      <div class="modal-sub">CyberSec Partners · $28,000</div>
+      <button class="modal-close" onclick="closeModal('rejectModal')" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="callout crit" style="margin-bottom:var(--s-4)">
+        <svg viewBox="0 0 16 16"><path d="M8 2L1.5 13h13L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg>
+        <p style="color:var(--sev-critical)">This will notify the subcontractor and DM. Payment returns to subcontractor for correction.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Reason Category<span class="req">*</span></label>
+        <select class="field-input"><option>Select reason…</option><option>Disputed Hours</option><option>Scope Mismatch</option><option>Missing Documentation</option><option>Insufficient Evidence</option><option>Other</option></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Detailed Explanation<span class="req">*</span></label>
+        <textarea class="field-input" rows="4" placeholder="Provide specifics to help subcontractor correct…" style="resize:vertical;line-height:1.5"></textarea>
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label">Suggested Action (optional)</label>
+        <textarea class="field-input" rows="2" placeholder="e.g. Please resubmit with corrected invoice…" style="resize:vertical;line-height:1.5"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn danger" onclick="closeModal('rejectModal')">Reject &amp; Notify</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFamily='coffee',currentMode='dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){document.body.className=currentFamily+' '+currentMode;document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');document.getElementById('mb-light').classList.toggle('active',currentMode==='light')}
+function setFamily(f){currentFamily=f;applyTheme()}
+function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn'),themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open,.theme-popover.open').forEach(el=>el.classList.remove('open'))});
+
+let adjOpen=false;
+const ORIG=28000;
+function toggleAdjEdit(){adjOpen=!adjOpen;document.getElementById('adjEditZone').classList.toggle('visible',adjOpen);document.getElementById('deltaArea').style.display=adjOpen?'block':'none';document.getElementById('editBtn').textContent=adjOpen?'Cancel Edit':'Edit Amount'}
+function cancelAdjEdit(){adjOpen=false;document.getElementById('adjEditZone').classList.remove('visible');document.getElementById('deltaArea').style.display='none';document.getElementById('editBtn').innerHTML='<svg viewBox="0 0 16 16" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2l3 3-9 9H2v-3l9-9z"/></svg>Edit Amount';document.getElementById('adjInput').value='28,000';updateDelta()}
+function parseAmt(s){return parseFloat(String(s).replace(/[,$]/g,''))||0}
+function fmt(n){return'$'+n.toLocaleString()}
+function updateDelta(){
+  const newAmt=parseAmt(document.getElementById('adjInput').value);
+  document.getElementById('newAmtDisplay').textContent=fmt(newAmt);
+  const delta=newAmt-ORIG;
+  const chip=document.getElementById('deltaChip');
+  if(delta!==0){chip.style.display='inline-flex';chip.textContent=(delta<0?'−$':'+')+Math.abs(delta).toLocaleString();chip.className='delta-chip '+(delta<0?'delta-neg':'delta-pos')}
+  else chip.style.display='none';
+}
+function saveAdjustment(){
+  const newAmt=parseAmt(document.getElementById('adjInput').value);
+  document.getElementById('adjDisplay').textContent=fmt(newAmt);
+  cancelAdjEdit();
+}
+function openApproveModal(){document.getElementById('approveModal').classList.add('open')}
+function openRejectModal(){document.getElementById('rejectModal').classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.getElementById('pushProgress').style.display='none'}
+function simulatePush(){document.getElementById('pushProgress').style.display='flex'}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+</script>
+</body>
+</html>

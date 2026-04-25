@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISO-03 · Board Report Export · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SECURELOOP · CISO-03 · BOARD REPORT EXPORT WIZARD
+   v3 fixes: preview-state switcher sync · Cancel removed · Step 1 gap fixed
+   Uses v7 frozen design system (identical tokens to CISO-02 v3)
+   ===================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ============================================
+   DESIGN TOKENS (frozen from v7)
+   ============================================ */
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243, 238, 226, 0.07); --line-strong: rgba(243, 238, 226, 0.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-dim: rgba(243, 238, 226, 0.12); --brand-glow: rgba(243, 238, 226, 0.22); --brand-ink: #120804;
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255, 107, 91, 0.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255, 176, 77, 0.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255, 217, 122, 0.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122, 184, 229, 0.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143, 229, 179, 0.14);
+
+  --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+}
+
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43, 24, 16, 0.10); --line-strong: rgba(43, 24, 16, 0.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-dim: rgba(111, 78, 55, 0.14); --brand-glow: rgba(111, 78, 55, 0.24); --brand-ink: #F3EEE2;
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201, 70, 55, 0.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184, 101, 29, 0.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158, 127, 16, 0.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46, 134, 193, 0.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46, 139, 80, 0.12);
+}
+
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232, 244, 253, 0.08); --line-strong: rgba(232, 244, 253, 0.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-dim: rgba(232, 244, 253, 0.12); --brand-glow: rgba(232, 244, 253, 0.22); --brand-ink: #0A1628;
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255, 122, 107, 0.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255, 179, 71, 0.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255, 217, 122, 0.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122, 184, 229, 0.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126, 224, 168, 0.14);
+}
+
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10, 22, 40, 0.08); --line-strong: rgba(10, 22, 40, 0.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-dim: rgba(30, 90, 138, 0.14); --brand-glow: rgba(30, 90, 138, 0.24); --brand-ink: #F2F8FD;
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199, 62, 58, 0.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193, 122, 26, 0.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158, 127, 16, 0.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46, 134, 193, 0.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46, 139, 80, 0.12);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  overflow: hidden;
+  transition: background 240ms ease, color 240ms ease;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: 0.05; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* ============================================
+   BACKGROUND DASHBOARD (dimmed)
+   ============================================ */
+.bg-dashboard { position: fixed; inset: 0; z-index: 1; display: grid; grid-template-columns: 64px 1fr; pointer-events: none; }
+.bg-rail { background: var(--bg-base); border-right: 1px solid var(--line); }
+.bg-main { padding: 56px var(--s-8) var(--s-8); background: var(--bg-page); position: relative; }
+.bg-main::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 56px; border-bottom: 1px solid var(--line); background: var(--bg-base); }
+.bg-title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 500; color: var(--ink-100); letter-spacing: -0.02em; margin: var(--s-4) 0; opacity: 0.5; }
+.bg-cards { display: grid; grid-template-columns: repeat(8, 1fr); gap: var(--s-4); opacity: 0.4; }
+.bg-card { height: 180px; background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); }
+.bg-card.span-3 { grid-column: span 3; }
+.bg-card.span-2 { grid-column: span 2; }
+
+/* ============================================
+   BACKDROP + MODAL
+   ============================================ */
+.backdrop { position: fixed; inset: 0; z-index: 10; background: rgba(0, 0, 0, 0.52); backdrop-filter: blur(8px); display: grid; place-items: center; padding: var(--s-6); overflow-y: auto; animation: fadeIn 200ms ease; }
+body.coffee.light .backdrop { background: rgba(43, 24, 16, 0.35); }
+body.blue.light .backdrop { background: rgba(10, 22, 40, 0.30); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  width: 900px;
+  height: 640px;
+  max-width: 100%;
+  max-height: calc(100vh - var(--s-12));
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: riseIn 320ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes riseIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* Modal head */
+.modal-head {
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.head-meta { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.head-eyebrow { display: flex; align-items: center; gap: var(--s-2); font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+.head-eyebrow .id-pill { padding: 2px 7px; background: var(--brand-dim); color: var(--brand); border-radius: var(--r-xs); letter-spacing: 0.04em; }
+.head-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; color: var(--ink-100); letter-spacing: -0.015em; }
+.close-btn { width: 32px; height: 32px; display: grid; place-items: center; background: transparent; border: 1px solid transparent; border-radius: var(--r-sm); color: var(--ink-60); cursor: pointer; transition: all 140ms; }
+.close-btn:hover { background: var(--bg-raised); color: var(--ink-100); border-color: var(--line); }
+
+/* ============================================
+   STEPPER — Progress Indicator
+   ============================================ */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: var(--s-4) var(--s-6);
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--line);
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 6px var(--s-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 140ms;
+  font-family: var(--font-ui);
+  color: var(--ink-60);
+}
+.step:hover:not(.active) { background: var(--bg-raised); color: var(--ink-80); }
+.step.active {
+  background: var(--bg-raised);
+  border-color: var(--line-strong);
+  color: var(--ink-100);
+}
+.step.complete { color: var(--status-good); }
+.step.complete:hover { background: var(--bg-raised); color: var(--status-good); }
+
+.step-dot {
+  width: 22px; height: 22px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--ink-40);
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--ink-60);
+  flex-shrink: 0;
+  transition: all 180ms;
+}
+.step.active .step-dot {
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-color: var(--brand);
+}
+.step.complete .step-dot {
+  background: var(--status-good);
+  color: var(--bg-base);
+  border-color: var(--status-good);
+}
+
+.step-label {
+  font-size: var(--text-label);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.step-connector {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  max-width: 40px;
+}
+.step-connector.complete {
+  background: var(--status-good);
+}
+
+/* ============================================
+   MODAL BODY
+   ============================================ */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-6);
+  position: relative;
+}
+
+/* Only one step panel visible at a time */
+.step-panel { display: none; animation: slideIn 300ms cubic-bezier(.2,.7,.2,1); }
+.step-panel.active { display: block; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-head {
+  margin-bottom: var(--s-6);
+}
+.panel-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: var(--s-1);
+}
+.panel-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--s-1);
+}
+.panel-sub {
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  font-weight: 300;
+  line-height: 1.55;
+  max-width: 680px;
+}
+
+/* ============================================
+   STEP 1 — Select Formats
+   ============================================ */
+.format-groups { display: flex; flex-direction: column; gap: var(--s-6); }
+.format-group { display: flex; flex-direction: column; gap: var(--s-3); }
+.format-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.format-group-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--ink-100);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.format-group-sub {
+  font-size: var(--text-label);
+  color: var(--ink-60);
+}
+.select-all-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-80);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.select-all-btn:hover { background: var(--bg-raised); color: var(--ink-100); border-color: var(--line-strong); }
+
+.format-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+
+.format-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-overlay);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 140ms;
+}
+.format-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.format-card.selected {
+  border-color: var(--brand);
+  background: var(--brand-dim);
+}
+
+/* Custom checkbox */
+.checkbox {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--ink-40);
+  border-radius: var(--r-xs);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 140ms;
+  background: var(--bg-base);
+}
+.format-card.selected .checkbox {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.checkbox svg { opacity: 0; color: var(--brand-ink); transition: opacity 140ms; }
+.format-card.selected .checkbox svg { opacity: 1; }
+
+.format-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.format-name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-100);
+}
+.format-name .format-size {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  font-weight: 500;
+  margin-left: auto;
+}
+.format-desc {
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  line-height: 1.45;
+}
+
+/* ============================================
+   STEP 2 — Customize Sections (drag-and-drop)
+   ============================================ */
+.section-list { display: flex; flex-direction: column; gap: var(--s-2); }
+
+.section-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-overlay);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  transition: all 140ms;
+  cursor: grab;
+}
+.section-row:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.section-row.dragging { opacity: 0.5; cursor: grabbing; }
+
+.drag-handle {
+  display: grid;
+  place-items: center;
+  color: var(--ink-40);
+  cursor: grab;
+  transition: color 140ms;
+}
+.section-row:hover .drag-handle { color: var(--ink-80); }
+
+.section-row .checkbox { margin-top: 0; }
+.section-row.included .checkbox { background: var(--brand); border-color: var(--brand); }
+.section-row.included .checkbox svg { opacity: 1; }
+
+.section-name {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-100);
+  flex: 1;
+}
+
+.section-order {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  padding: 2px 7px;
+  background: var(--bg-raised);
+  border-radius: var(--r-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.preview-icon {
+  color: var(--ink-60);
+  cursor: help;
+  padding: 4px;
+  border-radius: var(--r-xs);
+  transition: all 140ms;
+}
+.preview-icon:hover { background: var(--bg-raised); color: var(--ink-100); }
+
+/* ============================================
+   STEP 3 — Add Commentary
+   ============================================ */
+.commentary-list { display: flex; flex-direction: column; gap: var(--s-4); }
+
+.commentary-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background: var(--bg-overlay);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.commentary-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.commentary-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-100);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.commentary-label .optional {
+  font-weight: 400;
+  color: var(--ink-60);
+  font-size: var(--text-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.commentary-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px var(--s-2);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.commentary-preview-btn:hover { color: var(--ink-100); border-color: var(--line-strong); }
+
+.commentary-textarea {
+  width: 100%;
+  padding: var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 400;
+  outline: none;
+  resize: vertical;
+  min-height: 64px;
+  line-height: 1.55;
+  transition: border-color 140ms;
+}
+.commentary-textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand-dim);
+}
+.commentary-textarea::placeholder { color: var(--ink-40); }
+
+.commentary-foot {
+  display: flex;
+  justify-content: flex-end;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  font-weight: 500;
+}
+.commentary-foot em { font-style: normal; color: var(--ink-80); }
+
+/* ============================================
+   STEP 4 — Generate / Summary
+   ============================================ */
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+  margin-bottom: var(--s-6);
+}
+.summary-card {
+  padding: var(--s-4);
+  background: var(--bg-overlay);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+.summary-card-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  margin-bottom: var(--s-2);
+}
+.summary-badges { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.summary-badge {
+  padding: 3px var(--s-2);
+  background: var(--brand-dim);
+  border: 1px solid var(--brand);
+  color: var(--brand);
+  border-radius: var(--r-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.summary-value {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -0.015em;
+}
+.summary-value .hint {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 400;
+  margin-left: var(--s-2);
+}
+
+.branding-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--brand-dim);
+  border: 1px solid var(--brand);
+  border-radius: var(--r-sm);
+  margin-bottom: var(--s-4);
+}
+.branding-logo {
+  width: 32px; height: 32px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-radius: var(--r-xs);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-lg);
+}
+.branding-text { font-size: var(--text-label); color: var(--ink-80); line-height: 1.5; }
+.branding-text strong { color: var(--ink-100); font-weight: 600; }
+
+.time-estimate {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+}
+.time-estimate svg { color: var(--ink-80); }
+
+/* ============================================
+   GENERATION PROGRESS STATE
+   ============================================ */
+.gen-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--s-8) var(--s-6);
+  gap: var(--s-4);
+  min-height: 400px;
+}
+.gen-state.active { display: flex; }
+
+.gen-spinner {
+  width: 64px; height: 64px;
+  border: 3px solid var(--line);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 900ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.gen-success-icon {
+  width: 64px; height: 64px;
+  background: var(--status-good-bg);
+  color: var(--status-good);
+  border: 2px solid var(--status-good);
+  border-radius: 50%;
+  display: grid; place-items: center;
+}
+
+.gen-error-icon {
+  width: 64px; height: 64px;
+  background: var(--sev-critical-bg);
+  color: var(--sev-critical);
+  border: 2px solid var(--sev-critical);
+  border-radius: 50%;
+  display: grid; place-items: center;
+}
+
+.gen-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -0.02em;
+}
+.gen-sub {
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+.gen-progress-bar {
+  width: 360px;
+  height: 4px;
+  background: var(--bg-raised);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  margin-top: var(--s-2);
+}
+.gen-progress-fill {
+  height: 100%;
+  width: 65%;
+  background: var(--brand);
+  border-radius: var(--r-full);
+  transition: width 400ms ease;
+}
+.gen-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  letter-spacing: 0.04em;
+}
+
+.gen-actions { display: flex; gap: var(--s-3); margin-top: var(--s-3); }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.modal-foot {
+  padding: var(--s-4) var(--s-6);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  background: var(--bg-base);
+}
+.foot-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+}
+.foot-actions { margin-left: auto; display: flex; gap: var(--s-2); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 8px var(--s-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  height: 36px;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-color: var(--brand);
+  font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.primary:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+.btn.ghost { background: transparent; }
+.btn.ghost:hover { background: var(--bg-raised); }
+.btn.large {
+  padding: 11px var(--s-6);
+  height: 44px;
+  font-size: var(--text-lg);
+}
+
+/* ============================================
+   THEME PICKER (same as v7)
+   ============================================ */
+.theme-picker-wrap { position: fixed; top: 12px; right: var(--s-6); z-index: 20; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms; backdrop-filter: blur(8px);
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; }
+body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; }
+body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; }
+body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; }
+body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); }
+.tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-family: var(--font-ui); font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; align-items: stretch; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+.modal-body::-webkit-scrollbar, .commentary-textarea::-webkit-scrollbar { width: 8px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+
+/* State indicator for demo navigation */
+.state-switcher {
+  position: fixed; bottom: var(--s-4); left: var(--s-4); z-index: 30;
+  padding: var(--s-2) var(--s-3);
+  background: var(--bg-overlay);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+}
+.state-switcher strong { color: var(--ink-100); font-weight: 600; }
+.state-switcher-btns { display: inline-flex; gap: 4px; margin-left: var(--s-2); }
+.state-btn {
+  padding: 2px 7px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.state-btn:hover { color: var(--ink-100); border-color: var(--line-strong); }
+.state-btn.active { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- Dimmed background dashboard -->
+<div class="bg-dashboard" aria-hidden="true">
+  <div class="bg-rail"></div>
+  <div class="bg-main">
+    <h1 class="bg-title">Your organisation is exposed</h1>
+    <div class="bg-cards">
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-2"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Theme picker -->
+<div class="theme-picker-wrap">
+  <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+    <span class="tp-family-swatches">
+      <span class="tp-sw tp-sw-bg"></span>
+      <span class="tp-sw tp-sw-accent"></span>
+    </span>
+    <span class="tp-label">
+      <span id="tpFamily">Coffee</span>
+      <span class="tp-sep">·</span>
+      <span class="tp-mode" id="tpMode">Dark</span>
+    </span>
+    <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <div class="theme-popover" id="themePopover" role="dialog">
+    <div class="tp-section">
+      <div class="tp-section-label">Palette family</div>
+      <div class="tp-family-grid">
+        <button class="tp-family-card active" data-family="coffee">
+          <span class="tp-family-preview">
+            <span class="tp-pv-swatch" style="background:#120804;"></span>
+            <span class="tp-pv-swatch" style="background:#F3EEE2;"></span>
+            <span class="tp-pv-swatch" style="background:#6F4E37;"></span>
+          </span>
+          <span class="tp-family-name">Coffee</span>
+          <span class="tp-family-desc">Warm · Investigation</span>
+        </button>
+        <button class="tp-family-card" data-family="blue">
+          <span class="tp-family-preview">
+            <span class="tp-pv-swatch" style="background:#0A1628;"></span>
+            <span class="tp-pv-swatch" style="background:#F2F8FD;"></span>
+            <span class="tp-pv-swatch" style="background:#1E5A8A;"></span>
+          </span>
+          <span class="tp-family-name">Blue</span>
+          <span class="tp-family-desc">Cool · Enterprise</span>
+        </button>
+      </div>
+    </div>
+    <div class="tp-section">
+      <div class="tp-section-label">Appearance</div>
+      <div class="tp-mode-row">
+        <button class="tp-mode-btn active" data-mode="dark">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark
+        </button>
+        <button class="tp-mode-btn" data-mode="light">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Light
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="backdrop">
+  <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+
+    <div class="modal-head">
+      <div class="head-meta">
+        <div class="head-eyebrow">
+          <span>Wizard</span>
+          <span class="id-pill">CISO-03-1</span>
+          <span>Report period:</span>
+          <span style="color: var(--ink-100); font-family: var(--font-mono);">Q4 2025 · Oct – Dec</span>
+        </div>
+        <h2 class="head-title" id="modalTitle">Export Board Report</h2>
+      </div>
+      <button class="close-btn" aria-label="Close wizard" title="Close (Esc)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper" role="tablist" id="stepper">
+      <button class="step complete" data-step="1" role="tab">
+        <span class="step-dot">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </span>
+        <span class="step-label">Select formats</span>
+      </button>
+      <div class="step-connector complete"></div>
+      <button class="step active" data-step="2" role="tab" aria-selected="true">
+        <span class="step-dot">2</span>
+        <span class="step-label">Customize sections</span>
+      </button>
+      <div class="step-connector"></div>
+      <button class="step" data-step="3" role="tab">
+        <span class="step-dot">3</span>
+        <span class="step-label">Add commentary</span>
+      </button>
+      <div class="step-connector"></div>
+      <button class="step" data-step="4" role="tab">
+        <span class="step-dot">4</span>
+        <span class="step-label">Generate</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body" id="modalBody">
+
+      <!-- STEP 1 -->
+      <div class="step-panel" data-panel="1">
+        <div class="panel-head">
+          <div class="panel-eyebrow">Step 1 of 4</div>
+          <h3 class="panel-title">Select export formats</h3>
+          <p class="panel-sub">Choose a board-ready PDF for presentation and one or more data formats for system integration. Selected formats will be bundled into a single .zip download.</p>
+        </div>
+
+        <div class="format-groups">
+          <div class="format-group">
+            <div class="format-group-head">
+              <div class="format-group-title">Presentation</div>
+              <span class="format-group-sub">Board-ready</span>
+            </div>
+            <div class="format-list" style="grid-template-columns: 1fr;">
+              <div class="format-card selected" data-format="pdf">
+                <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div class="format-info">
+                  <div class="format-name">PDF <span class="format-size">~1.8 MB</span></div>
+                  <div class="format-desc">Executive summary, charts, top risks. Designed for board presentation — human-readable layout.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="format-group">
+            <div class="format-group-head">
+              <div class="format-group-title">Data Export</div>
+              <button class="select-all-btn" id="selectAllData">Select all data formats</button>
+            </div>
+            <div class="format-list">
+              <div class="format-card selected" data-format="csv">
+                <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div class="format-info">
+                  <div class="format-name">CSV <span class="format-size">~240 KB</span></div>
+                  <div class="format-desc">For spreadsheets, BI platforms</div>
+                </div>
+              </div>
+              <div class="format-card selected" data-format="json">
+                <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div class="format-info">
+                  <div class="format-name">JSON <span class="format-size">~320 KB</span></div>
+                  <div class="format-desc">For SIEM, GRC tools, APIs</div>
+                </div>
+              </div>
+              <div class="format-card" data-format="yaml">
+                <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div class="format-info">
+                  <div class="format-name">YAML <span class="format-size">~310 KB</span></div>
+                  <div class="format-desc">For config-as-code workflows</div>
+                </div>
+              </div>
+              <div class="format-card" data-format="xml">
+                <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div class="format-info">
+                  <div class="format-name">XML <span class="format-size">~440 KB</span></div>
+                  <div class="format-desc">For legacy enterprise systems</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 (active) -->
+      <div class="step-panel active" data-panel="2">
+        <div class="panel-head">
+          <div class="panel-eyebrow">Step 2 of 4 · PDF only</div>
+          <h3 class="panel-title">Customize report sections</h3>
+          <p class="panel-sub">Drag to reorder. Uncheck to exclude a section from the PDF. Data exports (CSV/JSON/YAML/XML) always include all sections.</p>
+        </div>
+
+        <div class="section-list" id="sectionList">
+          <div class="section-row included" draggable="true" data-section="risk-posture">
+            <span class="drag-handle" title="Drag to reorder">
+              <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg>
+            </span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Risk Posture Trend</span>
+            <span class="section-order">1</span>
+            <span class="preview-icon" title="Preview this section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+
+          <div class="section-row included" draggable="true" data-section="top-risks">
+            <span class="drag-handle" title="Drag to reorder"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg></span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Top 5 Risks</span>
+            <span class="section-order">2</span>
+            <span class="preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+
+          <div class="section-row included" draggable="true" data-section="compliance">
+            <span class="drag-handle"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg></span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Compliance Status</span>
+            <span class="section-order">3</span>
+            <span class="preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+
+          <div class="section-row included" draggable="true" data-section="remediation">
+            <span class="drag-handle"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg></span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Remediation Progress</span>
+            <span class="section-order">4</span>
+            <span class="preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+
+          <div class="section-row included" draggable="true" data-section="financial">
+            <span class="drag-handle"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg></span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Financial Impact Summary</span>
+            <span class="section-order">5</span>
+            <span class="preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+
+          <div class="section-row included" draggable="true" data-section="open-findings">
+            <span class="drag-handle"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="3" r="1.3"/><circle cx="8" cy="3" r="1.3"/><circle cx="2" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="2" cy="13" r="1.3"/><circle cx="8" cy="13" r="1.3"/></svg></span>
+            <span class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span class="section-name">Open Findings by Severity</span>
+            <span class="section-order">6</span>
+            <span class="preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-panel" data-panel="3">
+        <div class="panel-head">
+          <div class="panel-eyebrow">Step 3 of 4 · PDF only · Optional</div>
+          <h3 class="panel-title">Add commentary</h3>
+          <p class="panel-sub">Add context for the board. Commentary appears below each section in an italic gray box. Plain text only — no formatting or rich text.</p>
+        </div>
+
+        <div class="commentary-list">
+          <div class="commentary-block">
+            <div class="commentary-head">
+              <label class="commentary-label" for="cmt1">
+                Commentary for <em style="font-style:normal;color:var(--ink-60);">Risk Posture Trend</em>
+                <span class="optional">Optional</span>
+              </label>
+              <button class="commentary-preview-btn" title="Preview how this will appear">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+            </div>
+            <textarea class="commentary-textarea" id="cmt1" placeholder="Add context for the board…" data-max="1000">Posture trending down for 11 weeks, but velocity has slowed. Primary blocker: 4 controls awaiting Business Owner sign-off (SOC 2 deadline 20 Jan).</textarea>
+            <div class="commentary-foot"><span><em>186</em> / 1,000</span></div>
+          </div>
+
+          <div class="commentary-block">
+            <div class="commentary-head">
+              <label class="commentary-label" for="cmt2">
+                Commentary for <em style="font-style:normal;color:var(--ink-60);">Top 5 Risks</em>
+                <span class="optional">Optional</span>
+              </label>
+              <button class="commentary-preview-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+            </div>
+            <textarea class="commentary-textarea" id="cmt2" placeholder="Add context for the board…" data-max="1000"></textarea>
+            <div class="commentary-foot"><span><em>0</em> / 1,000</span></div>
+          </div>
+
+          <div class="commentary-block">
+            <div class="commentary-head">
+              <label class="commentary-label" for="cmt3">
+                Commentary for <em style="font-style:normal;color:var(--ink-60);">Compliance Status</em>
+                <span class="optional">Optional</span>
+              </label>
+              <button class="commentary-preview-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+            </div>
+            <textarea class="commentary-textarea" id="cmt3" placeholder="Add context for the board…" data-max="1000"></textarea>
+            <div class="commentary-foot"><span><em>0</em> / 1,000</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step-panel" data-panel="4">
+        <div class="panel-head">
+          <div class="panel-eyebrow">Step 4 of 4</div>
+          <h3 class="panel-title">Review &amp; generate</h3>
+          <p class="panel-sub">Everything is ready. Your report will be branded with PTOps Suite identity and delivered as a single .zip file.</p>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-card-title">Selected formats</div>
+            <div class="summary-badges">
+              <span class="summary-badge">PDF</span>
+              <span class="summary-badge">CSV</span>
+              <span class="summary-badge">JSON</span>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-title">Included sections</div>
+            <div class="summary-value">6 <span class="hint">of 6 · reordered</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-title">Commentary added</div>
+            <div class="summary-value">1 <span class="hint">of 6 sections</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-title">Estimated file size</div>
+            <div class="summary-value">2.4 <span class="hint">MB total (zipped)</span></div>
+          </div>
+        </div>
+
+        <div class="branding-notice">
+          <div class="branding-logo">S</div>
+          <div class="branding-text">
+            <strong>Branded with PTOps Suite identity</strong><br>
+            Logo, colours, and headers will match the SecureLoop PTOps Suite brand. To customize branding, contact your platform administrator.
+          </div>
+        </div>
+
+        <div class="time-estimate">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Generation time: approximately 30 seconds
+        </div>
+      </div>
+
+      <!-- GENERATION: In progress -->
+      <div class="gen-state" data-gen-state="progress">
+        <div class="gen-spinner"></div>
+        <h3 class="gen-title">Generating your report</h3>
+        <div class="gen-progress-bar"><div class="gen-progress-fill" id="progressFill"></div></div>
+        <div class="gen-status" id="genStatus">Rendering PDF…</div>
+        <p class="gen-sub">This usually takes under 30 seconds. We'll notify you here when ready.</p>
+      </div>
+
+      <!-- GENERATION: Success -->
+      <div class="gen-state" data-gen-state="success">
+        <div class="gen-success-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h3 class="gen-title">Your report is ready</h3>
+        <p class="gen-sub">Download will start automatically in 2 seconds. Report period: Q4 2025.</p>
+        <div class="gen-actions">
+          <button class="btn primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Download SecureLoop_Q4_2025.zip (2.4 MB)
+          </button>
+          <button class="btn ghost">Generate another report</button>
+        </div>
+      </div>
+
+      <!-- GENERATION: Error -->
+      <div class="gen-state" data-gen-state="error">
+        <div class="gen-error-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <h3 class="gen-title">Report generation failed</h3>
+        <p class="gen-sub">Could not render the Compliance Status section — SOC 2 Type II framework mapping is incomplete. Check Admin &gt; Frameworks.</p>
+        <div class="gen-actions">
+          <button class="btn primary">Retry generation</button>
+          <button class="btn ghost">Contact support</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-foot" id="modalFoot">
+      <div class="foot-meta">
+        <span>Changes saved as draft</span>
+      </div>
+      <div class="foot-actions">
+        <button class="btn" id="btnBack">← Back</button>
+        <button class="btn primary" id="btnNext">Next →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Demo: state switcher -->
+<div class="state-switcher">
+  <strong>Preview state:</strong>
+  <span class="state-switcher-btns">
+    <button class="state-btn" data-state="step" data-step="1">Step 1</button>
+    <button class="state-btn active" data-state="step" data-step="2">Step 2</button>
+    <button class="state-btn" data-state="step" data-step="3">Step 3</button>
+    <button class="state-btn" data-state="step" data-step="4">Step 4</button>
+    <button class="state-btn" data-state="gen" data-gen="progress">Progress</button>
+    <button class="state-btn" data-state="gen" data-gen="success">Success</button>
+    <button class="state-btn" data-state="gen" data-gen="error">Error</button>
+  </span>
+</div>
+
+<script>
+  // ============================================
+  // THEME PICKER
+  // ============================================
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+
+  function applyTheme() {
+    document.body.classList.remove('coffee', 'blue', 'dark', 'light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(forceState) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof forceState === 'boolean' ? forceState : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // ============================================
+  // STEP / STATE NAVIGATION
+  // ============================================
+  // Sync the preview-state switcher dots with current view
+  function syncStateSwitcher(kind, value) {
+    document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    let selector;
+    if (kind === 'step') selector = `.state-btn[data-state="step"][data-step="${value}"]`;
+    else selector = `.state-btn[data-state="gen"][data-gen="${value}"]`;
+    const btn = document.querySelector(selector);
+    if (btn) btn.classList.add('active');
+  }
+
+  function showStep(n) {
+    // Hide all gen states
+    document.querySelectorAll('.gen-state').forEach(g => g.classList.remove('active'));
+    // Show the step panel
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`.step-panel[data-panel="${n}"]`).classList.add('active');
+    // Update stepper
+    document.querySelectorAll('.step').forEach(s => {
+      const sn = parseInt(s.dataset.step);
+      s.classList.remove('active', 'complete');
+      if (sn === n) s.classList.add('active');
+      else if (sn < n) s.classList.add('complete');
+    });
+    document.querySelectorAll('.step-connector').forEach((c, i) => {
+      c.classList.toggle('complete', i + 1 < n);
+    });
+    // Update footer buttons
+    const btnBack = document.getElementById('btnBack');
+    const btnNext = document.getElementById('btnNext');
+    btnBack.style.display = n === 1 ? 'none' : 'inline-flex';
+    if (n === 4) {
+      btnNext.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg>
+        Generate report
+      `;
+    } else {
+      btnNext.innerHTML = 'Next →';
+    }
+    // Show footer
+    document.getElementById('modalFoot').style.display = 'flex';
+    syncStateSwitcher('step', n);
+  }
+
+  function showGenState(state) {
+    // Hide step panels
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    // Hide all gen states
+    document.querySelectorAll('.gen-state').forEach(g => g.classList.remove('active'));
+    // Show target gen state
+    document.querySelector(`.gen-state[data-gen-state="${state}"]`).classList.add('active');
+    // Hide footer (gen states have their own actions)
+    document.getElementById('modalFoot').style.display = 'none';
+    syncStateSwitcher('gen', state);
+  }
+
+  // Stepper dot clicks
+  document.querySelectorAll('.step').forEach(step => {
+    step.addEventListener('click', () => showStep(parseInt(step.dataset.step)));
+  });
+
+  // Back/Next buttons
+  document.getElementById('btnBack').addEventListener('click', () => {
+    const active = document.querySelector('.step.active');
+    const n = parseInt(active.dataset.step);
+    if (n > 1) showStep(n - 1);
+  });
+  document.getElementById('btnNext').addEventListener('click', () => {
+    const active = document.querySelector('.step.active');
+    const n = parseInt(active.dataset.step);
+    if (n < 4) showStep(n + 1);
+    else showGenState('progress');  // Generate clicked
+  });
+
+  // Demo state switcher (active class is managed centrally by syncStateSwitcher)
+  document.querySelectorAll('.state-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.state === 'step') showStep(parseInt(btn.dataset.step));
+      else if (btn.dataset.state === 'gen') showGenState(btn.dataset.gen);
+    });
+  });
+
+  // ============================================
+  // FORMAT CARD SELECTION
+  // ============================================
+  document.querySelectorAll('.format-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+    });
+  });
+  document.getElementById('selectAllData').addEventListener('click', () => {
+    document.querySelectorAll('.format-card[data-format]:not([data-format="pdf"])').forEach(c => c.classList.add('selected'));
+  });
+
+  // ============================================
+  // SECTION ROW CHECKBOX TOGGLE
+  // ============================================
+  document.querySelectorAll('.section-row .checkbox').forEach(cb => {
+    cb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cb.parentElement.classList.toggle('included');
+    });
+  });
+
+  // ============================================
+  // DRAG AND DROP (native HTML5)
+  // ============================================
+  let draggedEl = null;
+  const sectionList = document.getElementById('sectionList');
+
+  sectionList.querySelectorAll('.section-row').forEach(row => {
+    row.addEventListener('dragstart', (e) => {
+      draggedEl = row;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+      draggedEl = null;
+      // Re-number sections after drop
+      sectionList.querySelectorAll('.section-row .section-order').forEach((o, i) => {
+        o.textContent = i + 1;
+      });
+    });
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (!draggedEl || row === draggedEl) return;
+      const rect = row.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      if (e.clientY < midY) row.parentNode.insertBefore(draggedEl, row);
+      else row.parentNode.insertBefore(draggedEl, row.nextSibling);
+    });
+  });
+
+  // ============================================
+  // COMMENTARY CHARACTER COUNT
+  // ============================================
+  document.querySelectorAll('.commentary-textarea').forEach(ta => {
+    ta.addEventListener('input', () => {
+      const len = ta.value.length;
+      const max = parseInt(ta.dataset.max);
+      const foot = ta.nextElementSibling.querySelector('em');
+      foot.textContent = len.toLocaleString();
+      const span = ta.nextElementSibling.querySelector('span');
+      span.style.color = len > max ? 'var(--sev-critical)' : '';
+    });
+  });
+
+  // ============================================
+  // SIMULATE PROGRESS (when on progress state)
+  // ============================================
+  const statuses = ['Compiling data…', 'Rendering PDF…', 'Preparing data exports…', 'Creating archive…'];
+  let statusIdx = 1;
+  setInterval(() => {
+    const progressActive = document.querySelector('.gen-state[data-gen-state="progress"].active');
+    if (progressActive) {
+      document.getElementById('genStatus').textContent = statuses[statusIdx % statuses.length];
+      statusIdx++;
+    }
+  }, 2000);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-04-1 Cash Flow Forecast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select{font:inherit}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30)}
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.rail{width:64px;min-height:100vh;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}
+.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.topbar{position:fixed;left:64px;right:0;top:0;height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);z-index:90}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.breadcrumb .sep{color:var(--ink-40);font-size:var(--text-micro)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:relative}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+.theme-popover{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}
+.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.content{margin-left:64px;margin-top:56px;flex:1;display:flex;height:calc(100vh - 56px);overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:64px;text-align:center}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* ── PAGE LAYOUT ── */
+.main-scroll{flex:1;overflow-y:auto;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.main-and-sidebar{display:flex;gap:var(--s-4);flex:1;min-height:0}
+.main-col{flex:1;display:flex;flex-direction:column;gap:var(--s-4);min-width:0}
+.sidebar-col{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:var(--s-3)}
+
+/* ── CONFIG BAR ── */
+.config-bar{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap}
+.config-select{padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);cursor:pointer}
+.config-select:focus{border-color:var(--brand);outline:none}
+
+/* ── KPI CARDS ── */
+.kpi-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3)}
+.kpi-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.kpi-label{font-size:var(--text-label);color:var(--ink-60);font-weight:500;margin-bottom:var(--s-2)}
+.kpi-value{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);line-height:1.1}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:var(--text-label);padding:1px 6px;border-radius:var(--r-xs);margin-top:var(--s-1)}
+.trend-up{background:var(--status-good-bg);color:var(--status-good)}
+.trend-warn{background:var(--sev-high-bg);color:var(--sev-high)}
+.kpi-card.warn-card{border-color:var(--sev-critical);background:var(--sev-critical-bg)}
+
+/* ── CHART AREA ── */
+.chart-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4)}
+.chart-header{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-4)}
+.chart-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.legend{display:flex;gap:var(--s-4);flex-wrap:wrap;margin-left:auto}
+.legend-item{display:flex;align-items:center;gap:var(--s-1);font-size:var(--text-label);color:var(--ink-60)}
+.legend-dot{width:10px;height:10px;border-radius:var(--r-xs);flex-shrink:0}
+
+/* ── TABLE ── */
+.table-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:var(--s-2) var(--s-3);font-size:var(--text-label);font-weight:600;color:var(--ink-60);letter-spacing:0.04em;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--line);background:var(--bg-raised);white-space:nowrap}
+thead th.r{text-align:right}
+tbody tr{border-bottom:1px solid var(--line);transition:background 140ms}
+tbody tr:hover{background:var(--bg-hover)}
+tbody tr:last-child{border-bottom:none}
+td{padding:var(--s-2) var(--s-3);font-size:var(--text-body);color:var(--ink-80);vertical-align:middle;white-space:nowrap}
+td.mono{font-family:var(--font-mono);font-size:var(--text-body)}
+td.r{text-align:right}
+.pos{color:var(--status-good)}
+.neg{color:var(--sev-critical)}
+.ai-cell{color:var(--sev-high);font-family:var(--font-mono)}
+
+/* ── SIDEBAR CARDS ── */
+.sidebar-kpi{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3)}
+.sidebar-kpi-label{font-size:var(--text-label);color:var(--ink-60);font-weight:500;margin-bottom:var(--s-1)}
+.sidebar-kpi-value{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;color:var(--ink-100)}
+.sidebar-kpi-sub{font-size:var(--text-label);color:var(--ink-40);margin-top:3px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+
+<nav class="rail">
+  <div class="logo">S</div>
+  <div class="nav-sep"></div>
+  <button class="nav-item active" title="Finance" aria-label="Finance"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg></button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <button class="nav-item" title="Settings" aria-label="Settings"><svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14"/></svg></button>
+</nav>
+
+<header class="topbar">
+  <div class="breadcrumb">
+    <span>Finance</span><span class="sep">›</span>
+    <span class="current">Cash Flow Forecast</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn">
+      <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>Export Excel
+    </button>
+    <button class="btn">Export PDF</button>
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches"><div class="swatch" id="sw1" style="background:#1A0F08"></div><div class="swatch" id="sw2" style="background:#F3EEE2"></div></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')"><div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div><div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div></div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')"><div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div><div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div></div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark</button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="content">
+  <div class="main-scroll">
+    <!-- Page header -->
+    <div style="display:flex;align-items:center;gap:var(--s-3)">
+      <div class="id-pill">FIN-04-1</div>
+      <h1 style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.020em">Cash Flow Forecast</h1>
+    </div>
+
+    <!-- Config bar -->
+    <div class="config-bar">
+      <select class="config-select" aria-label="Forecast horizon">
+        <option>3 Months</option>
+        <option selected>6 Months</option>
+        <option>12 Months</option>
+        <option>24 Months</option>
+        <option>Custom</option>
+      </select>
+      <select class="config-select" aria-label="Scenario">
+        <option selected>Base Case</option>
+        <option>Optimistic</option>
+        <option>Pessimistic</option>
+        <option>Q4 2026 Conservative</option>
+      </select>
+      <select class="config-select" aria-label="Currency">
+        <option>USD</option>
+        <option>EUR</option>
+        <option>Multi-Currency</option>
+      </select>
+      <div class="segmented" role="group" aria-label="View type">
+        <button class="seg-btn active" onclick="switchView('chart',this)" aria-pressed="true">Chart</button>
+        <button class="seg-btn" onclick="switchView('table',this)" aria-pressed="false">Table</button>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:var(--s-2)">
+        <button class="btn">Edit Assumptions</button>
+        <button class="btn">Save Scenario</button>
+        <button class="btn">Compare Scenarios</button>
+      </div>
+    </div>
+
+    <!-- Main + sidebar -->
+    <div class="main-and-sidebar">
+      <div class="main-col">
+        <!-- KPI cards -->
+        <div class="kpi-cards">
+          <div class="kpi-card">
+            <div class="kpi-label">Projected Cash (Oct 2026)</div>
+            <div class="kpi-value">$1.84M</div>
+            <div class="kpi-trend trend-up">↑ +$340K vs today</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Highest Balance Month</div>
+            <div class="kpi-value">Aug '26</div>
+            <div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">$2.21M peak liquidity</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Lowest Balance Month</div>
+            <div class="kpi-value">Jun '26</div>
+            <div class="kpi-trend trend-warn">$1.12M · above zero</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Total AI Credit Spend</div>
+            <div class="kpi-value" style="color:var(--sev-high)">$142K</div>
+            <div style="font-size:var(--text-label);color:var(--ink-60);margin-top:4px">Forecast 6-month total</div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-card" id="chartView">
+          <div class="chart-header">
+            <span class="chart-title">Monthly Cash Flow Forecast · May–Oct 2026</span>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--status-good)"></div>Inflows</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--sev-critical)"></div>Outflows</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--sev-high)"></div>AI Credits</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--sev-low)"></div>Net Cash</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--ink-40)"></div>Closing Bal.</div>
+            </div>
+          </div>
+          <svg id="cashflowChart" viewBox="0 0 900 300" width="100%" style="display:block" aria-label="Cash flow forecast chart"></svg>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card" id="tableView" style="display:none">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th class="r">Opening Bal.</th>
+                  <th class="r">Total Inflows</th>
+                  <th class="r">Total Outflows</th>
+                  <th class="r" style="color:var(--sev-high)">AI Credits</th>
+                  <th class="r">Net Cash</th>
+                  <th class="r">Closing Bal.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="font-weight:600">May 2026</td><td class="mono r">$1,500K</td><td class="mono r pos">+$840K</td><td class="mono r neg">−$620K</td><td class="ai-cell r">−$22K</td><td class="mono r pos">+$198K</td><td class="mono r" style="font-weight:700">$1,698K</td></tr>
+                <tr><td style="font-weight:600">Jun 2026</td><td class="mono r">$1,698K</td><td class="mono r pos">+$720K</td><td class="mono r neg">−$1,280K</td><td class="ai-cell r">−$24K</td><td class="mono r neg">−$584K</td><td class="mono r" style="font-weight:700;color:var(--sev-medium)">$1,114K</td></tr>
+                <tr><td style="font-weight:600">Jul 2026</td><td class="mono r">$1,114K</td><td class="mono r pos">+$1,120K</td><td class="mono r neg">−$680K</td><td class="ai-cell r">−$25K</td><td class="mono r pos">+$415K</td><td class="mono r" style="font-weight:700">$1,529K</td></tr>
+                <tr><td style="font-weight:600">Aug 2026</td><td class="mono r">$1,529K</td><td class="mono r pos">+$1,380K</td><td class="mono r neg">−$700K</td><td class="ai-cell r">−$27K</td><td class="mono r pos">+$653K</td><td class="mono r" style="font-weight:700">$2,182K</td></tr>
+                <tr><td style="font-weight:600">Sep 2026</td><td class="mono r">$2,182K</td><td class="mono r pos">+$960K</td><td class="mono r neg">−$1,100K</td><td class="ai-cell r">−$22K</td><td class="mono r neg">−$162K</td><td class="mono r" style="font-weight:700">$2,020K</td></tr>
+                <tr><td style="font-weight:600">Oct 2026</td><td class="mono r">$2,020K</td><td class="mono r pos">+$880K</td><td class="mono r neg">−$890K</td><td class="ai-cell r">−$22K</td><td class="mono r neg">−$32K</td><td class="mono r" style="font-weight:700">$1,988K</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar-col">
+        <div class="sidebar-kpi">
+          <div class="sidebar-kpi-label">AI Credit Spend (6-mo)</div>
+          <div class="sidebar-kpi-value" style="color:var(--sev-high)">$142K</div>
+          <div class="sidebar-kpi-sub">Shown as separate line</div>
+        </div>
+        <div class="sidebar-kpi">
+          <div class="sidebar-kpi-label">Avg Monthly Inflow</div>
+          <div class="sidebar-kpi-value" style="color:var(--status-good)">$983K</div>
+          <div class="sidebar-kpi-sub">↑ +12% vs prior 6mo</div>
+        </div>
+        <div class="sidebar-kpi">
+          <div class="sidebar-kpi-label">Avg Monthly Outflow</div>
+          <div class="sidebar-kpi-value">$878K</div>
+          <div class="sidebar-kpi-sub">Stable · target &lt;$900K</div>
+        </div>
+        <div class="sidebar-kpi">
+          <div class="sidebar-kpi-label">Forecast Accuracy (prior)</div>
+          <div class="sidebar-kpi-value">91%</div>
+          <div class="sidebar-kpi-sub">Based on last 3 months</div>
+        </div>
+        <div style="background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3)">
+          <div style="font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)">Inflow Assumptions</div>
+          <div style="font-size:var(--text-label);color:var(--ink-60);line-height:1.6">
+            Collection days: <strong style="color:var(--ink-80)">45 avg</strong><br>
+            Signed invoices: <strong style="color:var(--ink-80)">100%</strong><br>
+            Accepted quotes: <strong style="color:var(--ink-80)">80%</strong><br>
+            Pipeline: <strong style="color:var(--ink-80)">50%</strong>
+          </div>
+        </div>
+        <div style="background:var(--sev-high-bg);border:1px solid var(--sev-high);border-radius:var(--r-sm);padding:var(--s-3)">
+          <div style="font-size:var(--text-label);font-weight:600;color:var(--sev-high);margin-bottom:4px">⚠ Jun 2026 Low Point</div>
+          <div style="font-size:var(--text-label);color:var(--ink-60);line-height:1.5">Large subcontractor payments due. Balance drops to $1.12M — above threshold but monitor.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFamily='coffee',currentMode='dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){
+  document.body.className=currentFamily+' '+currentMode;
+  document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];
+  document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];
+  document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];
+  document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');
+  document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');
+  document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');
+  document.getElementById('mb-light').classList.toggle('active',currentMode==='light');
+  drawChart();
+}
+function setFamily(f){currentFamily=f;applyTheme()}
+function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn'),themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')themePopover.classList.remove('open')});
+
+function switchView(v,btn){
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('chartView').style.display=v==='chart'?'block':'none';
+  document.getElementById('tableView').style.display=v==='table'?'block':'none';
+}
+
+// Pure SVG chart with data-role + MutationObserver
+const SVG_PAL={
+  'coffee dark':{bg:'#1A0F08',line:'rgba(243,238,226,.07)',lineStrong:'rgba(243,238,226,.14)',ink60:'#A69B80',ink40:'#7A7058',inflow:'#8FE5B3',outflow:'#FF6B5B',ai:'#FFB04D',net:'#7AB8E5',closing:'#A69B80'},
+  'coffee light':{bg:'#FBF8F1',line:'rgba(43,24,16,.10)',lineStrong:'rgba(43,24,16,.18)',ink60:'#6B5544',ink40:'#907D68',inflow:'#2E8B50',outflow:'#C94637',ai:'#B8651D',net:'#2E86C1',closing:'#907D68'},
+  'blue dark':{bg:'#0F1E35',line:'rgba(232,244,253,.08)',lineStrong:'rgba(232,244,253,.15)',ink60:'#7A96B4',ink40:'#556F8A',inflow:'#7EE0A8',outflow:'#FF7A6B',ai:'#FFB347',net:'#7AB8E5',closing:'#7A96B4'},
+  'blue light':{bg:'#FFFFFF',line:'rgba(10,22,40,.08)',lineStrong:'rgba(10,22,40,.16)',ink60:'#4A6380',ink40:'#7A8FA8',inflow:'#2E8B50',outflow:'#C73E3A',ai:'#C17A1A',net:'#2E86C1',closing:'#7A8FA8'}
+};
+const MONTHS=['May','Jun','Jul','Aug','Sep','Oct'];
+const DATA={
+  inflow:[840,720,1120,1380,960,880],
+  outflow:[620,1280,680,700,1100,890],
+  ai:[22,24,25,27,22,22],
+  closing:[1698,1114,1529,2182,2020,1988]
+};
+function getThemeKey(){return currentFamily+' '+currentMode}
+function drawChart(){
+  const svg=document.getElementById('cashflowChart');
+  const pal=SVG_PAL[getThemeKey()]||SVG_PAL['coffee dark'];
+  const W=900,H=300,PAD={l:60,r:20,t:20,b:40};
+  const bW=100,bGap=30,groupW=bW*3+bGap*2,groupGap=20;
+  const maxVal=Math.max(...DATA.inflow,...DATA.outflow,...DATA.closing)*1.15;
+  const scaleY=(v)=>H-PAD.b-(v/maxVal)*(H-PAD.t-PAD.b);
+  let html='';
+  // Grid lines
+  for(let i=0;i<=4;i++){
+    const y=PAD.t+(H-PAD.t-PAD.b)*i/4;
+    const v=Math.round(maxVal*(1-i/4)/1000);
+    html+=`<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="${pal.line}" stroke-width="1" data-role="grid"/>`;
+    html+=`<text x="${PAD.l-6}" y="${y+4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="${pal.ink40}" data-role="axis-label">$${v}K</text>`;
+  }
+  // Bars per month
+  const startX=PAD.l+10;
+  const slotW=(W-PAD.l-PAD.r)/MONTHS.length;
+  MONTHS.forEach((month,i)=>{
+    const cx=startX+i*slotW+slotW/2;
+    const bw=22;
+    // Inflow
+    const y1=scaleY(DATA.inflow[i]);
+    html+=`<rect x="${cx-bw*1.5-2}" y="${y1}" width="${bw}" height="${H-PAD.b-y1}" fill="${pal.inflow}" rx="3" data-role="bar-inflow" opacity="0.85"/>`;
+    // Outflow
+    const y2=scaleY(DATA.outflow[i]);
+    html+=`<rect x="${cx-bw/2}" y="${y2}" width="${bw}" height="${H-PAD.b-y2}" fill="${pal.outflow}" rx="3" data-role="bar-outflow" opacity="0.85"/>`;
+    // AI
+    const y3=scaleY(DATA.ai[i]);
+    html+=`<rect x="${cx+bw/2+2}" y="${y3}" width="${bw}" height="${H-PAD.b-y3}" fill="${pal.ai}" rx="3" data-role="bar-ai" opacity="0.85"/>`;
+    // Closing balance dot
+    const yc=scaleY(DATA.closing[i]);
+    html+=`<circle cx="${cx}" cy="${yc}" r="4" fill="${pal.closing}" data-role="closing-dot"/>`;
+    // Month label
+    html+=`<text x="${cx}" y="${H-PAD.b+14}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="${pal.ink60}" data-role="axis-label">${month}</text>`;
+  });
+  // Closing balance line
+  let linePts=MONTHS.map((m,i)=>{const cx=startX+i*slotW+slotW/2;return cx+','+scaleY(DATA.closing[i])}).join(' ');
+  html+=`<polyline points="${linePts}" fill="none" stroke="${pal.closing}" stroke-width="1.5" stroke-dasharray="4,3" data-role="closing-line"/>`;
+  svg.innerHTML=html;
+}
+drawChart();
+// MutationObserver for theme changes
+const observer=new MutationObserver(()=>drawChart());
+observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+</script>
+</body>
+</html>

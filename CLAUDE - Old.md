@@ -6,12 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > Read it fully on every new session. Do not re-litigate decisions marked FROZEN.
 > If you believe a FROZEN decision is wrong, stop and ask Mahesh before acting.
 
-> **State-of-repo legend:**
-> - ✅ EXISTS — currently scaffolded in repo
-> - ⚠️ PLANNED — described as target state; not yet scaffolded. Do not assume present.
->
-> Always check actual filesystem before referencing PLANNED items. See §12 for current state of the world.
-
 ---
 
 ## 0. Commands
@@ -61,21 +55,7 @@ pnpm clean
 
 ## 2. Personas (13)
 
-| Code | Name | Wireframe folder |
-|---|---|---|
-| CISO | Chief Information Security Officer | `01 CISO` |
-| CTRL | Control Owner | `02 Control Owner` |
-| TSTR | VAPT Tester | `03 VAPT Tester` |
-| SENG | Security Engineer | `04 Security Engineer` |
-| TEAM | Team | `05 Team` |
-| BO | Business Owner | `06 Business Owner` |
-| DM | Delivery Manager | `07 Delivery Manager` |
-| FIN | Finance | `08 Finance` |
-| LGL | Legal | `09 Legal` |
-| SUB | Sub Contractor | `10 Sub contractor` |
-| AUD | Auditor | `11 Auditor` |
-| ADMIN | Admin | `12 Admin` |
-| IE | Integration Engineer | `13 Integration Engg` |
+CISO · CTRL (Control Owner) · TSTR (Tester) · SENG (Security Engineer) · TEAM · DM (Delivery Manager) · FIN · LGL · SUB (Subcontractor) · AUD (Auditor) · ADMIN · IE (Integration Engineer) · BO (Business Owner)
 
 ---
 
@@ -108,27 +88,25 @@ pnpm clean
 
 ---
 
-## 4. Monorepo layout — FROZEN (target state)
-
-> ⚠️ This is the **target** structure. Most directories are PLANNED. Currently scaffolded items are marked ✅. See §12 for actual current state.
+## 4. Monorepo layout — FROZEN
 
 ```
 secureloop/
-├── ✅ CLAUDE.md                          ← this file
-├── ✅ README.md
-├── ✅ package.json                       ← root workspace
-├── ✅ pnpm-workspace.yaml
-├── ✅ tsconfig.base.json
-├── ⚠️ turbo.json
-├── ⚠️ .env.example
-├── ⚠️ docker-compose.yml                 ← local dev stack
-├── ⚠️ docker-compose.override.yml        ← gitignored, per-dev tweaks
+├── CLAUDE.md                          ← this file
+├── README.md
+├── package.json                       ← root workspace
+├── pnpm-workspace.yaml
+├── turbo.json
+├── tsconfig.base.json
+├── .env.example
+├── docker-compose.yml                 ← local dev stack
+├── docker-compose.override.yml        ← gitignored, per-dev tweaks
 │
-├── ⚠️ apps/
+├── apps/
 │   ├── ptops-web/                     ← Next.js — PTOps Suite (tester/SE/DM/FIN/LGL/ADMIN/IE)
 │   └── portal-web/                    ← Next.js — SecureLoop Portal (CISO/CTRL/TEAM/BO/AUD/SUB)
 │
-├── ⚠️ services/
+├── services/
 │   ├── auth/                          ← JWT, OAuth, SAML, SSO, RBAC (TS)
 │   ├── tenants/                       ← tenant provisioning, config, framework toggles (TS)
 │   ├── users/                         ← user profiles, persona assignments (TS)
@@ -146,7 +124,7 @@ secureloop/
 │   ├── files/                         ← object store abstraction, evidence, exports (TS)
 │   └── ai-gateway/                    ← Claude API orchestration, credit meter (Python, FastAPI)
 │
-├── ⚠️ workers/
+├── workers/
 │   ├── report-exporter/               ← PDF+zip generation (TS)
 │   ├── scanner-poller/                ← continuous scanner polling (TS)
 │   ├── sbom-processor/                ← SBOM parse, transitive analysis (TS → calls ai-gateway)
@@ -154,64 +132,51 @@ secureloop/
 │   └── risk-recalculator/             ← recompute scores on events (TS)
 │
 ├── packages/
-│   ├── ✅ design-system/                 ← CSS vars, tokens, theme switcher, base components
-│   ├── ✅ ui/                            ← shared React components built on design-system
-│   │   └── src/
-│   │       ├── components/            ← 18 components (see §12)
-│   │       ├── primitives/            ← low-level building blocks
-│   │       └── utils/
-│   ├── ⚠️ api-types/                     ← generated TS types from OpenAPI specs
-│   ├── ⚠️ api-client/                    ← typed fetch wrappers for each service
-│   ├── ⚠️ auth-client/                   ← JWT/OAuth/SAML client helpers
-│   ├── ⚠️ event-contracts/               ← RabbitMQ event schemas (Zod + JSON Schema)
-│   ├── ⚠️ config/                        ← env loading, validation (Zod)
-│   ├── ⚠️ logger/                        ← Pino config, correlation IDs
-│   ├── ⚠️ telemetry/                     ← OpenTelemetry setup
-│   ├── ⚠️ db/                            ← Postgres client, migration runner, base repositories
-│   ├── ⚠️ testing/                       ← shared test utils, fixtures, MSW handlers
-│   └── ⚠️ eslint-config/                 ← shared ESLint rules
+│   ├── design-system/                 ← CSS vars, tokens, theme switcher, base components
+│   ├── ui/                            ← shared React components built on design-system
+│   ├── api-types/                     ← generated TS types from OpenAPI specs
+│   ├── api-client/                    ← typed fetch wrappers for each service
+│   ├── auth-client/                   ← JWT/OAuth/SAML client helpers
+│   ├── event-contracts/               ← RabbitMQ event schemas (Zod + JSON Schema)
+│   ├── config/                        ← env loading, validation (Zod)
+│   ├── logger/                        ← Pino config, correlation IDs
+│   ├── telemetry/                     ← OpenTelemetry setup
+│   ├── db/                            ← Postgres client, migration runner, base repositories
+│   ├── testing/                       ← shared test utils, fixtures, MSW handlers
+│   └── eslint-config/                 ← shared ESLint rules
 │
-├── ⚠️ contracts/
+├── contracts/
 │   ├── openapi/                       ← one .yaml per service
 │   │   ├── auth.yaml
 │   │   ├── findings.yaml
 │   │   └── ...
 │   └── events/                        ← RabbitMQ event schemas (JSON Schema)
 │
-├── ⚠️ infra/
+├── infra/
 │   ├── docker/                        ← per-service Dockerfiles
 │   ├── k8s/                           ← Helm charts (Phase 2)
 │   └── scripts/                       ← dev setup, seed, reset
 │
-├── ✅ docs/                              ← currently contains 2 files; rest are PLANNED
-│   ├── ⚠️ 01_product_definition_personas.md
-│   ├── ⚠️ 02_user_stories.md
-│   ├── ⚠️ 03_data_model.md
-│   ├── ⚠️ 04_api_contracts.md
-│   ├── ⚠️ 05_technical_architecture.md
-│   ├── ⚠️ 06_non_functional_requirements.md
-│   ├── ⚠️ 07_integration_catalogue.md
-│   ├── ⚠️ 08_governance_compliance_model.md
-│   ├── ⚠️ 09_wireframe_specs/             ← one .md per persona part
-│   ├── ⚠️ 10_decision_log.md              ← frozen decisions (this doc's source)
-│   ├── ✅ 11_design_system_v2_draft.md    ← v2 additive spec, authoritative for v2 scope (see §5.5)
-│   ├── ⚠️ 12_story_to_service_map.md      ← which service owns which story
-│   └── ✅ 13_scaffold_remediation_tasks.md ← open gaps in current packages/* scaffold
+├── docs/                              ← SOURCE OF TRUTH (converted from .docx)
+│   ├── 01_product_definition_personas.md
+│   ├── 02_user_stories.md
+│   ├── 03_data_model.md
+│   ├── 04_api_contracts.md
+│   ├── 05_technical_architecture.md
+│   ├── 06_non_functional_requirements.md
+│   ├── 07_integration_catalogue.md
+│   ├── 08_governance_compliance_model.md
+│   ├── 09_wireframe_specs/             ← one .md per persona part
+│   ├── 10_decision_log.md              ← frozen decisions (this doc's source)
+│   ├── 11_design_system_v2_draft.md    ← v2 additive spec, authoritative for v2 scope (see §5.5)
+│   ├── 12_story_to_service_map.md      ← which service owns which story
+│   └── 13_scaffold_remediation_tasks.md ← open gaps in current packages/* scaffold
 │
-└── ✅ Wireframe Designs/                 ← hi-fi HTML wireframes (visual truth) — all 13 personas
-    ├── 01 CISO/
-    ├── 02 Control Owner/
-    ├── 03 VAPT Tester/
-    ├── 04 Security Engineer/
-    ├── 05 Team/
-    ├── 06 Business Owner/
-    ├── 07 Delivery Manager/
-    ├── 08 Finance/
-    ├── 09 Legal/
-    ├── 10 Sub contractor/
-    ├── 11 Auditor/
-    ├── 12 Admin/
-    └── 13 Integration Engg/
+└── wireframes/                        ← hi-fi HTML wireframes (visual truth)
+    ├── CISO/
+    ├── CTRL/
+    ├── TSTR/
+    └── SENG/
 ```
 
 **Rule:** No service in `services/` imports from another service directly. Cross-service calls go through `packages/api-client`. Cross-service events go through `packages/event-contracts`.
@@ -223,7 +188,7 @@ secureloop/
 - Wireframes: `SecureLoop_<PERSONA>-<NUM>_<ScreenName>_v<N>.html`
   Example: `SecureLoop_CISO-05_SLAEscalation_v1.html`
 - Services: `services/<kebab-name>/` — singular domain noun or short phrase.
-- Packages: `packages/<kebab-name>/` — scoped as `@secureloop/<n>`.
+- Packages: `packages/<kebab-name>/` — scoped as `@secureloop/<name>`.
 - OpenAPI specs: `contracts/openapi/<service-name>.yaml`.
 - Migrations: `services/<svc>/migrations/NNNN_<snake_case_description>.sql` (sequential, zero-padded).
 - Tests: co-located as `*.test.ts` for units, `*.integration.test.ts` for integration, `apps/*/e2e/` for Playwright.
@@ -236,7 +201,7 @@ The SecureLoop design system is authoritative across **three** sources. Each has
 
 1. **`packages/design-system/` and `packages/ui/` source code** — HIGHEST AUTHORITY. The code is the runtime truth. When spec diverges from code, the CODE wins — raise a remediation task to align the spec, do not modify the code to match a conflicting spec.
 2. **`docs/11_design_system_v2_draft.md`** — authoritative for everything the packages do not yet implement: v2 additive scope (elevation, motion, density, data-viz palettes, micro-interactions, empty/loading/error states, table patterns, keyboard/accessibility extensions, typography rhythm, icon system, chrome refinements, print styles, responsive rules, brand moments).
-3. **`Wireframe Designs/<NN PERSONA>/*.html`** — WINS for layout and visual composition of specific screens. Pixel-match the wireframe.
+3. **`wireframes/<PERSONA>/*.html`** — WINS for layout and visual composition of specific screens. Pixel-match the wireframe.
 
 > **Note:** §6, §7, and §8 of this file contain token values, locked patterns, and exclusions as **passive reference only** — they are not authoritative sources. The authoritative values live in `packages/design-system/`.
 
@@ -257,9 +222,8 @@ When building or modifying either package:
 | `packages/design-system/src/themes/*` | Theme palettes + elevation/dataviz vars |
 | `packages/design-system/src/{elevation,motion,dataviz}/*` | v2 additive token modules |
 | `packages/ui/src/components/*` | React components built on design-system |
-| `packages/ui/src/primitives/*` | Low-level UI primitives |
 | `docs/11_design_system_v2_draft.md` | v2 additive spec — fallback for unimplemented scope |
-| `Wireframe Designs/<NN PERSONA>/*.html` | Final screen composition reference |
+| `wireframes/<PERSONA>/*.html` | Final screen composition reference |
 
 ---
 
@@ -385,21 +349,21 @@ PCI-DSS, ISO 27001, HIPAA, CMMC, FedRAMP, SAMA, NESA IAR, MITRE ATT&CK.
 
 Admin configures frameworks per customer.
 
-> ⚠️ Per-story decision table referenced as `docs/10_decision_log.md` is PLANNED, not yet created. Source-of-truth decisions live in this CLAUDE.md until that log exists.
+See `docs/10_decision_log.md` for the full per-story decision table (CISO-03 through IE-04, TEAM-03, BO-01/02, ADMIN-01/07, SENG-09/12, TSTR-01/02, DM-01/03, FIN-01, AUD-02/04, CTRL-03/06).
 
 ---
 
 ## 10. Wireframes — source of visual truth
 
-Hi-fi HTML wireframes for all 13 personas live in `Wireframe Designs/<NN PERSONA>/` (folder names are numbered, e.g. `01 CISO`, `13 Integration Engg` — see §2 mapping table).
+Hi-fi HTML wireframes for frozen personas (CISO, CTRL, TSTR, SENG v1) live in `D:\Projects\VAPTOS\SecureLoopRepo\Wireframe Designs\<PERSONA>\`.
 
 Design system source: `packages/design-system/` (tokens) and `packages/ui/` (components).
 
 **When building a screen, always:**
-1. Open the corresponding HTML wireframe in `Wireframe Designs/<NN PERSONA>/`.
+1. Open the corresponding HTML wireframe in `Wireframe Designs/<PERSONA>/`.
 2. Match the wireframe pixel-accurately. Do not improvise layout.
-3. Map every visual element to existing components in `packages/ui/`. If a needed component is missing, propose adding it to the design system rather than inline-styling.
-4. Use ONLY tokens from §6. Use ONLY patterns from §7. Honor exclusions in §8.
+3. Map every visual element to existing components in `packages/ui/`. If missing, propose adding it — never inline-style.
+4. Use ONLY tokens from §6. Use ONLY patterns from §7.
 
 ---
 
@@ -415,18 +379,15 @@ Design system source: `packages/design-system/` (tokens) and `packages/ui/` (com
 7. **packages/ui rule.** When working on any file inside `packages/ui/`, always apply `frontend-design` and `impeccable:audit` rules automatically without being asked.
 
 ### Workflow for any code task
-
-> ⚠️ Steps below assume target-state docs/dirs. When a referenced doc/dir doesn't exist yet, skip that step and proceed; flag it to Mahesh if it blocks the task.
-
-1. Read relevant docs in `/docs` first (user story + data model + API contract for the feature) — when those docs exist.
-2. If a wireframe exists in `Wireframe Designs/<NN PERSONA>/`, open it.
-3. Identify the service(s) touched — currently by inspection; once `docs/12_story_to_service_map.md` exists, use it.
-4. Write or update the OpenAPI contract in `contracts/openapi/` FIRST — once `contracts/` is scaffolded.
+1. Read relevant docs in `/docs` first (user story + data model + API contract for the feature).
+2. If a wireframe exists, open it.
+3. Identify the service(s) touched via `docs/12_story_to_service_map.md`.
+4. Write or update the OpenAPI contract in `contracts/openapi/` FIRST.
 5. Regenerate types (`pnpm gen:types` — available once `packages/api-types` is scaffolded).
 6. Write database migration if schema changes.
 7. Implement service handler + tests.
 8. Implement UI in the relevant `apps/*-web/`.
-9. If a new decision is made, record it in CLAUDE.md §9 (or in `docs/10_decision_log.md` once that file exists).
+9. Update `docs/10_decision_log.md` if a new decision was made.
 10. Run `pnpm typecheck` before declaring done (`pnpm lint && pnpm test` gates are pending ME-6 and first service).
 
 ### Styling with vanilla-extract
@@ -473,34 +434,14 @@ Design system source: `packages/design-system/` (tokens) and `packages/ui/` (com
 
 ---
 
-## 12. Current state of the world (2026-04-24)
+## 12. First milestones (current state)
 
-**Actually scaffolded:**
+**Current repo state (2026-04-24):** Only `packages/design-system` and `packages/ui` are scaffolded. `apps/`, `services/`, `workers/`, `contracts/`, `infra/`, and `wireframes/` directories do not exist yet. The `docs/` directory contains only `11_design_system_v2_draft.md` and `13_scaffold_remediation_tasks.md` — all other doc files (01–10, 12) are pending.
 
-- ✅ Repo root files (package.json, pnpm-workspace.yaml, tsconfig.base.json, .gitignore, .editorconfig, README.md)
-- ✅ `packages/design-system/` — v1 tokens + v2 additive (elevation, motion, dataviz, density, typography rhythm, 4 themes, global CSS, default = coffee-dark)
-  - `src/tokens/`, `src/themes/`, `src/elevation/`, `src/motion/`, `src/dataviz/`, `src/global/`
-- ✅ `packages/ui/` — 18 components in `src/components/`: ThemeProvider, ThemePicker, DensityToggle, Shell, Button, Card, Badge, Chip, Input, Select, Modal, Table, Icon, Skeleton, EmptyState, LiveDot, Kbd, Gauge
-  - `src/primitives/` and `src/utils/` also exist
-- ✅ `docs/` — contains only `11_design_system_v2_draft.md` and `13_scaffold_remediation_tasks.md`
-- ✅ `Wireframe Designs/` — all 13 persona folders present (see §2 mapping)
-
-**Not yet scaffolded (PLANNED):**
-
-- ⚠️ `apps/`, `services/`, `workers/`, `contracts/`, `infra/`
-- ⚠️ All `packages/*` except `design-system` and `ui`
-- ⚠️ All `docs/` files except 11 and 13
-- ⚠️ Docker Compose stack
-- ⚠️ Per-story decision log
-
-**Worktree note:** `.claude/worktrees/` contains stale worktrees (`gifted-einstein-d637e7`, `modest-grothendieck-b98f61`). Ignore for code reference; clean up when convenient.
-
-### Sequenced milestones
-
-1. ✅ Repo scaffolded
-2. ✅ `docs/11_design_system_v2_draft.md`
-3. ✅ `packages/design-system`
-4. ✅ `packages/ui`
+1. ✅ Repo root files scaffolded (package.json, pnpm-workspace.yaml, tsconfig.base.json, .gitignore, .editorconfig, README.md).
+2. ✅ `docs/11_design_system_v2_draft.md` placed.
+3. ✅ `packages/design-system` built — v1 tokens + v2 additive (elevation, motion, dataviz, density, typography rhythm, 4 themes, global CSS, default = coffee-dark).
+4. ✅ `packages/ui` built — 18 components: ThemeProvider, ThemePicker, DensityToggle, Shell (Rail/Topbar/Crumbs/Main), Button, Card, Badge, Chip, Input, Select, Modal, Table (10 sub-parts), Icon + 16 glyphs, Skeleton, EmptyState, LiveDot, Kbd, Gauge.
 5. 🔧 **Remediation outstanding** — see `docs/13_scaffold_remediation_tasks.md`. Must be completed before first screen build. Gaps: Wizard, Callout, Breadcrumb interactivity, font loader, Tooltip, skip-links, print styles, Checkbox/Radio, Tabs, inline/banner error states, extended Table features, Prettier/ESLint shared config.
 6. `services/auth` + `services/tenants` + `services/users` (foundation) — after remediation.
 7. `services/assets` + `services/findings` (data spine).
@@ -523,12 +464,12 @@ Stop and ask Mahesh immediately if:
 
 ## 14. What "done" means for any story
 
-- [ ] OpenAPI contract merged (in `contracts/openapi/` once scaffolded).
+- [ ] OpenAPI contract merged.
 - [ ] DB migration merged and reversible.
 - [ ] Service handler + repository + tests.
 - [ ] UI screen matching wireframe, using only tokens + patterns.
 - [ ] Audit-log events emitted for state changes.
 - [ ] Integration test covering happy + one error path.
-- [ ] Story marked complete in `docs/12_story_to_service_map.md` (once that file exists).
-- [ ] Decision recorded in §9 / `docs/10_decision_log.md` if any new decision was made.
+- [ ] Story entry in `docs/12_story_to_service_map.md` marked complete.
+- [ ] `docs/10_decision_log.md` updated if any new decision was made.
 - [ ] Lint + typecheck + test all green.

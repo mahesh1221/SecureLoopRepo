@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-04 · Team Manager Workload Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:"Space Grotesk",system-ui,sans-serif;--font-ui:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg.icon{width:14px;height:14px}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* content */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1440px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-6)}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.1}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2)}
+
+/* manager-only badge */
+.mgr-badge{display:inline-flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--sev-medium-bg);color:var(--sev-medium);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:600;letter-spacing:0.02em}
+.mgr-badge svg{width:12px;height:12px}
+
+/* team overview card */
+.overview-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-6);position:relative;overflow:hidden}
+.rag-ribbon{position:absolute;top:0;left:0;right:0;height:4px;background:var(--sev-high)}
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-top:var(--s-2)}
+.ov-tile{padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.ov-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.ov-value{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);letter-spacing:-0.02em;line-height:1}
+.ov-trend{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;margin-top:var(--s-2);font-weight:600}
+.ov-trend.up-bad{color:var(--sev-critical)}
+.ov-trend.dn-good{color:var(--status-good)}
+.ov-trend.stable{color:var(--ink-60)}
+.ov-trend svg{width:10px;height:10px}
+
+.health-banner{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--sev-high-bg);border-radius:var(--r-sm);margin-top:var(--s-4)}
+.health-banner svg{width:16px;height:16px;color:var(--sev-high)}
+.health-banner .label{color:var(--sev-high);font-weight:600;font-size:var(--text-label);letter-spacing:0.04em;font-family:var(--font-mono);text-transform:uppercase}
+.health-banner .msg{color:var(--ink-80);font-size:var(--text-body)}
+
+/* filters bar */
+.filters{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-4);flex-wrap:wrap}
+.filter-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60)}
+.filter-pill{display:inline-flex;align-items:center;gap:6px;padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);color:var(--ink-80);cursor:pointer}
+.filter-pill:hover{background:var(--bg-hover)}
+.filter-pill svg{width:12px;height:12px;color:var(--ink-60)}
+.filter-pill .count{padding:1px 6px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-full);font-family:var(--font-mono);font-size:10px;font-weight:700;margin-left:2px}
+.clear-link{font-size:var(--text-label);color:var(--brand);cursor:pointer;text-decoration:none}
+.clear-link:hover{text-decoration:underline}
+
+/* member workload table */
+.table-wrap{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.table-head{display:grid;grid-template-columns:minmax(200px,1.8fr) 160px 160px 120px 160px 120px 44px;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600;align-items:center}
+.th-sort{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.th-sort:hover{color:var(--ink-100)}
+.th-sort svg{width:10px;height:10px}
+.row{display:grid;grid-template-columns:minmax(200px,1.8fr) 160px 160px 120px 160px 120px 44px;gap:var(--s-3);padding:var(--s-4);border-bottom:1px solid var(--line);align-items:center;transition:background 140ms}
+.row:hover{background:var(--bg-hover)}
+.row:last-of-type{border-bottom:none}
+
+.mem-id{display:flex;align-items:center;gap:var(--s-3);cursor:pointer}
+.mem-id:hover .mem-name{color:var(--brand)}
+.mem-name{font-size:var(--text-body);font-weight:500;color:var(--ink-100);transition:color 140ms}
+.mem-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:2px}
+
+.metric-cell{font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;color:var(--ink-100);display:flex;align-items:center;gap:var(--s-2)}
+.trend-arrow{font-size:var(--text-micro)}
+.trend-arrow.up-bad{color:var(--sev-critical)}
+.trend-arrow.dn-good{color:var(--status-good)}
+.trend-arrow.stable{color:var(--ink-40)}
+.delta{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+
+.sla-badge{display:inline-flex;align-items:center;padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:700;font-family:var(--font-mono);letter-spacing:0.04em}
+.sla-badge.ok{background:var(--status-good-bg);color:var(--status-good)}
+.sla-badge.warn{background:var(--sev-high-bg);color:var(--sev-high)}
+.sla-badge.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+
+.overdue-chip{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);background:var(--sev-critical-bg);color:var(--sev-critical);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;cursor:pointer}
+.overdue-chip:hover{filter:brightness(1.1)}
+.overdue-chip.none{background:var(--bg-raised);color:var(--ink-60);cursor:default}
+
+.expand-btn{width:28px;height:28px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 140ms}
+.expand-btn:hover{background:var(--bg-raised);color:var(--ink-100)}
+.expand-btn svg{width:14px;height:14px;transition:transform 180ms}
+.expand-btn.open svg{transform:rotate(90deg)}
+
+/* expanded overdue panel */
+.overdue-panel{grid-column:1 / -1;padding:0 var(--s-4) var(--s-4);display:none;background:var(--bg-raised)}
+.overdue-panel.open{display:block}
+.overdue-panel-head{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);padding:var(--s-3) 0 var(--s-2);font-weight:600}
+.overdue-row{display:grid;grid-template-columns:1fr 100px 140px auto;gap:var(--s-3);padding:var(--s-2) var(--s-3);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-2);align-items:center;font-size:var(--text-label)}
+.overdue-row:last-child{margin-bottom:0}
+.odt-title{color:var(--ink-100);font-weight:500}
+.odt-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-top:2px;letter-spacing:0.04em}
+.odt-days{font-family:var(--font-mono);font-weight:700;color:var(--sev-critical)}
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+.sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)} .sev-pill.high .dot{background:var(--sev-high)}
+.odt-actions{display:flex;gap:4px}
+.odt-btn{padding:3px var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-80);font-size:var(--text-micro);cursor:pointer;font-family:var(--font-ui);font-weight:500}
+.odt-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+
+/* export panel */
+.export-panel{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);margin-top:var(--s-6);display:flex;align-items:center;justify-content:space-between;gap:var(--s-4)}
+.ep-left{display:flex;align-items:center;gap:var(--s-3)}
+.ep-icon{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand-dim);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.ep-icon svg{width:16px;height:16px}
+.ep-title{font-weight:600;color:var(--ink-100);margin-bottom:2px}
+.ep-sub{font-size:var(--text-label);color:var(--ink-60)}
+.ep-actions{display:flex;gap:var(--s-2)}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <button class="rail-btn" title="My Findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn" title="Effort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn" title="Fixes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></button>
+    <button class="rail-btn active" title="Team Workload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>Team Lead</span><span class="sep">/</span>
+        <span class="current">Cloud Team · Workload</span>
+        <span class="id-pill">TEAM-04</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row"><button class="mode-btn active" data-mode="dark">Dark</button><button class="mode-btn" data-mode="light">Light</button></div>
+        </div>
+      </div>
+
+      <div class="user-chip"><span class="avatar">PM</span><div><div class="user-chip-name">Priya Menon</div><div class="user-chip-role">Cloud Team · Manager</div></div></div>
+    </header>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="page-eyebrow" style="display:flex;align-items:center;gap:var(--s-2)">
+            Team Lead View
+            <span class="mgr-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2M10 17h4M5 8h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+              Manager-only
+            </span>
+          </div>
+          <h1 class="page-title">Cloud Team · 41 open findings · 3 members over capacity</h1>
+          <p class="page-sub">Last 7 days vs prior 7 · live-synced · sortable by any column</p>
+        </div>
+        <div style="display:flex;gap:var(--s-2)">
+          <button class="btn ghost"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>Refresh</button>
+          <button class="btn primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>Send to Sprint Planning</button>
+        </div>
+      </div>
+
+      <!-- TEAM OVERVIEW CARD -->
+      <div class="overview-card">
+        <div class="rag-ribbon"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-3)">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:2px">Team health · last 7 days</div>
+            <div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em">Amber — SLA compliance at 78%, below 85% target</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;color:var(--ink-60)">Updated · 2 min ago</div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="ov-tile">
+            <div class="ov-label">Total Open Findings</div>
+            <div class="ov-value">41</div>
+            <div class="ov-trend up-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>+7 vs last week</div>
+          </div>
+          <div class="ov-tile">
+            <div class="ov-label">Effort Outstanding</div>
+            <div class="ov-value">412<span style="font-size:var(--text-body);color:var(--ink-60);font-weight:400"> hrs</span></div>
+            <div class="ov-trend up-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>+47 hrs WoW</div>
+          </div>
+          <div class="ov-tile">
+            <div class="ov-label">Avg MTTR</div>
+            <div class="ov-value">6.2<span style="font-size:var(--text-body);color:var(--ink-60);font-weight:400"> d</span></div>
+            <div class="ov-trend stable"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>no change</div>
+          </div>
+          <div class="ov-tile">
+            <div class="ov-label">SLA Compliance</div>
+            <div class="ov-value" style="color:var(--sev-high)">78%</div>
+            <div class="ov-trend up-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>−6 vs last week</div>
+          </div>
+        </div>
+
+        <div class="health-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span class="label">Attention</span>
+          <span class="msg">3 members (Nikhil, Aaliyah, Jamal) are over sprint capacity. 4 tickets expected to breach SLA within 72 hrs.</span>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <span class="filter-label">Filters</span>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>Trend window: last 7 vs prior 7</button>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>Severity: Critical + High<span class="count">2</span></button>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>Member: All 5</button>
+        <a class="clear-link">Clear filters</a>
+      </div>
+
+      <!-- MEMBER WORKLOAD TABLE -->
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="th-sort">Member <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort">Findings (Δ WoW)<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort">Effort hrs (Δ) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort">MTTR (Δ) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort">SLA Compliance <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort" style="color:var(--sev-critical)">Overdue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg></div>
+          <div></div>
+        </div>
+
+        <!-- Jamal - most overdue -->
+        <div class="row">
+          <div class="mem-id"><span class="avatar" style="background:#FF851B;color:#fff">JD</span><div><div class="mem-name">Jamal Diallo</div><div class="mem-sub">Cloud · 96 hrs of 60</div></div></div>
+          <div class="metric-cell">7 <span class="trend-arrow up-bad">↑</span><div class="delta">+3 WoW</div></div>
+          <div class="metric-cell" style="color:var(--sev-critical)">96 hrs<div class="delta" style="color:var(--sev-critical)">+22 hrs</div></div>
+          <div class="metric-cell" style="color:var(--sev-critical)">11.4 d<div class="delta" style="color:var(--sev-critical)">+2.1 (team avg 6.2)</div></div>
+          <div><span class="sla-badge crit">58%</span></div>
+          <div><span class="overdue-chip" data-expand="row-jd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg>3 overdue</span></div>
+          <div><button class="expand-btn" data-expand="row-jd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div>
+        </div>
+        <div class="overdue-panel" id="row-jd">
+          <div class="overdue-panel-head">Jamal's overdue tickets</div>
+          <div class="overdue-row">
+            <div><div class="odt-title">CloudTrail logging disabled in us-west-2</div><div class="odt-sub">FND-2026-00455 · Blocked</div></div>
+            <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+            <div class="odt-days">5 days overdue</div>
+            <div class="odt-actions"><button class="odt-btn">Reassign</button><button class="odt-btn">Extend SLA</button><button class="odt-btn">View</button></div>
+          </div>
+          <div class="overdue-row">
+            <div><div class="odt-title">Route53 zone has overly permissive DNSSEC config</div><div class="odt-sub">FND-2026-00441 · In Progress</div></div>
+            <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+            <div class="odt-days">3 days overdue</div>
+            <div class="odt-actions"><button class="odt-btn">Reassign</button><button class="odt-btn">Extend SLA</button><button class="odt-btn">View</button></div>
+          </div>
+          <div class="overdue-row">
+            <div><div class="odt-title">SNS topic allows cross-account publishing</div><div class="odt-sub">FND-2026-00433 · Open</div></div>
+            <div><span class="sev-pill crit"><span class="dot"></span>Critical</span></div>
+            <div class="odt-days">1 day overdue</div>
+            <div class="odt-actions"><button class="odt-btn">Reassign</button><button class="odt-btn">Extend SLA</button><button class="odt-btn">View</button></div>
+          </div>
+        </div>
+
+        <!-- Nikhil -->
+        <div class="row">
+          <div class="mem-id"><span class="avatar">NR</span><div><div class="mem-name">Nikhil Rao</div><div class="mem-sub">Cloud · 86 hrs of 60</div></div></div>
+          <div class="metric-cell">12 <span class="trend-arrow up-bad">↑</span><div class="delta">+2 WoW</div></div>
+          <div class="metric-cell" style="color:var(--sev-high)">86 hrs<div class="delta" style="color:var(--sev-high)">+12 hrs</div></div>
+          <div class="metric-cell">5.8 d<div class="delta">−0.4 (vs avg)</div></div>
+          <div><span class="sla-badge warn">84%</span></div>
+          <div><span class="overdue-chip" data-expand="row-nr"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg>2 overdue</span></div>
+          <div><button class="expand-btn" data-expand="row-nr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div>
+        </div>
+        <div class="overdue-panel" id="row-nr">
+          <div class="overdue-panel-head">Nikhil's overdue tickets</div>
+          <div class="overdue-row">
+            <div><div class="odt-title">S3 bucket "payments-logs-prod" has public read access</div><div class="odt-sub">FND-2026-00482 · In Progress</div></div>
+            <div><span class="sev-pill crit"><span class="dot"></span>Critical</span></div>
+            <div class="odt-days">1 day overdue</div>
+            <div class="odt-actions"><button class="odt-btn">Reassign</button><button class="odt-btn">Extend SLA</button><button class="odt-btn">View</button></div>
+          </div>
+          <div class="overdue-row">
+            <div><div class="odt-title">ELB security policy uses deprecated TLS 1.0</div><div class="odt-sub">FND-2026-00428 · Open</div></div>
+            <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+            <div class="odt-days">2 days overdue</div>
+            <div class="odt-actions"><button class="odt-btn">Reassign</button><button class="odt-btn">Extend SLA</button><button class="odt-btn">View</button></div>
+          </div>
+        </div>
+
+        <!-- Aaliyah -->
+        <div class="row">
+          <div class="mem-id"><span class="avatar" style="background:#3D9970;color:#fff">AK</span><div><div class="mem-name">Aaliyah Khan</div><div class="mem-sub">Cloud · 72 hrs of 60</div></div></div>
+          <div class="metric-cell">9 <span class="trend-arrow stable">→</span><div class="delta">0 WoW</div></div>
+          <div class="metric-cell" style="color:var(--sev-high)">72 hrs<div class="delta" style="color:var(--sev-high)">+6 hrs</div></div>
+          <div class="metric-cell">4.9 d<div class="delta" style="color:var(--status-good)">−1.3 (vs avg)</div></div>
+          <div><span class="sla-badge ok">92%</span></div>
+          <div><span class="overdue-chip none">0 overdue</span></div>
+          <div><button class="expand-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div>
+        </div>
+
+        <!-- Sophia -->
+        <div class="row">
+          <div class="mem-id"><span class="avatar" style="background:#7FDBFF;color:#0B1E14">SL</span><div><div class="mem-name">Sophia Lindqvist</div><div class="mem-sub">Cloud · 68 hrs of 60</div></div></div>
+          <div class="metric-cell">8 <span class="trend-arrow dn-good">↓</span><div class="delta" style="color:var(--status-good)">−1 WoW</div></div>
+          <div class="metric-cell" style="color:var(--sev-high)">68 hrs<div class="delta" style="color:var(--status-good)">−2 hrs</div></div>
+          <div class="metric-cell">5.2 d<div class="delta" style="color:var(--status-good)">−1.0 (vs avg)</div></div>
+          <div><span class="sla-badge ok">94%</span></div>
+          <div><span class="overdue-chip none">0 overdue</span></div>
+          <div><button class="expand-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div>
+        </div>
+
+        <!-- Mateo -->
+        <div class="row">
+          <div class="mem-id"><span class="avatar" style="background:#B10DC9;color:#fff">MT</span><div><div class="mem-name">Mateo Torres</div><div class="mem-sub">Cloud · 48 hrs of 60</div></div></div>
+          <div class="metric-cell">5 <span class="trend-arrow dn-good">↓</span><div class="delta" style="color:var(--status-good)">−2 WoW</div></div>
+          <div class="metric-cell" style="color:var(--status-good)">48 hrs<div class="delta" style="color:var(--status-good)">−6 hrs</div></div>
+          <div class="metric-cell">4.1 d<div class="delta" style="color:var(--status-good)">−2.1 (vs avg)</div></div>
+          <div><span class="sla-badge ok">97%</span></div>
+          <div><span class="overdue-chip none">0 overdue</span></div>
+          <div><button class="expand-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div>
+        </div>
+
+      </div>
+
+      <!-- EXPORT PANEL -->
+      <div class="export-panel">
+        <div class="ep-left">
+          <div class="ep-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+          <div>
+            <div class="ep-title">Export &amp; Sprint Planning</div>
+            <div class="ep-sub">Includes timestamp + your name as metadata · 4 formats + 2 sprint-tool pushes</div>
+          </div>
+        </div>
+        <div class="ep-actions">
+          <button class="btn">CSV</button>
+          <button class="btn">PDF summary</button>
+          <button class="btn">Push to Jira</button>
+          <button class="btn">Push to Azure DevOps</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePop.classList.remove('open')});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* overdue row expand */
+document.querySelectorAll('[data-expand]').forEach(el=>el.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  const id=el.dataset.expand;
+  const panel=document.getElementById(id);
+  if(!panel)return;
+  panel.classList.toggle('open');
+  // toggle the row's expand chevron if present
+  const rowBtn=document.querySelector('.expand-btn[data-expand="'+id+'"]');
+  if(rowBtn)rowBtn.classList.toggle('open',panel.classList.contains('open'));
+}));
+
+applyTheme();
+</script>
+</body>
+</html>

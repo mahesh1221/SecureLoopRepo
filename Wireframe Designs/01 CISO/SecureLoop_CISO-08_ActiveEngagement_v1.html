@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISO-08 · Active Engagement · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease;
+  overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* APP SHELL */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail {
+  background: var(--bg-base); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1);
+}
+.rail-logo {
+  width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink);
+  border-radius: var(--r-sm); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl);
+  margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow);
+}
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer;
+  transition: all 140ms; position: relative;
+}
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before {
+  content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar {
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line);
+  background: var(--bg-base); height: 56px; flex-shrink: 0;
+}
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill {
+  padding: 2px 6px; background: var(--brand-dim); color: var(--brand);
+  border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro);
+  letter-spacing: 0.04em; font-weight: 600; margin-left: 2px;
+}
+
+/* Engagement selector in topbar */
+.engagement-select {
+  padding: 6px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 28px;
+  min-width: 280px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+}
+body.coffee.light .engagement-select, body.blue.light .engagement-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* WebSocket indicator */
+.ws-indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.ws-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--status-good);
+  box-shadow: 0 0 8px var(--status-good);
+  animation: pulse 2s infinite;
+}
+.ws-dot.off { background: var(--sev-critical); box-shadow: 0 0 8px var(--sev-critical); animation: none; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* THEME PICKER */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms;
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40;
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* CONTENT — 60/40 split */
+.content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 60fr 40fr;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Final report banner (hidden by default) */
+.final-banner {
+  display: none;
+  grid-column: 1 / -1;
+  padding: var(--s-4) var(--s-6);
+  background: linear-gradient(90deg, var(--status-good-bg), transparent);
+  border-bottom: 1px solid var(--status-good);
+  align-items: center;
+  gap: var(--s-4);
+}
+.final-banner.visible { display: flex; }
+.final-banner-icon {
+  width: 40px; height: 40px;
+  background: var(--status-good);
+  color: var(--bg-page);
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.final-banner-text { flex: 1; min-width: 0; }
+.final-banner-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.final-banner-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 9px var(--s-4); height: 38px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+
+/* FEED PANEL (left, 60%) */
+.feed-panel {
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--line);
+  min-width: 0;
+  overflow: hidden;
+}
+.feed-head {
+  padding: var(--s-4) var(--s-6) var(--s-3);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.feed-title-block { display: flex; flex-direction: column; gap: 3px; }
+.feed-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
+.feed-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.feed-counts { display: flex; gap: var(--s-2); }
+.count-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.count-pill.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.count-pill.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.count-pill.med { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.count-pill.low { background: var(--sev-low-bg); color: var(--sev-low); }
+.count-pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* Feed list */
+.feed-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-4) var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.feed-list::-webkit-scrollbar { width: 10px; }
+.feed-list::-webkit-scrollbar-track { background: transparent; }
+.feed-list::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.feed-list::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+.finding-card {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  cursor: pointer;
+  transition: all 140ms;
+  display: flex; align-items: center; gap: var(--s-3);
+  position: relative;
+}
+.finding-card:hover { border-color: var(--line-strong); background: var(--bg-raised); }
+.finding-card.new {
+  animation: slideIn 400ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); background: var(--brand-dim); }
+  to { opacity: 1; transform: translateY(0); background: var(--bg-base); }
+}
+.fc-severity {
+  width: 4px; align-self: stretch;
+  border-radius: var(--r-xs);
+  flex-shrink: 0;
+}
+.fc-severity.crit { background: var(--sev-critical); }
+.fc-severity.high { background: var(--sev-high); }
+.fc-severity.med { background: var(--sev-medium); }
+.fc-severity.low { background: var(--sev-low); }
+
+.fc-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.fc-title-row { display: flex; align-items: center; gap: var(--s-2); }
+.fc-title {
+  flex: 1; min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 600;
+  line-height: 1.35;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.unlocked .fc-title { color: var(--brand); text-decoration: none; }
+.unlocked .fc-title:hover { text-decoration: underline; }
+
+.sev-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 6px; border-radius: var(--r-xs);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+}
+.sev-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev-badge.med { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.sev-badge.low { background: var(--sev-low-bg); color: var(--sev-low); }
+.sev-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+.fc-meta {
+  display: flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .02em;
+}
+.fc-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-40); }
+
+.fc-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.unlocked .fc-status {
+  background: var(--status-good-bg);
+  color: var(--status-good);
+  border-color: var(--status-good);
+}
+
+/* PROGRESS PANEL (right, 40%) */
+.progress-panel {
+  display: flex; flex-direction: column;
+  background: var(--bg-base);
+  min-width: 0;
+  overflow: hidden;
+}
+.progress-head {
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.progress-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+
+.progress-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-6);
+}
+.progress-body::-webkit-scrollbar { width: 10px; }
+.progress-body::-webkit-scrollbar-track { background: transparent; }
+.progress-body::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+
+/* Engagement meta card */
+.engagement-meta {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.eng-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+  line-height: 1.3;
+}
+.eng-tester {
+  display: flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 500;
+}
+.avatar {
+  width: 24px; height: 24px; border-radius: var(--r-full);
+  background: var(--brand-dim); color: var(--brand);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.eng-dates {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.eng-date { display: flex; flex-direction: column; gap: 2px; }
+.eng-date-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.eng-date-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-100);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+/* Milestone ring */
+.milestone-block {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  display: flex; align-items: center; gap: var(--s-4);
+}
+.milestone-ring {
+  width: 100px; height: 100px;
+  position: relative;
+  flex-shrink: 0;
+}
+.milestone-ring svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.milestone-ring-value {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.milestone-pct {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.milestone-pct-unit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 500;
+}
+.milestone-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.milestone-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.milestone-stat {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.milestone-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Asset coverage bar */
+.coverage-block {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.coverage-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3);
+}
+.coverage-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.coverage-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.coverage-value .pct {
+  color: var(--status-good);
+  margin-left: var(--s-2);
+}
+.coverage-track {
+  height: 10px;
+  background: var(--bg-raised);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.coverage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sev-high), var(--status-good));
+  border-radius: var(--r-full);
+  transition: width 400ms;
+}
+
+/* Milestones list */
+.milestones-list { display: flex; flex-direction: column; gap: var(--s-2); }
+.ms-item {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-2) 0;
+}
+.ms-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--ink-40);
+  background: var(--bg-base);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.ms-item.done .ms-dot {
+  border-color: var(--status-good);
+  background: var(--status-good);
+  color: var(--bg-page);
+}
+.ms-item.active .ms-dot {
+  border-color: var(--sev-high);
+  background: var(--bg-base);
+}
+.ms-item.active .ms-dot::after {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--sev-high);
+  animation: pulse 1.5s infinite;
+}
+.ms-item.future .ms-dot {
+  border-color: var(--ink-20);
+}
+.ms-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-100);
+  font-weight: 500;
+  flex: 1; min-width: 0;
+}
+.ms-item.future .ms-label { color: var(--ink-60); font-weight: 400; }
+.ms-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: var(--backdrop);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+  display: none;
+  padding: var(--s-6);
+  overflow-y: auto;
+}
+.modal-backdrop.open { display: grid; place-items: center; animation: fadeIn 200ms; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  width: 520px;
+  max-width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  animation: riseIn 320ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-head {
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-4);
+}
+.modal-title-block { flex: 1; min-width: 0; }
+.modal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+  line-height: 1.3;
+}
+.modal-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--ink-60);
+  cursor: pointer;
+  transition: all 140ms;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--bg-raised); color: var(--ink-100); }
+.modal-body { padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+
+.modal-meta-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3) var(--s-4);
+  padding: var(--s-4);
+  background: var(--bg-raised);
+  border-radius: var(--r-sm);
+}
+.meta-field { display: flex; flex-direction: column; gap: 3px; }
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.meta-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 500;
+}
+.meta-value.mono { font-family: var(--font-mono); letter-spacing: -.01em; }
+
+/* Locked notice */
+.locked-notice {
+  padding: var(--s-4);
+  background: var(--bg-raised);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-sm);
+  display: flex; align-items: flex-start; gap: var(--s-3);
+}
+.locked-icon {
+  width: 36px; height: 36px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.locked-text { flex: 1; min-width: 0; }
+.locked-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.locked-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* State switcher (demo) */
+.state-switcher {
+  position: fixed; bottom: var(--s-4); left: var(--s-4);
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--bg-raised); border: 1px solid var(--line);
+  border-radius: var(--r-sm); z-index: 60;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  align-items: center;
+}
+.ss-label {
+  padding: 0 var(--s-2);
+  color: var(--ink-60);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.ss-btn {
+  padding: 5px var(--s-3); background: transparent; border: none;
+  border-radius: var(--r-xs); color: var(--ink-60);
+  font-size: var(--text-label); font-weight: 500; cursor: pointer;
+  transition: all 140ms;
+}
+.ss-btn:hover { color: var(--ink-100); }
+.ss-btn.active {
+  background: var(--bg-base); color: var(--ink-100);
+  box-shadow: 0 1px 2px rgba(0,0,0,.12);
+}
+</style>
+</head>
+
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="rail-logo">S</div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+    <div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <span>SecureLoop</span>
+        <span class="sep">/</span>
+        <span>Engagements</span>
+        <span class="sep">/</span>
+        <span class="current">Active Monitor</span>
+        <span class="id-pill">CISO-08</span>
+      </div>
+
+      <select class="engagement-select">
+        <option>Q1 Payment Platform VAPT · ENG-2026-0184</option>
+        <option>Infrastructure Baseline · ENG-2026-0171</option>
+        <option>Mobile App Penetration Test · ENG-2026-0163</option>
+      </select>
+
+      <div class="ws-indicator" id="wsIndicator">
+        <span class="ws-dot" id="wsDot"></span>
+        <span id="wsText">Live</span>
+      </div>
+
+      <div class="theme-picker-wrap">
+        <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+          <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+          <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+          <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-popover" id="themePopover" role="dialog">
+          <div class="tp-section">
+            <div class="tp-section-label">Palette family</div>
+            <div class="tp-family-grid">
+              <button class="tp-family-card active" data-family="coffee">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+                <span class="tp-family-name">Coffee</span>
+                <span class="tp-family-desc">Warm · Investigation</span>
+              </button>
+              <button class="tp-family-card" data-family="blue">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+                <span class="tp-family-name">Blue</span>
+                <span class="tp-family-desc">Cool · Enterprise</span>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-section-label">Appearance</div>
+            <div class="tp-mode-row">
+              <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="content">
+
+      <!-- Final report banner (hidden by default, visible when engagement completed) -->
+      <div class="final-banner" id="finalBanner">
+        <div class="final-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="final-banner-text">
+          <div class="final-banner-title">Final report published</div>
+          <div class="final-banner-sub">All findings are now available for review and remediation · Published Jan 22, 2026 14:18 UTC</div>
+        </div>
+        <button class="btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download full report
+        </button>
+      </div>
+
+      <!-- LEFT: Findings feed -->
+      <section class="feed-panel" id="feedPanel">
+        <div class="feed-head">
+          <div class="feed-title-block">
+            <span class="feed-eyebrow">Approved by Delivery Manager · Newest first</span>
+            <div class="feed-title">Findings feed</div>
+          </div>
+          <div class="feed-counts">
+            <span class="count-pill crit">3 Critical</span>
+            <span class="count-pill high">7 High</span>
+            <span class="count-pill med">12 Medium</span>
+            <span class="count-pill low">5 Low</span>
+          </div>
+        </div>
+
+        <div class="feed-list" id="feedList">
+          <div class="finding-card new" data-open>
+            <span class="fc-severity crit"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Authentication bypass via header injection in /api/v2/auth</span>
+                <span class="sev-badge crit">Critical</span>
+              </div>
+              <div class="fc-meta">
+                <span>auth-service-prod</span>
+                <span class="dot"></span>
+                <span>2m ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity high"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Insecure direct object reference on order API endpoint</span>
+                <span class="sev-badge high">High</span>
+              </div>
+              <div class="fc-meta">
+                <span>order-service-prod</span>
+                <span class="dot"></span>
+                <span>18m ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity crit"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">SQL injection vulnerability in legacy reporting module</span>
+                <span class="sev-badge crit">Critical</span>
+              </div>
+              <div class="fc-meta">
+                <span>reporting-legacy-db</span>
+                <span class="dot"></span>
+                <span>1h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity med"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Missing rate limiting on public signup endpoint</span>
+                <span class="sev-badge med">Medium</span>
+              </div>
+              <div class="fc-meta">
+                <span>signup-api</span>
+                <span class="dot"></span>
+                <span>2h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity high"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Weak session token generation using predictable RNG</span>
+                <span class="sev-badge high">High</span>
+              </div>
+              <div class="fc-meta">
+                <span>session-manager</span>
+                <span class="dot"></span>
+                <span>4h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity high"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Cross-site scripting reflected on customer search interface</span>
+                <span class="sev-badge high">High</span>
+              </div>
+              <div class="fc-meta">
+                <span>customer-portal-web</span>
+                <span class="dot"></span>
+                <span>6h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity med"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Outdated dependency with known CVE in payment library</span>
+                <span class="sev-badge med">Medium</span>
+              </div>
+              <div class="fc-meta">
+                <span>payment-gateway-prod</span>
+                <span class="dot"></span>
+                <span>8h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity low"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Missing security headers on legacy admin console</span>
+                <span class="sev-badge low">Low</span>
+              </div>
+              <div class="fc-meta">
+                <span>admin-console-legacy</span>
+                <span class="dot"></span>
+                <span>12h ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity crit"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Hard-coded API credentials found in mobile app binary</span>
+                <span class="sev-badge crit">Critical</span>
+              </div>
+              <div class="fc-meta">
+                <span>mobile-app-android</span>
+                <span class="dot"></span>
+                <span>Yesterday</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity med"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Unencrypted backup storage accessible to non-admin roles</span>
+                <span class="sev-badge med">Medium</span>
+              </div>
+              <div class="fc-meta">
+                <span>backup-s3-archive</span>
+                <span class="dot"></span>
+                <span>Yesterday</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+
+          <div class="finding-card" data-open>
+            <span class="fc-severity high"></span>
+            <div class="fc-body">
+              <div class="fc-title-row">
+                <span class="fc-title">Server-side request forgery in image upload service</span>
+                <span class="sev-badge high">High</span>
+              </div>
+              <div class="fc-meta">
+                <span>image-upload-service</span>
+                <span class="dot"></span>
+                <span>2d ago</span>
+              </div>
+            </div>
+            <span class="fc-status">Pending Final Report</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Engagement progress -->
+      <section class="progress-panel">
+        <div class="progress-head">
+          <div class="progress-title">Engagement progress</div>
+        </div>
+
+        <div class="progress-body">
+
+          <!-- Engagement meta -->
+          <div class="engagement-meta">
+            <div class="eng-title">Q1 Payment Platform VAPT</div>
+            <div class="eng-tester">
+              <div class="avatar">AK</div>
+              <span>Aliya Khan · Senior Tester</span>
+            </div>
+            <div class="eng-dates">
+              <div class="eng-date">
+                <span class="eng-date-label">Started</span>
+                <span class="eng-date-value">Jan 08, 2026</span>
+              </div>
+              <div class="eng-date">
+                <span class="eng-date-label">Est. completion</span>
+                <span class="eng-date-value">Jan 22, 2026</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone progress -->
+          <div class="milestone-block">
+            <div class="milestone-ring">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg-raised)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="263.89" stroke-dashoffset="89.72"/>
+              </svg>
+              <div class="milestone-ring-value">
+                <div class="milestone-pct">66%</div>
+                <div class="milestone-pct-unit">Complete</div>
+              </div>
+            </div>
+            <div class="milestone-info">
+              <span class="milestone-label">Milestones</span>
+              <span class="milestone-stat">4 of 6 complete</span>
+              <span class="milestone-sub">Currently on "Application-layer testing"</span>
+            </div>
+          </div>
+
+          <!-- Asset coverage -->
+          <div class="coverage-block">
+            <div class="coverage-head">
+              <span class="coverage-label">Asset coverage</span>
+              <span class="coverage-value">18 / 24<span class="pct">75%</span></span>
+            </div>
+            <div class="coverage-track">
+              <div class="coverage-fill" style="width: 75%;"></div>
+            </div>
+            <div style="font-family: var(--font-ui); font-size: var(--text-label); color: var(--ink-60); font-weight: 400;">
+              6 assets remaining · mobile backends, legacy reporting module
+            </div>
+          </div>
+
+          <!-- Milestones list -->
+          <div class="coverage-block">
+            <div class="coverage-head">
+              <span class="coverage-label">Milestone timeline</span>
+            </div>
+            <div class="milestones-list">
+              <div class="ms-item done">
+                <div class="ms-dot">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <span class="ms-label">Scoping &amp; reconnaissance</span>
+                <span class="ms-date">Jan 08</span>
+              </div>
+              <div class="ms-item done">
+                <div class="ms-dot">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <span class="ms-label">Network &amp; infrastructure scan</span>
+                <span class="ms-date">Jan 11</span>
+              </div>
+              <div class="ms-item done">
+                <div class="ms-dot">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <span class="ms-label">Authentication &amp; access testing</span>
+                <span class="ms-date">Jan 14</span>
+              </div>
+              <div class="ms-item done">
+                <div class="ms-dot">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <span class="ms-label">API security testing</span>
+                <span class="ms-date">Jan 17</span>
+              </div>
+              <div class="ms-item active">
+                <div class="ms-dot"></div>
+                <span class="ms-label">Application-layer testing</span>
+                <span class="ms-date">In progress</span>
+              </div>
+              <div class="ms-item future">
+                <div class="ms-dot"></div>
+                <span class="ms-label">Report finalisation</span>
+                <span class="ms-date">Jan 22</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Finding detail (limited during engagement) -->
+<div class="modal-backdrop" id="findingModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-block">
+        <div class="modal-eyebrow">Finding · Pending Final Report</div>
+        <div class="modal-title" id="modalTitle">Authentication bypass via header injection in /api/v2/auth</div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta-grid">
+        <div class="meta-field">
+          <span class="meta-label">Severity</span>
+          <span class="sev-badge crit" style="width: fit-content; margin-top: 2px;">Critical</span>
+        </div>
+        <div class="meta-field">
+          <span class="meta-label">Asset</span>
+          <span class="meta-value mono">auth-service-prod</span>
+        </div>
+        <div class="meta-field">
+          <span class="meta-label">Discovered</span>
+          <span class="meta-value mono">Jan 18, 2026 · 14:22 UTC</span>
+        </div>
+        <div class="meta-field">
+          <span class="meta-label">Status</span>
+          <span class="meta-value">Pending Final Report</span>
+        </div>
+      </div>
+
+      <div class="locked-notice">
+        <div class="locked-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="locked-text">
+          <div class="locked-title">Full technical detail locked</div>
+          <div class="locked-sub">Technical description, CVSS breakdown, evidence, proof-of-concept, and remediation steps will be available when the tester publishes the final report.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- State switcher (demo only) -->
+<div class="state-switcher">
+  <span class="ss-label">Engagement state:</span>
+  <button class="ss-btn active" data-state="active">In progress</button>
+  <button class="ss-btn" data-state="completed">Completed</button>
+</div>
+
+<script>
+  // Theme picker
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // Modal
+  const modal = document.getElementById('findingModal');
+  const modalTitle = document.getElementById('modalTitle');
+  document.querySelectorAll('.finding-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.querySelector('.fc-title').textContent;
+      modalTitle.textContent = title;
+      modal.classList.add('open');
+    });
+  });
+  document.getElementById('modalClose').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+  // State switcher — toggle in-progress vs completed
+  const finalBanner = document.getElementById('finalBanner');
+  const feedList = document.getElementById('feedList');
+  document.querySelectorAll('.ss-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ss-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const state = btn.dataset.state;
+      if (state === 'completed') {
+        finalBanner.classList.add('visible');
+        document.querySelectorAll('.finding-card').forEach(c => c.classList.add('unlocked'));
+        document.querySelectorAll('.fc-status').forEach(s => s.textContent = 'Published');
+      } else {
+        finalBanner.classList.remove('visible');
+        document.querySelectorAll('.finding-card').forEach(c => c.classList.remove('unlocked'));
+        document.querySelectorAll('.fc-status').forEach(s => s.textContent = 'Pending Final Report');
+      }
+    });
+  });
+</script>
+</body>
+</html>

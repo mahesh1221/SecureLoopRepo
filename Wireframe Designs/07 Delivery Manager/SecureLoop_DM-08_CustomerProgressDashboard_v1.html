@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-08 Customer Progress Dashboard Config</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--grain-opacity:.025}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--grain-opacity:.025}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-0.003em;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");opacity:var(--grain-opacity);mix-blend-mode:overlay}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button,input,select,textarea{font-family:inherit;color:inherit}
+
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+.rail{background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{width:40px;height:40px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+.topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pick{position:relative}.theme-btn{height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);cursor:pointer}
+.theme-swatches{display:inline-flex;gap:2px}.theme-swatches span{width:10px;height:14px;border-radius:2px;border:1px solid var(--line-strong)}.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.theme-pop{position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);display:none;flex-direction:column;gap:var(--s-4);z-index:100}
+.theme-pop.open{display:flex}.theme-pop h4{margin:0;font-size:var(--text-micro);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}.fam-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}.mode-btn{flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn svg{width:13px;height:13px}
+
+.content{padding:var(--s-6) var(--s-8);max-width:1440px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-4)}
+.eyebrow{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.role-chip{padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;margin-right:var(--s-2)}
+.page-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);letter-spacing:-0.02em;margin:0;color:var(--ink-100)}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+
+.eng-selector{padding:var(--s-3) var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-6)}
+.eng-sel-label{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.eng-sel-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100)}
+.eng-sel-id{padding:2px var(--s-2);background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600}
+.eng-sel-status{margin-left:auto;display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-full);font-size:var(--text-label);font-weight:500}
+.eng-sel-status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--status-good);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(143,229,179,.5)}70%{box-shadow:0 0 0 6px rgba(143,229,179,0)}100%{box-shadow:0 0 0 0 rgba(143,229,179,0)}}
+
+.section{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-6);overflow:hidden}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.sec-title-block{display:flex;flex-direction:column;gap:2px}
+.sec-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.sec-sub{font-size:var(--text-label);color:var(--ink-60)}
+
+/* Access control */
+.access-body{padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.access-table{width:100%;border-collapse:collapse;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.access-table th{padding:var(--s-3) var(--s-4);text-align:left;font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;border-bottom:1px solid var(--line);background:var(--bg-base)}
+.access-table td{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);font-size:var(--text-label);vertical-align:middle}
+.access-table tr:last-child td{border-bottom:none}
+.stakeholder-cell{display:flex;align-items:center;gap:var(--s-3)}
+.sh-ava{width:32px;height:32px;border-radius:var(--r-full);background:var(--brand-dim);color:var(--brand);display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label)}
+.sh-info .n{font-weight:500;color:var(--ink-100);font-size:var(--text-body)}
+.sh-info .m{font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono);margin-top:2px}
+.access-level-pill{padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em;display:inline-flex}
+.access-level-pill.full{background:var(--status-good-bg);color:var(--status-good)}
+.access-level-pill.read{background:var(--sev-low-bg);color:var(--sev-low)}
+.sent-badge{padding:1px var(--s-2);background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:500}
+
+.add-row{display:flex;gap:var(--s-3);align-items:flex-end}
+.add-field{flex:1;display:flex;flex-direction:column;gap:var(--s-2)}
+.add-label{font-size:var(--text-label);font-weight:600;color:var(--ink-80)}
+.input,.select{width:100%;padding:0 var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body)}
+.input:focus,.select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-dim)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A69B80' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right var(--s-3) center;background-size:14px}
+
+.url-row{padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;align-items:center;gap:var(--s-3);font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)}
+.url-row svg{width:14px;height:14px;color:var(--ink-60);flex-shrink:0}
+.url-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Content config */
+.toggle-row{display:flex;flex-wrap:wrap;gap:var(--s-3);padding:var(--s-6)}
+.t-toggle{padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms;display:flex;align-items:center;gap:var(--s-3);min-width:200px;flex:1;font-family:inherit;color:inherit;text-align:left}
+.t-toggle:hover{background:var(--bg-hover)}
+.t-toggle.on{background:var(--brand-dim);border-color:var(--brand)}
+.t-box{width:18px;height:18px;border-radius:var(--r-xs);border:1.5px solid var(--line-strong);background:transparent;flex-shrink:0;display:grid;place-items:center;transition:all 140ms}
+.t-toggle.on .t-box{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.t-toggle.on .t-box svg{display:block;width:12px;height:12px;stroke-width:3}
+.t-toggle:not(.on) .t-box svg{display:none}
+.t-info{flex:1}
+.t-name{font-weight:500;color:var(--ink-100)}
+.t-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px;line-height:1.5}
+.t-locked{padding:1px 5px;background:var(--sev-medium-bg);color:var(--sev-medium);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+/* Preview */
+.preview-section{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.preview-head{padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-3)}
+.preview-label{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.preview-label .live-dot{width:8px;height:8px;border-radius:50%;background:var(--status-good);animation:pulse 2s infinite}
+.preview-browser{padding:var(--s-2);background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-2)}
+.browser-dot{width:10px;height:10px;border-radius:50%}
+.browser-dot:nth-child(1){background:#FF6B5B}.browser-dot:nth-child(2){background:#FFD97A}.browser-dot:nth-child(3){background:#8FE5B3}
+.browser-url{margin-left:var(--s-3);padding:4px var(--s-3);background:var(--bg-raised);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);flex:1}
+.preview-body{padding:var(--s-6);background:var(--bg-raised)}
+
+/* customer view styling */
+.cv-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:var(--s-4);border-bottom:1px solid var(--line);margin-bottom:var(--s-4)}
+.cv-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--ink-100)}
+.cv-customer{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+.cv-brand{padding:4px var(--s-3);background:var(--brand);color:var(--brand-ink);border-radius:var(--r-full);font-size:var(--text-label);font-weight:600}
+
+.cv-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-3);margin-bottom:var(--s-4)}
+.cv-tile{padding:var(--s-3) var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);display:none}
+.cv-tile.on{display:flex;flex-direction:column;gap:var(--s-1)}
+.cv-tile-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.cv-tile-val{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:500;color:var(--ink-100);line-height:1}
+.cv-tile-sub{font-size:var(--text-micro);color:var(--ink-60)}
+
+.cv-progress{padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);display:none;flex-direction:column;gap:var(--s-3);margin-bottom:var(--s-4)}
+.cv-progress.on{display:flex}
+.cv-progress-head{display:flex;justify-content:space-between;align-items:center}
+.cv-progress-lbl{font-weight:600;color:var(--ink-100);font-size:var(--text-body)}
+.cv-progress-pct{font-family:var(--font-mono);font-weight:600;color:var(--ink-100)}
+.cv-progress-bar{height:8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);overflow:hidden}
+.cv-progress-fill{height:100%;background:var(--brand);border-radius:var(--r-full);width:62%}
+
+.cv-milestones{padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);display:none;flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-4)}
+.cv-milestones.on{display:flex}
+.cv-ms-head{font-weight:600;color:var(--ink-100);margin-bottom:var(--s-2);font-size:var(--text-body)}
+.cv-ms-item{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label)}
+.cv-ms-icon{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.cv-ms-icon.done{background:var(--status-good);color:var(--bg-page)}
+.cv-ms-icon.current{background:var(--brand);color:var(--brand-ink)}
+.cv-ms-icon.pending{background:var(--bg-base);border:1px dashed var(--line-strong);color:var(--ink-60)}
+.cv-ms-icon svg{width:10px;height:10px;stroke-width:3}
+.cv-ms-name{flex:1;font-weight:500;color:var(--ink-100)}
+.cv-ms-date{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60)}
+
+.cv-findings{padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);display:none;flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-4)}
+.cv-findings.on{display:flex}
+.cv-f-head{font-weight:600;color:var(--ink-100);margin-bottom:var(--s-2);font-size:var(--text-body)}
+.cv-f-count-row{display:flex;gap:var(--s-2);flex-wrap:wrap}
+.cv-f-count{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label)}
+.cv-f-count .dot{width:8px;height:8px;border-radius:50%}
+.cv-f-count.crit .dot{background:var(--sev-critical)}.cv-f-count.high .dot{background:var(--sev-high)}.cv-f-count.med .dot{background:var(--sev-medium)}.cv-f-count.low .dot{background:var(--sev-low)}
+.cv-f-count .n{font-family:var(--font-mono);font-weight:600;color:var(--ink-100)}
+.cv-f-count .l{color:var(--ink-60);text-transform:uppercase;letter-spacing:.06em;font-size:var(--text-micro);font-weight:600}
+
+.cv-nextms{padding:var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);display:none;flex-direction:column;gap:var(--s-2)}
+.cv-nextms.on{display:flex}
+.cv-nm-head{font-weight:600;color:var(--ink-100);font-size:var(--text-body)}
+.cv-nm-body{font-size:var(--text-body);color:var(--ink-80)}
+.cv-nm-body b{color:var(--ink-100)}
+.cv-nm-date{font-family:var(--font-mono);color:var(--brand);font-weight:600}
+
+/* Callout */
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md);margin-bottom:var(--s-6)}
+.callout.locked{background:var(--sev-medium-bg);border-color:var(--sev-medium)}
+.callout-chip{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.callout.locked .callout-chip{background:var(--sev-medium);color:#120804}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+.foot-actions{display:flex;justify-content:space-between;padding:var(--s-4) var(--s-6);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);align-items:center}
+.foot-actions .info{font-size:var(--text-label);color:var(--ink-60)}
+
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body class="coffee dark">
+<div class="shell">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav">
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 5-10 5L2 7l10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></button>
+    </nav>
+    <div class="rail-spacer"></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb"><span>SecureLoop</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Delivery</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span class="current">Customer dashboard config</span><span class="id-pill">DM-08</span></div>
+      <div class="topbar-right">
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn"><span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span><span id="themeLabel">Coffee · Dark</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="theme-pop" id="themePop">
+            <div><h4>Palette family</h4><div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Coffee</div><div class="fam-sub">Warm · investigation</div></button>
+              <button class="fam-card" data-fam="blue"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Blue</div><div class="fam-sub">Cool · enterprise</div></button>
+            </div></div>
+            <div><h4>Appearance</h4><div class="mode-row">
+              <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg>Light</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow"><span class="role-chip">DELIVERY MANAGER</span>CUSTOMER-FACING PROGRESS DASHBOARD</div>
+          <h1 class="page-title">Configure customer view</h1>
+          <div class="page-sub">Control which stakeholders can see the engagement progress dashboard and what content they see. Changes update the customer view in real time via WebSocket.</div>
+        </div>
+      </div>
+
+      <div class="eng-selector">
+        <span class="eng-sel-label">Engagement</span>
+        <span class="eng-sel-name">Aurora Financial · Q2 Web Pentest</span>
+        <span class="eng-sel-id">ENG-2026-0412</span>
+        <div class="eng-sel-status">Live · 62% complete</div>
+      </div>
+
+      <!-- Finding-visibility locked callout (from CISO-08 decision) -->
+      <div class="callout locked">
+        <div class="callout-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div>
+          <div class="callout-title">Finding-visibility rule — platform-locked, DM cannot override</div>
+          <div class="callout-body">Customer stakeholders see finding <b>titles and severity only</b> during the engagement. Full technical detail (evidence, reproduction steps, CVSS breakdown) is gated until the DM-approved final report is delivered. This is enforced across all customers and all engagements per CISO-08 policy.</div>
+        </div>
+      </div>
+
+      <!-- Access Control -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="sec-title-block">
+            <h2 class="sec-title">Access control</h2>
+            <div class="sec-sub">3 stakeholders invited · unique URL token per user · revocation immediate</div>
+          </div>
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Invite stakeholder</button>
+        </div>
+        <div class="access-body">
+          <table class="access-table">
+            <thead><tr><th>Stakeholder</th><th>Role</th><th>Access level</th><th>Invitation</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="stakeholder-cell"><div class="sh-ava">AK</div><div class="sh-info"><div class="n">Amit Kapoor</div><div class="m">amit.kapoor@aurora-financial.com</div></div></div></td>
+                <td>CISO · Aurora</td>
+                <td><span class="access-level-pill full">Full</span></td>
+                <td><span class="sent-badge">Sent 14 Apr</span></td>
+                <td style="text-align:right"><button class="btn sm">Manage</button> <button class="btn sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td><div class="stakeholder-cell"><div class="sh-ava">JC</div><div class="sh-info"><div class="n">Jessica Chen</div><div class="m">jessica.chen@aurora-financial.com</div></div></div></td>
+                <td>Security Director</td>
+                <td><span class="access-level-pill read">Read-only</span></td>
+                <td><span class="sent-badge">Sent 14 Apr</span></td>
+                <td style="text-align:right"><button class="btn sm">Manage</button> <button class="btn sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td><div class="stakeholder-cell"><div class="sh-ava">RF</div><div class="sh-info"><div class="n">Robert Friedman</div><div class="m">robert.friedman@aurora-financial.com</div></div></div></td>
+                <td>Risk Officer</td>
+                <td><span class="access-level-pill read">Read-only</span></td>
+                <td><span class="sent-badge" style="background:var(--status-good-bg);color:var(--status-good)">Active · viewed 22 Apr</span></td>
+                <td style="text-align:right"><button class="btn sm">Manage</button> <button class="btn sm">Revoke</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="add-row">
+            <div class="add-field">
+              <label class="add-label">Email address</label>
+              <input class="input" type="email" placeholder="stakeholder@customer.com" />
+            </div>
+            <div class="add-field">
+              <label class="add-label">Role</label>
+              <input class="input" type="text" placeholder="e.g. Compliance Lead" />
+            </div>
+            <div class="add-field">
+              <label class="add-label">Access level</label>
+              <select class="select"><option>Full (can see all configured content)</option><option>Read-only</option></select>
+            </div>
+            <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>Send invitation</button>
+          </div>
+
+          <div class="url-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span class="url-text">https://portal.secureloop.io/view/aurora-financial/ENG-2026-0412?t=7f3b9e8c-...</span>
+            <button class="btn sm">Copy</button>
+            <button class="btn sm">Regenerate</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content config -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="sec-title-block">
+            <h2 class="sec-title">Content configuration</h2>
+            <div class="sec-sub">Select which blocks appear in the customer view. Preview updates in real time below.</div>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <button class="t-toggle on" data-toggle="completion">
+            <div class="t-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="t-info"><div class="t-name">Completion %</div><div class="t-desc">Overall progress bar + numeric percentage</div></div>
+          </button>
+          <button class="t-toggle on" data-toggle="milestones">
+            <div class="t-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="t-info"><div class="t-name">Milestones</div><div class="t-desc">Timeline of engagement phases with dates</div></div>
+          </button>
+          <button class="t-toggle on" data-toggle="assets">
+            <div class="t-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="t-info"><div class="t-name">Assets tested</div><div class="t-desc">Count of assets in scope with tested/pending split</div></div>
+          </button>
+          <button class="t-toggle on" data-toggle="findings">
+            <div class="t-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="t-info"><div class="t-name">Finding counts <span class="t-locked">Titles + severity only</span></div><div class="t-desc">Severity distribution · platform-locked to counts + titles</div></div>
+          </button>
+          <button class="t-toggle on" data-toggle="nextms">
+            <div class="t-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="t-info"><div class="t-name">Next milestone + ETA</div><div class="t-desc">Upcoming milestone name and estimated delivery date</div></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Live preview -->
+      <section class="preview-section">
+        <div class="preview-head">
+          <div class="preview-label"><span class="live-dot"></span>Live preview · customer view</div>
+          <div style="margin-left:auto;font-size:var(--text-label);color:var(--ink-60)">Updates via WebSocket on every config change</div>
+        </div>
+        <div class="preview-browser">
+          <span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span>
+          <span class="browser-url">portal.secureloop.io/view/aurora-financial/ENG-2026-0412</span>
+        </div>
+        <div class="preview-body">
+          <div class="cv-head">
+            <div>
+              <div class="cv-title">Aurora Financial · Q2 Web Pentest</div>
+              <div class="cv-customer">Customer view · read-only · last updated 12s ago</div>
+            </div>
+            <div class="cv-brand">SecureLoop</div>
+          </div>
+
+          <div class="cv-progress on" id="cv-completion">
+            <div class="cv-progress-head">
+              <span class="cv-progress-lbl">Overall progress</span>
+              <span class="cv-progress-pct">62%</span>
+            </div>
+            <div class="cv-progress-bar"><div class="cv-progress-fill"></div></div>
+          </div>
+
+          <div class="cv-tiles">
+            <div class="cv-tile on" id="cv-assets">
+              <div class="cv-tile-lbl">Assets tested</div>
+              <div class="cv-tile-val">9 / 14</div>
+              <div class="cv-tile-sub">5 pending</div>
+            </div>
+            <div class="cv-tile on" id="cv-findings-tile">
+              <div class="cv-tile-lbl">Findings so far</div>
+              <div class="cv-tile-val">17</div>
+              <div class="cv-tile-sub">pending triage</div>
+            </div>
+            <div class="cv-tile on" id="cv-days">
+              <div class="cv-tile-lbl">Engagement phase</div>
+              <div class="cv-tile-val">3 / 5</div>
+              <div class="cv-tile-sub">Authenticated testing</div>
+            </div>
+          </div>
+
+          <div class="cv-milestones on" id="cv-milestones">
+            <div class="cv-ms-head">Milestones</div>
+            <div class="cv-ms-item"><div class="cv-ms-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><div class="cv-ms-name">Scoping &amp; reconnaissance</div><span class="cv-ms-date">14 Apr · Complete</span></div>
+            <div class="cv-ms-item"><div class="cv-ms-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><div class="cv-ms-name">Unauthenticated testing</div><span class="cv-ms-date">18 Apr · Complete</span></div>
+            <div class="cv-ms-item"><div class="cv-ms-icon current"></div><div class="cv-ms-name">Authenticated testing</div><span class="cv-ms-date">In progress · ETA 28 Apr</span></div>
+            <div class="cv-ms-item"><div class="cv-ms-icon pending"></div><div class="cv-ms-name">Business-logic abuse</div><span class="cv-ms-date">Scheduled 29 Apr</span></div>
+            <div class="cv-ms-item"><div class="cv-ms-icon pending"></div><div class="cv-ms-name">Reporting &amp; retest</div><span class="cv-ms-date">Scheduled 05 May</span></div>
+          </div>
+
+          <div class="cv-findings on" id="cv-findings">
+            <div class="cv-f-head">Findings by severity <span style="font-size:var(--text-micro);color:var(--ink-60);font-weight:400;margin-left:var(--s-2)">Titles + severity only · full detail available in final report</span></div>
+            <div class="cv-f-count-row">
+              <div class="cv-f-count crit"><span class="dot"></span><span class="n">2</span><span class="l">Critical</span></div>
+              <div class="cv-f-count high"><span class="dot"></span><span class="n">5</span><span class="l">High</span></div>
+              <div class="cv-f-count med"><span class="dot"></span><span class="n">7</span><span class="l">Medium</span></div>
+              <div class="cv-f-count low"><span class="dot"></span><span class="n">3</span><span class="l">Low</span></div>
+            </div>
+          </div>
+
+          <div class="cv-nextms on" id="cv-nextms">
+            <div class="cv-nm-head">Next milestone</div>
+            <div class="cv-nm-body">Business-logic abuse testing begins on <b class="cv-nm-date">29 April 2026</b>. Lead tester: Nikhil Rao. Estimated duration: 4 working days.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="foot-actions" style="margin-top:var(--s-6)">
+        <div class="info">Changes auto-save · last saved 3s ago · all changes logged to audit trail</div>
+        <div style="display:flex;gap:var(--s-2)">
+          <button class="btn">View customer dashboard</button>
+          <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Publish changes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop'),themeLabel=document.getElementById('themeLabel');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){themePop.classList.remove('open')}});
+function applyTheme(){const fam=document.querySelector('.fam-card.active').dataset.fam,mode=document.querySelector('.mode-btn.active').dataset.mode;document.body.className='';document.body.classList.add(fam,mode);themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1)}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+
+// State-switcher-sync: toggle config → mirror in preview
+const MAP = {
+  completion: ['cv-completion'],
+  milestones: ['cv-milestones'],
+  assets: ['cv-assets'],
+  findings: ['cv-findings','cv-findings-tile'],
+  nextms: ['cv-nextms','cv-days']
+};
+document.querySelectorAll('.t-toggle').forEach(t=>{
+  t.addEventListener('click',()=>{
+    t.classList.toggle('on');
+    const key = t.dataset.toggle;
+    const targets = MAP[key] || [];
+    const on = t.classList.contains('on');
+    targets.forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('on', on);
+    });
+  });
+});
+</script>
+</body></html>

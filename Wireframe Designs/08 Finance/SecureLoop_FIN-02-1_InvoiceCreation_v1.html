@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-02-1 Invoice Creation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select,textarea{font:inherit}
+
+body.coffee.dark{
+  --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;
+  --bg-overlay:#2B1810;--bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;
+  --ink-40:#7A7058;--ink-20:#3D3428;
+  --brand:#F3EEE2;--brand-ink:#120804;
+  --brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);
+  --sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);
+  --sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);
+  --backdrop:rgba(0,0,0,.52);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;
+  --bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;
+  --ink-40:#907D68;--ink-20:#C9C0AA;
+  --brand:#6F4E37;--brand-ink:#F3EEE2;
+  --brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);
+  --sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);
+  --sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);
+  --backdrop:rgba(43,24,16,.35);
+}
+body.blue.dark{
+  --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;
+  --bg-overlay:#1C3557;--bg-hover:#22406B;
+  --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;
+  --ink-40:#556F8A;--ink-20:#2C4058;
+  --brand:#E8F4FD;--brand-ink:#0A1628;
+  --brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);
+  --sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);
+  --sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);
+  --backdrop:rgba(0,0,0,.52);
+}
+body.blue.light{
+  --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;
+  --bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;
+  --ink-40:#7A8FA8;--ink-20:#B5C5D8;
+  --brand:#1E5A8A;--brand-ink:#F2F8FD;
+  --brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);
+  --sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);
+  --sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);
+  --backdrop:rgba(10,22,40,.30);
+}
+
+:root{
+  --font-display:'Space Grotesk',sans-serif;
+  --font-ui:'IBM Plex Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;
+  --text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;
+  --s-6:24px;--s-8:32px;--s-12:48px;
+}
+
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ── RAIL ── */
+.rail{width:64px;min-height:100vh;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-4) 0;gap:var(--s-2);flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}
+.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;left:64px;right:0;top:0;height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);z-index:90}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.breadcrumb span.sep{color:var(--ink-40);font-size:var(--text-micro)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:relative}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+
+/* ── THEME POPOVER ── */
+.theme-popover{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}
+.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+
+/* ── LAYOUT ── */
+.content{margin-left:64px;margin-top:56px;flex:1;display:flex;height:calc(100vh - 56px);overflow:hidden}
+.form-area{flex:1;overflow-y:auto;padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.preview-area{width:380px;flex-shrink:0;background:var(--bg-base);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;transition:width 280ms cubic-bezier(.2,.7,.2,1)}
+.preview-area.collapsed{width:0}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:center;gap:var(--s-3)}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-0.020em;color:var(--ink-100)}
+.page-actions{margin-left:auto;display:flex;gap:var(--s-2);align-items:center}
+.autosave{font-size:var(--text-label);color:var(--ink-40)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn.danger{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── FORM SECTIONS ── */
+.form-section{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.section-head{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);background:var(--bg-raised)}
+.section-title{font-size:var(--text-body);font-weight:600;color:var(--ink-80)}
+.section-badge{font-size:var(--text-micro);padding:2px 6px;border-radius:var(--r-full);font-weight:600}
+.badge-required{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.badge-optional{background:var(--brand-dim);color:var(--brand)}
+.section-body{padding:var(--s-4)}
+
+/* ── FORM INPUTS ── */
+.field-group{margin-bottom:var(--s-4)}
+.field-group:last-child{margin-bottom:0}
+.field-label{font-size:var(--text-label);font-weight:500;color:var(--ink-60);margin-bottom:var(--s-1);display:block}
+.field-label .req{color:var(--sev-critical);margin-left:2px}
+.field-input{
+  width:100%;padding:8px var(--s-3);
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);color:var(--ink-100);
+  font-size:var(--text-body);font-family:var(--font-ui);
+  transition:border-color 140ms;
+}
+.field-input:focus{border-color:var(--brand);outline:none}
+.field-input:disabled{opacity:.5;cursor:not-allowed}
+.field-input.error{border-color:var(--sev-critical);box-shadow:0 0 0 3px var(--sev-critical-bg)}
+.field-error{font-size:var(--text-label);color:var(--sev-critical);margin-top:var(--s-1)}
+.field-hint{font-size:var(--text-label);color:var(--ink-40);margin-top:var(--s-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-4)}
+
+/* ── ENGAGEMENT SELECTOR ── */
+.eng-selector{position:relative}
+.eng-dropdown{
+  width:100%;padding:10px var(--s-3);
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);color:var(--ink-100);
+  font-size:var(--text-body);font-family:var(--font-ui);
+  cursor:pointer;display:flex;align-items:center;gap:var(--s-2);
+  transition:border-color 140ms;
+}
+.eng-dropdown:hover{border-color:var(--line-strong)}
+.eng-dropdown .eng-id-tag{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60);background:var(--bg-overlay);padding:1px 5px;border-radius:var(--r-xs)}
+.eng-dropdown .eng-name{font-weight:500}
+.eng-dropdown .eng-status{margin-left:auto;font-size:var(--text-label);color:var(--status-good)}
+
+/* ── CUSTOMER DETAILS ── */
+.customer-panel{
+  display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);
+  padding:var(--s-4);background:var(--bg-raised);border-radius:var(--r-sm);
+  margin-bottom:var(--s-4);
+}
+.cust-kv{display:flex;flex-direction:column;gap:3px}
+.cust-label{font-size:var(--text-label);color:var(--ink-40);font-weight:500}
+.cust-value{font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+.read-only-tag{font-size:var(--text-micro);padding:1px 5px;background:var(--bg-overlay);color:var(--ink-40);border-radius:var(--r-xs);border:1px solid var(--line)}
+
+/* ── LINE ITEMS TABLE ── */
+.line-items-table{width:100%;border-collapse:collapse;margin-bottom:var(--s-3)}
+.line-items-table thead th{
+  padding:var(--s-2) var(--s-3);
+  font-size:var(--text-label);font-weight:600;color:var(--ink-40);
+  letter-spacing:0.04em;text-transform:uppercase;
+  text-align:left;border-bottom:1px solid var(--line);
+  background:var(--bg-raised);
+}
+.line-items-table thead th.r{text-align:right}
+.line-items-table tbody tr{border-bottom:1px solid var(--line)}
+.line-items-table tbody tr:hover{background:var(--bg-hover)}
+.line-items-table tbody tr:last-child{border-bottom:none}
+.line-items-table td{padding:var(--s-2) var(--s-3);vertical-align:middle}
+.line-input{
+  width:100%;padding:5px var(--s-2);
+  background:transparent;border:1px solid transparent;
+  border-radius:var(--r-xs);color:var(--ink-100);
+  font-size:var(--text-body);font-family:var(--font-ui);
+  transition:border-color 140ms;
+}
+.line-input:focus{border-color:var(--brand);background:var(--bg-raised);outline:none}
+.line-input.num{text-align:right;font-family:var(--font-mono);width:90px}
+.line-total{font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-100);text-align:right;padding-right:var(--s-2)}
+.remove-row{width:24px;height:24px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;color:var(--ink-40);transition:all 140ms}
+.remove-row:hover{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.remove-row svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.add-line-btn{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+  padding:6px var(--s-3);height:30px;
+  background:var(--brand-dim);border:1px dashed var(--brand);
+  border-radius:var(--r-sm);color:var(--brand);
+  font-size:var(--text-label);font-weight:600;
+  transition:all 140ms;
+}
+.add-line-btn:hover{background:var(--brand);color:var(--brand-ink)}
+
+/* ── AI CREDIT TOGGLE ── */
+.ai-toggle-row{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-3) var(--s-4);
+  background:var(--sev-high-bg);border:1px solid var(--sev-high);
+  border-radius:var(--r-sm);
+  margin-top:var(--s-3);
+}
+.ai-toggle-row svg{width:15px;height:15px;stroke:var(--sev-high);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ai-toggle-text{flex:1;font-size:var(--text-body);font-weight:500;color:var(--sev-high)}
+.ai-toggle-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+/* custom checkbox */
+.check-wrap{display:flex;align-items:center;gap:var(--s-2);cursor:pointer}
+.check-box{width:18px;height:18px;border-radius:var(--r-xs);border:2px solid var(--line-strong);background:var(--bg-raised);display:flex;align-items:center;justify-content:center;transition:all 140ms;flex-shrink:0}
+.check-box.checked{background:var(--sev-high);border-color:var(--sev-high)}
+.check-box svg{width:11px;height:11px;stroke:#1A0F08;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.check-box.checked svg{opacity:1}
+
+/* ── SUBTOTAL PANEL ── */
+.subtotal-panel{
+  background:var(--bg-raised);border-radius:var(--r-sm);
+  padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-2);
+  align-self:flex-end;width:320px;
+}
+.subtotal-row{display:flex;justify-content:space-between;align-items:center}
+.subtotal-label{font-size:var(--text-body);color:var(--ink-60)}
+.subtotal-value{font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-80)}
+.subtotal-sep{height:1px;background:var(--line-strong);margin:var(--s-1) 0}
+.subtotal-total .subtotal-label{font-weight:600;color:var(--ink-100);font-size:var(--text-lg)}
+.subtotal-total .subtotal-value{font-size:var(--text-xl);font-weight:700;color:var(--ink-100)}
+
+/* ── PAYMENT TERMS ── */
+.terms-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-4)}
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:64px;text-align:center}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* ── ACTION BAR ── */
+.action-bar{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-4);
+  background:var(--bg-base);border-top:1px solid var(--line);
+  flex-shrink:0;
+}
+.action-bar .spacer{flex:1}
+
+/* ── PREVIEW PANEL ── */
+.preview-header{
+  display:flex;align-items:center;gap:var(--s-2);
+  padding:var(--s-3) var(--s-4);
+  border-bottom:1px solid var(--line);
+  flex-shrink:0;background:var(--bg-raised);
+}
+.preview-title{font-size:var(--text-body);font-weight:600;color:var(--ink-80);flex:1}
+.preview-toggle{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px var(--s-2);background:transparent;border:1px solid var(--line);
+  border-radius:var(--r-xs);font-size:var(--text-label);color:var(--ink-60);
+  transition:all 140ms;
+}
+.preview-toggle:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.preview-body{overflow-y:auto;flex:1;padding:var(--s-4)}
+
+/* ── INVOICE PREVIEW ── */
+.inv-preview{
+  background:var(--bg-overlay);border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:var(--s-6);
+  font-size:var(--text-label);
+  min-height:100%;
+}
+.inv-letterhead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--s-6)}
+.inv-logo-block{display:flex;align-items:center;gap:var(--s-2)}
+.inv-logo{width:28px;height:28px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-body)}
+.inv-company{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}
+.inv-sub-company{font-size:var(--text-micro);color:var(--ink-60)}
+.inv-meta{text-align:right}
+.inv-number{font-family:var(--font-mono);font-size:var(--text-label);color:var(--brand);font-weight:600}
+.inv-date{font-size:var(--text-micro);color:var(--ink-60);margin-top:3px}
+.inv-section-title{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);margin-bottom:var(--s-4)}
+.inv-party-name{font-weight:600;color:var(--ink-100);font-size:var(--text-label);margin-bottom:3px}
+.inv-party-detail{font-size:var(--text-micro);color:var(--ink-60);line-height:1.5}
+.inv-items{width:100%;border-collapse:collapse;margin-bottom:var(--s-4)}
+.inv-items th{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);text-transform:uppercase;letter-spacing:0.06em;padding:var(--s-2) var(--s-2) var(--s-1);border-bottom:1px solid var(--line);text-align:left}
+.inv-items th.r{text-align:right}
+.inv-items td{font-size:var(--text-micro);color:var(--ink-80);padding:var(--s-1) var(--s-2);border-bottom:1px solid var(--line)}
+.inv-items td.r{text-align:right;font-family:var(--font-mono)}
+.inv-items tr:last-child td{border-bottom:none}
+.inv-totals{display:flex;flex-direction:column;gap:4px;align-items:flex-end;margin-bottom:var(--s-4)}
+.inv-total-row{display:flex;gap:var(--s-6);font-size:var(--text-micro);color:var(--ink-60)}
+.inv-total-row.grand{color:var(--ink-100);font-weight:700;font-size:var(--text-label);border-top:1px solid var(--line);padding-top:4px;margin-top:2px}
+.inv-total-label{min-width:80px;text-align:right}
+.inv-total-value{min-width:70px;text-align:right;font-family:var(--font-mono)}
+.inv-terms{font-size:var(--text-micro);color:var(--ink-60);padding-top:var(--s-3);border-top:1px solid var(--line)}
+.inv-terms strong{color:var(--ink-80)}
+.inv-ai-section{margin-bottom:var(--s-3);padding:var(--s-2) var(--s-2);background:var(--sev-high-bg);border-radius:var(--r-xs);border-left:2px solid var(--sev-high)}
+.inv-ai-label{font-size:var(--text-micro);font-weight:600;color:var(--sev-high);margin-bottom:3px;letter-spacing:0.04em;text-transform:uppercase}
+.draft-watermark{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);
+  font-family:var(--font-display);font-size:48px;font-weight:700;
+  color:var(--line-strong);pointer-events:none;user-select:none;
+  white-space:nowrap;
+}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:var(--backdrop);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{width:880px;max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);display:flex;flex-direction:column;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+.modal-head{display:flex;align-items:center;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);flex-shrink:0}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--ink-100)}
+.modal-close{margin-left:auto;width:32px;height:32px;border-radius:var(--r-sm);background:var(--bg-raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}
+.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.modal-body{overflow-y:auto;flex:1;padding:var(--s-6)}
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;gap:var(--s-3);justify-content:flex-end;flex-shrink:0}
+
+/* ── CONFIRM MODAL ── */
+.confirm-callout{
+  display:flex;align-items:flex-start;gap:var(--s-3);
+  padding:var(--s-4);background:var(--sev-medium-bg);
+  border:1px solid var(--sev-medium);border-radius:var(--r-sm);
+  margin-bottom:var(--s-4);
+}
+.confirm-callout svg{width:15px;height:15px;stroke:var(--sev-medium);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+.confirm-callout p{font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+.confirm-kv{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-6)}
+.confirm-kv-row{display:flex;flex-direction:column;gap:3px}
+.ckv-label{font-size:var(--text-label);color:var(--ink-40);font-weight:500}
+.ckv-value{font-size:var(--text-body);color:var(--ink-80);font-weight:500}
+.ckv-value.mono{font-family:var(--font-mono)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- RAIL -->
+<nav class="rail">
+  <div class="logo">S</div>
+  <div class="nav-sep"></div>
+  <button class="nav-item" title="Dashboard" aria-label="Dashboard">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+  </button>
+  <button class="nav-item" title="Engagements" aria-label="Engagements">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/><path d="M5 6h6M5 8h6M5 10h4"/></svg>
+  </button>
+  <button class="nav-item active" title="Finance" aria-label="Finance">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg>
+  </button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <button class="nav-item" title="Settings" aria-label="Settings">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.5 3.5l1 1M11.5 11.5l1 1M11.5 3.5l1-1M3.5 12.5l-1 1"/></svg>
+  </button>
+</nav>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="breadcrumb">
+    <span>SecureLoop</span><span class="sep">›</span>
+    <span>Finance</span><span class="sep">›</span>
+    <span>Invoices</span><span class="sep">›</span>
+    <span class="current">Create Invoice</span>
+  </div>
+  <div class="topbar-right">
+    <span class="autosave">Last saved 1 min ago</span>
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme picker" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches">
+          <div class="swatch" id="sw1" style="background:#1A0F08"></div>
+          <div class="swatch" id="sw2" style="background:#F3EEE2"></div>
+        </div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover" role="dialog" aria-label="Theme selector">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')">
+            <div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div>
+            <div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div>
+          </div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')">
+            <div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div>
+            <div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div>
+          </div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')">
+            <svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark
+          </button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')">
+            <svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5M2.9 2.9l1 1M9.1 9.1l1 1M9.1 2.9l1-1M2.9 9.1l-1 1"/></svg>Light
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- FORM AREA -->
+  <div class="form-area">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="id-pill">FIN-02-1</div>
+      <h1 class="page-title">Create Invoice</h1>
+      <div class="page-actions">
+        <button class="preview-toggle-btn btn" onclick="togglePreview()">
+          <svg viewBox="0 0 16 16" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="10" rx="1"/><path d="M5 7h6M5 9.5h3"/></svg>
+          <span id="previewBtnLabel">Hide Preview</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SECTION 1: ENGAGEMENT SELECTOR -->
+    <div class="form-section">
+      <div class="section-head">
+        <span class="section-title">Engagement</span>
+        <span class="section-badge badge-required">Required</span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <label class="field-label">Select Engagement<span class="req">*</span></label>
+          <div class="eng-dropdown" onclick="toggleEngDropdown()" id="engSelectorBtn" role="combobox" aria-expanded="false" tabindex="0">
+            <svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/><path d="M5 6h6M5 8h6M5 10h4"/></svg>
+            <span class="eng-id-tag">ENG-2026-041</span>
+            <span class="eng-name">Nexus Financial · VAPT Assessment Q2</span>
+            <span class="eng-status">● Active</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75" style="margin-left:4px;color:var(--ink-40)"><path d="M3 4.5l3 3 3-3"/></svg>
+          </div>
+          <div class="field-hint">Searching by Engagement ID, Customer Name, or Project Name. Auto-populates customer billing details and suggests line items.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: CUSTOMER DETAILS -->
+    <div class="form-section">
+      <div class="section-head">
+        <span class="section-title">Customer Billing Details</span>
+        <span class="read-only-tag">Read-only · Auto-populated</span>
+        <button class="btn" style="margin-left:auto;height:28px;font-size:var(--text-label);padding:0 var(--s-3)">Edit Customer</button>
+      </div>
+      <div class="section-body" style="padding-bottom:0">
+        <div class="customer-panel">
+          <div class="cust-kv"><span class="cust-label">Legal Name</span><span class="cust-value">Nexus Financial Services LLC</span></div>
+          <div class="cust-kv"><span class="cust-label">Billing Contact</span><span class="cust-value">Aisha Patel · CFO</span></div>
+          <div class="cust-kv"><span class="cust-label">Billing Email</span><span class="cust-value">billing@nexusfinancial.com</span></div>
+          <div class="cust-kv"><span class="cust-label">Tax ID</span><span class="cust-value">US-47-8821043</span></div>
+          <div class="cust-kv" style="grid-column:1/-1"><span class="cust-label">Billing Address</span><span class="cust-value">1200 Park Ave, Suite 1800, New York, NY 10019, USA</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: LINE ITEMS -->
+    <div class="form-section">
+      <div class="section-head">
+        <span class="section-title">Line Items</span>
+        <span class="section-badge badge-required">Required · Min 1 item</span>
+      </div>
+      <div class="section-body">
+        <table class="line-items-table" id="lineItemsTable">
+          <thead>
+            <tr>
+              <th style="width:45%">Description</th>
+              <th class="r" style="width:10%">Qty</th>
+              <th class="r" style="width:15%">Unit Price</th>
+              <th class="r" style="width:15%">Total</th>
+              <th style="width:5%"></th>
+            </tr>
+          </thead>
+          <tbody id="lineItemsBody">
+            <tr data-row="1">
+              <td><input class="line-input" type="text" value="VAPT Assessment — External Penetration Testing" aria-label="Description" oninput="updatePreview()"></td>
+              <td><input class="line-input num" type="number" value="1" min="0" aria-label="Quantity" oninput="calcRow(this);updatePreview()"></td>
+              <td><input class="line-input num" type="text" value="50,000" aria-label="Unit price" oninput="calcRow(this);updatePreview()"></td>
+              <td><span class="line-total" id="total-1">$50,000</span></td>
+              <td><button class="remove-row" onclick="removeRow(1)" title="Remove" aria-label="Remove row"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2L2 10"/></svg></button></td>
+            </tr>
+            <tr data-row="2">
+              <td><input class="line-input" type="text" value="Security Report &amp; Remediation Guidance" aria-label="Description" oninput="updatePreview()"></td>
+              <td><input class="line-input num" type="number" value="1" min="0" aria-label="Quantity" oninput="calcRow(this);updatePreview()"></td>
+              <td><input class="line-input num" type="text" value="12,000" aria-label="Unit price" oninput="calcRow(this);updatePreview()"></td>
+              <td><span class="line-total" id="total-2">$12,000</span></td>
+              <td><button class="remove-row" onclick="removeRow(2)" title="Remove" aria-label="Remove row"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2L2 10"/></svg></button></td>
+            </tr>
+            <tr data-row="3">
+              <td><input class="line-input" type="text" value="Management Presentation &amp; Walkthrough (4hrs)" aria-label="Description" oninput="updatePreview()"></td>
+              <td><input class="line-input num" type="number" value="1" min="0" aria-label="Quantity" oninput="calcRow(this);updatePreview()"></td>
+              <td><input class="line-input num" type="text" value="3,200" aria-label="Unit price" oninput="calcRow(this);updatePreview()"></td>
+              <td><span class="line-total" id="total-3">$3,200</span></td>
+              <td><button class="remove-row" onclick="removeRow(3)" title="Remove" aria-label="Remove row"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2L2 10"/></svg></button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button class="add-line-btn" onclick="addRow()">
+          <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 2v8M2 6h8"/></svg>
+          Add Line Item
+        </button>
+
+        <!-- AI CREDIT TOGGLE -->
+        <div class="ai-toggle-row">
+          <svg viewBox="0 0 16 16"><path d="M8 2L10 6l4 .5-3 2.5 1 4-4-2.5L4 13l1-4-3-2.5L6 6z"/></svg>
+          <div style="flex:1">
+            <div class="ai-toggle-text">Include AI Credit Charges on this Invoice</div>
+            <div class="ai-toggle-sub">Opens AI session selector — 18 billable sessions available ($3,200 total)</div>
+          </div>
+          <label class="check-wrap" aria-label="Include AI credit charges">
+            <div class="check-box" id="aiCheckBox" onclick="toggleAI()" role="checkbox" aria-checked="false" tabindex="0">
+              <svg viewBox="0 0 11 11"><polyline points="1.5,5.5 4,8.5 9.5,2.5"/></svg>
+            </div>
+          </label>
+        </div>
+
+        <!-- SUBTOTAL -->
+        <div style="display:flex;justify-content:flex-end;margin-top:var(--s-4)">
+          <div class="subtotal-panel">
+            <div class="subtotal-row">
+              <span class="subtotal-label">Subtotal</span>
+              <span class="subtotal-value" id="subtotalVal">$65,200</span>
+            </div>
+            <div class="subtotal-row" id="aiCreditsRow" style="display:none">
+              <span class="subtotal-label" style="color:var(--sev-high)">AI Credit Charges</span>
+              <span class="subtotal-value" style="color:var(--sev-high)" id="aiCreditsVal">$3,200</span>
+            </div>
+            <div class="subtotal-row">
+              <span class="subtotal-label">Tax (5%)</span>
+              <span class="subtotal-value" id="taxVal">$3,260</span>
+            </div>
+            <div class="subtotal-sep"></div>
+            <div class="subtotal-row subtotal-total">
+              <span class="subtotal-label">Total</span>
+              <span class="subtotal-value" id="totalVal">$68,460</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: PAYMENT TERMS -->
+    <div class="form-section">
+      <div class="section-head">
+        <span class="section-title">Payment Terms</span>
+        <span class="section-badge badge-required">Required</span>
+      </div>
+      <div class="section-body">
+        <div class="terms-grid">
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Issue Date<span class="req">*</span></label>
+            <input type="date" class="field-input" value="2026-04-22" onchange="updatePreview()">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Payment Terms<span class="req">*</span></label>
+            <select class="field-input" id="termsSelect" onchange="calcDueDate();updatePreview()">
+              <option value="15">NET 15</option>
+              <option value="30" selected>NET 30</option>
+              <option value="45">NET 45</option>
+              <option value="60">NET 60</option>
+              <option value="90">NET 90</option>
+              <option value="0">Due on Receipt</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Due Date</label>
+            <input type="date" class="field-input" id="dueDateInput" value="2026-05-22" readonly style="background:var(--bg-raised);opacity:.8">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: NOTES -->
+    <div class="form-section">
+      <div class="section-head">
+        <span class="section-title">Invoice Notes &amp; Payment Instructions</span>
+        <span class="section-badge badge-optional">Optional</span>
+      </div>
+      <div class="section-body">
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">Notes / Payment Instructions</label>
+          <textarea class="field-input" rows="4" maxlength="2000" id="notesField"
+            placeholder="e.g. Bank transfer details, payment portal link, special instructions…"
+            oninput="updatePreview();document.getElementById('notesCount').textContent=this.value.length"
+            style="resize:vertical;line-height:1.5">Please remit payment via bank wire to Cybrilliant Inc. Account: 4821-0093-1122. Payment portal: https://pay.secureloop.io/inv/DRAFT-001</textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:var(--s-1)">
+            <span style="font-size:var(--text-label);color:var(--ink-40)"><span id="notesCount">107</span>/2000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+      <button class="btn danger" onclick="discardInvoice()">
+        <svg viewBox="0 0 16 16"><path d="M3 4h10M6 4V3h4v1M5 4v9h6V4"/></svg>
+        Discard Draft
+      </button>
+      <div class="spacer"></div>
+      <span style="font-size:var(--text-label);color:var(--ink-40)">DRAFT-INV-2026-004</span>
+      <button class="btn" onclick="saveDraft()">
+        <svg viewBox="0 0 16 16"><path d="M2 4v9h12V6l-3-3H2z"/><path d="M11 2v4H5V2M8 10v3"/></svg>
+        Save as Draft
+      </button>
+      <button class="btn primary" onclick="openSendModal()">
+        <svg viewBox="0 0 16 16"><path d="M14 2L2 7l5 2 2 5 5-12z"/><path d="M7 9l4-4"/></svg>
+        Send to Customer
+      </button>
+    </div>
+
+  </div><!-- /form-area -->
+
+  <!-- PREVIEW AREA -->
+  <div class="preview-area" id="previewArea">
+    <div class="preview-header">
+      <span class="preview-title">Invoice Preview</span>
+      <button class="btn" style="height:26px;font-size:var(--text-label);padding:0 var(--s-2)" onclick="window.print()">
+        <svg viewBox="0 0 14 14" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V2h8v3M3 9H1V6h12v3h-2M3 9h8v3H3z"/></svg>
+        Print
+      </button>
+    </div>
+    <div class="preview-body">
+      <div class="inv-preview" id="invPreview" style="position:relative">
+        <div class="draft-watermark">DRAFT</div>
+
+        <!-- Letterhead -->
+        <div class="inv-letterhead">
+          <div>
+            <div class="inv-logo-block" style="margin-bottom:6px">
+              <div class="inv-logo">S</div>
+              <div>
+                <div class="inv-company">SecureLoop · PTOps Suite</div>
+                <div class="inv-sub-company">Cybrilliant Inc.</div>
+              </div>
+            </div>
+            <div style="font-size:var(--text-micro);color:var(--ink-60);line-height:1.6">
+              billing@cybrilliant.com<br>
+              +1 (212) 555-0190
+            </div>
+          </div>
+          <div class="inv-meta">
+            <div class="inv-number">DRAFT-INV-2026-004</div>
+            <div class="inv-date">Issued: Apr 22, 2026</div>
+            <div class="inv-date">Due: <strong id="prevDueDate" style="color:var(--ink-80)">May 22, 2026</strong></div>
+          </div>
+        </div>
+
+        <!-- Bill To -->
+        <div class="inv-section-title">Bill To</div>
+        <div class="inv-parties" style="grid-template-columns:1fr;margin-bottom:var(--s-3)">
+          <div>
+            <div class="inv-party-name">Nexus Financial Services LLC</div>
+            <div class="inv-party-detail">Aisha Patel · CFO<br>billing@nexusfinancial.com<br>1200 Park Ave, Suite 1800<br>New York, NY 10019</div>
+          </div>
+        </div>
+
+        <!-- RE: Engagement -->
+        <div style="display:flex;gap:var(--s-6);margin-bottom:var(--s-4)">
+          <div><div class="inv-section-title">RE: Engagement</div><div style="font-size:var(--text-label);color:var(--ink-80);font-weight:500">ENG-2026-041 · VAPT Assessment Q2</div></div>
+          <div><div class="inv-section-title">Payment Terms</div><div style="font-size:var(--text-label);color:var(--ink-80);font-weight:500" id="prevTerms">NET 30</div></div>
+        </div>
+
+        <!-- Line items -->
+        <div class="inv-section-title">Line Items</div>
+        <table class="inv-items" id="prevItems">
+          <thead>
+            <tr><th style="width:60%">Description</th><th class="r">Qty</th><th class="r">Unit</th><th class="r">Total</th></tr>
+          </thead>
+          <tbody id="prevItemsBody">
+            <tr><td>VAPT Assessment — External Penetration Testing</td><td class="r">1</td><td class="r">$50,000</td><td class="r">$50,000</td></tr>
+            <tr><td>Security Report &amp; Remediation Guidance</td><td class="r">1</td><td class="r">$12,000</td><td class="r">$12,000</td></tr>
+            <tr><td>Management Presentation &amp; Walkthrough (4hrs)</td><td class="r">1</td><td class="r">$3,200</td><td class="r">$3,200</td></tr>
+          </tbody>
+        </table>
+
+        <!-- AI Credits section (hidden by default) -->
+        <div class="inv-ai-section" id="prevAISection" style="display:none">
+          <div class="inv-ai-label">AI Credit Charges (itemised)</div>
+          <table class="inv-items" style="margin-bottom:0">
+            <tbody>
+              <tr><td>AI — Impact Generation (24 sessions, Apr 2026)</td><td class="r">24</td><td class="r">$60</td><td class="r">$1,440</td></tr>
+              <tr><td>AI — Remediation Suggestion (18 sessions)</td><td class="r">18</td><td class="r">$40</td><td class="r">$720</td></tr>
+              <tr><td>AI — Report Auto-Generation (2 sessions)</td><td class="r">2</td><td class="r">$400</td><td class="r">$800</td></tr>
+              <tr><td>AI — AI Sidekick (12 sessions)</td><td class="r">12</td><td class="r">$20</td><td class="r">$240</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals -->
+        <div class="inv-totals">
+          <div class="inv-total-row"><span class="inv-total-label">Subtotal</span><span class="inv-total-value" id="prevSubtotal">$65,200</span></div>
+          <div class="inv-total-row" id="prevAIRow" style="display:none"><span class="inv-total-label" style="color:var(--sev-high)">AI Credits</span><span class="inv-total-value" style="color:var(--sev-high)">$3,200</span></div>
+          <div class="inv-total-row"><span class="inv-total-label">Tax (5%)</span><span class="inv-total-value" id="prevTax">$3,260</span></div>
+          <div class="inv-total-row grand"><span class="inv-total-label">Total Due</span><span class="inv-total-value" id="prevTotal">$68,460</span></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="inv-terms" id="prevNotes">
+          <strong>Payment Instructions:</strong> Please remit payment via bank wire to Cybrilliant Inc. Account: 4821-0093-1122. Payment portal: https://pay.secureloop.io/inv/DRAFT-001
+        </div>
+      </div>
+    </div>
+  </div><!-- /preview-area -->
+
+</div><!-- /content -->
+
+<!-- SEND CONFIRMATION MODAL -->
+<div class="modal-overlay" id="sendModal" role="dialog" aria-modal="true" aria-labelledby="sendModalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="sendModalTitle">Send Invoice to Customer</div>
+      <button class="modal-close" onclick="closeSendModal()" aria-label="Close">
+        <svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-callout">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 10.5v.5"/></svg>
+        <p>This will generate a final Invoice ID (replacing DRAFT-INV-2026-004), create a PDF, and email it to the customer's billing contact with a payment portal link. This action is permanent — sent invoices cannot be edited.</p>
+      </div>
+      <div class="confirm-kv">
+        <div class="confirm-kv-row"><span class="ckv-label">Invoice To</span><span class="ckv-value">Nexus Financial Services LLC</span></div>
+        <div class="confirm-kv-row"><span class="ckv-label">Recipient Email</span><span class="ckv-value">billing@nexusfinancial.com</span></div>
+        <div class="confirm-kv-row"><span class="ckv-label">Engagement</span><span class="ckv-value">ENG-2026-041 · VAPT Assessment Q2</span></div>
+        <div class="confirm-kv-row"><span class="ckv-label">Invoice Amount</span><span class="ckv-value mono">$68,460 USD</span></div>
+        <div class="confirm-kv-row"><span class="ckv-label">Payment Terms</span><span class="ckv-value">NET 30 · Due May 22, 2026</span></div>
+        <div class="confirm-kv-row"><span class="ckv-label">AI Credits Included</span><span class="ckv-value" id="aiIncludedVal">No</span></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeSendModal()">Cancel</button>
+      <button class="btn primary" onclick="confirmSend()">
+        <svg viewBox="0 0 16 16" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2L2 7l5 2 2 5 5-12z"/><path d="M7 9l4-4"/></svg>
+        Confirm &amp; Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME ──────────────────────────────────────────────────────
+let currentFamily = 'coffee', currentMode = 'dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){
+  document.body.className=currentFamily+' '+currentMode;
+  document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];
+  document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];
+  document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];
+  document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');
+  document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');
+  document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');
+  document.getElementById('mb-light').classList.toggle('active',currentMode==='light');
+}
+function setFamily(f){currentFamily=f;applyTheme()}
+function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn');
+const themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',(e)=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePopover.classList.remove('open')});
+
+// ── PREVIEW TOGGLE ─────────────────────────────────────────────
+let previewOpen = true;
+function togglePreview(){
+  previewOpen=!previewOpen;
+  document.getElementById('previewArea').classList.toggle('collapsed',!previewOpen);
+  document.getElementById('previewBtnLabel').textContent=previewOpen?'Hide Preview':'Show Preview';
+}
+
+// ── LINE ITEMS ─────────────────────────────────────────────────
+let rowCounter=3;
+function addRow(){
+  rowCounter++;
+  const tbody=document.getElementById('lineItemsBody');
+  const tr=document.createElement('tr');
+  tr.setAttribute('data-row',rowCounter);
+  tr.innerHTML=`
+    <td><input class="line-input" type="text" value="" placeholder="Description" aria-label="Description" oninput="updatePreview()"></td>
+    <td><input class="line-input num" type="number" value="1" min="0" aria-label="Quantity" oninput="calcRow(this);updatePreview()"></td>
+    <td><input class="line-input num" type="text" value="0" aria-label="Unit price" oninput="calcRow(this);updatePreview()"></td>
+    <td><span class="line-total" id="total-${rowCounter}">$0</span></td>
+    <td><button class="remove-row" onclick="removeRow(${rowCounter})" title="Remove" aria-label="Remove row"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('input').focus();
+  updateTotals();
+  updatePreview();
+}
+function removeRow(id){
+  const row=document.querySelector(`[data-row="${id}"]`);
+  if(row)row.remove();
+  updateTotals();
+  updatePreview();
+}
+function parseAmt(str){return parseFloat(String(str).replace(/[,$]/g,''))||0}
+function calcRow(input){
+  const row=input.closest('tr');
+  const qty=parseAmt(row.querySelectorAll('input')[1].value);
+  const price=parseAmt(row.querySelectorAll('input')[2].value);
+  const id=row.getAttribute('data-row');
+  const total=document.getElementById('total-'+id);
+  if(total)total.textContent='$'+numberWithCommas((qty*price).toFixed(0));
+  updateTotals();
+}
+function numberWithCommas(x){return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function updateTotals(){
+  let sub=0;
+  document.querySelectorAll('#lineItemsBody tr').forEach(row=>{
+    const qty=parseAmt(row.querySelectorAll('input')[1]?.value||0);
+    const price=parseAmt(row.querySelectorAll('input')[2]?.value||0);
+    sub+=qty*price;
+  });
+  const aiIncluded=document.getElementById('aiCheckBox').classList.contains('checked');
+  const ai=aiIncluded?3200:0;
+  const tax=(sub+ai)*0.05;
+  const total=sub+ai+tax;
+  document.getElementById('subtotalVal').textContent='$'+numberWithCommas(sub.toFixed(0));
+  document.getElementById('taxVal').textContent='$'+numberWithCommas(tax.toFixed(0));
+  document.getElementById('totalVal').textContent='$'+numberWithCommas(total.toFixed(0));
+  document.getElementById('aiCreditsRow').style.display=aiIncluded?'flex':'none';
+}
+
+// ── AI TOGGLE ──────────────────────────────────────────────────
+function toggleAI(){
+  const box=document.getElementById('aiCheckBox');
+  const checked=box.classList.toggle('checked');
+  box.setAttribute('aria-checked',checked);
+  document.getElementById('aiCreditsRow').style.display=checked?'flex':'none';
+  document.getElementById('prevAISection').style.display=checked?'block':'none';
+  document.getElementById('prevAIRow').style.display=checked?'flex':'none';
+  document.getElementById('aiIncludedVal').textContent=checked?'Yes — 18 sessions ($3,200)':'No';
+  updateTotals();
+  updatePreview();
+}
+
+// ── DUE DATE AUTO-CALC ─────────────────────────────────────────
+function calcDueDate(){
+  const terms=document.getElementById('termsSelect').value;
+  const issue=new Date('2026-04-22');
+  const days=parseInt(terms)||0;
+  issue.setDate(issue.getDate()+days);
+  const due=issue.toISOString().split('T')[0];
+  document.getElementById('dueDateInput').value=due;
+  document.getElementById('prevDueDate').textContent=issue.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const termLabels={15:'NET 15',30:'NET 30',45:'NET 45',60:'NET 60',90:'NET 90',0:'Due on Receipt'};
+  document.getElementById('prevTerms').textContent=termLabels[terms]||'Custom';
+  updatePreview();
+}
+
+// ── PREVIEW UPDATE (debounced) ─────────────────────────────────
+let previewTimer;
+function updatePreview(){
+  clearTimeout(previewTimer);
+  previewTimer=setTimeout(_doUpdatePreview,300);
+}
+function _doUpdatePreview(){
+  // Sync line items to preview
+  const rows=document.querySelectorAll('#lineItemsBody tr');
+  const prevBody=document.getElementById('prevItemsBody');
+  prevBody.innerHTML='';
+  let sub=0;
+  rows.forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const desc=inputs[0]?.value||'';
+    const qty=parseAmt(inputs[1]?.value||0);
+    const price=parseAmt(inputs[2]?.value||0);
+    const total=qty*price;
+    sub+=total;
+    if(desc||total>0){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${desc}</td><td class="r">${qty}</td><td class="r">$${numberWithCommas(price.toFixed(0))}</td><td class="r">$${numberWithCommas(total.toFixed(0))}</td>`;
+      prevBody.appendChild(tr);
+    }
+  });
+  const aiIncluded=document.getElementById('aiCheckBox').classList.contains('checked');
+  const ai=aiIncluded?3200:0;
+  const tax=(sub+ai)*0.05;
+  const total=sub+ai+tax;
+  document.getElementById('prevSubtotal').textContent='$'+numberWithCommas(sub.toFixed(0));
+  document.getElementById('prevTax').textContent='$'+numberWithCommas(tax.toFixed(0));
+  document.getElementById('prevTotal').textContent='$'+numberWithCommas(total.toFixed(0));
+  // Notes
+  const notes=document.getElementById('notesField').value;
+  document.getElementById('prevNotes').innerHTML=notes?`<strong>Payment Instructions:</strong> ${notes}`:'';
+}
+
+// ── MODAL ──────────────────────────────────────────────────────
+function openSendModal(){document.getElementById('sendModal').classList.add('open')}
+function closeSendModal(){document.getElementById('sendModal').classList.remove('open')}
+function confirmSend(){
+  closeSendModal();
+  // Success toast simulation
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--status-good-bg);border:1px solid var(--status-good);color:var(--status-good);padding:12px 20px;border-radius:6px;font-size:13px;font-weight:600;z-index:9999;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1)';
+  toast.textContent='✓ Invoice INV-2026-047 sent to billing@nexusfinancial.com';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),4000);
+}
+function saveDraft(){
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--brand-dim);border:1px solid var(--brand);color:var(--brand);padding:12px 20px;border-radius:6px;font-size:13px;font-weight:600;z-index:9999;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1)';
+  toast.textContent='Draft saved · DRAFT-INV-2026-004';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),3000);
+}
+function discardInvoice(){
+  if(confirm('Discard this draft? All unsaved changes will be lost.'))window.history.back();
+}
+document.getElementById('sendModal').addEventListener('click',function(e){if(e.target===this)closeSendModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('sendModal').classList.contains('open'))closeSendModal()});
+</script>
+</body>
+</html>

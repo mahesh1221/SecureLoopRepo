@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-07 Engagement Template Library</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--grain-opacity:.025}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--grain-opacity:.025}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-0.003em;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");opacity:var(--grain-opacity);mix-blend-mode:overlay}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button,input,select,textarea{font-family:inherit;color:inherit}
+
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+.rail{background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{width:40px;height:40px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+.topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pick{position:relative}.theme-btn{height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);cursor:pointer}
+.theme-swatches{display:inline-flex;gap:2px}.theme-swatches span{width:10px;height:14px;border-radius:3px;border:1px solid var(--line-strong)}.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.theme-pop{position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);display:none;flex-direction:column;gap:var(--s-4);z-index:100}
+.theme-pop.open{display:flex}.theme-pop h4{margin:0;font-size:var(--text-micro);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}.fam-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}.mode-btn{flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn svg{width:13px;height:13px}
+
+.content{padding:var(--s-6) var(--s-8);max-width:1440px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-4)}
+.eyebrow{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.role-chip{padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;margin-right:var(--s-2)}
+.page-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);letter-spacing:-0.02em;margin:0;color:var(--ink-100)}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+
+.segmented{display:inline-flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-size:var(--text-label);font-weight:500;cursor:pointer;min-width:100px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg-btn svg{width:11px;height:11px}
+
+/* 2-col */
+.split{display:grid;grid-template-columns:380px 1fr;gap:var(--s-6);align-items:start}
+
+/* List */
+.list{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;position:sticky;top:calc(56px + var(--s-6))}
+.list-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);background:var(--bg-raised)}
+.list-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100)}
+.list-body{overflow-y:auto;max-height:calc(100vh - 56px - var(--s-12) - 140px)}
+.search-inp{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line)}
+.search-inp input{width:100%;height:32px;padding:0 var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body)}
+.search-inp input:focus{outline:none;border-color:var(--brand)}
+
+.tpl-item{display:flex;flex-direction:column;gap:var(--s-1);padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);cursor:pointer;transition:all 140ms;border-left:3px solid transparent;background:transparent;width:100%;text-align:left;border-right:none;border-top:none;font-family:inherit;color:inherit}
+.tpl-item:hover{background:var(--bg-hover)}
+.tpl-item.active{background:var(--brand-dim);border-left-color:var(--brand)}
+.tpl-item-top{display:flex;align-items:center;justify-content:space-between;gap:var(--s-2)}
+.tpl-name{font-weight:500;color:var(--ink-100)}
+.tpl-default-badge{padding:1px 5px;background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.tpl-my-badge{padding:1px 5px;background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.tpl-desc{font-size:var(--text-label);color:var(--ink-60);line-height:1.5}
+.tpl-meta{display:flex;justify-content:space-between;font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono);margin-top:var(--s-1)}
+
+/* Preview */
+.preview{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column}
+.prev-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-4)}
+.prev-title-block{flex:1}
+.prev-id{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;font-weight:600;text-transform:uppercase;margin-bottom:var(--s-1)}
+.prev-name{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;color:var(--ink-100);margin:0;letter-spacing:-0.02em;display:flex;align-items:center;gap:var(--s-3)}
+.prev-desc{font-size:var(--text-body);color:var(--ink-80);margin-top:var(--s-2);max-width:680px}
+.prev-actions{display:flex;gap:var(--s-2)}
+
+.prev-body{padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-6);overflow-y:auto}
+
+.section-h{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin:0 0 var(--s-3);letter-spacing:-0.01em;display:flex;align-items:center;gap:var(--s-2)}
+.section-h .count{padding:1px var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:500}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.tag{padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);color:var(--ink-80);font-size:var(--text-label);font-weight:500}
+.tag.brand{background:var(--brand-dim);color:var(--brand);border-color:var(--brand)}
+
+.phases{display:flex;flex-direction:column;gap:var(--s-2);position:relative;padding-left:var(--s-6)}
+.phases::before{content:"";position:absolute;left:9px;top:10px;bottom:10px;width:2px;background:var(--line)}
+.phase{display:flex;gap:var(--s-3);position:relative;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.phase::before{content:"";position:absolute;left:calc(-1 * var(--s-6) + 2px);top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:var(--brand);border:2px solid var(--bg-base);box-shadow:0 0 0 2px var(--brand)}
+.phase-num{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:600;min-width:32px}
+.phase-body{flex:1}
+.phase-name{font-weight:500;color:var(--ink-100);font-size:var(--text-body)}
+.phase-detail{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+
+.sla-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3)}
+.sla-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:var(--s-1)}
+.sla-sev-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em;align-self:flex-start}
+.sla-sev-pill::before{content:"";width:6px;height:6px;border-radius:50%}
+.sla-sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}.sla-sev-pill.crit::before{background:var(--sev-critical)}
+.sla-sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)}.sla-sev-pill.high::before{background:var(--sev-high)}
+.sla-sev-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}.sla-sev-pill.med::before{background:var(--sev-medium)}
+.sla-sev-pill.low{background:var(--sev-low-bg);color:var(--sev-low)}.sla-sev-pill.low::before{background:var(--sev-low)}
+.sla-val{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:500;color:var(--ink-100);line-height:1}
+.sla-label{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+
+.sections-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.sec-item{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.sec-num{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:600;min-width:28px;text-align:right}
+.sec-name{flex:1;font-weight:500;color:var(--ink-100)}
+.sec-opt{padding:2px var(--s-2);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-xs);font-size:var(--text-micro);color:var(--ink-60);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-3)}
+.meta-tile{padding:var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:var(--s-1)}
+.meta-tile-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.meta-tile-val{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:500;color:var(--ink-100);line-height:1}
+.meta-tile-sub{font-size:var(--text-label);color:var(--ink-60)}
+
+/* MODAL (use template) */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}
+.backdrop.open{display:flex;animation:fade 180ms}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{width:720px;max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column;animation:rise 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.modal-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.modal-close{width:36px;height:36px;display:grid;place-items:center;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer}
+.modal-close:hover{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.modal-close svg{width:14px;height:14px}
+.modal-body{padding:var(--s-6);overflow-y:auto;display:flex;flex-direction:column;gap:var(--s-4)}
+.field{display:flex;flex-direction:column;gap:var(--s-2)}
+.field-label{font-size:var(--text-label);font-weight:600;color:var(--ink-80)}
+.field-label .req{color:var(--sev-critical)}
+.input,.select{width:100%;padding:0 var(--s-3);height:40px;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body)}
+.input:focus,.select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-dim)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A69B80' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right var(--s-3) center;background-size:14px}
+.modal-foot{display:flex;justify-content:flex-end;gap:var(--s-2);padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);background:var(--bg-base)}
+
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body class="coffee dark">
+<div class="shell">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav">
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></button>
+    </nav>
+    <div class="rail-spacer"></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb"><span>SecureLoop</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Delivery</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span class="current">Template library</span><span class="id-pill">DM-07</span></div>
+      <div class="topbar-right">
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn"><span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span><span id="themeLabel">Coffee · Dark</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="theme-pop" id="themePop">
+            <div><h4>Palette family</h4><div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Coffee</div><div class="fam-sub">Warm · investigation</div></button>
+              <button class="fam-card" data-fam="blue"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Blue</div><div class="fam-sub">Cool · enterprise</div></button>
+            </div></div>
+            <div><h4>Appearance</h4><div class="mode-row">
+              <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg>Light</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow"><span class="role-chip">DELIVERY MANAGER</span>ENGAGEMENT TEMPLATES</div>
+          <h1 class="page-title">Engagement template library</h1>
+          <div class="page-sub">5 default templates · 3 of yours · 2 shared by team · use template to pre-fill the creation wizard</div>
+        </div>
+        <div style="display:flex;gap:var(--s-2);align-items:center">
+          <div class="segmented">
+            <button class="seg-btn active" data-scope="all">All <span style="padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro);margin-left:4px">10</span></button>
+            <button class="seg-btn" data-scope="default">Defaults <span style="padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro);margin-left:4px">5</span></button>
+            <button class="seg-btn" data-scope="mine">Mine <span style="padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro);margin-left:4px">3</span></button>
+            <button class="seg-btn" data-scope="shared">Shared <span style="padding:0 5px;background:rgba(0,0,0,.12);border-radius:var(--r-xs);font-family:var(--font-mono);font-weight:600;font-size:var(--text-micro);margin-left:4px">2</span></button>
+          </div>
+          <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Create template</button>
+        </div>
+      </div>
+
+      <div class="split">
+        <!-- LEFT LIST -->
+        <aside class="list">
+          <div class="search-inp"><input type="text" placeholder="Search templates…" /></div>
+          <div class="list-head">
+            <div class="list-title">Templates</div>
+          </div>
+          <div class="list-body">
+            <button class="tpl-item active">
+              <div class="tpl-item-top"><span class="tpl-name">Web application pentest</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">OWASP-aligned testing of web apps — authenticated + unauthenticated. Covers ASVS Level 2.</div>
+              <div class="tpl-meta"><span>12 used · last 7d</span><span>v3.2</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">API security assessment</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">REST + GraphQL API testing. Focus on auth, rate limiting, injection, IDOR.</div>
+              <div class="tpl-meta"><span>9 used · last 30d</span><span>v2.8</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Network pentest</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">Internal + external network testing. CIDR scope, lateral movement, privilege escalation.</div>
+              <div class="tpl-meta"><span>6 used · last 30d</span><span>v2.5</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Cloud security assessment</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">AWS/Azure/GCP config review + runtime testing. CSA CCM-aligned.</div>
+              <div class="tpl-meta"><span>4 used · last 30d</span><span>v1.9</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Red team exercise</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">Goal-oriented adversary simulation · 4-6 week engagement · limited-knowledge scope.</div>
+              <div class="tpl-meta"><span>2 used · last 90d</span><span>v1.3</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Financial services SOC2 combo</span><span class="tpl-my-badge">Mine</span></div>
+              <div class="tpl-desc">Web + API + cloud bundle tailored for fin-services clients. SOC2 Type II + NIST CSF auto-enabled.</div>
+              <div class="tpl-meta"><span>5 used · last 30d</span><span>v1.2</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Healthcare HIPAA scope</span><span class="tpl-my-badge">Mine</span></div>
+              <div class="tpl-desc">HIPAA + OWASP ASVS Level 3 for healthcare apps handling PHI.</div>
+              <div class="tpl-meta"><span>3 used · last 60d</span><span>v1.1</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">Mobile app security test</span><span class="tpl-my-badge">Mine</span></div>
+              <div class="tpl-desc">iOS + Android pentest — reverse engineering, API binding, local storage.</div>
+              <div class="tpl-meta"><span>1 used · last 120d</span><span>v0.9 (draft)</span></div>
+            </button>
+            <button class="tpl-item">
+              <div class="tpl-item-top"><span class="tpl-name">PCI-DSS segmentation validation</span><span class="tpl-default-badge">Default</span></div>
+              <div class="tpl-desc">PCI-DSS network segmentation test · QSA-aligned evidence pack.</div>
+              <div class="tpl-meta"><span>Shared by Lee Kwan</span><span>v1.0</span></div>
+            </button>
+          </div>
+        </aside>
+
+        <!-- RIGHT PREVIEW -->
+        <section class="preview">
+          <div class="prev-head">
+            <div class="prev-title-block">
+              <div class="prev-id">TPL-001 · v3.2 · last edited 14 Apr 2026</div>
+              <h2 class="prev-name">Web application pentest <span class="tpl-default-badge" style="font-size:var(--text-label);padding:3px 8px">Default</span></h2>
+              <p class="prev-desc">OWASP-aligned pentest for web applications — authenticated, unauthenticated, and business-logic flaws. Default template used by 12 active engagements in the last 7 days. Mapped to OWASP ASVS Level 2 by default; framework mapping configurable per engagement.</p>
+            </div>
+            <div class="prev-actions">
+              <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Edit</button>
+              <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15v-2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2M8 7h8M12 11V3"/></svg>Duplicate</button>
+              <button class="btn primary" onclick="openUseModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Use this template</button>
+            </div>
+          </div>
+
+          <div class="prev-body">
+            <div class="meta-grid">
+              <div class="meta-tile"><div class="meta-tile-lbl">Duration</div><div class="meta-tile-val">3 wks</div><div class="meta-tile-sub">Typical · configurable</div></div>
+              <div class="meta-tile"><div class="meta-tile-lbl">Team size</div><div class="meta-tile-val">2</div><div class="meta-tile-sub">1 lead + 1 senior</div></div>
+              <div class="meta-tile"><div class="meta-tile-lbl">Base price</div><div class="meta-tile-val">$16,800</div><div class="meta-tile-sub">Excl. frameworks</div></div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Asset types accepted <span class="count">4</span></h3>
+              <div class="tag-row">
+                <span class="tag">Web application</span>
+                <span class="tag">API endpoint</span>
+                <span class="tag">Subdomain</span>
+                <span class="tag">Login portal</span>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Test phases <span class="count">5</span></h3>
+              <div class="phases">
+                <div class="phase">
+                  <div class="phase-num">01</div>
+                  <div class="phase-body">
+                    <div class="phase-name">Scoping &amp; reconnaissance</div>
+                    <div class="phase-detail">Asset inventory, subdomain enumeration, tech stack fingerprinting. Deliverable: recon report</div>
+                  </div>
+                </div>
+                <div class="phase">
+                  <div class="phase-num">02</div>
+                  <div class="phase-body">
+                    <div class="phase-name">Unauthenticated testing</div>
+                    <div class="phase-detail">Public-facing surface, OWASP Top 10 screen, CVE matching. Burp + manual verification.</div>
+                  </div>
+                </div>
+                <div class="phase">
+                  <div class="phase-num">03</div>
+                  <div class="phase-body">
+                    <div class="phase-name">Authenticated testing</div>
+                    <div class="phase-detail">Per-role testing, session/auth flaws, privilege escalation, IDOR. Customer provides test accounts.</div>
+                  </div>
+                </div>
+                <div class="phase">
+                  <div class="phase-num">04</div>
+                  <div class="phase-body">
+                    <div class="phase-name">Business-logic abuse</div>
+                    <div class="phase-detail">Workflow bypass, race conditions, pricing/coupon abuse, state-machine flaws.</div>
+                  </div>
+                </div>
+                <div class="phase">
+                  <div class="phase-num">05</div>
+                  <div class="phase-body">
+                    <div class="phase-name">Reporting &amp; retest</div>
+                    <div class="phase-detail">Tester → SE → DM report approval. Retest window configurable per severity.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Default SLA by severity</h3>
+              <div class="sla-grid">
+                <div class="sla-card"><span class="sla-sev-pill crit">Critical</span><div class="sla-val">3d</div><div class="sla-label">Response + triage</div></div>
+                <div class="sla-card"><span class="sla-sev-pill high">High</span><div class="sla-val">7d</div><div class="sla-label">Response + triage</div></div>
+                <div class="sla-card"><span class="sla-sev-pill med">Medium</span><div class="sla-val">14d</div><div class="sla-label">Response + triage</div></div>
+                <div class="sla-card"><span class="sla-sev-pill low">Low</span><div class="sla-val">30d</div><div class="sla-label">Response + triage</div></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Report sections <span class="count">8</span></h3>
+              <div class="sections-list">
+                <div class="sec-item"><span class="sec-num">01</span><span class="sec-name">Executive summary</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">02</span><span class="sec-name">Engagement scope</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">03</span><span class="sec-name">Methodology</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">04</span><span class="sec-name">Findings by severity</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">05</span><span class="sec-name">Compliance mapping</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">06</span><span class="sec-name">Business-logic flaws</span><span class="sec-opt">Optional</span></div>
+                <div class="sec-item"><span class="sec-num">07</span><span class="sec-name">Remediation roadmap</span><span class="sec-opt">Required</span></div>
+                <div class="sec-item"><span class="sec-num">08</span><span class="sec-name">Appendix · evidence &amp; logs</span><span class="sec-opt">Required</span></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Compliance frameworks</h3>
+              <div class="tag-row">
+                <span class="tag brand">OWASP ASVS L2</span>
+                <span class="tag">SOC 2 Type II</span>
+                <span class="tag">NIST CSF</span>
+                <span class="tag">CIS v8</span>
+                <span class="tag">CSA CCM</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- USE TEMPLATE MODAL -->
+<div class="backdrop" id="useModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Use "Web application pentest" template</h2>
+        <div class="modal-sub">Creates a new engagement with template defaults pre-filled. Edit in wizard.</div>
+      </div>
+      <button class="modal-close" onclick="closeUseModal()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label">Customer<span class="req">*</span></label>
+        <select class="select">
+          <option>Aurora Financial Corp</option>
+          <option>Meridian Health Systems</option>
+          <option>Bayview Retail Group</option>
+          <option>+ Add new customer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label">Engagement name</label>
+        <input class="input" type="text" placeholder="Aurora Financial · Q2 Web Pentest" value="Aurora Financial · Q2 Web Pentest" />
+      </div>
+      <div class="field">
+        <label class="field-label">Pre-fill with template defaults?</label>
+        <select class="select">
+          <option>Yes — use all template settings (recommended)</option>
+          <option>Yes — customise SLA + team assignment in wizard</option>
+          <option>No — skip to Step 1 with blank form</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeUseModal()">Cancel</button>
+      <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Open in wizard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop'),themeLabel=document.getElementById('themeLabel');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){themePop.classList.remove('open');closeUseModal()}});
+function applyTheme(){const fam=document.querySelector('.fam-card.active').dataset.fam,mode=document.querySelector('.mode-btn.active').dataset.mode;document.body.className='';document.body.classList.add(fam,mode);themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1)}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+
+document.querySelectorAll('.page-head .seg-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.page-head .seg-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+document.querySelectorAll('.tpl-item').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tpl-item').forEach(x=>x.classList.remove('active'));t.classList.add('active')}));
+
+function openUseModal(){document.getElementById('useModal').classList.add('open')}
+function closeUseModal(){document.getElementById('useModal').classList.remove('open')}
+document.getElementById('useModal').addEventListener('click',e=>{if(e.target.id==='useModal')closeUseModal()});
+</script>
+</body></html>

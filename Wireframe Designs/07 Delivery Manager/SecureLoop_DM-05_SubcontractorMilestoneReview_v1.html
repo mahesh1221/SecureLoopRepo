@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-05 Subcontractor Milestone Review</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--grain-opacity:.025}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--grain-opacity:.025}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-0.003em;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");opacity:var(--grain-opacity);mix-blend-mode:overlay}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button,input,select,textarea{font-family:inherit;color:inherit}
+
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+.rail{background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{width:40px;height:40px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+.topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pick{position:relative}.theme-btn{height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);cursor:pointer}
+.theme-swatches{display:inline-flex;gap:2px}.theme-swatches span{width:10px;height:14px;border-radius:3px;border:1px solid var(--line-strong)}.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.theme-pop{position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);display:none;flex-direction:column;gap:var(--s-4);z-index:100}
+.theme-pop.open{display:flex}.theme-pop h4{margin:0;font-size:var(--text-micro);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}.fam-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}.mode-btn{flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.danger{background:var(--sev-critical);color:#fff;border-color:var(--sev-critical);font-weight:600}
+.btn.danger:hover{filter:brightness(1.1)}
+.btn.danger:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn svg{width:13px;height:13px}
+
+/* Page */
+.content{padding:var(--s-6) var(--s-8);max-width:1440px}
+.page-head{margin-bottom:var(--s-6)}
+.eyebrow{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.role-chip{padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;margin-right:var(--s-2)}
+.page-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);letter-spacing:-0.02em;margin:0;color:var(--ink-100)}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+
+/* 2-col layout */
+.split{display:grid;grid-template-columns:380px 1fr;gap:var(--s-6);align-items:start}
+
+.queue{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;position:sticky;top:calc(56px + var(--s-6));max-height:calc(100vh - 56px - var(--s-12))}
+.queue-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);background:var(--bg-raised)}
+.queue-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);letter-spacing:-0.01em}
+.queue-count{padding:2px var(--s-2);background:var(--brand);color:var(--brand-ink);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600}
+.queue-list{overflow-y:auto;max-height:calc(100vh - 56px - var(--s-12) - 56px)}
+.q-item{padding:var(--s-4);border-bottom:1px solid var(--line);cursor:pointer;transition:all 140ms;display:flex;flex-direction:column;gap:var(--s-2);background:transparent;border-left:3px solid transparent;width:100%;text-align:left;border-right:none;border-top:none;font-family:inherit;color:inherit}
+.q-item:hover{background:var(--bg-hover)}
+.q-item.active{background:var(--brand-dim);border-left-color:var(--brand)}
+.q-top{display:flex;align-items:center;gap:var(--s-2);justify-content:space-between}
+.q-sub-name{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+.q-milestone{font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+.q-eng{font-size:var(--text-label);color:var(--ink-80);margin-top:2px}
+.q-foot{display:flex;align-items:center;justify-content:space-between;font-size:var(--text-micro);color:var(--ink-60);margin-top:var(--s-1)}
+.q-days{font-family:var(--font-mono);font-weight:600}
+.q-days.urgent{color:var(--sev-high)}
+
+.detail{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column}
+.det-banner{padding:var(--s-3) var(--s-6);background:var(--brand-dim);border-bottom:1px solid var(--line-strong);display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-label)}
+.det-banner-icon{width:24px;height:24px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.det-banner-icon svg{width:12px;height:12px}
+.det-banner b{color:var(--ink-100)}
+.det-head{padding:var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-4)}
+.det-id{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;font-weight:600;text-transform:uppercase;margin-bottom:var(--s-2)}
+.det-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;color:var(--ink-100);margin:0;letter-spacing:-0.02em}
+.det-meta{display:flex;gap:var(--s-4);margin-top:var(--s-3);font-size:var(--text-label);color:var(--ink-60)}
+.det-meta b{color:var(--ink-100);font-weight:500}
+
+.sub-card{display:flex;align-items:center;gap:var(--s-3)}
+.sub-avatar{width:48px;height:48px;border-radius:var(--r-sm);background:var(--sev-low-bg);color:var(--sev-low);display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-lg)}
+.sub-info{display:flex;flex-direction:column;gap:2px}
+.sub-name{font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+.sub-meta{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+.sub-rating{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;margin-top:var(--s-2)}
+
+.det-body{padding:var(--s-6);overflow-y:auto;display:flex;flex-direction:column;gap:var(--s-6)}
+.section-h{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin:0 0 var(--s-3);letter-spacing:-0.01em}
+
+.deliv-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.deliv-item{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.deliv-icon{width:32px;height:32px;border-radius:var(--r-sm);background:var(--brand-dim);color:var(--brand);display:grid;place-items:center}
+.deliv-icon svg{width:14px;height:14px}
+.deliv-name{flex:1;font-weight:500;color:var(--ink-100)}
+.deliv-meta{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+
+.findings-table{width:100%;border-collapse:collapse;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.findings-table th{padding:var(--s-3);text-align:left;font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;border-bottom:1px solid var(--line);background:var(--bg-base)}
+.findings-table td{padding:var(--s-3);border-bottom:1px solid var(--line);font-size:var(--text-label);vertical-align:middle}
+.findings-table tr:last-child td{border-bottom:none}
+
+.sev-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sev-pill::before{content:"";width:6px;height:6px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}.sev-pill.crit::before{background:var(--sev-critical)}
+.sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)}.sev-pill.high::before{background:var(--sev-high)}
+.sev-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}.sev-pill.med::before{background:var(--sev-medium)}
+.sev-pill.low{background:var(--sev-low-bg);color:var(--sev-low)}.sev-pill.low::before{background:var(--sev-low)}
+
+/* timeline */
+.timeline{display:flex;flex-direction:column;gap:var(--s-3);position:relative;padding-left:var(--s-6)}
+.timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tl-item{display:flex;flex-direction:column;gap:2px;position:relative}
+.tl-item::before{content:"";position:absolute;left:calc(-1 * var(--s-6) + 2px);top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg-raised);border:2px solid var(--ink-40)}
+.tl-item.done::before{background:var(--status-good);border-color:var(--status-good)}
+.tl-item.current::before{background:var(--brand);border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-dim)}
+.tl-item.pending::before{background:var(--bg-raised);border-color:var(--line-strong);border-style:dashed}
+.tl-event{font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+.tl-meta{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+
+/* Action footer */
+.det-actions{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line-strong);background:var(--bg-base);display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);position:sticky;bottom:0}
+.act-info{font-size:var(--text-label);color:var(--ink-60)}
+
+/* MODALS */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}
+.backdrop.open{display:flex;animation:fade 180ms}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{width:880px;max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column;animation:rise 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.modal-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.modal-close{width:36px;height:36px;display:grid;place-items:center;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer}
+.modal-close:hover{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.modal-close svg{width:14px;height:14px}
+.modal-body{padding:var(--s-6);overflow-y:auto;display:flex;flex-direction:column;gap:var(--s-4)}
+.modal-foot{display:flex;justify-content:flex-end;gap:var(--s-2);padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);background:var(--bg-base)}
+
+.field{display:flex;flex-direction:column;gap:var(--s-2)}
+.field-label{font-size:var(--text-label);font-weight:600;color:var(--ink-80);display:flex;justify-content:space-between}
+.field-label .req{color:var(--sev-critical)}
+.field-label .hint{font-weight:400;color:var(--ink-60);font-size:var(--text-micro)}
+.input,.textarea{width:100%;padding:var(--s-3);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body)}
+.input{height:40px;padding:0 var(--s-3)}
+.textarea{min-height:120px;line-height:1.5;resize:vertical}
+.textarea:focus,.input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-dim)}
+.textarea.err{border-color:var(--sev-critical);box-shadow:0 0 0 3px var(--sev-critical-bg)}
+.char-count{font-size:var(--text-micro);color:var(--ink-60);margin-top:var(--s-1);font-family:var(--font-mono);text-align:right}
+.char-count.ok{color:var(--status-good)}.char-count.err{color:var(--sev-critical)}
+
+.ack-card{padding:var(--s-4);background:var(--bg-raised);border:1px solid var(--line-strong);border-radius:var(--r-sm);display:flex;align-items:flex-start;gap:var(--s-3);cursor:pointer;transition:all 140ms}
+.ack-card.checked{background:var(--status-good-bg);border-color:var(--status-good)}
+.ack-box{width:18px;height:18px;border-radius:var(--r-xs);border:1.5px solid var(--line-strong);background:transparent;flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:all 140ms}
+.ack-card.checked .ack-box{background:var(--status-good);border-color:var(--status-good);color:var(--bg-page)}
+.ack-card.checked .ack-box svg{display:block;width:12px;height:12px;stroke-width:3}
+.ack-card:not(.checked) .ack-box svg{display:none}
+.ack-text{font-size:var(--text-body);color:var(--ink-100);font-weight:500;line-height:1.4}
+.ack-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:4px;line-height:1.5}
+
+/* callout */
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md)}
+.callout-chip{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body class="coffee dark">
+<div class="shell">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav">
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></button>
+      <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></button>
+    </nav>
+    <div class="rail-spacer"></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb"><span>SecureLoop</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Delivery</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Subcontractors</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span class="current">Milestone Review</span><span class="id-pill">DM-05</span></div>
+      <div class="topbar-right">
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn"><span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span><span id="themeLabel">Coffee · Dark</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="theme-pop" id="themePop">
+            <div><h4>Palette family</h4><div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Coffee</div><div class="fam-sub">Warm · investigation</div></button>
+              <button class="fam-card" data-fam="blue"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Blue</div><div class="fam-sub">Cool · enterprise</div></button>
+            </div></div>
+            <div><h4>Appearance</h4><div class="mode-row">
+              <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg>Light</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div class="eyebrow"><span class="role-chip">DELIVERY MANAGER</span>SUBCONTRACTOR MILESTONE REVIEW</div>
+        <h1 class="page-title">5 milestones awaiting your review</h1>
+        <div class="page-sub">One milestone reviewed at a time · approval requests payment authorisation from Finance — payment is not automatic</div>
+      </div>
+
+      <div class="split">
+        <!-- QUEUE -->
+        <aside class="queue">
+          <div class="queue-head">
+            <h2 class="queue-title">Pending queue</h2>
+            <span class="queue-count">5</span>
+          </div>
+          <div class="queue-list">
+            <button class="q-item active">
+              <div class="q-top"><span class="q-sub-name">Tomás Olivera · CloudOps Sec</span></div>
+              <div class="q-milestone">Phase 2 deliverable · Internal scan</div>
+              <div class="q-eng">Helix Biotech · ENG-2026-0387</div>
+              <div class="q-foot"><span>Submitted 19 Apr</span><span class="q-days urgent">3d pending</span></div>
+            </button>
+            <button class="q-item">
+              <div class="q-top"><span class="q-sub-name">Anna Kovacs · API Hunters</span></div>
+              <div class="q-milestone">Phase 1 deliverable · Recon &amp; mapping</div>
+              <div class="q-eng">Meridian Health · ENG-2026-0408</div>
+              <div class="q-foot"><span>Submitted 21 Apr</span><span class="q-days">1d pending</span></div>
+            </button>
+            <button class="q-item">
+              <div class="q-top"><span class="q-sub-name">Tomás Olivera · CloudOps Sec</span></div>
+              <div class="q-milestone">Final report draft</div>
+              <div class="q-eng">Helix Biotech · ENG-2026-0387</div>
+              <div class="q-foot"><span>Submitted 22 Apr</span><span class="q-days">3h pending</span></div>
+            </button>
+            <button class="q-item">
+              <div class="q-top"><span class="q-sub-name">Priya Desai · NetForce</span></div>
+              <div class="q-milestone">Phase 3 deliverable · Exploitation report</div>
+              <div class="q-eng">Bayview Retail · ENG-2026-0401</div>
+              <div class="q-foot"><span>Submitted 22 Apr</span><span class="q-days">2h pending</span></div>
+            </button>
+            <button class="q-item">
+              <div class="q-top"><span class="q-sub-name">Anna Kovacs · API Hunters</span></div>
+              <div class="q-milestone">Evidence package · authentication tests</div>
+              <div class="q-eng">Meridian Health · ENG-2026-0408</div>
+              <div class="q-foot"><span>Submitted 22 Apr</span><span class="q-days">1h pending</span></div>
+            </button>
+          </div>
+        </aside>
+
+        <!-- DETAIL -->
+        <section class="detail">
+          <div class="det-banner">
+            <div class="det-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+            <div><b>One-at-a-time review.</b> Approving or rejecting auto-loads the next pending milestone. No batch approvals.</div>
+          </div>
+
+          <div class="det-head">
+            <div>
+              <div class="det-id">MILESTONE · MS-2026-0102</div>
+              <h2 class="det-title">Phase 2 deliverable · Internal scan</h2>
+              <div class="det-meta"><span>Engagement: <b>Helix Biotech · ENG-2026-0387</b></span><span>Milestone: <b>4 of 6</b></span><span>Submitted: <b>19 Apr 2026 · 14:21 GST</b></span></div>
+            </div>
+            <div class="sub-card">
+              <div class="sub-avatar">TO</div>
+              <div class="sub-info">
+                <span class="sub-name">Tomás Olivera</span>
+                <span class="sub-meta">CloudOps Sec · SUB-024</span>
+                <span class="sub-rating">★ 4.6 / 5 · 14 prior milestones</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="det-body">
+            <div>
+              <h3 class="section-h">Deliverables submitted</h3>
+              <div class="deliv-list">
+                <div class="deliv-item"><div class="deliv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="deliv-name">internal-scan-report.pdf</div><div class="deliv-meta">2.3 MB · v1.0</div></div>
+                <div class="deliv-item"><div class="deliv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="deliv-name">findings-evidence.zip</div><div class="deliv-meta">14 files · 18.7 MB</div></div>
+                <div class="deliv-item"><div class="deliv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="deliv-name">scan-logs-nessus.xml</div><div class="deliv-meta">847 KB · scanner export</div></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="section-h">Findings included <span style="font-family:var(--font-ui);font-size:var(--text-label);font-weight:300;color:var(--ink-60)">· 6 routed to SE for confirmation</span></h3>
+              <table class="findings-table">
+                <thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Asset</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4828</td><td>Hardcoded API key in mobile app build</td><td><span class="sev-pill crit">Critical</span></td><td>helix-mobile.apk</td></tr>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4830</td><td>XSS in admin panel</td><td><span class="sev-pill high">High</span></td><td>admin.helix.com</td></tr>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4831</td><td>Insecure direct object reference</td><td><span class="sev-pill med">Medium</span></td><td>api.helix.com</td></tr>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4833</td><td>Stored credentials in nginx config backup</td><td><span class="sev-pill high">High</span></td><td>10.20.4.0/24</td></tr>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4835</td><td>Verbose error messages reveal stack trace</td><td><span class="sev-pill low">Low</span></td><td>helix.com/api</td></tr>
+                  <tr><td class="mono" style="font-family:var(--font-mono);color:var(--ink-80)">SEC-4836</td><td>Outdated jQuery version (1.8.3)</td><td><span class="sev-pill low">Low</span></td><td>helix.com</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 class="section-h">Audit trail</h3>
+              <div class="timeline">
+                <div class="tl-item done"><div class="tl-event">Milestone created</div><div class="tl-meta">14 Apr 2026 · 09:30 GST · system</div></div>
+                <div class="tl-item done"><div class="tl-event">Subcontractor began work</div><div class="tl-meta">14 Apr 2026 · 14:00 GST · Tomás Olivera</div></div>
+                <div class="tl-item done"><div class="tl-event">Submitted for DM review</div><div class="tl-meta">19 Apr 2026 · 14:21 GST · Tomás Olivera</div></div>
+                <div class="tl-item current"><div class="tl-event">Awaiting DM review</div><div class="tl-meta">3d pending · Priya Sharma</div></div>
+                <div class="tl-item pending"><div class="tl-event">Payment request sent to Finance</div><div class="tl-meta">— pending DM approval</div></div>
+                <div class="tl-item pending"><div class="tl-event">Payment authorised</div><div class="tl-meta">— pending Finance authorisation</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="det-actions">
+            <div class="act-info">After approval, queue auto-loads the next milestone (Anna Kovacs · Phase 1 · Meridian Health)</div>
+            <div style="display:flex;gap:var(--s-2)">
+              <button class="btn" onclick="openReject()">Reject milestone</button>
+              <button class="btn primary" onclick="openApprove()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Approve milestone</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- APPROVE MODAL -->
+<div class="backdrop" id="approveModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Approve milestone</h2>
+        <div class="modal-sub">MS-2026-0102 · Phase 2 deliverable · Helix Biotech</div>
+      </div>
+      <button class="modal-close" onclick="closeApprove()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="callout">
+        <div class="callout-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+        <div>
+          <div class="callout-title">Approval triggers a payment REQUEST — not the payment itself</div>
+          <div class="callout-body">Finance will receive a payment authorisation request and must separately approve. Subcontractor will be notified that the milestone has been accepted.</div>
+        </div>
+      </div>
+      <div class="ack-card" id="ackCard" onclick="toggleAck()">
+        <div class="ack-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div>
+          <div class="ack-text">I confirm the deliverables meet quality standards</div>
+          <div class="ack-sub">By acknowledging, you certify the report, evidence, and findings have been reviewed and meet the engagement contract terms.</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Optional feedback to subcontractor <span class="hint">visible to subcontractor</span></label>
+        <textarea class="textarea" rows="3" placeholder="Optional. Praise good work, flag minor improvements for future milestones."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeApprove()">Cancel</button>
+      <button class="btn primary" id="approveBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        Approve &amp; request payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="backdrop" id="rejectModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Reject milestone</h2>
+        <div class="modal-sub">MS-2026-0102 · subcontractor will receive your reason and resubmit</div>
+      </div>
+      <button class="modal-close" onclick="closeReject()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="callout" style="background:var(--sev-critical-bg);border-color:var(--sev-critical)">
+        <div class="callout-chip" style="background:var(--sev-critical);color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+        <div>
+          <div class="callout-title" style="color:var(--ink-100)">Milestone reverts to "In progress"</div>
+          <div class="callout-body">Subcontractor will see the rejection reason and resubmit after corrections. No payment request is generated.</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Reason for rejection<span class="req">*</span> <span class="hint" id="rejHint">0 / 300 minimum</span></label>
+        <textarea class="textarea" id="rejReason" rows="6" placeholder="Required. Minimum 300 characters. Be specific about what is missing, incorrect, or sub-standard so the subcontractor can address it. Reason is shared with subcontractor and logged to audit trail."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeReject()">Cancel</button>
+      <button class="btn danger" id="rejectBtn" disabled>Reject milestone</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop'),themeLabel=document.getElementById('themeLabel');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){themePop.classList.remove('open');closeApprove();closeReject()}});
+function applyTheme(){const fam=document.querySelector('.fam-card.active').dataset.fam,mode=document.querySelector('.mode-btn.active').dataset.mode;document.body.className='';document.body.classList.add(fam,mode);themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1)}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+
+// Queue selection
+document.querySelectorAll('.q-item').forEach(q=>{q.addEventListener('click',()=>{document.querySelectorAll('.q-item').forEach(x=>x.classList.remove('active'));q.classList.add('active')})});
+
+// Approve modal
+function openApprove(){document.getElementById('approveModal').classList.add('open');document.getElementById('ackCard').classList.remove('checked');document.getElementById('approveBtn').disabled=true}
+function closeApprove(){document.getElementById('approveModal').classList.remove('open')}
+function toggleAck(){const c=document.getElementById('ackCard');c.classList.toggle('checked');document.getElementById('approveBtn').disabled=!c.classList.contains('checked')}
+document.getElementById('approveModal').addEventListener('click',e=>{if(e.target.id==='approveModal')closeApprove()});
+
+// Reject modal — char counter gate
+function openReject(){document.getElementById('rejectModal').classList.add('open');document.getElementById('rejReason').value='';updateRejCount()}
+function closeReject(){document.getElementById('rejectModal').classList.remove('open')}
+function updateRejCount(){
+  const ta=document.getElementById('rejReason'),hint=document.getElementById('rejHint'),btn=document.getElementById('rejectBtn');
+  const n=ta.value.length;
+  hint.textContent = n + ' / 300 minimum';
+  if (n >= 300) { hint.style.color='var(--status-good)'; ta.classList.remove('err'); btn.disabled=false; }
+  else { hint.style.color='var(--sev-critical)'; if(n>0) ta.classList.add('err'); else ta.classList.remove('err'); btn.disabled=true; }
+}
+document.getElementById('rejReason').addEventListener('input',updateRejCount);
+document.getElementById('rejectModal').addEventListener('click',e=>{if(e.target.id==='rejectModal')closeReject()});
+</script>
+</body></html>

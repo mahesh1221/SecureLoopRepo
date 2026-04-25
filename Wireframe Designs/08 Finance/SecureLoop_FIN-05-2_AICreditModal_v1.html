@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-05-2 AI Credit Selection Modal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}button{cursor:pointer;border:none;background:none;font:inherit}input,select,textarea{font:inherit}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);--sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);--backdrop:rgba(0,0,0,.52)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);--sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(43,24,16,.35)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);--sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);--sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);--sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);--status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);--backdrop:rgba(0,0,0,.52)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);--sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);--sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);--sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);--status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);--backdrop:rgba(10,22,40,.30)}
+:root{--font-display:'Space Grotesk',sans-serif;--font-ui:'IBM Plex Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+html,body{height:100%;letter-spacing:-0.003em}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;background:var(--bg-page);color:var(--ink-100);display:flex;align-items:center;justify-content:center;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:9999}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+
+/* page bg shell */
+.bg-shell{position:fixed;inset:0;background:var(--backdrop);backdrop-filter:blur(8px);z-index:0}
+
+/* MODAL */
+.modal{position:relative;z-index:10;width:880px;max-height:calc(100vh - 48px);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);display:flex;flex-direction:column;animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);overflow:hidden}
+@keyframes riseIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:flex-start;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);flex-shrink:0}
+.modal-title-block{flex:1}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--ink-100)}
+.modal-subtitle{font-size:var(--text-label);color:var(--ink-60);margin-top:3px}
+.modal-close{width:32px;height:32px;border-radius:var(--r-sm);background:var(--bg-raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-60);cursor:pointer;transition:all 140ms;flex-shrink:0}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* summary metrics bar */
+.metrics-bar{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--bg-raised)}
+.metric-cell{padding:var(--s-3) var(--s-6);display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--line)}
+.metric-cell:last-child{border-right:none}
+.mc-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);text-transform:uppercase;letter-spacing:0.08em}
+.mc-value{font-family:var(--font-mono);font-size:var(--text-lg);font-weight:700;color:var(--ink-100)}
+
+/* modal body split */
+.modal-body-split{display:flex;flex:1;min-height:0;overflow:hidden}
+.sessions-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden}
+.preview-col{width:340px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-raised)}
+
+/* selection controls */
+.sel-controls{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-4);border-bottom:1px solid var(--line);flex-shrink:0}
+.sel-btn{padding:3px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);font-size:var(--text-label);color:var(--ink-60);transition:all 140ms;font-family:var(--font-ui)}
+.sel-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+
+/* sessions list */
+.sessions-list{overflow-y:auto;flex:1;padding:var(--s-2)}
+
+/* group header */
+.group-header{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-3);cursor:pointer;border-radius:var(--r-sm);transition:background 140ms;user-select:none}
+.group-header:hover{background:var(--bg-hover)}
+.group-chevron{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform 140ms;color:var(--ink-60)}
+.group-chevron.open{transform:rotate(90deg)}
+.group-label{font-size:var(--text-body);font-weight:600;color:var(--ink-100);flex:1}
+.group-meta{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60)}
+
+/* session items */
+.group-sessions{display:flex;flex-direction:column;gap:1px;margin-bottom:var(--s-2)}
+.session-item{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-3);border-radius:var(--r-xs);transition:background 140ms;margin-left:var(--s-6)}
+.session-item:hover{background:var(--bg-hover)}
+.session-item.selected{background:var(--brand-dim)}
+.sess-check{width:15px;height:15px;border-radius:var(--r-xs);border:1px solid var(--line-strong);background:var(--bg-raised);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms;flex-shrink:0}
+.sess-check.checked{background:var(--brand);border-color:var(--brand)}
+.sess-check svg{width:9px;height:9px;stroke:var(--brand-ink);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.sess-check.checked svg{opacity:1}
+.sess-date{font-size:var(--text-label);color:var(--ink-60);min-width:72px}
+.sess-context{font-size:var(--text-label);color:var(--ink-80);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sess-cost{font-family:var(--font-mono);font-size:var(--text-label);color:var(--sev-high);min-width:56px;text-align:right}
+.feature-chip{display:inline-flex;align-items:center;padding:1px 6px;border-radius:var(--r-full);font-size:8px;font-weight:600}
+.chip-impact{background:var(--sev-critical-bg);color:var(--sev-critical)}.chip-remediation{background:var(--sev-high-bg);color:var(--sev-high)}.chip-report{background:var(--sev-medium-bg);color:var(--sev-medium)}.chip-sidekick{background:var(--sev-low-bg);color:var(--sev-low)}
+
+/* preview pane */
+.preview-head{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);flex-shrink:0}
+.preview-head-title{font-size:var(--text-label);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--s-2)}
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:3px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;text-align:center}
+.seg-btn:hover{color:var(--ink-100)}.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.preview-body{overflow-y:auto;flex:1;padding:var(--s-4)}
+.preview-line-item{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);padding:var(--s-2) 0;border-bottom:1px solid var(--line);font-size:var(--text-label)}
+.preview-line-item:last-child{border-bottom:none}
+.pli-desc{flex:1;color:var(--ink-80);line-height:1.4}
+.pli-cost{font-family:var(--font-mono);color:var(--sev-high);font-weight:600;flex-shrink:0}
+.preview-subtotal{padding:var(--s-2) 0;border-top:2px solid var(--line-strong);display:flex;justify-content:space-between;margin-top:var(--s-2)}
+.preview-empty{text-align:center;color:var(--ink-40);font-size:var(--text-label);padding:var(--s-8) 0}
+
+/* rationale field */
+.rationale-area{padding:var(--s-3) var(--s-4);border-top:1px solid var(--line);flex-shrink:0}
+.rationale-label{font-size:var(--text-label);color:var(--ink-60);font-weight:500;margin-bottom:var(--s-1)}
+.rationale-input{width:100%;padding:var(--s-2) var(--s-3);background:var(--bg-overlay);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-family:var(--font-ui);resize:none;line-height:1.5}
+.rationale-input:focus{border-color:var(--brand);outline:none}
+
+/* footer */
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;align-items:center;gap:var(--s-3);flex-shrink:0}
+
+/* theme picker */
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-label);font-weight:500;transition:all 140ms;position:fixed;top:var(--s-4);right:var(--s-4);z-index:20}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+.theme-popover{position:fixed;top:56px;right:var(--s-4);width:280px;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);box-shadow:0 8px 32px rgba(0,0,0,.32);display:none;z-index:200}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}.family-card{flex:1;padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}.mode-btn{flex:1;padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-60);display:flex;align-items:center;justify-content:center;gap:var(--s-1);transition:all 140ms}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+<div class="bg-shell"></div>
+
+<!-- THEME PICKER (floating) -->
+<button class="theme-btn" id="themeBtn" aria-label="Theme" aria-haspopup="true" aria-expanded="false">
+  <div class="theme-swatches"><div class="swatch" id="sw1" style="background:#1A0F08"></div><div class="swatch" id="sw2" style="background:#F3EEE2"></div></div>
+  <span id="themeLabel">Coffee · Dark</span>
+  <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+</button>
+<div class="theme-popover" id="themePopover">
+  <div class="pop-label">Palette Family</div>
+  <div class="family-cards">
+    <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')"><div class="family-swatches"><div class="fs" style="background:#1A0F08"></div><div class="fs" style="background:#F3EEE2"></div><div class="fs" style="background:#FF6B5B"></div></div><div class="family-name">Coffee</div><div class="family-desc">Warm · Investigation</div></div>
+    <div class="family-card" id="fc-blue" onclick="setFamily('blue')"><div class="family-swatches"><div class="fs" style="background:#0F1E35"></div><div class="fs" style="background:#E8F4FD"></div><div class="fs" style="background:#FF7A6B"></div></div><div class="family-name">Blue</div><div class="family-desc">Cool · Enterprise</div></div>
+  </div>
+  <div class="pop-label">Appearance</div>
+  <div class="mode-btns">
+    <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>Dark</button>
+    <button class="mode-btn" id="mb-light" onclick="setMode('light')"><svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5"/></svg>Light</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-head">
+    <div class="modal-title-block">
+      <div style="display:flex;align-items:center;gap:var(--s-2);margin-bottom:4px"><div class="id-pill">FIN-05-2</div></div>
+      <div class="modal-title" id="modalTitle">Configure AI Credit Charges for Invoice</div>
+      <div class="modal-subtitle">ENG-2026-041 · Nexus Financial Services · 24 sessions available · $3,200 total if all selected</div>
+    </div>
+    <button class="modal-close" onclick="" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+  </div>
+
+  <!-- Metrics bar -->
+  <div class="metrics-bar">
+    <div class="metric-cell">
+      <span class="mc-label">Sessions Available</span>
+      <span class="mc-value">24</span>
+    </div>
+    <div class="metric-cell">
+      <span class="mc-label">Currently Selected</span>
+      <span class="mc-value" id="selCount" style="color:var(--status-good)">18 · $2,480</span>
+    </div>
+    <div class="metric-cell">
+      <span class="mc-label">Excluded</span>
+      <span class="mc-value" id="exclCount" style="color:var(--ink-60)">6 · $720</span>
+    </div>
+    <div class="metric-cell" style="margin-left:auto">
+      <span class="mc-label">Aggregation</span>
+      <div class="segmented" style="margin-top:4px">
+        <button class="seg-btn active" onclick="setAgg('aggregated',this)">Aggregated</button>
+        <button class="seg-btn" onclick="setAgg('itemized',this)">Itemized</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Split body -->
+  <div class="modal-body-split">
+    <!-- Sessions col -->
+    <div class="sessions-col">
+      <div class="sel-controls">
+        <button class="sel-btn" onclick="selectAllBillable()">Select All Billable</button>
+        <button class="sel-btn" onclick="deselectAll()">Deselect All</button>
+        <button class="sel-btn" onclick="invertSel()">Invert</button>
+        <span style="margin-left:auto;font-size:var(--text-label);color:var(--ink-40)">18 of 24 selected</span>
+      </div>
+      <div class="sessions-list">
+        <!-- Group: Impact Generation -->
+        <div>
+          <div class="group-header" onclick="toggleGroup('grp-impact',this)">
+            <input type="checkbox" checked style="accent-color:var(--brand);width:14px;height:14px" onclick="event.stopPropagation()">
+            <svg class="group-chevron open" id="chev-grp-impact" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4"/></svg>
+            <span class="feature-chip chip-impact">★</span>
+            <span class="group-label">Impact Generation</span>
+            <span class="group-meta">12 sessions · $1,440</span>
+          </div>
+          <div class="group-sessions" id="grp-impact">
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 21</span><span class="sess-context">F-041-012 · Critical RCE</span><span class="sess-cost">$60</span></div>
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 20</span><span class="sess-context">F-041-009 · SQL Injection</span><span class="sess-cost">$60</span></div>
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 18</span><span class="sess-context">F-041-007 · IDOR Auth Bypass</span><span class="sess-cost">$60</span></div>
+            <div class="session-item" onclick="toggleSession(this)"><div class="sess-check" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 16</span><span class="sess-context">F-041-002 · Stored XSS</span><span class="sess-cost">$60</span></div>
+          </div>
+        </div>
+        <!-- Group: Remediation Suggestion -->
+        <div>
+          <div class="group-header" onclick="toggleGroup('grp-remed',this)">
+            <input type="checkbox" checked style="accent-color:var(--brand);width:14px;height:14px" onclick="event.stopPropagation()">
+            <svg class="group-chevron open" id="chev-grp-remed" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4"/></svg>
+            <span class="feature-chip chip-remediation">★</span>
+            <span class="group-label">Remediation Suggestion</span>
+            <span class="group-meta">8 sessions · $640</span>
+          </div>
+          <div class="group-sessions" id="grp-remed">
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 20</span><span class="sess-context">F-041-009 · Patch for SQL Injection</span><span class="sess-cost">$40</span></div>
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 19</span><span class="sess-context">F-041-007 · Fix for IDOR</span><span class="sess-cost">$40</span></div>
+          </div>
+        </div>
+        <!-- Group: Report Generation -->
+        <div>
+          <div class="group-header" onclick="toggleGroup('grp-report',this)">
+            <input type="checkbox" checked style="accent-color:var(--brand);width:14px;height:14px" onclick="event.stopPropagation()">
+            <svg class="group-chevron open" id="chev-grp-report" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4"/></svg>
+            <span class="feature-chip chip-report">★</span>
+            <span class="group-label">Report Generation</span>
+            <span class="group-meta">2 sessions · $800</span>
+          </div>
+          <div class="group-sessions" id="grp-report">
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 15</span><span class="sess-context">Final VAPT Report v3</span><span class="sess-cost">$400</span></div>
+            <div class="session-item selected" onclick="toggleSession(this)"><div class="sess-check checked" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 10</span><span class="sess-context">Executive Summary Draft v1</span><span class="sess-cost">$400</span></div>
+          </div>
+        </div>
+        <!-- Group: AI Sidekick -->
+        <div>
+          <div class="group-header" onclick="toggleGroup('grp-sk',this)">
+            <input type="checkbox" style="accent-color:var(--brand);width:14px;height:14px" onclick="event.stopPropagation()">
+            <svg class="group-chevron open" id="chev-grp-sk" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4"/></svg>
+            <span class="feature-chip chip-sidekick">★</span>
+            <span class="group-label">AI Sidekick</span>
+            <span class="group-meta">2 sessions · $40</span>
+          </div>
+          <div class="group-sessions" id="grp-sk">
+            <div class="session-item" onclick="toggleSession(this)"><div class="sess-check" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 14</span><span class="sess-context">Compliance mapping Q&amp;A</span><span class="sess-cost">$20</span></div>
+            <div class="session-item" onclick="toggleSession(this)"><div class="sess-check" onclick="event.stopPropagation();toggleCheck(this)"><svg viewBox="0 0 9 9"><polyline points="1,4.5 3.5,7.5 8.5,1.5"/></svg></div><span class="sess-date">Apr 12</span><span class="sess-context">Scope clarification</span><span class="sess-cost">$20</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview col -->
+    <div class="preview-col">
+      <div class="preview-head">
+        <div class="preview-head-title">Invoice Preview</div>
+      </div>
+      <div class="preview-body" id="previewBody">
+        <div style="font-size:var(--text-micro);font-weight:600;color:var(--ink-40);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-3);padding-bottom:var(--s-2);border-bottom:1px solid var(--line)">AI Credit Charges — Aggregated</div>
+        <div class="preview-line-item"><span class="pli-desc">AI — Impact Generation<br><span style="color:var(--ink-40)">3 sessions · Apr 2026</span></span><span class="pli-cost">$180</span></div>
+        <div class="preview-line-item"><span class="pli-desc">AI — Remediation Suggestion<br><span style="color:var(--ink-40)">2 sessions · Apr 2026</span></span><span class="pli-cost">$80</span></div>
+        <div class="preview-line-item"><span class="pli-desc">AI — Report Generation<br><span style="color:var(--ink-40)">2 sessions · Apr 2026</span></span><span class="pli-cost">$800</span></div>
+        <div class="preview-subtotal">
+          <span style="font-size:var(--text-body);font-weight:600;color:var(--ink-100)">AI Credits Subtotal</span>
+          <span style="font-family:var(--font-mono);font-size:var(--text-lg);font-weight:700;color:var(--sev-high)">$1,060</span>
+        </div>
+        <div style="font-size:var(--text-label);color:var(--ink-40);margin-top:var(--s-3);line-height:1.5">Customer can view detailed session breakdown in SecureLoop Portal regardless of invoice presentation.</div>
+      </div>
+      <div class="rationale-area">
+        <div class="rationale-label">Internal Exclusion Note (Finance only, not visible to customer)</div>
+        <textarea class="rationale-input" rows="2" placeholder="e.g. AI Sidekick sessions excluded — used for internal SE analysis, not customer deliverable…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-foot">
+    <span style="font-size:var(--text-label);color:var(--ink-40)">18 sessions selected · $1,060 total</span>
+    <div style="margin-left:auto;display:flex;gap:var(--s-2)">
+      <button class="btn" onclick="">Cancel</button>
+      <button class="btn" onclick="">Save for Later</button>
+      <button class="btn primary" onclick="">
+        <svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8"/></svg>
+        Include Selected on Invoice
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFamily='coffee',currentMode='dark';
+const SWATCH_MAP={coffee:{dark:['#1A0F08','#F3EEE2'],light:['#FBF8F1','#6F4E37']},blue:{dark:['#0F1E35','#E8F4FD'],light:['#FFFFFF','#1E5A8A']}};
+const LABEL_MAP={coffee:{dark:'Coffee · Dark',light:'Coffee · Light'},blue:{dark:'Blue · Dark',light:'Blue · Light'}};
+function applyTheme(){document.body.className=currentFamily+' '+currentMode;document.getElementById('sw1').style.background=SWATCH_MAP[currentFamily][currentMode][0];document.getElementById('sw2').style.background=SWATCH_MAP[currentFamily][currentMode][1];document.getElementById('themeLabel').textContent=LABEL_MAP[currentFamily][currentMode];document.getElementById('fc-coffee').classList.toggle('active',currentFamily==='coffee');document.getElementById('fc-blue').classList.toggle('active',currentFamily==='blue');document.getElementById('mb-dark').classList.toggle('active',currentMode==='dark');document.getElementById('mb-light').classList.toggle('active',currentMode==='light')}
+function setFamily(f){currentFamily=f;applyTheme()}function setMode(m){currentMode=m;applyTheme()}
+const themeBtn=document.getElementById('themeBtn'),themePopover=document.getElementById('themePopover');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();const o=themePopover.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',e=>{if(!themePopover.contains(e.target)&&e.target!==themeBtn){themePopover.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')themePopover.classList.remove('open')});
+
+function toggleGroup(id,hdr){const el=document.getElementById(id);const chevId='chev-'+id;const chev=document.getElementById(chevId);const open=el.style.display!=='none';el.style.display=open?'none':'flex';chev.classList.toggle('open',!open)}
+function toggleSession(item){item.classList.toggle('selected');const chk=item.querySelector('.sess-check');chk.classList.toggle('checked',item.classList.contains('selected'))}
+function toggleCheck(chk){const item=chk.closest('.session-item');item.classList.toggle('selected');chk.classList.toggle('checked',item.classList.contains('selected'))}
+function selectAllBillable(){document.querySelectorAll('.session-item').forEach(i=>{i.classList.add('selected');i.querySelector('.sess-check').classList.add('checked')})}
+function deselectAll(){document.querySelectorAll('.session-item').forEach(i=>{i.classList.remove('selected');i.querySelector('.sess-check').classList.remove('checked')})}
+function invertSel(){document.querySelectorAll('.session-item').forEach(i=>{i.classList.toggle('selected');i.querySelector('.sess-check').classList.toggle('checked',i.classList.contains('selected'))})}
+function setAgg(mode,btn){document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+</script>
+</body>
+</html>

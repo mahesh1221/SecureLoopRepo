@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENG-10 · SBOM Ingestion & Analysis · SecureLoop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+  --syn-keyword: #C794E5; --syn-string: #A5D6A7; --syn-func: #FFB04D; --syn-comment: #7A7058; --syn-number: #81C7D8;
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #B8651D; --syn-comment: #907D68; --syn-number: #2E86C1;
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #C17A1A; --syn-comment: #7A8FA8; --syn-number: #1E5A8A;
+}
+html, body {
+  height: 100%; background: var(--bg-page); color: var(--ink-100);
+  font-family: var(--font-ui); font-weight: 300; font-size: var(--text-body); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease; overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Shell */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail { background: var(--bg-base); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1); }
+.rail-logo { width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink); border-radius: var(--r-sm); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl); margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow); }
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item { width: 40px; height: 40px; display: grid; place-items: center; color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; position: relative; }
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before { content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0; }
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line); background: var(--bg-base); height: 56px; flex-shrink: 0; }
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill { padding: 2px 6px; background: var(--brand-dim); color: var(--brand); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: 0.04em; font-weight: 600; margin-left: 2px; }
+
+/* Theme picker */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 5px 10px 5px 6px; height: 32px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover { position: absolute; top: calc(100% + 8px); right: 0; width: 280px; padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity 160ms, transform 160ms; }
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* Common buttons */
+.btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 8px var(--s-4); height: 36px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-body); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.primary:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+.btn-small { padding: 6px var(--s-3); height: 30px; font-size: var(--text-label); }
+
+/* Severity badges */
+.sev-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.sev-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev-badge.med  { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.sev-badge.low  { background: var(--sev-low-bg); color: var(--sev-low); }
+.sev-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* Status badges */
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; width: fit-content; }
+.status-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.status-badge.good { background: var(--status-good-bg); color: var(--status-good); }
+.status-badge.warn { background: var(--sev-high-bg); color: var(--sev-high); }
+.status-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.status-badge.neutral { background: var(--bg-raised); color: var(--ink-60); border: 1px solid var(--line-strong); }
+.status-badge.info { background: var(--sev-low-bg); color: var(--sev-low); }
+
+/* Avatar */
+.avatar { width: 24px; height: 24px; border-radius: var(--r-full); background: var(--brand-dim); color: var(--brand); display: grid; place-items: center; font-family: var(--font-display); font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.avatar-sm { width: 20px; height: 20px; font-size: 9px; }
+
+/* Scrollbar */
+.scroll::-webkit-scrollbar { width: 10px; height: 6px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.scroll::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+.content { flex: 1; overflow-y: auto; padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); }
+.page-title-block { display: flex; flex-direction: column; gap: 4px; }
+.page-eyebrow { font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.page-title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 500; color: var(--ink-100); letter-spacing: -.02em; line-height: 1.2; }
+.page-title em { font-style: normal; font-weight: 700; color: var(--brand); }
+
+.sec-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600; color: var(--ink-100); letter-spacing: -.01em; }
+
+/* Upload modes row */
+.upload-modes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+.upload-mode { padding: var(--s-4); background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); display: flex; flex-direction: column; gap: var(--s-3); }
+.upload-mode.dashed { border-style: dashed; }
+.um-head { display: flex; align-items: center; gap: var(--s-3); }
+.um-icon { width: 40px; height: 40px; border-radius: var(--r-sm); background: var(--brand-dim); color: var(--brand); display: grid; place-items: center; flex-shrink: 0; }
+.um-title { font-family: var(--font-display); font-size: var(--text-body); font-weight: 600; color: var(--ink-100); letter-spacing: -.01em; }
+.um-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-60); letter-spacing: -.01em; margin-top: 2px; }
+
+.formats-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.format-chip { padding: 3px 8px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: 9px; color: var(--ink-80); font-weight: 600; letter-spacing: -.01em; }
+
+.pipeline-row { display: flex; align-items: center; justify-content: space-between; padding: var(--s-2) var(--s-3); background: var(--bg-raised); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: 10px; color: var(--ink-80); border: 1px solid var(--line); }
+.pipeline-row .p-name { color: var(--ink-100); font-weight: 700; }
+.pipeline-row .p-time { color: var(--ink-60); }
+
+/* SBOM inventory */
+.sbom-table { background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.sb-thead, .sb-row { display: grid; grid-template-columns: minmax(0, 1.6fr) 110px 90px 110px 220px 90px; gap: var(--s-3); align-items: center; padding: var(--s-3) var(--s-4); }
+.sb-thead { background: var(--bg-raised); border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.sb-row { border-bottom: 1px solid var(--line); font-size: var(--text-body); cursor: pointer; transition: background 140ms; position: relative; }
+.sb-row:last-child { border-bottom: none; }
+.sb-row:hover { background: var(--bg-raised); }
+.sb-row.selected { background: var(--brand-dim); }
+.sb-row.selected::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand); }
+
+.pkg-name { font-family: var(--font-mono); font-size: var(--text-label); color: var(--brand); font-weight: 700; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pkg-sub { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); margin-top: 2px; letter-spacing: -.01em; }
+.fmt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; width: fit-content; }
+.fmt-badge.cdx { background: var(--sev-low-bg); color: var(--sev-low); }
+.fmt-badge.spdx { background: var(--status-good-bg); color: var(--status-good); }
+.src-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; width: fit-content; }
+.src-badge.manual { background: var(--bg-raised); color: var(--ink-80); border: 1px solid var(--line-strong); }
+.src-badge.cicd { background: var(--brand-dim); color: var(--brand); }
+
+.vuln-counts { display: flex; gap: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: -.01em; }
+.vc { padding: 2px 6px; border-radius: var(--r-xs); font-size: 10px; }
+.vc.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.vc.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.vc.med { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.vc.low { background: var(--sev-low-bg); color: var(--sev-low); }
+
+/* Tree + side panel */
+.tree-row { display: grid; grid-template-columns: 1fr 380px; gap: var(--s-4); align-items: start; }
+.tree-panel { background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.tree-head { padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); background: var(--bg-raised); display: flex; justify-content: space-between; align-items: center; }
+.tree-title { font-family: var(--font-display); font-size: var(--text-body); color: var(--ink-100); font-weight: 600; }
+.tree-body { padding: var(--s-4); font-family: var(--font-mono); font-size: 11px; line-height: 1.9; max-height: 460px; overflow-y: auto; letter-spacing: -.01em; }
+.tn { display: flex; align-items: center; gap: 6px; padding: 4px var(--s-2); border-radius: var(--r-xs); cursor: pointer; transition: background 140ms; }
+.tn:hover { background: var(--bg-raised); }
+.tn.selected { background: var(--brand-dim); }
+.tn-indent { width: 16px; flex-shrink: 0; }
+.tn-caret { width: 10px; color: var(--ink-60); }
+.tn-caret.hidden { visibility: hidden; }
+.tn-pkg { font-family: var(--font-mono); font-weight: 700; color: var(--ink-100); letter-spacing: -.01em; }
+.tn-version { color: var(--ink-60); margin-left: 4px; }
+.tn-vuln-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: var(--r-xs); font-size: 9px; font-weight: 700; letter-spacing: .04em; margin-left: auto; }
+.tn-vuln-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.tn-vuln-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.tn-vuln-badge.med { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.tn-license { font-size: 9px; color: var(--ink-40); font-style: italic; margin-left: 4px; }
+
+/* Vulnerability side panel */
+.vuln-panel { background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; position: sticky; top: var(--s-6); }
+.vp-head { padding: var(--s-4); border-bottom: 1px solid var(--line); background: var(--bg-raised); }
+.vp-crumb { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; margin-bottom: 3px; }
+.vp-title { font-family: var(--font-display); font-size: var(--text-lg); color: var(--ink-100); font-weight: 700; letter-spacing: -.01em; }
+.vp-version-row { display: flex; gap: 4px; margin-top: 6px; }
+.vp-body { padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); max-height: 400px; overflow-y: auto; }
+
+.cve-card { padding: var(--s-3); background: var(--bg-raised); border-left: 3px solid var(--sev-critical); border-radius: var(--r-xs); display: flex; flex-direction: column; gap: 6px; }
+.cve-card.high { border-color: var(--sev-high); }
+.cve-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); }
+.cve-id { font-family: var(--font-mono); font-size: var(--text-label); color: var(--ink-100); font-weight: 700; letter-spacing: -.01em; }
+.cvss-score { font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: var(--r-xs); }
+.cvss-score.crit { background: var(--sev-critical); color: #FFF; }
+.cvss-score.high { background: var(--sev-high); color: var(--bg-page); }
+.cve-desc { font-family: var(--font-ui); font-size: 10px; color: var(--ink-80); line-height: 1.5; font-weight: 400; }
+.cve-exploit { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; background: var(--sev-critical-bg); color: var(--sev-critical); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: 9px; font-weight: 700; width: fit-content; letter-spacing: -.01em; }
+
+.fix-suggestion { padding: var(--s-3); background: var(--status-good-bg); border-left: 3px solid var(--status-good); border-radius: var(--r-xs); display: flex; flex-direction: column; gap: var(--s-2); }
+.fix-title { font-family: var(--font-mono); font-size: 9px; color: var(--status-good); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.fix-body { font-family: var(--font-ui); font-size: 11px; color: var(--ink-100); line-height: 1.5; font-weight: 400; }
+.fix-body code { font-family: var(--font-mono); background: var(--bg-base); padding: 1px 5px; border-radius: 2px; font-weight: 700; }
+
+.vp-foot { padding: var(--s-3) var(--s-4); border-top: 1px solid var(--line); display: flex; gap: var(--s-2); }
+.vp-foot .btn { flex: 1; justify-content: center; font-size: 10px; height: 30px; }
+
+</style>
+</head>
+<body class="coffee dark">
+<div class="app"><aside class="rail"><div class="rail-logo">S</div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M8 10H5M19 10h-3M8 14H5M19 14h-3M8 18H5M19 18h-3M12 2v4M9 4l3-2 3 2"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div></aside><div class="main"><div class="topbar">
+  <div class="crumb"><span>SecureLoop</span><span class="sep">/</span><span>Supply chain</span><span class="sep">/</span><span class="current">SBOM analysis</span><span class="id-pill">SENG-10</span></div>
+  <div class="theme-picker-wrap">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+      <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+      <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+      <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="theme-popover" id="themePopover" role="dialog">
+      <div class="tp-section">
+        <div class="tp-section-label">Palette family</div>
+        <div class="tp-family-grid">
+          <button class="tp-family-card active" data-family="coffee">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+            <span class="tp-family-name">Coffee</span>
+            <span class="tp-family-desc">Warm · Investigation</span>
+          </button>
+          <button class="tp-family-card" data-family="blue">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+            <span class="tp-family-name">Blue</span>
+            <span class="tp-family-desc">Cool · Enterprise</span>
+          </button>
+        </div>
+      </div>
+      <div class="tp-section">
+        <div class="tp-section-label">Appearance</div>
+        <div class="tp-mode-row">
+          <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+          <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content scroll">
+  <div class="page-head">
+    <div class="page-title-block">
+      <span class="page-eyebrow">Software Bill of Materials · CycloneDX &amp; SPDX · transitive dependency analysis</span>
+      <h1 class="page-title">SBOM <em>ingestion</em></h1>
+    </div>
+  </div>
+
+  <!-- Upload modes -->
+  <div class="upload-modes">
+    <div class="upload-mode dashed">
+      <div class="um-head">
+        <div class="um-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div>
+          <div class="um-title">Manual upload</div>
+          <div class="um-sub">Drag &amp; drop · or click to browse</div>
+        </div>
+      </div>
+      <div class="formats-row">
+        <span class="format-chip">CycloneDX · .json</span>
+        <span class="format-chip">CycloneDX · .xml</span>
+        <span class="format-chip">SPDX · .json</span>
+        <span class="format-chip">SPDX · .rdf</span>
+      </div>
+      <button class="btn btn-small primary" style="align-self: flex-start;">Browse files</button>
+    </div>
+
+    <div class="upload-mode">
+      <div class="um-head">
+        <div class="um-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div>
+          <div class="um-title">CI/CD pipeline integration</div>
+          <div class="um-sub">Automated SBOM generation on build</div>
+        </div>
+      </div>
+      <div class="pipeline-row"><span class="p-name">payment-service · GitHub Actions</span><span class="p-time">Last ingested 2h ago</span></div>
+      <div class="pipeline-row"><span class="p-name">auth-service · GitLab CI</span><span class="p-time">Last ingested 4h ago</span></div>
+      <div class="pipeline-row"><span class="p-name">mobile-app-android · Jenkins</span><span class="p-time">Last ingested yesterday</span></div>
+      <button class="btn btn-small" style="align-self: flex-start;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Configure pipeline</button>
+    </div>
+  </div>
+
+  <!-- SBOM inventory -->
+  <section>
+    <div class="sec-title" style="margin-bottom: var(--s-3);">SBOM inventory <span style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-60); font-weight: 500; margin-left: 6px;">5 ingested · 1,247 total dependencies across applications</span></div>
+    <div class="sbom-table">
+      <div class="sb-thead"><div>Application / component</div><div>Format</div><div>Version</div><div>Deps</div><div>Vulnerabilities</div><div>Source</div></div>
+
+      <div class="sb-row selected">
+        <div><div class="pkg-name">payment-service</div><div class="pkg-sub">Node.js · Express · prod</div></div>
+        <div><span class="fmt-badge cdx">CycloneDX</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-80); letter-spacing: -.01em;">3.4.1</div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-100); font-weight: 700;">284</div>
+        <div class="vuln-counts"><span class="vc crit">2</span><span class="vc high">5</span><span class="vc med">12</span><span class="vc low">23</span></div>
+        <div><span class="src-badge cicd">CI/CD</span></div>
+      </div>
+
+      <div class="sb-row">
+        <div><div class="pkg-name">auth-service</div><div class="pkg-sub">Python · FastAPI · prod</div></div>
+        <div><span class="fmt-badge spdx">SPDX</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-80);">2.1.0</div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-100); font-weight: 700;">142</div>
+        <div class="vuln-counts"><span class="vc crit">1</span><span class="vc high">3</span><span class="vc med">8</span><span class="vc low">14</span></div>
+        <div><span class="src-badge cicd">CI/CD</span></div>
+      </div>
+
+      <div class="sb-row">
+        <div><div class="pkg-name">customer-portal-web</div><div class="pkg-sub">React · Next.js · prod</div></div>
+        <div><span class="fmt-badge cdx">CycloneDX</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-80);">4.8.2</div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-100); font-weight: 700;">517</div>
+        <div class="vuln-counts"><span class="vc crit">0</span><span class="vc high">4</span><span class="vc med">18</span><span class="vc low">31</span></div>
+        <div><span class="src-badge cicd">CI/CD</span></div>
+      </div>
+
+      <div class="sb-row">
+        <div><div class="pkg-name">mobile-app-android</div><div class="pkg-sub">Kotlin · Jetpack · prod</div></div>
+        <div><span class="fmt-badge spdx">SPDX</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-80);">5.2.7</div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-100); font-weight: 700;">198</div>
+        <div class="vuln-counts"><span class="vc crit">0</span><span class="vc high">1</span><span class="vc med">4</span><span class="vc low">9</span></div>
+        <div><span class="src-badge cicd">CI/CD</span></div>
+      </div>
+
+      <div class="sb-row">
+        <div><div class="pkg-name">admin-console-legacy</div><div class="pkg-sub">PHP · Laravel 6 · legacy</div></div>
+        <div><span class="fmt-badge cdx">CycloneDX</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-80);">1.2.3</div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-100); font-weight: 700;">106</div>
+        <div class="vuln-counts"><span class="vc crit">3</span><span class="vc high">7</span><span class="vc med">11</span><span class="vc low">6</span></div>
+        <div><span class="src-badge manual">Manual</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tree + side panel -->
+  <div class="tree-row">
+    <div class="tree-panel">
+      <div class="tree-head">
+        <div class="tree-title">payment-service v3.4.1 — transitive dependency tree</div>
+        <button class="btn btn-small"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>Expand all</button>
+      </div>
+      <div class="tree-body scroll">
+        <div class="tn">
+          <svg class="tn-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="tn-pkg">payment-service</span><span class="tn-version">@3.4.1</span><span class="tn-license">MIT</span>
+        </div>
+
+        <div class="tn" style="padding-left: 20px;">
+          <svg class="tn-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="tn-pkg">express</span><span class="tn-version">@4.17.1</span><span class="tn-license">MIT</span>
+        </div>
+
+        <div class="tn" style="padding-left: 40px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg">body-parser</span><span class="tn-version">@1.19.0</span><span class="tn-license">MIT</span>
+        </div>
+
+        <div class="tn selected" style="padding-left: 40px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg" style="color: var(--sev-critical);">lodash</span><span class="tn-version">@4.17.15</span><span class="tn-license">MIT</span>
+          <span class="tn-vuln-badge crit">1 crit · CVE-2020-8203</span>
+        </div>
+
+        <div class="tn" style="padding-left: 40px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg" style="color: var(--sev-high);">axios</span><span class="tn-version">@0.21.1</span><span class="tn-license">MIT</span>
+          <span class="tn-vuln-badge high">1 high</span>
+        </div>
+
+        <div class="tn" style="padding-left: 20px;">
+          <svg class="tn-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="tn-pkg">pg</span><span class="tn-version">@8.7.3</span><span class="tn-license">MIT</span>
+        </div>
+
+        <div class="tn" style="padding-left: 40px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg" style="color: var(--sev-critical);">node-forge</span><span class="tn-version">@0.10.0</span><span class="tn-license">BSD</span>
+          <span class="tn-vuln-badge crit">1 crit · CVE-2022-24771</span>
+        </div>
+
+        <div class="tn" style="padding-left: 20px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg">jsonwebtoken</span><span class="tn-version">@8.5.1</span><span class="tn-license">MIT</span>
+        </div>
+
+        <div class="tn" style="padding-left: 20px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg" style="color: var(--sev-medium);">winston</span><span class="tn-version">@3.2.1</span><span class="tn-license">MIT</span>
+          <span class="tn-vuln-badge med">2 med</span>
+        </div>
+
+        <div class="tn" style="padding-left: 20px;">
+          <svg class="tn-caret hidden" width="10" height="10" viewBox="0 0 24 24"></svg>
+          <span class="tn-pkg">dotenv</span><span class="tn-version">@10.0.0</span><span class="tn-license">BSD</span>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-60); padding: var(--s-2) 0; text-align: center;">… 275 more transitive deps</div>
+      </div>
+    </div>
+
+    <!-- Vulnerability side panel -->
+    <aside class="vuln-panel">
+      <div class="vp-head">
+        <div class="vp-crumb">SBOM path: payment-service › express › lodash</div>
+        <div class="vp-title">lodash@4.17.15</div>
+        <div class="vp-version-row">
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-60);">License:</span>
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-100); font-weight: 700;">MIT</span>
+        </div>
+      </div>
+      <div class="vp-body">
+        <div class="cve-card">
+          <div class="cve-head">
+            <span class="cve-id">CVE-2020-8203</span>
+            <span class="cvss-score crit">7.4 High</span>
+          </div>
+          <div class="cve-desc">Prototype pollution in lodash prior to 4.17.19 allows attackers to modify properties of Object.prototype via `_.zipObjectDeep`.</div>
+          <span class="cve-exploit"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Public exploit available</span>
+        </div>
+
+        <div class="cve-card high">
+          <div class="cve-head">
+            <span class="cve-id">CVE-2019-10744</span>
+            <span class="cvss-score high">6.5 Med</span>
+          </div>
+          <div class="cve-desc">Prototype pollution via `_.defaultsDeep` in lodash prior to 4.17.12. Allows adding or modifying properties of global Object.</div>
+        </div>
+
+        <div class="fix-suggestion">
+          <div class="fix-title">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align: middle;"><path d="M20 6L9 17l-5-5"/></svg>
+            Auto-remediation · AI-generated
+          </div>
+          <div class="fix-body">Upgrade package <code>lodash</code> from <code>4.17.15</code> to <code>4.17.21</code> to resolve both CVEs. No breaking changes expected — patch releases only.</div>
+        </div>
+      </div>
+      <div class="vp-foot">
+        <button class="btn btn-small primary"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create finding</button>
+        <button class="btn btn-small"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Generate fix artifact</button>
+      </div>
+    </aside>
+  </div>
+</div>
+</div></div>
+<script>
+// Theme picker
+(function(){
+  const pickerBtn = document.getElementById('themePickerBtn');
+  if (!pickerBtn) return;
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+})();
+
+</script>
+</body>
+</html>

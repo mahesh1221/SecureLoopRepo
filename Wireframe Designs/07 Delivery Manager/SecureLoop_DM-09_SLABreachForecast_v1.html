@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-09 SLA Breach Forecast</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);--grain-opacity:.025}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);--grain-opacity:.025}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);--grain-opacity:.05}
+
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-0.003em;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");opacity:var(--grain-opacity);mix-blend-mode:overlay}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button,input,select,textarea{font-family:inherit;color:inherit}
+
+.shell{display:grid;grid-template-columns:64px 1fr;min-height:100vh;position:relative;z-index:2}
+.rail{background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-2)}
+body.light .logo{font-weight:600}
+.rail-nav{display:flex;flex-direction:column;gap:var(--s-1);margin-top:var(--s-2);width:100%;align-items:center}
+.rail-btn{width:40px;height:40px;display:grid;place-items:center;background:transparent;border:none;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.rail-spacer{flex:1}
+
+.topbar{height:56px;background:var(--bg-base);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pick{position:relative}.theme-btn{height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);cursor:pointer}
+.theme-swatches{display:inline-flex;gap:2px}.theme-swatches span{width:10px;height:14px;border-radius:3px;border:1px solid var(--line-strong)}.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.theme-pop{position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);display:none;flex-direction:column;gap:var(--s-4);z-index:100}
+.theme-pop.open{display:flex}.theme-pop h4{margin:0;font-size:var(--text-micro);font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}.fam-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}.mode-btn{flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn svg{width:13px;height:13px}
+
+.content{padding:var(--s-6) var(--s-8);max-width:1440px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-4)}
+.eyebrow{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.role-chip{padding:2px var(--s-2);background:var(--sev-low-bg);color:var(--sev-low);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em;margin-right:var(--s-2)}
+.page-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);letter-spacing:-0.02em;margin:0;color:var(--ink-100)}
+.page-sub{font-size:var(--text-body);color:var(--ink-60);margin-top:var(--s-1)}
+
+/* Summary tiles */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-6)}
+.s-tile{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);display:flex;flex-direction:column;gap:var(--s-2)}
+.s-tile.crit{border-color:rgba(255,107,91,.3)}
+.s-tile.warn{border-color:rgba(255,176,77,.3)}
+.s-tile-label{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.s-tile-icon{width:24px;height:24px;display:grid;place-items:center;border-radius:var(--r-sm);background:var(--brand-dim);color:var(--brand)}
+.s-tile.crit .s-tile-icon{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.s-tile.warn .s-tile-icon{background:var(--sev-high-bg);color:var(--sev-high)}
+.s-tile-icon svg{width:12px;height:12px}
+.s-tile-val{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:500;line-height:1;color:var(--ink-100)}
+.s-tile.crit .s-tile-val{color:var(--sev-critical)}
+.s-tile.warn .s-tile-val{color:var(--sev-high)}
+.s-tile-meta{font-size:var(--text-label);color:var(--ink-60)}
+
+/* Split */
+.split{display:grid;grid-template-columns:1fr 380px;gap:var(--s-6);align-items:start}
+
+.section{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-6);overflow:hidden}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.sec-title-block{display:flex;flex-direction:column;gap:2px}
+.sec-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em;margin:0;color:var(--ink-100)}
+.sec-sub{font-size:var(--text-label);color:var(--ink-60)}
+
+/* Timeline chart */
+.chart-wrap{padding:var(--s-6);background:var(--bg-raised);position:relative}
+.chart-legend{display:flex;gap:var(--s-4);margin-bottom:var(--s-4);font-size:var(--text-label);color:var(--ink-60);flex-wrap:wrap}
+.leg-item{display:inline-flex;align-items:center;gap:var(--s-2)}
+.leg-swatch{width:10px;height:10px;border-radius:3px}
+.leg-crit{background:var(--sev-critical)}.leg-high{background:var(--sev-high)}.leg-med{background:var(--sev-medium)}.leg-low{background:var(--sev-low)}
+
+#forecastChart{width:100%;height:260px;display:block}
+#forecastChart [data-role="axis"]{stroke:var(--ink-40);stroke-width:1}
+#forecastChart [data-role="grid"]{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3}
+#forecastChart [data-role="axis-label"]{fill:var(--ink-60);font-size:11px;font-family:'JetBrains Mono',monospace}
+#forecastChart [data-role="bar-crit"]{fill:var(--sev-critical)}
+#forecastChart [data-role="bar-high"]{fill:var(--sev-high)}
+#forecastChart [data-role="bar-med"]{fill:var(--sev-medium)}
+#forecastChart [data-role="bar-low"]{fill:var(--sev-low)}
+#forecastChart [data-role="today-line"]{stroke:var(--brand);stroke-width:1.5;stroke-dasharray:4 2}
+#forecastChart [data-role="today-label"]{fill:var(--brand);font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600}
+#forecastChart [data-role="tooltip-anchor"]:hover{opacity:.8;cursor:pointer}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{padding:var(--s-3) var(--s-6);text-align:left;font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;border-bottom:1px solid var(--line);background:var(--bg-raised);white-space:nowrap}
+.tbl tbody td{padding:var(--s-3) var(--s-6);border-bottom:1px solid var(--line);vertical-align:middle;font-size:var(--text-label)}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--bg-hover)}
+.tbl tbody tr.selected{background:var(--brand-dim)}
+.tbl tbody tr:last-child td{border-bottom:none}
+
+.sev-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sev-pill::before{content:"";width:6px;height:6px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}.sev-pill.crit::before{background:var(--sev-critical)}
+.sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)}.sev-pill.high::before{background:var(--sev-high)}
+.sev-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}.sev-pill.med::before{background:var(--sev-medium)}
+.sev-pill.low{background:var(--sev-low-bg);color:var(--sev-low)}.sev-pill.low::before{background:var(--sev-low)}
+
+.risk-cell{display:flex;align-items:center;gap:var(--s-2);min-width:110px}
+.risk-score{font-family:var(--font-mono);font-weight:600;font-size:var(--text-body);min-width:32px;text-align:right}
+.risk-bar{flex:1;height:5px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden}
+.risk-fill{height:100%;border-radius:var(--r-full)}
+.risk-fill.lo{background:var(--status-good)}
+.risk-fill.mid{background:var(--sev-high)}
+.risk-fill.hi{background:var(--sev-critical)}
+
+.risk-score.lo{color:var(--status-good)}
+.risk-score.mid{color:var(--sev-high)}
+.risk-score.hi{color:var(--sev-critical)}
+
+.conf-pill{display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.conf-pill.high{background:var(--status-good-bg);color:var(--status-good)}
+.conf-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.conf-pill.low{background:var(--sev-critical-bg);color:var(--sev-critical)}
+
+.days-cell{font-family:var(--font-mono);font-weight:600}
+.days-cell.lo{color:var(--sev-critical)}
+.days-cell.mid{color:var(--sev-high)}
+.days-cell.hi{color:var(--ink-80)}
+.mono{font-family:var(--font-mono);font-weight:500}
+
+.row-actions{display:flex;gap:var(--s-1);justify-content:flex-end;flex-wrap:wrap}
+
+.item-cell{display:flex;flex-direction:column;gap:2px}
+.item-name{font-weight:500;color:var(--ink-100)}
+.item-sub{font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono)}
+
+/* Algorithm sidebar */
+.algo{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;position:sticky;top:calc(56px + var(--s-6))}
+.algo-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);background:var(--bg-raised)}
+.algo-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin:0;letter-spacing:-0.01em}
+.algo-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.algo-body{padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4);max-height:calc(100vh - 180px);overflow-y:auto}
+
+.algo-finding{padding:var(--s-3);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:2px}
+.algo-f-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);font-weight:600}
+.algo-f-name{font-weight:500;color:var(--ink-100);font-size:var(--text-body)}
+
+.algo-score{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) var(--s-4);background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-sm)}
+.algo-score-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);font-weight:600;margin-bottom:2px}
+.algo-score-val{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:500;color:var(--sev-critical);line-height:1}
+.algo-score-sub{font-size:var(--text-label);color:var(--sev-critical);font-weight:600;text-align:right}
+
+.algo-h{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;color:var(--ink-100);margin:var(--s-2) 0 var(--s-1);letter-spacing:-0.005em}
+.algo-formula{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80);line-height:1.7}
+.algo-formula b{color:var(--ink-100);font-weight:600}
+
+.algo-factor{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:var(--s-2)}
+.af-top{display:flex;justify-content:space-between;align-items:center}
+.af-name{font-weight:500;color:var(--ink-100);font-size:var(--text-label)}
+.af-contrib{font-family:var(--font-mono);font-weight:600;font-size:var(--text-label);color:var(--ink-100)}
+.af-bar{height:4px;background:var(--bg-base);border-radius:var(--r-full);overflow:hidden}
+.af-fill{height:100%;border-radius:var(--r-full);background:var(--sev-critical)}
+.af-desc{font-size:var(--text-micro);color:var(--ink-60);line-height:1.5}
+
+.algo-thresh{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-2)}
+.t-band{padding:var(--s-2);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);text-align:center}
+.t-band .rng{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:600}
+.t-band .lbl{font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.t-band.g .lbl{color:var(--status-good)}.t-band.y .lbl{color:var(--sev-high)}.t-band.r .lbl{color:var(--sev-critical)}
+
+.alert-cfg{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:var(--s-2)}
+.alert-cfg label{font-size:var(--text-label);font-weight:500;color:var(--ink-100)}
+.alert-cfg-row{display:flex;gap:var(--s-2);align-items:center}
+.alert-inp{width:60px;padding:0 var(--s-2);height:32px;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-100);font-family:var(--font-mono);font-weight:500;text-align:center}
+
+.callout{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-6);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-md);margin-bottom:var(--s-6)}
+.callout-chip{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body class="coffee dark">
+<div class="shell">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <nav class="rail-nav">
+      <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 17l4-4 4 2 5-7"/></svg></button>
+    </nav>
+    <div class="rail-spacer"></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb"><span>SecureLoop</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Delivery</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span class="current">SLA Breach Forecast</span><span class="id-pill">DM-09</span></div>
+      <div class="topbar-right">
+        <div class="theme-pick">
+          <button class="theme-btn" id="themeBtn"><span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span><span id="themeLabel">Coffee · Dark</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="theme-pop" id="themePop">
+            <div><h4>Palette family</h4><div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Coffee</div><div class="fam-sub">Warm · investigation</div></button>
+              <button class="fam-card" data-fam="blue"><div class="fam-swatch"><span></span><span></span><span></span></div><div class="fam-name">Blue</div><div class="fam-sub">Cool · enterprise</div></button>
+            </div></div>
+            <div><h4>Appearance</h4><div class="mode-row">
+              <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg>Light</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow"><span class="role-chip">DELIVERY MANAGER</span>PREDICTIVE SLA FORECAST</div>
+          <h1 class="page-title">11 findings projected to breach SLA in the next 30 days</h1>
+          <div class="page-sub">Risk Score = (Workload × 0.4) + (MTTR × 0.4) + (Complexity × 0.2) · confidence drops below 20 data points · model retrained nightly</div>
+        </div>
+        <div style="display:flex;gap:var(--s-2)">
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export forecast</button>
+          <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>Configure alerts</button>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="s-tile crit">
+          <div class="s-tile-label">High risk <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div></div>
+          <div class="s-tile-val">4</div>
+          <div class="s-tile-meta">Score 71-100 · action recommended</div>
+        </div>
+        <div class="s-tile warn">
+          <div class="s-tile-label">Medium risk <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div></div>
+          <div class="s-tile-val">5</div>
+          <div class="s-tile-meta">Score 31-70 · monitor closely</div>
+        </div>
+        <div class="s-tile">
+          <div class="s-tile-label">Low risk <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div></div>
+          <div class="s-tile-val">2</div>
+          <div class="s-tile-meta">Score 0-30 · healthy buffer</div>
+        </div>
+        <div class="s-tile">
+          <div class="s-tile-label">Forecast accuracy <div class="s-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 17l4-4 4 2 5-7"/></svg></div></div>
+          <div class="s-tile-val">87%</div>
+          <div class="s-tile-meta">90-day backtest · 238 findings</div>
+        </div>
+      </div>
+
+      <!-- 30-day timeline chart -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="sec-title-block">
+            <h2 class="sec-title">30-day breach forecast</h2>
+            <div class="sec-sub">Projected breaches per day by severity · hover bars for detail · today marker indicates current date</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-legend">
+            <span class="leg-item"><span class="leg-swatch leg-crit"></span>Critical</span>
+            <span class="leg-item"><span class="leg-swatch leg-high"></span>High</span>
+            <span class="leg-item"><span class="leg-swatch leg-med"></span>Medium</span>
+            <span class="leg-item"><span class="leg-swatch leg-low"></span>Low</span>
+            <span class="leg-item" style="margin-left:auto"><span class="leg-swatch" style="background:var(--brand)"></span>Today (Apr 22)</span>
+          </div>
+          <svg id="forecastChart" viewBox="0 0 1000 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </section>
+
+      <div class="split">
+        <!-- LEFT: at-risk findings table -->
+        <section class="section" style="margin:0">
+          <div class="sec-head">
+            <div class="sec-title-block">
+              <h2 class="sec-title">At-risk findings</h2>
+              <div class="sec-sub">Click any row to see per-finding risk breakdown in the side panel</div>
+            </div>
+            <button class="btn sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>Filter</button>
+          </div>
+          <div style="overflow:auto">
+            <table class="tbl">
+              <thead><tr><th>Finding</th><th>Sev</th><th>Asset</th><th>Assigned</th><th>Projected breach</th><th>Days</th><th>Risk score</th><th>Confidence</th><th style="text-align:right">Actions</th></tr></thead>
+              <tbody id="findingsBody">
+                <tr class="selected" data-row="0">
+                  <td><div class="item-cell"><div class="item-name">Privilege escalation via IAM policy</div><div class="item-sub">SEC-4812</div></div></td>
+                  <td><span class="sev-pill crit">Critical</span></td>
+                  <td class="mono" style="color:var(--ink-80)">aurora-iam-prod</td>
+                  <td>Nikhil Rao</td>
+                  <td class="mono">19 Apr</td>
+                  <td class="days-cell lo">−3d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill hi" style="width:92%"></div></div><span class="risk-score hi">92</span></div></td>
+                  <td><span class="conf-pill high">High</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary">Extend</button></div></td>
+                </tr>
+                <tr data-row="1">
+                  <td><div class="item-cell"><div class="item-name">SQLi in payment gateway</div><div class="item-sub">SEC-4798</div></div></td>
+                  <td><span class="sev-pill high">High</span></td>
+                  <td class="mono" style="color:var(--ink-80)">meridian-payments</td>
+                  <td>Lee Kwan</td>
+                  <td class="mono">20 Apr</td>
+                  <td class="days-cell lo">−2d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill hi" style="width:88%"></div></div><span class="risk-score hi">88</span></div></td>
+                  <td><span class="conf-pill high">High</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm primary">Extend</button></div></td>
+                </tr>
+                <tr data-row="2">
+                  <td><div class="item-cell"><div class="item-name">Hardcoded API key in mobile app</div><div class="item-sub">SEC-4828</div></div></td>
+                  <td><span class="sev-pill crit">Critical</span></td>
+                  <td class="mono" style="color:var(--ink-80)">helix-mobile.apk</td>
+                  <td>Tomás Olivera</td>
+                  <td class="mono">25 Apr</td>
+                  <td class="days-cell mid">3d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill hi" style="width:78%"></div></div><span class="risk-score hi">78</span></div></td>
+                  <td><span class="conf-pill high">High</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm">Add resources</button></div></td>
+                </tr>
+                <tr data-row="3">
+                  <td><div class="item-cell"><div class="item-name">XSS in admin panel</div><div class="item-sub">SEC-4830</div></div></td>
+                  <td><span class="sev-pill high">High</span></td>
+                  <td class="mono" style="color:var(--ink-80)">admin.helix.com</td>
+                  <td>Tomás Olivera</td>
+                  <td class="mono">26 Apr</td>
+                  <td class="days-cell mid">4d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill hi" style="width:74%"></div></div><span class="risk-score hi">74</span></div></td>
+                  <td><span class="conf-pill high">High</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm">Extend</button></div></td>
+                </tr>
+                <tr data-row="4">
+                  <td><div class="item-cell"><div class="item-name">IDOR in user API</div><div class="item-sub">SEC-4831</div></div></td>
+                  <td><span class="sev-pill med">Medium</span></td>
+                  <td class="mono" style="color:var(--ink-80)">api.helix.com</td>
+                  <td>Tomás Olivera</td>
+                  <td class="mono">28 Apr</td>
+                  <td class="days-cell mid">6d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill mid" style="width:62%"></div></div><span class="risk-score mid">62</span></div></td>
+                  <td><span class="conf-pill med">Medium</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm">Extend</button></div></td>
+                </tr>
+                <tr data-row="5">
+                  <td><div class="item-cell"><div class="item-name">Stored creds in nginx backup</div><div class="item-sub">SEC-4833</div></div></td>
+                  <td><span class="sev-pill high">High</span></td>
+                  <td class="mono" style="color:var(--ink-80)">10.20.4.0/24</td>
+                  <td>Maya Ferreira</td>
+                  <td class="mono">30 Apr</td>
+                  <td class="days-cell mid">8d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill mid" style="width:58%"></div></div><span class="risk-score mid">58</span></div></td>
+                  <td><span class="conf-pill high">High</span></td>
+                  <td><div class="row-actions"><button class="btn sm">Reassign</button><button class="btn sm">Extend</button></div></td>
+                </tr>
+                <tr data-row="6">
+                  <td><div class="item-cell"><div class="item-name">Weak TLS cipher suite</div><div class="item-sub">SEC-4845</div></div></td>
+                  <td><span class="sev-pill med">Medium</span></td>
+                  <td class="mono" style="color:var(--ink-80)">solaris-edge</td>
+                  <td>Jamal Toure</td>
+                  <td class="mono">02 May</td>
+                  <td class="days-cell hi">10d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill mid" style="width:46%"></div></div><span class="risk-score mid">46</span></div></td>
+                  <td><span class="conf-pill med">Medium</span></td>
+                  <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+                </tr>
+                <tr data-row="7">
+                  <td><div class="item-cell"><div class="item-name">Missing rate limit on login</div><div class="item-sub">SEC-4852</div></div></td>
+                  <td><span class="sev-pill med">Medium</span></td>
+                  <td class="mono" style="color:var(--ink-80)">kestrel-auth</td>
+                  <td>Sana Karim</td>
+                  <td class="mono">05 May</td>
+                  <td class="days-cell hi">13d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill mid" style="width:42%"></div></div><span class="risk-score mid">42</span></div></td>
+                  <td><span class="conf-pill med">Medium</span></td>
+                  <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+                </tr>
+                <tr data-row="8">
+                  <td><div class="item-cell"><div class="item-name">Verbose stack traces</div><div class="item-sub">SEC-4835</div></div></td>
+                  <td><span class="sev-pill low">Low</span></td>
+                  <td class="mono" style="color:var(--ink-80)">helix.com/api</td>
+                  <td>Tomás Olivera</td>
+                  <td class="mono">09 May</td>
+                  <td class="days-cell hi">17d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill mid" style="width:38%"></div></div><span class="risk-score mid">38</span></div></td>
+                  <td><span class="conf-pill low">Low</span></td>
+                  <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+                </tr>
+                <tr data-row="9">
+                  <td><div class="item-cell"><div class="item-name">Outdated jQuery 1.8.3</div><div class="item-sub">SEC-4836</div></div></td>
+                  <td><span class="sev-pill low">Low</span></td>
+                  <td class="mono" style="color:var(--ink-80)">helix.com</td>
+                  <td>Tomás Olivera</td>
+                  <td class="mono">14 May</td>
+                  <td class="days-cell hi">22d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill lo" style="width:22%"></div></div><span class="risk-score lo">22</span></div></td>
+                  <td><span class="conf-pill low">Low</span></td>
+                  <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+                </tr>
+                <tr data-row="10">
+                  <td><div class="item-cell"><div class="item-name">Self-signed dev certificate</div><div class="item-sub">SEC-4841</div></div></td>
+                  <td><span class="sev-pill low">Low</span></td>
+                  <td class="mono" style="color:var(--ink-80)">dev.orion.io</td>
+                  <td>Claire Moreau</td>
+                  <td class="mono">18 May</td>
+                  <td class="days-cell hi">26d</td>
+                  <td><div class="risk-cell"><div class="risk-bar"><div class="risk-fill lo" style="width:18%"></div></div><span class="risk-score lo">18</span></div></td>
+                  <td><span class="conf-pill low">Low</span></td>
+                  <td><div class="row-actions"><button class="btn sm">View</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- RIGHT: algorithm breakdown -->
+        <aside class="algo">
+          <div class="algo-head">
+            <h2 class="algo-title">Risk breakdown</h2>
+            <div class="algo-sub">Selected finding · factors driving the score</div>
+          </div>
+          <div class="algo-body">
+            <div class="algo-finding">
+              <div class="algo-f-lbl">Selected</div>
+              <div class="algo-f-name" id="selFinding">SEC-4812 · Privilege escalation via IAM policy</div>
+            </div>
+
+            <div class="algo-score">
+              <div>
+                <div class="algo-score-lbl">Risk score</div>
+                <div class="algo-score-val" id="selScore">92</div>
+              </div>
+              <div class="algo-score-sub">High risk<br/><span style="font-weight:400;color:var(--ink-60);text-transform:none;font-size:var(--text-micro);letter-spacing:0">Projected breach in −3d</span></div>
+            </div>
+
+            <div>
+              <h4 class="algo-h">Scoring formula</h4>
+              <div class="algo-formula"><b>Risk</b> = Workload × <b>0.4</b><br/>&nbsp;&nbsp;+ MTTR &nbsp;&nbsp;× <b>0.4</b><br/>&nbsp;&nbsp;+ Complexity × <b>0.2</b></div>
+            </div>
+
+            <div>
+              <h4 class="algo-h">Factor contribution</h4>
+              <div class="algo-factor">
+                <div class="af-top"><span class="af-name">Tester workload</span><span class="af-contrib">+38 / 40</span></div>
+                <div class="af-bar"><div class="af-fill" style="width:95%"></div></div>
+                <div class="af-desc">Nikhil Rao at 78% utilisation with 2 active engagements. MTTR degrades sharply above 75%.</div>
+              </div>
+              <div class="algo-factor" style="margin-top:var(--s-2)">
+                <div class="af-top"><span class="af-name">Historical MTTR</span><span class="af-contrib">+36 / 40</span></div>
+                <div class="af-bar"><div class="af-fill" style="width:90%"></div></div>
+                <div class="af-desc">Critical IAM findings average 4.2 working days to remediate across 18 prior cases. SLA window is 3d.</div>
+              </div>
+              <div class="algo-factor" style="margin-top:var(--s-2)">
+                <div class="af-top"><span class="af-name">Complexity</span><span class="af-contrib">+18 / 20</span></div>
+                <div class="af-bar"><div class="af-fill" style="width:90%"></div></div>
+                <div class="af-desc">Cross-service IAM policy; production change-window restricts deploy windows; requires Cloud + AppSec review.</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="algo-h">Confidence</h4>
+              <div class="algo-factor">
+                <div class="af-top"><span class="af-name">High confidence</span><span class="af-contrib">238 data points</span></div>
+                <div class="af-desc">Backtested over 90 days · IAM findings represent 14% of corpus · &gt;20 points required for High.</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="algo-h">Score bands</h4>
+              <div class="algo-thresh">
+                <div class="t-band g"><div class="rng">0–30</div><div class="lbl">Low</div></div>
+                <div class="t-band y"><div class="rng">31–70</div><div class="lbl">Medium</div></div>
+                <div class="t-band r"><div class="rng">71–100</div><div class="lbl">High</div></div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="algo-h">Alert configuration</h4>
+              <div class="alert-cfg">
+                <label>Alert me before projected breach:</label>
+                <div class="alert-cfg-row">
+                  <input class="alert-inp" type="number" value="2" min="0" max="30" />
+                  <span style="font-size:var(--text-label);color:var(--ink-80)">days ahead</span>
+                </div>
+                <label style="margin-top:var(--s-2)">Alert threshold:</label>
+                <div class="alert-cfg-row">
+                  <span style="font-size:var(--text-label);color:var(--ink-80)">Risk score ≥</span>
+                  <input class="alert-inp" type="number" value="71" min="0" max="100" />
+                </div>
+                <button class="btn primary sm" style="align-self:flex-start;margin-top:var(--s-2)">Save rule</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="callout">
+        <div class="callout-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+        <div>
+          <div class="callout-title">Forecasts are advisory, not authoritative</div>
+          <div class="callout-body">Breach projections are statistical estimates based on historical MTTR, current workload, and complexity signals. Low-confidence rows (fewer than 20 comparable findings) should be reviewed manually. Reassign, Extend SLA, and Add Resources actions all log to the audit trail and feed back into the model.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Theme
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop'),themeLabel=document.getElementById('themeLabel');
+themeBtn.addEventListener('click',e=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){themePop.classList.remove('open')}});
+function applyTheme(){const fam=document.querySelector('.fam-card.active').dataset.fam,mode=document.querySelector('.mode-btn.active').dataset.mode;document.body.className='';document.body.classList.add(fam,mode);themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1);redrawChart()}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+
+// Row selection
+const findings = [
+  {id:'SEC-4812', name:'Privilege escalation via IAM policy', score:92},
+  {id:'SEC-4798', name:'SQLi in payment gateway', score:88},
+  {id:'SEC-4828', name:'Hardcoded API key in mobile app', score:78},
+  {id:'SEC-4830', name:'XSS in admin panel', score:74},
+  {id:'SEC-4831', name:'IDOR in user API', score:62},
+  {id:'SEC-4833', name:'Stored creds in nginx backup', score:58},
+  {id:'SEC-4845', name:'Weak TLS cipher suite', score:46},
+  {id:'SEC-4852', name:'Missing rate limit on login', score:42},
+  {id:'SEC-4835', name:'Verbose stack traces', score:38},
+  {id:'SEC-4836', name:'Outdated jQuery 1.8.3', score:22},
+  {id:'SEC-4841', name:'Self-signed dev certificate', score:18}
+];
+document.querySelectorAll('#findingsBody tr').forEach(tr=>{
+  tr.addEventListener('click',()=>{
+    document.querySelectorAll('#findingsBody tr').forEach(x=>x.classList.remove('selected'));
+    tr.classList.add('selected');
+    const i = parseInt(tr.dataset.row);
+    const f = findings[i];
+    document.getElementById('selFinding').textContent = f.id + ' · ' + f.name;
+    document.getElementById('selScore').textContent = f.score;
+    const score = document.querySelector('.algo-score');
+    score.style.background = f.score > 70 ? 'var(--sev-critical-bg)' : f.score > 30 ? 'var(--sev-medium-bg)' : 'var(--status-good-bg)';
+    score.style.borderColor = f.score > 70 ? 'var(--sev-critical)' : f.score > 30 ? 'var(--sev-medium)' : 'var(--status-good)';
+    document.getElementById('selScore').style.color = f.score > 70 ? 'var(--sev-critical)' : f.score > 30 ? 'var(--sev-medium)' : 'var(--status-good)';
+  });
+});
+
+// SVG forecast chart — pure SVG, data-role driven
+// Per-day breach data over 30 days (Apr 22 to May 21), stacked by severity
+const forecastData = [
+  {day:'22',c:1,h:1,m:0,l:0},{day:'23',c:0,h:0,m:0,l:0},{day:'25',c:1,h:0,m:0,l:0},{day:'26',c:0,h:1,m:0,l:0},
+  {day:'28',c:0,h:0,m:1,l:0},{day:'30',c:0,h:1,m:0,l:0},{day:'02',c:0,h:0,m:1,l:0},{day:'05',c:0,h:0,m:1,l:0},
+  {day:'09',c:0,h:0,m:0,l:1},{day:'14',c:0,h:0,m:0,l:1},{day:'18',c:0,h:0,m:0,l:1}
+];
+// Generate full 30 days
+function buildDays(){
+  const days = [];
+  const start = new Date(2026, 3, 22); // Apr 22
+  for (let i=0;i<30;i++){
+    const d = new Date(start);
+    d.setDate(d.getDate()+i);
+    const lbl = d.getDate().toString().padStart(2,'0');
+    days.push({d, lbl, c:0,h:0,m:0,l:0});
+  }
+  // Assign breaches
+  const assignMap = {3:{c:1,h:0},4:{c:0,h:1},6:{m:1},8:{h:1},10:{m:1},13:{m:1},17:{l:1},22:{l:1},26:{l:1}};
+  // Past / today cumulative: -3d=SEC-4812(c), -2d=SEC-4798(h)
+  days[0].c = 1; days[0].h = 1;
+  Object.keys(assignMap).forEach(idx=>{
+    const a = assignMap[idx];
+    if (a.c) days[idx].c += a.c;
+    if (a.h) days[idx].h += a.h;
+    if (a.m) days[idx].m += a.m;
+    if (a.l) days[idx].l += a.l;
+  });
+  return days;
+}
+
+function redrawChart(){
+  const svg = document.getElementById('forecastChart');
+  svg.innerHTML = '';
+  const days = buildDays();
+  const W=1000,H=260,padL=40,padR=20,padT=20,padB=40;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const n = days.length;
+  const maxY = 4;
+  const barW = plotW/n * 0.7;
+  const step = plotW/n;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const addEl = (tag, attrs) => { const e = document.createElementNS(svgNS, tag); Object.keys(attrs).forEach(k=>e.setAttribute(k, attrs[k])); svg.appendChild(e); return e; };
+  // Y grid + labels
+  for (let i=0;i<=4;i++){
+    const y = padT + plotH - (i/maxY)*plotH;
+    addEl('line',{'data-role':'grid', x1:padL, y1:y, x2:W-padR, y2:y});
+    addEl('text',{'data-role':'axis-label', x:padL-8, y:y+4, 'text-anchor':'end'}).textContent = i;
+  }
+  // Axes
+  addEl('line',{'data-role':'axis', x1:padL, y1:padT+plotH, x2:W-padR, y2:padT+plotH});
+  // X labels every 3 days
+  days.forEach((d,i)=>{
+    const x = padL + i*step + step/2;
+    if (i%3===0 || i===n-1){
+      addEl('text',{'data-role':'axis-label', x, y:padT+plotH+18, 'text-anchor':'middle'}).textContent = d.lbl;
+    }
+  });
+  // Bars — stacked
+  days.forEach((d,i)=>{
+    const x = padL + i*step + (step-barW)/2;
+    let y = padT + plotH;
+    const stack = [['c','bar-crit'],['h','bar-high'],['m','bar-med'],['l','bar-low']];
+    stack.forEach(([k,role])=>{
+      const val = d[k];
+      if (val>0){
+        const h = (val/maxY)*plotH;
+        y -= h;
+        addEl('rect',{'data-role':role, 'data-tooltip': d.lbl + ' · ' + k.toUpperCase() + ' × ' + val, x, y, width:barW, height:h, rx:2});
+      }
+    });
+  });
+  // Today marker — day 0
+  const todayX = padL + step/2;
+  addEl('line',{'data-role':'today-line', x1:todayX, y1:padT, x2:todayX, y2:padT+plotH});
+  addEl('text',{'data-role':'today-label', x:todayX+6, y:padT+10}).textContent = 'TODAY';
+}
+redrawChart();
+
+// Theme-responsive: observe class changes on body
+const observer = new MutationObserver(redrawChart);
+observer.observe(document.body, {attributes:true, attributeFilter:['class']});
+</script>
+</body></html>

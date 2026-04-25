@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISO-02 · Business Impact Editor · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SECURELOOP · CISO-02 v3 · BUSINESS IMPACT EDITOR
+   v3 fix: WYSIWYG list spacing (bullets/numbers now fit the editor padding)
+   Uses v7 frozen design system (no new tokens invented)
+   ===================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ============================================
+   DESIGN TOKENS (identical to v7 baseline)
+   ============================================ */
+
+:root {
+  /* Coffee Dark (default) */
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243, 238, 226, 0.07); --line-strong: rgba(243, 238, 226, 0.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-dim: rgba(243, 238, 226, 0.12); --brand-glow: rgba(243, 238, 226, 0.22); --brand-ink: #120804;
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255, 107, 91, 0.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255, 176, 77, 0.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255, 217, 122, 0.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122, 184, 229, 0.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143, 229, 179, 0.14);
+
+  --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+}
+
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43, 24, 16, 0.10); --line-strong: rgba(43, 24, 16, 0.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-dim: rgba(111, 78, 55, 0.14); --brand-glow: rgba(111, 78, 55, 0.24); --brand-ink: #F3EEE2;
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201, 70, 55, 0.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184, 101, 29, 0.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158, 127, 16, 0.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46, 134, 193, 0.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46, 139, 80, 0.12);
+}
+
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232, 244, 253, 0.08); --line-strong: rgba(232, 244, 253, 0.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-dim: rgba(232, 244, 253, 0.12); --brand-glow: rgba(232, 244, 253, 0.22); --brand-ink: #0A1628;
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255, 122, 107, 0.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255, 179, 71, 0.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255, 217, 122, 0.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122, 184, 229, 0.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126, 224, 168, 0.14);
+}
+
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10, 22, 40, 0.08); --line-strong: rgba(10, 22, 40, 0.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-dim: rgba(30, 90, 138, 0.14); --brand-glow: rgba(30, 90, 138, 0.24); --brand-ink: #F2F8FD;
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199, 62, 58, 0.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193, 122, 26, 0.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158, 127, 16, 0.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46, 134, 193, 0.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46, 139, 80, 0.12);
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.003em;
+  overflow: hidden;
+  transition: background 240ms ease, color 240ms ease;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: 0.05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* ============================================
+   BACKGROUND DASHBOARD (dimmed behind modal)
+   Shows that this is a modal opened from a detail view
+   ============================================ */
+
+.bg-dashboard {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  pointer-events: none;
+}
+
+.bg-rail {
+  background: var(--bg-base);
+  border-right: 1px solid var(--line);
+}
+
+.bg-main {
+  padding: 56px var(--s-8) var(--s-8);
+  background: var(--bg-page);
+}
+.bg-main::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 64px; right: 0;
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-base);
+}
+
+.bg-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -0.02em;
+  margin: var(--s-4) 0;
+  opacity: 0.5;
+}
+.bg-table {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: var(--s-4);
+  opacity: 0.4;
+}
+.bg-card {
+  height: 180px;
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.bg-card.span-3 { grid-column: span 3; }
+.bg-card.span-2 { grid-column: span 2; }
+
+/* ============================================
+   MODAL BACKDROP
+   ============================================ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  padding: var(--s-6);
+  overflow-y: auto;
+  animation: fadeIn 200ms ease;
+}
+body.coffee.light .backdrop { background: rgba(43, 24, 16, 0.35); }
+body.blue.light .backdrop { background: rgba(10, 22, 40, 0.30); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ============================================
+   MODAL
+   ============================================ */
+
+.modal {
+  width: 880px;
+  max-width: 100%;
+  max-height: calc(100vh - var(--s-12));
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: riseIn 320ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal header */
+.modal-head {
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  background: var(--bg-base);
+}
+
+.head-meta { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+
+.head-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.head-eyebrow .id-pill {
+  padding: 2px 7px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  border-radius: var(--r-xs);
+  letter-spacing: 0.04em;
+}
+
+.head-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -0.015em;
+}
+
+.head-right { display: flex; align-items: center; gap: var(--s-3); }
+
+/* ============================================
+   SEGMENTED PILL (locked pattern for binary toggles)
+   Same pattern as Dark/Light theme toggle
+   ============================================ */
+.config-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+}
+.config-toggle-label {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+}
+
+.segmented {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+.seg-btn {
+  padding: 4px var(--s-3);
+  background: transparent;
+  border: none;
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  min-width: 64px;
+  text-align: center;
+}
+.seg-btn:hover { color: var(--ink-100); }
+.seg-btn.active {
+  background: var(--bg-base);
+  color: var(--ink-100);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+}
+
+.config-info-icon {
+  color: var(--ink-60);
+  cursor: help;
+  display: inline-grid;
+  place-items: center;
+}
+
+/* Close button */
+.close-btn {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--ink-60);
+  cursor: pointer;
+  transition: all 140ms;
+}
+.close-btn:hover {
+  background: var(--bg-raised);
+  color: var(--ink-100);
+  border-color: var(--line);
+}
+
+/* ============================================
+   MODAL BODY (scrollable)
+   ============================================ */
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+/* ============================================
+   SECTION 1: Original Technical Detail (collapsible)
+   ============================================ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.section-number {
+  width: 18px; height: 18px;
+  border-radius: var(--r-full);
+  display: grid;
+  place-items: center;
+  background: var(--bg-raised);
+  color: var(--ink-60);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.section-number.active {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+
+/* Collapsible technical detail */
+.tech-detail {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.tech-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border: none;
+  color: var(--ink-80);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 140ms;
+}
+.tech-trigger:hover { background: var(--bg-hover); }
+
+.tech-trigger .chevron {
+  color: var(--ink-60);
+  transition: transform 180ms;
+}
+.tech-trigger[aria-expanded="true"] .chevron { transform: rotate(90deg); }
+
+.tech-trigger-label { flex: 1; }
+
+.tech-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: 0.04em;
+}
+
+.tech-content {
+  padding: var(--s-4);
+  background: var(--bg-overlay);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--s-4);
+  row-gap: var(--s-2);
+  display: none;
+}
+.tech-trigger[aria-expanded="true"] + .tech-content { display: grid; }
+
+.tech-content dt {
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.tech-content dd {
+  color: var(--ink-100);
+}
+.tech-content dd .cvss-score {
+  color: var(--sev-critical);
+  font-weight: 700;
+}
+
+/* ============================================
+   SECTION 2: Business Impact Editor + AI panel
+   ============================================ */
+
+.editor-wrap {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--s-4);
+  align-items: stretch;
+}
+
+.editor-shell {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-overlay);
+  overflow: hidden;
+  transition: border-color 180ms, box-shadow 180ms;
+}
+/* Validation pattern: border only for error — valid state uses default */
+.editor-shell.invalid {
+  border-color: var(--sev-critical);
+  box-shadow: 0 0 0 3px var(--sev-critical-bg);
+}
+
+/* Toolbar */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.tool-btn {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-xs);
+  color: var(--ink-60);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  transition: all 140ms;
+}
+.tool-btn:hover {
+  background: var(--bg-overlay);
+  color: var(--ink-100);
+  border-color: var(--line);
+}
+.tool-btn.active {
+  background: var(--bg-overlay);
+  color: var(--brand);
+  border-color: var(--line-strong);
+}
+.tool-btn b { font-weight: 700; }
+.tool-btn i { font-style: italic; font-weight: 500; }
+
+.tool-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--line);
+  margin: 0 var(--s-1);
+}
+
+/* Editor content */
+.editor-content {
+  flex: 1;
+  min-height: 180px;
+  padding: var(--s-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-y: auto;
+  outline: none;
+}
+.editor-content:empty::before {
+  content: attr(data-placeholder);
+  color: var(--ink-40);
+  font-style: italic;
+}
+.editor-content b { font-weight: 600; }
+.editor-content i { font-style: italic; }
+
+/* List styles — respect editor padding (fix from v2 bullet/number spacing bug) */
+.editor-content ul,
+.editor-content ol {
+  padding-left: 20px;    /* was browser-default 40px, far too much */
+  margin: 6px 0;          /* vertical breathing room between lists and prose */
+}
+.editor-content li {
+  padding-left: 4px;      /* space between marker and text */
+  margin-bottom: 2px;     /* small gap between list items */
+  line-height: 1.6;
+}
+.editor-content li::marker {
+  color: var(--ink-60);    /* softer marker colour */
+}
+.editor-content ul ul,
+.editor-content ol ol,
+.editor-content ul ol,
+.editor-content ol ul {
+  margin: 2px 0;           /* tighter nesting */
+}
+.editor-content p {
+  margin: 0 0 8px 0;       /* consistent paragraph spacing (contenteditable wraps in <p>) */
+}
+.editor-content p:last-child { margin-bottom: 0; }
+
+/* Footer with character count + validation */
+.editor-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-top: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.validation-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+.validation-icon.valid { color: var(--status-good); }
+.validation-icon.invalid { color: var(--sev-critical); }
+
+.char-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  font-weight: 500;
+}
+.char-count.min-not-met { color: var(--sev-critical); }
+.char-count em { font-style: normal; color: var(--ink-80); }
+
+/* ============================================
+   AI ASSISTANCE PANEL
+   ============================================ */
+
+.ai-panel {
+  background: var(--bg-overlay);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.ai-icon {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  background: var(--brand-dim);
+  color: var(--brand);
+  border-radius: var(--r-xs);
+}
+.ai-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--ink-100);
+}
+.ai-sub {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  margin-top: -2px;
+}
+
+.ai-questions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.ai-question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.ai-q-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--ink-80);
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+.ai-q-label .required {
+  color: var(--sev-critical);
+  font-weight: 700;
+}
+
+/* Inputs */
+.input, .select {
+  width: 100%;
+  padding: 7px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 400;
+  outline: none;
+  transition: border-color 140ms;
+}
+.input:focus, .select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand-dim);
+}
+.input::placeholder { color: var(--ink-40); }
+
+.select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+}
+body.coffee.light .select, body.blue.light .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.textarea {
+  width: 100%;
+  padding: 7px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 400;
+  outline: none;
+  resize: vertical;
+  min-height: 48px;
+  line-height: 1.5;
+}
+.textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand-dim);
+}
+.textarea::placeholder { color: var(--ink-40); }
+
+/* AI action buttons */
+.ai-actions { display: flex; flex-direction: column; gap: var(--s-2); margin-top: auto; }
+
+.btn-ai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 8px var(--s-3);
+  background: var(--brand);
+  color: var(--brand-ink);
+  border: 1px solid var(--brand);
+  border-radius: var(--r-sm);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 140ms;
+}
+.btn-ai:hover { filter: brightness(1.1); }
+
+.btn-ai-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 7px var(--s-3);
+  background: transparent;
+  color: var(--ink-80);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.btn-ai-ghost:hover { background: var(--bg-raised); border-color: var(--line-strong); color: var(--ink-100); }
+
+/* ============================================
+   SECTION 3: Financial Impact Calculator
+   ============================================ */
+
+.calc-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-overlay);
+  overflow: hidden;
+}
+
+.calc-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border: none;
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 140ms;
+}
+.calc-trigger:hover { background: var(--bg-hover); }
+.calc-trigger .chevron { color: var(--ink-60); transition: transform 180ms; }
+.calc-trigger[aria-expanded="true"] .chevron { transform: rotate(90deg); }
+.calc-trigger-label { flex: 1; }
+.calc-trigger-total {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.calc-body {
+  padding: var(--s-4);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+  display: none;
+}
+.calc-trigger[aria-expanded="true"] + .calc-body { display: grid; }
+
+.calc-field { display: flex; flex-direction: column; gap: 4px; }
+.calc-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.calc-info {
+  width: 14px; height: 14px;
+  display: inline-grid; place-items: center;
+  color: var(--ink-60);
+  cursor: help;
+}
+
+.calc-input-wrap {
+  position: relative;
+}
+.calc-input-wrap::before {
+  content: "$";
+  position: absolute;
+  left: var(--s-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  color: var(--ink-60);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.calc-input {
+  width: 100%;
+  padding: 7px var(--s-3) 7px 24px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-100);
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 500;
+  outline: none;
+}
+.calc-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand-dim);
+}
+
+.calc-hint {
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  font-weight: 400;
+}
+
+/* Total row */
+.calc-total {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.calc-total-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.calc-total-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  color: var(--ink-100);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================
+   MODAL FOOTER
+   ============================================ */
+
+.modal-foot {
+  padding: var(--s-4) var(--s-6);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  background: var(--bg-base);
+  flex-wrap: wrap;
+}
+
+.foot-info {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 400;
+}
+.foot-info .role-pill {
+  padding: 2px 7px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  border-radius: var(--r-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.foot-actions { margin-left: auto; display: flex; gap: var(--s-2); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 8px var(--s-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  height: 36px;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-color: var(--brand);
+  font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+.btn.ghost {
+  background: transparent;
+}
+.btn.ghost:hover { background: var(--bg-raised); }
+
+/* ============================================
+   THEME PICKER (same as v7)
+   ============================================ */
+
+.theme-picker-wrap {
+  position: fixed;
+  top: 12px; right: var(--s-6);
+  z-index: 20;
+}
+
+.theme-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 5px 10px 5px 6px;
+  height: 32px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+  backdrop-filter: blur(8px);
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+
+.tp-family-swatches {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-overlay);
+  border-radius: var(--r-xs);
+  height: 20px;
+  align-items: center;
+  pointer-events: none;
+}
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; }
+body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; }
+body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; }
+body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; }
+body.blue.light .tp-sw-accent { background: #1E5A8A; }
+
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); }
+.tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+
+.theme-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  padding: var(--s-3);
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  color: var(--ink-60);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--s-2);
+}
+
+.tp-family-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+}
+
+.tp-family-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  padding: var(--s-2);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 140ms;
+  text-align: left;
+  font-family: var(--font-ui);
+}
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.tp-family-preview {
+  display: flex; gap: 2px; height: 22px;
+  border-radius: var(--r-xs); overflow: hidden;
+}
+.tp-pv-swatch { flex: 1; display: block; }
+
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px var(--s-3);
+  height: 30px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-80);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 1px var(--brand);
+  color: var(--ink-100);
+}
+
+/* Scrollbar */
+.modal-body::-webkit-scrollbar, .editor-content::-webkit-scrollbar { width: 8px; }
+.modal-body::-webkit-scrollbar-track, .editor-content::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb, .editor-content::-webkit-scrollbar-thumb {
+  background: var(--ink-20);
+  border-radius: var(--r-sm);
+}
+
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- Dimmed background dashboard (implies modal opened from CISO-01) -->
+<div class="bg-dashboard" aria-hidden="true">
+  <div class="bg-rail"></div>
+  <div class="bg-main">
+    <h1 class="bg-title">Your organisation is exposed</h1>
+    <div class="bg-table">
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-2"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-3"></div>
+      <div class="bg-card span-2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Theme picker (floating, for this standalone prototype) -->
+<div class="theme-picker-wrap">
+  <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+    <span class="tp-family-swatches">
+      <span class="tp-sw tp-sw-bg"></span>
+      <span class="tp-sw tp-sw-accent"></span>
+    </span>
+    <span class="tp-label">
+      <span id="tpFamily">Coffee</span>
+      <span class="tp-sep">·</span>
+      <span class="tp-mode" id="tpMode">Dark</span>
+    </span>
+    <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div class="theme-popover" id="themePopover" role="dialog">
+    <div class="tp-section">
+      <div class="tp-section-label">Palette family</div>
+      <div class="tp-family-grid">
+        <button class="tp-family-card active" data-family="coffee">
+          <span class="tp-family-preview">
+            <span class="tp-pv-swatch" style="background:#120804;"></span>
+            <span class="tp-pv-swatch" style="background:#F3EEE2;"></span>
+            <span class="tp-pv-swatch" style="background:#6F4E37;"></span>
+          </span>
+          <span class="tp-family-name">Coffee</span>
+          <span class="tp-family-desc">Warm · Investigation</span>
+        </button>
+        <button class="tp-family-card" data-family="blue">
+          <span class="tp-family-preview">
+            <span class="tp-pv-swatch" style="background:#0A1628;"></span>
+            <span class="tp-pv-swatch" style="background:#F2F8FD;"></span>
+            <span class="tp-pv-swatch" style="background:#1E5A8A;"></span>
+          </span>
+          <span class="tp-family-name">Blue</span>
+          <span class="tp-family-desc">Cool · Enterprise</span>
+        </button>
+      </div>
+    </div>
+    <div class="tp-section">
+      <div class="tp-section-label">Appearance</div>
+      <div class="tp-mode-row">
+        <button class="tp-mode-btn active" data-mode="dark">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark
+        </button>
+        <button class="tp-mode-btn" data-mode="light">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Light
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL ===================== -->
+<div class="backdrop">
+  <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+
+    <!-- Header -->
+    <div class="modal-head">
+      <div class="head-meta">
+        <div class="head-eyebrow">
+          <span>Finding</span>
+          <span class="id-pill">FND-2026-0142</span>
+          <span>Severity</span>
+          <span class="id-pill" style="color: var(--sev-critical); background: var(--sev-critical-bg);">CRITICAL</span>
+        </div>
+        <h2 class="head-title" id="modalTitle">Business Impact · SQL Injection on /api/v2/users/search</h2>
+      </div>
+
+      <div class="head-right">
+        <div class="config-toggle">
+          <span class="config-toggle-label">Business impact</span>
+          <div class="segmented" role="group" aria-label="Business impact required or optional">
+            <button class="seg-btn active" id="segRequired" data-state="required">Required</button>
+            <button class="seg-btn" id="segOptional" data-state="optional">Optional</button>
+          </div>
+          <span class="config-info-icon" title="Platform admin can configure per deployment">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </span>
+        </div>
+
+        <button class="close-btn" aria-label="Close editor" title="Close (Esc)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Section 1: Technical Detail (collapsed) -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-number">1</div>
+          <div class="section-label">Original technical detail</div>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="tech-detail">
+          <button class="tech-trigger" id="techTrigger" aria-expanded="false" aria-controls="techContent">
+            <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            <span class="tech-trigger-label">Show technical detail</span>
+            <span class="tech-meta">CVSS 9.8 · Attack vector: Network</span>
+          </button>
+          <dl class="tech-content" id="techContent">
+            <dt>CVSS score</dt>
+            <dd><span class="cvss-score">9.8</span> · Critical</dd>
+            <dt>Attack vector</dt>
+            <dd>Network (AV:N)</dd>
+            <dt>Attack complexity</dt>
+            <dd>Low (AC:L)</dd>
+            <dt>Privileges required</dt>
+            <dd>None (PR:N)</dd>
+            <dt>User interaction</dt>
+            <dd>None (UI:N)</dd>
+            <dt>Exploitability</dt>
+            <dd>Proof of concept available</dd>
+            <dt>CWE</dt>
+            <dd>CWE-89 · Improper Neutralization of SQL Elements</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Section 2: Business Impact Editor + AI panel -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-number active">2</div>
+          <div class="section-label">Business impact statement</div>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="editor-wrap">
+          <!-- WYSIWYG Editor -->
+          <div class="editor-shell" id="editorShell">
+            <div class="editor-toolbar" role="toolbar" aria-label="Text formatting">
+              <button class="tool-btn" title="Bold (⌘B)" aria-label="Bold" data-cmd="bold"><b>B</b></button>
+              <button class="tool-btn" title="Italic (⌘I)" aria-label="Italic" data-cmd="italic"><i>I</i></button>
+              <span class="tool-divider"></span>
+              <button class="tool-btn" title="Bulleted list" aria-label="Bulleted list" data-cmd="ul">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+              </button>
+              <button class="tool-btn" title="Numbered list" aria-label="Numbered list" data-cmd="ol">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="2" y="10" font-size="8" font-family="JetBrains Mono" fill="currentColor" stroke="none">1</text><text x="2" y="16" font-size="8" font-family="JetBrains Mono" fill="currentColor" stroke="none">2</text></svg>
+              </button>
+            </div>
+
+            <div class="editor-content" id="editorContent" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Business impact statement" data-placeholder="Describe how this finding impacts the business in plain language — avoid CVSS scores and technical jargon.">A successful SQL injection on the user search endpoint would allow an attacker to extract the entire customer database, including PII and payment tokens. Given our role as a financial services provider, this would trigger <b>mandatory breach disclosure under GDPR Article 33 within 72 hours</b>, along with potential FCA reporting obligations.
+
+The most likely operational impact is a <b>7-10 day service outage</b> while forensic investigation is completed and affected customer credentials are rotated. Customer trust damage is the primary reputational concern — particularly given our competitors' recent security marketing push.
+
+Business owner: Head of Customer Platform (Sarah Chen).</div>
+
+            <div class="editor-foot">
+              <span class="validation-icon valid" id="validIcon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Valid
+              </span>
+              <span class="char-count" id="charCount">
+                <em>648</em> / 500 minimum
+              </span>
+            </div>
+          </div>
+
+          <!-- AI Assistance Panel -->
+          <aside class="ai-panel">
+            <div class="ai-head">
+              <div class="ai-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="ai-title">AI Assistance</div>
+                <div class="ai-sub">Structured questions</div>
+              </div>
+            </div>
+
+            <div class="ai-questions">
+              <div class="ai-question">
+                <label class="ai-q-label" for="aiQ1">1. Business process affected <span class="required">*</span></label>
+                <select class="select" id="aiQ1">
+                  <option value="">Select process…</option>
+                  <option>Customer Service</option>
+                  <option selected>Finance</option>
+                  <option>Operations</option>
+                  <option>Sales</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="ai-question">
+                <label class="ai-q-label" for="aiQ2">2. Worst-case scenario <span class="required">*</span></label>
+                <textarea class="textarea" id="aiQ2" rows="2" placeholder="e.g. Full PII database exfiltration">Mass exfiltration of customer PII and payment tokens, triggering GDPR breach disclosure.</textarea>
+              </div>
+
+              <div class="ai-question">
+                <label class="ai-q-label" for="aiQ3">3. Business owner <span class="required">*</span></label>
+                <input class="input" type="text" id="aiQ3" value="Sarah Chen" placeholder="Full name">
+              </div>
+            </div>
+
+            <div class="ai-actions">
+              <button class="btn-ai">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg>
+                Improve with AI
+              </button>
+              <button class="btn-ai-ghost">Refine further</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Section 3: Financial Impact Calculator (expandable) -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-number">3</div>
+          <div class="section-label">Financial impact · Optional</div>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="calc-wrap">
+          <button class="calc-trigger" id="calcTrigger" aria-expanded="true" aria-controls="calcBody">
+            <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transform: rotate(90deg);"><path d="M9 18l6-6-6-6"/></svg>
+            <span class="calc-trigger-label">Total estimated cost</span>
+            <span class="calc-trigger-total" id="calcTotal">$4,200,000</span>
+          </button>
+
+          <div class="calc-body" id="calcBody">
+            <div class="calc-field">
+              <label class="calc-label" for="calcBreach">
+                Breach cost
+                <span class="calc-info" title="Forensics, notification, credit monitoring">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
+              </label>
+              <div class="calc-input-wrap">
+                <input class="calc-input" type="text" id="calcBreach" value="1,200,000" data-field="breach">
+              </div>
+              <span class="calc-hint">Industry avg: $4.45M (IBM 2024)</span>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-label" for="calcFine">
+                Regulatory fine (max)
+                <span class="calc-info" title="GDPR max: 4% of global turnover">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
+              </label>
+              <div class="calc-input-wrap">
+                <input class="calc-input" type="text" id="calcFine" value="2,500,000" data-field="fine">
+              </div>
+              <span class="calc-hint">Range: $500K – $2.5M under GDPR</span>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-label" for="calcDowntime">
+                Operational downtime
+                <span class="calc-info" title="Hours × revenue per hour">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
+              </label>
+              <div class="calc-input-wrap">
+                <input class="calc-input" type="text" id="calcDowntime" value="200,000" data-field="downtime">
+              </div>
+              <span class="calc-hint">168 hours × $1,200/hour</span>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-label" for="calcReputation">
+                Reputational damage
+                <span class="calc-info" title="Churn + brand impact, estimated">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
+              </label>
+              <div class="calc-input-wrap">
+                <input class="calc-input" type="text" id="calcReputation" value="300,000" data-field="reputation">
+              </div>
+              <span class="calc-hint">Estimate: 2% customer churn at $15K LTV</span>
+            </div>
+
+            <div class="calc-total">
+              <span class="calc-total-label">Total estimated cost</span>
+              <span class="calc-total-value" id="calcTotalLarge">$4,200,000</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-foot">
+      <div class="foot-info">
+        <span>Your role:</span>
+        <span class="role-pill">CISO REVIEWER</span>
+        <span style="color: var(--ink-40);">·</span>
+        <span>Last saved 2 minutes ago</span>
+      </div>
+      <div class="foot-actions">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn">Save draft</button>
+        <button class="btn primary" id="submitBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Approve &amp; Confirm
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // THEME PICKER (same logic as v7)
+  // ============================================
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+
+  function applyTheme() {
+    document.body.classList.remove('coffee', 'blue', 'dark', 'light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(forceState) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof forceState === 'boolean' ? forceState : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // ============================================
+  // COLLAPSIBLES
+  // ============================================
+  document.querySelectorAll('[aria-controls]').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      if (trigger.classList.contains('tp-mode-btn') || trigger.classList.contains('tp-family-card')) return;
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+    });
+  });
+
+  // ============================================
+  // EDITOR — character count & validation
+  // ============================================
+  const editor = document.getElementById('editorContent');
+  const charCount = document.getElementById('charCount');
+  const validIcon = document.getElementById('validIcon');
+  const editorShell = document.getElementById('editorShell');
+  const submitBtn = document.getElementById('submitBtn');
+  const MIN_CHARS = 500;
+
+  function updateEditor() {
+    const len = editor.innerText.length;
+    charCount.innerHTML = `<em>${len.toLocaleString()}</em> / ${MIN_CHARS} minimum`;
+
+    if (len >= MIN_CHARS) {
+      charCount.classList.remove('min-not-met');
+      editorShell.classList.remove('invalid');
+      validIcon.classList.remove('invalid');
+      validIcon.classList.add('valid');
+      validIcon.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Valid`;
+      submitBtn.disabled = false;
+    } else {
+      charCount.classList.add('min-not-met');
+      editorShell.classList.add('invalid');
+      validIcon.classList.remove('valid');
+      validIcon.classList.add('invalid');
+      validIcon.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> ${MIN_CHARS - len} more characters needed`;
+      submitBtn.disabled = true;
+    }
+  }
+  editor.addEventListener('input', updateEditor);
+  updateEditor();
+
+  // Toolbar commands
+  document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const cmd = btn.dataset.cmd;
+      editor.focus();
+      if (cmd === 'bold') document.execCommand('bold');
+      if (cmd === 'italic') document.execCommand('italic');
+      if (cmd === 'ul') document.execCommand('insertUnorderedList');
+      if (cmd === 'ol') document.execCommand('insertOrderedList');
+    });
+  });
+
+  // ============================================
+  // REQUIRED TOGGLE
+  // ============================================
+  // Segmented pill: Required / Optional
+  document.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const state = this.dataset.state;
+      const submitLabel = submitBtn.querySelector('svg').outerHTML;
+      if (state === 'required') {
+        submitBtn.innerHTML = submitLabel + ' Approve &amp; Confirm';
+      } else {
+        submitBtn.innerHTML = submitLabel + ' Save &amp; Skip';
+      }
+    });
+  });
+
+  // ============================================
+  // FINANCIAL CALCULATOR
+  // ============================================
+  function recalcTotal() {
+    let sum = 0;
+    ['calcBreach', 'calcFine', 'calcDowntime', 'calcReputation'].forEach(id => {
+      const raw = document.getElementById(id).value.replace(/[^0-9]/g, '');
+      sum += parseInt(raw || 0, 10);
+    });
+    const formatted = '$' + sum.toLocaleString();
+    document.getElementById('calcTotal').textContent = formatted;
+    document.getElementById('calcTotalLarge').textContent = formatted;
+  }
+  document.querySelectorAll('.calc-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const raw = e.target.value.replace(/[^0-9]/g, '');
+      e.target.value = raw ? parseInt(raw, 10).toLocaleString() : '';
+      recalcTotal();
+    });
+  });
+
+  // Close modal on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !popover.classList.contains('open')) {
+      // Would close modal here; for prototype we keep it open
+    }
+  });
+</script>
+
+</body>
+</html>

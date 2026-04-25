@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>SecureLoop · BO-02-3 · Escalated Risk Review Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-.003em;-webkit-font-smoothing:antialiased;overflow:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::after{opacity:.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:64px 1fr;grid-template-rows:56px 1fr;height:100vh}
+.rail{grid-row:1/3;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2)}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:18px;box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-3)}
+body.light .logo{font-weight:600}
+.nav-ic{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--ink-40);cursor:pointer;transition:all 140ms;position:relative}
+.nav-ic:hover{color:var(--ink-100);background:var(--bg-raised)}
+.nav-ic.active{color:var(--brand);background:var(--brand-dim)}
+.nav-ic.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:2px;background:var(--brand);border-radius:var(--r-full)}
+.nav-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+.topbar{grid-column:2;height:56px;background:var(--bg-page);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 var(--s-6);gap:var(--s-6);position:relative}
+.crumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .cur{color:var(--ink-100);font-weight:500}
+.crumb a{color:var(--ink-60);text-decoration:none;cursor:pointer}
+.crumb a:hover{color:var(--ink-100)}
+.topbar-spacer{flex:1}
+.tb-actions{display:flex;align-items:center;gap:var(--s-2)}
+.tb-meta{display:flex;align-items:center;gap:var(--s-2);padding:6px 10px;height:32px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);color:var(--ink-80)}
+.tb-meta .dot{width:6px;height:6px;border-radius:var(--r-full);background:var(--sev-critical)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:6px 10px;height:32px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer}
+.sw-stack{display:flex;flex-direction:column;gap:2px}
+.sw-stack span{display:block;width:14px;height:5px;border-radius:1px}
+.sw-stack .s1{background:var(--bg-page)}.sw-stack .s2{background:var(--brand)}
+.theme-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.pop{position:absolute;top:52px;right:var(--s-6);z-index:60;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);width:340px;box-shadow:0 12px 36px rgba(0,0,0,.35);display:none}
+.pop.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+.pop h5{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.fam-card{padding:var(--s-3);border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-raised);cursor:pointer}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fam-card .swatches span{width:20px;height:20px;border-radius:var(--r-xs);border:1px solid var(--line)}
+.fam-card .name{font-size:var(--text-body);font-weight:600}
+.fam-card .desc{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;margin-top:2px}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
+.mode-btn{display:flex;align-items:center;justify-content:center;gap:var(--s-2);padding:10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);cursor:pointer;font-size:var(--text-body);font-weight:500}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+.main{grid-column:2;overflow-y:auto;overflow-x:hidden;background:var(--bg-page)}
+.page{max-width:1280px;margin:0 auto;padding:var(--s-8) var(--s-8) var(--s-12)}
+
+/* Page header */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-6)}
+.ph h1{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-.015em;margin-bottom:6px}
+.ph .sub{font-size:var(--text-body);color:var(--ink-60)}
+.ph .seg{display:inline-flex;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);padding:3px;gap:2px}
+.ph .seg button{background:transparent;border:0;color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;padding:6px 14px;border-radius:var(--r-full);cursor:pointer;letter-spacing:.01em}
+.ph .seg button.active{background:var(--brand);color:var(--brand-ink)}
+
+/* Escalation banner — critical callout pattern (chip + tint-bg + all-sides-border) */
+.esc-banner{display:flex;align-items:center;gap:var(--s-4);padding:var(--s-4) var(--s-6);background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-md);margin-bottom:var(--s-6)}
+.esc-banner .chip{width:30px;height:30px;border-radius:var(--r-full);background:var(--sev-critical);color:var(--brand-ink);display:grid;place-items:center;flex-shrink:0}
+body.coffee.light .esc-banner .chip,body.blue.light .esc-banner .chip{color:#FFF}
+.esc-banner .chip svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+.esc-banner .txt{flex:1}
+.esc-banner .ttl{font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin-bottom:2px}
+.esc-banner .body{font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+.esc-banner .body b{color:var(--sev-critical);font-weight:600}
+.esc-banner .urg{display:flex;align-items:center;gap:var(--s-2);padding:8px 12px;background:var(--bg-base);border:1px solid var(--line-strong);border-radius:var(--r-sm);font-size:var(--text-label);font-weight:500;color:var(--ink-100);flex-shrink:0}
+.esc-banner .urg .num{font-family:var(--font-mono);font-weight:700;color:var(--sev-critical);font-size:var(--text-lg)}
+
+/* Context role strip */
+.role-strip{display:flex;align-items:center;gap:var(--s-6);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-6);font-size:var(--text-label)}
+.role-strip .kv{display:flex;align-items:center;gap:var(--s-2)}
+.role-strip .lbl{color:var(--ink-60);text-transform:uppercase;letter-spacing:.06em;font-size:var(--text-micro);font-weight:600}
+.role-strip .val{color:var(--ink-100);font-weight:500}
+.role-strip .sep{width:1px;height:14px;background:var(--line-strong)}
+
+/* Bulk bar */
+.bulk-bar{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) var(--s-4);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-sm);margin-bottom:var(--s-4);transition:all 200ms}
+.bulk-bar.hidden{display:none}
+.bulk-bar .left{display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-body)}
+.bulk-bar .count{font-family:var(--font-mono);font-weight:700;color:var(--brand);font-size:var(--text-lg)}
+.bulk-bar .actions{display:flex;gap:var(--s-2)}
+
+/* Table */
+.queue-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.qc-head{padding:var(--s-4) var(--s-4);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.qc-head .title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.qc-head .meta{font-size:var(--text-label);color:var(--ink-60);font-weight:500}
+.qc-head .right{display:flex;align-items:center;gap:var(--s-3)}
+.qc-head .srch{display:flex;align-items:center;gap:var(--s-2);padding:6px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);width:240px}
+.qc-head .srch svg{width:12px;height:12px;stroke:var(--ink-60);fill:none;stroke-width:2}
+.qc-head .srch input{background:transparent;border:0;color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-label);outline:none;width:100%}
+.qc-head .srch input::placeholder{color:var(--ink-40)}
+
+.acc{width:100%;border-collapse:collapse}
+.acc thead th{text-align:left;padding:10px 12px;font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;background:var(--bg-raised);border-bottom:1px solid var(--line-strong);white-space:nowrap}
+.acc thead th.chk-col{width:36px}
+.acc tbody td{padding:var(--s-3) 12px;border-bottom:1px solid var(--line);font-size:var(--text-body);color:var(--ink-100);vertical-align:middle}
+.acc tbody tr{background:var(--sev-critical-bg)}
+.acc tbody tr:hover{background:rgba(255,107,91,.22)}
+body.light .acc tbody tr:hover{background:rgba(201,70,55,.22)}
+.acc tbody tr.expanded{background:var(--bg-raised)}
+.acc tbody tr.expanded:hover{background:var(--bg-raised)}
+.acc .ra-id{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.03em;margin-bottom:2px;display:block}
+.acc .rd{font-weight:500;color:var(--ink-100);line-height:1.35}
+.acc .rd-sub{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.acc td.mono{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)}
+.days-gone{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--sev-critical);color:var(--brand-ink);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700}
+body.light .days-gone{color:#FFF}
+.reason{display:inline-block;padding:3px 8px;background:var(--bg-raised);border:1px solid var(--line-strong);border-radius:var(--r-xs);font-size:var(--text-micro);color:var(--ink-80)}
+.rec{display:inline-flex;align-items:center;gap:4px;font-size:var(--text-label);color:var(--ink-80)}
+.rec.remediate{color:var(--sev-critical)}
+.rec.renew{color:var(--status-good)}
+.rec.transfer{color:var(--sev-low)}
+.rec svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Checkbox */
+.chk{display:inline-block;width:16px;height:16px;border:1.5px solid var(--ink-40);border-radius:var(--r-xs);background:var(--bg-raised);position:relative;cursor:pointer;vertical-align:middle}
+.chk.on{background:var(--brand);border-color:var(--brand)}
+.chk.on::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--brand-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+.expand-btn{width:24px;height:24px;display:inline-grid;place-items:center;border-radius:var(--r-xs);color:var(--ink-60);cursor:pointer;transition:all 140ms;background:transparent;border:0}
+.expand-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.expand-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;transition:transform 200ms}
+.expand-btn.open svg{transform:rotate(180deg)}
+
+/* Expanded panel */
+.exp-row td{padding:0 !important;border-bottom:1px solid var(--line-strong) !important;background:var(--bg-raised)}
+.exp-panel{padding:var(--s-6);display:grid;grid-template-columns:1.2fr 1fr;gap:var(--s-6);border-top:2px solid var(--sev-critical)}
+.exp-panel .col{display:flex;flex-direction:column;gap:var(--s-4)}
+.exp-block{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-4)}
+.exp-block h4{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-3)}
+.exp-block .body{font-size:var(--text-body);color:var(--ink-80);line-height:1.55}
+
+/* Timeline */
+.tl{list-style:none;padding:0;margin:0;position:relative}
+.tl::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:1px;background:var(--line-strong)}
+.tl li{position:relative;padding-left:28px;padding-bottom:var(--s-3);font-size:var(--text-body)}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:4px;top:4px;width:10px;height:10px;border-radius:var(--r-full);background:var(--brand);box-shadow:0 0 0 3px var(--bg-base)}
+.tl li.warn::before{background:var(--sev-high)}
+.tl li.crit::before{background:var(--sev-critical)}
+.tl .tl-date{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-right:var(--s-2)}
+.tl .tl-ttl{color:var(--ink-100);font-weight:500}
+.tl .tl-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px;display:block}
+
+/* CC status list */
+.cc-list{display:flex;flex-direction:column;gap:6px}
+.cc-item{display:flex;align-items:center;gap:var(--s-2);padding:8px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);font-size:var(--text-label)}
+.cc-item .ic{width:16px;height:16px;display:grid;place-items:center;border-radius:var(--r-full);flex-shrink:0}
+.cc-item.ok .ic{background:var(--status-good);color:var(--brand-ink)}
+body.light .cc-item.ok .ic{color:#FFF}
+.cc-item.fail .ic{background:var(--sev-critical);color:var(--brand-ink)}
+body.light .cc-item.fail .ic{color:#FFF}
+.cc-item .ic svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:3}
+.cc-item .lbl{flex:1;color:var(--ink-100)}
+.cc-item .st{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60)}
+
+/* CISO recommendation callout */
+.ciso-rec{display:flex;gap:var(--s-3);padding:var(--s-4) var(--s-4);background:var(--brand-dim);border:1px solid var(--line-strong);border-radius:var(--r-sm);align-items:flex-start}
+.ciso-rec .av{width:28px;height:28px;border-radius:var(--r-full);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:600;font-size:var(--text-label);flex-shrink:0;font-family:var(--font-display)}
+.ciso-rec .rec-body{flex:1}
+.ciso-rec .rec-meta{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-micro);color:var(--ink-60);margin-bottom:4px}
+.ciso-rec .rec-meta b{color:var(--ink-100);font-weight:600}
+.ciso-rec .rec-text{font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+.ciso-rec .rec-tag{display:inline-block;padding:2px 6px;background:var(--sev-critical);color:var(--brand-ink);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;margin-right:var(--s-2)}
+body.light .ciso-rec .rec-tag{color:#FFF}
+
+/* Decision triad */
+.decision-wrap{display:flex;flex-direction:column;gap:var(--s-3)}
+.decision-wrap h4{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.dec-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-2)}
+.dec-btn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:var(--s-3) var(--s-3);border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--bg-base);color:var(--ink-100);cursor:pointer;font-family:var(--font-ui);text-align:left;transition:all 160ms}
+.dec-btn:hover{background:var(--bg-hover)}
+.dec-btn .top{display:flex;align-items:center;gap:6px;font-size:var(--text-body);font-weight:600}
+.dec-btn .top svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.dec-btn .desc{font-size:var(--text-micro);color:var(--ink-60);line-height:1.35}
+.dec-btn.renew{border-color:var(--status-good)}
+.dec-btn.renew:hover{background:var(--status-good-bg)}
+.dec-btn.renew .top{color:var(--status-good)}
+.dec-btn.mandate{border-color:var(--sev-critical)}
+.dec-btn.mandate:hover{background:var(--sev-critical-bg)}
+.dec-btn.mandate .top{color:var(--sev-critical)}
+.dec-btn.transfer{border-color:var(--sev-low)}
+.dec-btn.transfer:hover{background:var(--sev-low-bg)}
+.dec-btn.transfer .top{color:var(--sev-low)}
+
+/* Committee voting panel */
+.vote-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-top:var(--s-6);overflow:hidden}
+.vote-head{padding:var(--s-4) var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.vote-head .title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;display:flex;align-items:center;gap:var(--s-2)}
+.vote-head .title svg{width:16px;height:16px;stroke:var(--brand);fill:none;stroke-width:2}
+.vote-head .meta{display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-label);color:var(--ink-60)}
+.vote-head .deadline{font-family:var(--font-mono);color:var(--sev-high)}
+.vote-body{padding:var(--s-4)}
+.vote-ctx{font-size:var(--text-label);color:var(--ink-60);margin-bottom:var(--s-4);line-height:1.55}
+.vote-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s-3)}
+.vote-cell{display:flex;flex-direction:column;align-items:center;gap:var(--s-2);padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);text-align:center}
+.vote-cell.approved{border-color:var(--status-good)}
+.vote-cell.rejected{border-color:var(--sev-critical)}
+.vote-cell.pending{border-style:dashed}
+.vote-av{width:40px;height:40px;border-radius:var(--r-full);background:var(--brand-dim);color:var(--brand);display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-body);position:relative}
+.vote-av .badge{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:var(--r-full);border:2px solid var(--bg-raised);display:grid;place-items:center}
+.vote-av .badge.ok{background:var(--status-good)}
+.vote-av .badge.no{background:var(--sev-critical)}
+.vote-av .badge.pn{background:var(--ink-40)}
+.vote-av .badge svg{width:8px;height:8px;stroke:var(--brand-ink);fill:none;stroke-width:3}
+body.light .vote-av .badge svg{stroke:#FFF}
+.vote-name{font-size:var(--text-label);font-weight:500;color:var(--ink-100);line-height:1.3}
+.vote-role{font-size:var(--text-micro);color:var(--ink-60)}
+.vote-state{font-family:var(--font-mono);font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:3px 8px;border-radius:var(--r-full)}
+.vote-state.approved{background:var(--status-good-bg);color:var(--status-good)}
+.vote-state.rejected{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.vote-state.pending{background:var(--bg-base);color:var(--ink-60);border:1px dashed var(--line-strong)}
+.vote-progress{margin-top:var(--s-4);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:space-between;font-size:var(--text-label)}
+.vote-progress .tally{display:flex;align-items:center;gap:var(--s-4)}
+.vote-progress .tally b{font-family:var(--font-mono);color:var(--ink-100);font-weight:600}
+.vote-progress .dflt{font-size:var(--text-micro);color:var(--ink-60);font-style:italic}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;animation:fadeIn 200ms}
+.overlay.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.modal{width:720px;max-height:85vh;overflow-y:auto;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:0 24px 64px rgba(0,0,0,.45);animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+.modal-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:var(--s-4)}
+.modal-head .title{display:flex;align-items:center;gap:var(--s-3)}
+.modal-head .title .chip{width:30px;height:30px;border-radius:var(--r-full);display:grid;place-items:center;flex-shrink:0}
+.modal-head .title .chip.mandate{background:var(--sev-critical);color:var(--brand-ink)}
+body.light .modal-head .title .chip.mandate{color:#FFF}
+.modal-head .title .chip.bulk{background:var(--status-good);color:var(--brand-ink)}
+body.light .modal-head .title .chip.bulk{color:#FFF}
+.modal-head .title .chip svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
+.modal-head h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.modal-head .sub{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.close-x{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:0;color:var(--ink-60);cursor:pointer;border-radius:var(--r-sm)}
+.close-x:hover{background:var(--bg-hover);color:var(--ink-100)}
+.close-x svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.modal-body{padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-4)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);font-weight:600}
+.field label .req{color:var(--sev-critical);margin-left:2px}
+.field label .opt{color:var(--ink-40);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
+.field input,.field select,.field textarea{background:var(--bg-raised);border:1px solid var(--line-strong);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);padding:10px 12px;outline:none;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand)}
+.field textarea{resize:vertical;min-height:80px;font-family:var(--font-ui)}
+.field .hint{font-size:var(--text-micro);color:var(--ink-60)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+
+/* Affected list (bulk) */
+.affected-list{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);max-height:200px;overflow-y:auto}
+.affected-item{display:flex;align-items:center;gap:var(--s-3);padding:8px 6px;border-bottom:1px solid var(--line);font-size:var(--text-label)}
+.affected-item:last-child{border-bottom:0}
+.affected-item .id{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);min-width:110px}
+.affected-item .nm{flex:1;color:var(--ink-100)}
+.affected-item .bz{font-size:var(--text-micro);color:var(--ink-60);padding:2px 6px;background:var(--bg-base);border-radius:var(--r-xs);border:1px solid var(--line)}
+
+.modal-foot{padding:var(--s-4) var(--s-6);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);background:var(--bg-raised)}
+.modal-foot .left{font-size:var(--text-micro);color:var(--ink-60);display:flex;align-items:center;gap:var(--s-2)}
+.modal-foot .right{display:flex;gap:var(--s-2)}
+
+/* Buttons */
+.btn{height:36px;padding:0 var(--s-4);border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--bg-raised);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:var(--s-2);letter-spacing:.01em}
+.btn:hover{background:var(--bg-hover)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ok{background:var(--status-good);color:var(--brand-ink);border-color:var(--status-good);font-weight:600}
+body.light .btn.ok{color:#FFF}
+.btn.ok:hover{filter:brightness(1.06)}
+.btn.danger{background:var(--sev-critical);color:var(--brand-ink);border-color:var(--sev-critical);font-weight:600}
+body.light .btn.danger{color:#FFF}
+.btn.danger:hover{filter:brightness(1.06)}
+.btn.sm{height:30px;padding:0 var(--s-3);font-size:var(--text-micro)}
+
+/* Audit immutable chip */
+.audit-chip{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-micro);color:var(--ink-60);margin-top:var(--s-6)}
+.audit-chip svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+.audit-chip b{color:var(--ink-100);font-weight:500}
+
+/* Impact cells */
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.impact-cell{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs)}
+.impact-cell .lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);font-weight:600;margin-bottom:4px}
+.impact-cell .val{font-family:var(--font-mono);font-size:var(--text-lg);font-weight:600;color:var(--ink-100)}
+.impact-cell .val.crit{color:var(--sev-critical)}
+.impact-cell .val.high{color:var(--sev-high)}
+.impact-cell .delta{font-size:var(--text-micro);color:var(--sev-critical);margin-top:2px}
+
+/* Notifications block */
+.notif-block{margin-top:var(--s-4);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px dashed var(--line-strong);border-radius:var(--r-sm);display:flex;align-items:center;gap:var(--s-3);font-size:var(--text-label);color:var(--ink-60)}
+.notif-block svg{width:14px;height:14px;stroke:var(--ink-80);fill:none;stroke-width:2;flex-shrink:0}
+.notif-block b{color:var(--ink-100);font-weight:500}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+
+  <!-- Left rail -->
+  <aside class="rail">
+    <div class="logo">S</div>
+    <div class="nav-ic" title="Dashboard">
+      <svg viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v11h14V10"/></svg>
+    </div>
+    <div class="nav-ic active" title="Risk Acceptances">
+      <svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <div class="nav-ic" title="Notifications">
+      <svg viewBox="0 0 24 24"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/><path d="M10 20a2 2 0 004 0"/></svg>
+    </div>
+    <div class="nav-ic" title="Settings" style="margin-top:auto">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.3l2-1.6-2-3.4-2.4.9a7 7 0 00-2.3-1.3L14 3h-4l-.3 2.3a7 7 0 00-2.3 1.3l-2.4-.9-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .9.1 1.3l-2 1.6 2 3.4 2.4-.9a7 7 0 002.3 1.3l.3 2.3h4l.3-2.3a7 7 0 002.3-1.3l2.4.9 2-3.4-2-1.6c0-.4.1-.9.1-1.3z"/></svg>
+    </div>
+  </aside>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <nav class="crumb">
+      <a>SecureLoop</a><span class="sep">/</span>
+      <a>Business Owner</a><span class="sep">/</span>
+      <a>Risk Acceptances</a><span class="sep">/</span>
+      <span class="cur">Escalated review queue</span>
+    </nav>
+    <div class="topbar-spacer"></div>
+    <div class="tb-actions">
+      <div class="tb-meta"><span class="dot"></span>4 escalations pending · you</div>
+      <button class="theme-btn" id="themeBtn">
+        <div class="sw-stack"><span class="s1"></span><span class="s2"></span></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- Theme popover -->
+    <div class="pop" id="themePop">
+      <h5>Color family</h5>
+      <div class="fam-grid">
+        <div class="fam-card active" data-fam="coffee">
+          <div class="swatches"><span style="background:#120804"></span><span style="background:#25170D"></span><span style="background:#F3EEE2"></span></div>
+          <div class="name">Coffee</div>
+          <div class="desc">WARM · DEFAULT</div>
+        </div>
+        <div class="fam-card" data-fam="blue">
+          <div class="swatches"><span style="background:#0A1628"></span><span style="background:#162B48"></span><span style="background:#E8F4FD"></span></div>
+          <div class="name">Blue</div>
+          <div class="desc">COOL · TECHNICAL</div>
+        </div>
+      </div>
+      <h5>Mode</h5>
+      <div class="mode-row">
+        <button class="mode-btn active" data-mode="dark">
+          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+          Dark
+        </button>
+        <button class="mode-btn" data-mode="light">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+          Light
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="page">
+
+      <!-- Page header -->
+      <div class="ph">
+        <div>
+          <h1>Escalated risk review queue</h1>
+          <div class="sub">Risk acceptances that expired beyond the grace period — your decision is required.</div>
+        </div>
+        <div class="seg">
+          <button class="active">Individual decisions</button>
+          <button>Committee voting</button>
+        </div>
+      </div>
+
+      <!-- Escalation banner -->
+      <div class="esc-banner">
+        <div class="chip">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/><line x1="12" y1="10" x2="12" y2="15"/><circle cx="12" cy="18" r=".9" fill="currentColor"/></svg>
+        </div>
+        <div class="txt">
+          <div class="ttl">These risk acceptances have expired without renewal.</div>
+          <div class="body">Your decision is required as <b>Business Owner · Payments &amp; Customer Experience</b>. Per your organization policy, escalations sit here for up to <b>7 days</b> before auto-applying the CISO recommendation.</div>
+        </div>
+        <div class="urg">
+          <span class="num">4</span>
+          <span>escalations<br/>pending</span>
+        </div>
+      </div>
+
+      <!-- Role / scope strip -->
+      <div class="role-strip">
+        <div class="kv"><span class="lbl">Deciding as</span><span class="val">Rohan Shah · Business Owner</span></div>
+        <div class="sep"></div>
+        <div class="kv"><span class="lbl">Scope</span><span class="val">Payments &amp; Customer Experience</span></div>
+        <div class="sep"></div>
+        <div class="kv"><span class="lbl">Escalation target policy</span><span class="val">Business Owner (primary) → Security Committee (fallback)</span></div>
+        <div class="sep"></div>
+        <div class="kv"><span class="lbl">Decision deadline</span><span class="val" style="color:var(--sev-high);font-family:var(--font-mono)">28 Apr 2026 · 17:00 GST</span></div>
+      </div>
+
+      <!-- Bulk action bar -->
+      <div class="bulk-bar" id="bulkBar">
+        <div class="left">
+          <span class="count" id="bulkCount">0</span>
+          <span>risks selected</span>
+          <span style="color:var(--ink-60);font-size:var(--text-label)">· Apply same decision to all selected</span>
+        </div>
+        <div class="actions">
+          <button class="btn sm" onclick="clearSelection()">Clear</button>
+          <button class="btn sm ok" onclick="openModal('bulkModal')">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            Bulk approve renewal
+          </button>
+        </div>
+      </div>
+
+      <!-- Queue table card -->
+      <div class="queue-card">
+        <div class="qc-head">
+          <div>
+            <div class="title">Escalated risks</div>
+            <div class="meta">4 expired · awaiting your decision</div>
+          </div>
+          <div class="right">
+            <div class="srch">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" placeholder="Search escalated risks…"/>
+            </div>
+            <button class="btn sm">
+              <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              Filter
+            </button>
+          </div>
+        </div>
+
+        <table class="acc">
+          <thead>
+            <tr>
+              <th class="chk-col"><div class="chk" id="chkAll" onclick="toggleAll()"></div></th>
+              <th>Risk</th>
+              <th>Originally accepted</th>
+              <th>Expired</th>
+              <th>Days since</th>
+              <th>Reason</th>
+              <th>CISO recommends</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 — EXPANDED -->
+            <tr data-id="r1">
+              <td><div class="chk" onclick="toggleRow('r1')"></div></td>
+              <td>
+                <span class="ra-id">RA-2026-0189</span>
+                <div class="rd">Legacy payment gateway accepting TLS 1.0 · Checkout API</div>
+                <div class="rd-sub">High risk · Payments &amp; Customer Experience</div>
+              </td>
+              <td class="mono">18 Jan 2026</td>
+              <td class="mono">05 Apr 2026</td>
+              <td><span class="days-gone">+16d</span></td>
+              <td><span class="reason">Grace period expired</span></td>
+              <td><span class="rec remediate"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>Remediate immediately</span></td>
+              <td><button class="expand-btn open" onclick="toggleExpand('exp-r1', this)"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></td>
+            </tr>
+            <tr class="exp-row" id="exp-r1">
+              <td colspan="8">
+                <div class="exp-panel">
+                  <!-- Left column -->
+                  <div class="col">
+
+                    <!-- Complete acceptance history -->
+                    <div class="exp-block">
+                      <h4>Complete acceptance history</h4>
+                      <ul class="tl">
+                        <li><span class="tl-date">18 Jan 2026</span><span class="tl-ttl">Initial risk acceptance approved</span><span class="tl-desc">Business Owner Rohan Shah · 30-day term · expires 17 Feb 2026</span></li>
+                        <li class="warn"><span class="tl-date">12 Feb 2026</span><span class="tl-ttl">Extension 1 requested &amp; approved</span><span class="tl-desc">+30 days to 19 Mar 2026 · justification: vendor patch ETA Mar</span></li>
+                        <li class="warn"><span class="tl-date">15 Mar 2026</span><span class="tl-ttl">Extension 2 requested &amp; approved</span><span class="tl-desc">+17 days to 05 Apr 2026 · vendor patch delayed</span></li>
+                        <li class="crit"><span class="tl-date">05 Apr 2026</span><span class="tl-ttl">Expired · no extension requested</span><span class="tl-desc">7-day grace period started</span></li>
+                        <li class="crit"><span class="tl-date">12 Apr 2026</span><span class="tl-ttl">Escalated to Business Owner</span><span class="tl-desc">Grace period elapsed · no renewal request received from Control Owner</span></li>
+                      </ul>
+                    </div>
+
+                    <!-- Compensating controls status -->
+                    <div class="exp-block">
+                      <h4>Compensating controls · current status</h4>
+                      <div class="cc-list">
+                        <div class="cc-item ok"><div class="ic"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="lbl">WAF rule blocking non-PCI traffic</div><div class="st">ACTIVE</div></div>
+                        <div class="cc-item ok"><div class="ic"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="lbl">IP allowlist for internal test harness only</div><div class="st">ACTIVE</div></div>
+                        <div class="cc-item fail"><div class="ic"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="lbl">Daily gateway log review by SOC</div><div class="st">2 MISSED</div></div>
+                        <div class="cc-item ok"><div class="ic"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="lbl">Quarterly vendor pressure for TLS 1.2 patch</div><div class="st">ON TRACK</div></div>
+                      </div>
+                    </div>
+
+                    <!-- Business impact reassessment -->
+                    <div class="exp-block">
+                      <h4>Business impact reassessment · today</h4>
+                      <div class="impact-grid">
+                        <div class="impact-cell"><div class="lbl">Financial exposure</div><div class="val crit">$8.4M</div><div class="delta">↑ $0.6M vs original</div></div>
+                        <div class="impact-cell"><div class="lbl">Compliance impact</div><div class="val high">PCI-DSS 4.2.1</div><div class="delta">Assessor query raised 14 Apr</div></div>
+                        <div class="impact-cell"><div class="lbl">Customer reach</div><div class="val">~180K/day</div><div class="delta">No change</div></div>
+                        <div class="impact-cell"><div class="lbl">Operational impact</div><div class="val">Medium</div><div class="delta">Migration window now 6 wks</div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right column -->
+                  <div class="col">
+
+                    <!-- CISO recommendation -->
+                    <div class="exp-block">
+                      <h4>CISO recommendation</h4>
+                      <div class="ciso-rec">
+                        <div class="av">AR</div>
+                        <div class="rec-body">
+                          <div class="rec-meta"><b>Aditi Rao</b> · CISO · 18 Apr 2026 · 11:40 GST</div>
+                          <div class="rec-text"><span class="rec-tag">REMEDIATE</span>Two consecutive extensions and a third lapse signal the vendor will not deliver TLS 1.2 on schedule. SOC log-review misses reduce detective control effectiveness. I recommend a <b>firm 8-week remediation deadline</b> with budget for in-house gateway refactor if vendor slips again.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Decision triad -->
+                    <div class="exp-block">
+                      <div class="decision-wrap">
+                        <h4>Your decision · required</h4>
+                        <div class="dec-triad">
+                          <button class="dec-btn renew">
+                            <span class="top"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Approve renewal</span>
+                            <span class="desc">Extend acceptance 90 days (editable). Requires 200-char justification.</span>
+                          </button>
+                          <button class="dec-btn mandate" onclick="openModal('mandateModal')">
+                            <span class="top"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".9" fill="currentColor"/></svg>Mandate remediation</span>
+                            <span class="desc">Reject further acceptance. Deadline date picker + justification required.</span>
+                          </button>
+                          <button class="dec-btn transfer">
+                            <span class="top"><svg viewBox="0 0 24 24"><path d="M17 7l-5-5-5 5M12 2v15M17 17l-5 5-5-5"/></svg>Transfer ownership</span>
+                            <span class="desc">Escalate to Board / CRO. Requires explanation.</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="notif-block">
+                      <svg viewBox="0 0 24 24"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/><path d="M10 20a2 2 0 004 0"/></svg>
+                      <div>On decision, notifies: <b>Priya Menon (CO)</b>, <b>Aditi Rao (CISO)</b>, Payments engineering team, and compliance.</div>
+                    </div>
+
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr data-id="r2">
+              <td><div class="chk on" onclick="toggleRow('r2')"></div></td>
+              <td>
+                <span class="ra-id">RA-2026-0204</span>
+                <div class="rd">Redundant SSO paths during Okta migration · EU tenants</div>
+                <div class="rd-sub">High risk · Payments &amp; Customer Experience</div>
+              </td>
+              <td class="mono">12 Feb 2026</td>
+              <td class="mono">11 Apr 2026</td>
+              <td><span class="days-gone">+10d</span></td>
+              <td><span class="reason">Extension rejected by CISO</span></td>
+              <td><span class="rec renew"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Approve 60-day renewal</span></td>
+              <td><button class="expand-btn"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr data-id="r3">
+              <td><div class="chk on" onclick="toggleRow('r3')"></div></td>
+              <td>
+                <span class="ra-id">RA-2026-0251</span>
+                <div class="rd">Mobile app pinning disabled for instrumentation · iOS beta</div>
+                <div class="rd-sub">Medium risk · Payments &amp; Customer Experience</div>
+              </td>
+              <td class="mono">02 Feb 2026</td>
+              <td class="mono">08 Apr 2026</td>
+              <td><span class="days-gone">+13d</span></td>
+              <td><span class="reason">No extension request</span></td>
+              <td><span class="rec transfer"><svg viewBox="0 0 24 24"><path d="M17 7l-5-5-5 5"/></svg>Transfer to CTO</span></td>
+              <td><button class="expand-btn"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr data-id="r4">
+              <td><div class="chk" onclick="toggleRow('r4')"></div></td>
+              <td>
+                <span class="ra-id">RA-2026-0317</span>
+                <div class="rd">Vendor-managed database over public endpoint · analytics replica</div>
+                <div class="rd-sub">High risk · Payments &amp; Customer Experience</div>
+              </td>
+              <td class="mono">24 Feb 2026</td>
+              <td class="mono">07 Apr 2026</td>
+              <td><span class="days-gone">+14d</span></td>
+              <td><span class="reason">Grace period expired</span></td>
+              <td><span class="rec remediate"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>Remediate immediately</span></td>
+              <td><button class="expand-btn"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Committee voting panel (secondary view) -->
+      <div class="vote-card">
+        <div class="vote-head">
+          <div class="title">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 14c2.7 0 5 2.3 5 5v1"/></svg>
+            Security Committee vote · RA-2026-0317
+          </div>
+          <div class="meta">
+            <span>Majority required · 3 of 5</span>
+            <span class="sep" style="width:1px;height:12px;background:var(--line-strong)"></span>
+            <span>Deadline <span class="deadline">25 Apr 2026 · 17:00</span></span>
+          </div>
+        </div>
+        <div class="vote-body">
+          <div class="vote-ctx">Fallback triggered · Business Owner decision window expired without response. Committee vote determines outcome. If majority not reached by deadline, system defaults to CISO recommendation: <b style="color:var(--sev-critical)">Mandate remediation</b>.</div>
+          <div class="vote-grid">
+            <div class="vote-cell approved">
+              <div class="vote-av">RS<span class="badge ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+              <div class="vote-name">Rohan Shah</div>
+              <div class="vote-role">Business Owner · Payments</div>
+              <div class="vote-state approved">Approved</div>
+            </div>
+            <div class="vote-cell approved">
+              <div class="vote-av">AR<span class="badge ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+              <div class="vote-name">Aditi Rao</div>
+              <div class="vote-role">CISO</div>
+              <div class="vote-state approved">Approved</div>
+            </div>
+            <div class="vote-cell pending">
+              <div class="vote-av">DM<span class="badge pn"></span></div>
+              <div class="vote-name">Deepa Menon</div>
+              <div class="vote-role">CRO</div>
+              <div class="vote-state pending">Pending</div>
+            </div>
+            <div class="vote-cell rejected">
+              <div class="vote-av">JK<span class="badge no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div>
+              <div class="vote-name">Jane Kaur</div>
+              <div class="vote-role">CTO</div>
+              <div class="vote-state rejected">Rejected</div>
+            </div>
+            <div class="vote-cell pending">
+              <div class="vote-av">SA<span class="badge pn"></span></div>
+              <div class="vote-name">Sami Al-Amri</div>
+              <div class="vote-role">General Counsel</div>
+              <div class="vote-state pending">Pending</div>
+            </div>
+          </div>
+          <div class="vote-progress">
+            <div class="tally">
+              <div><b>2</b> approved · <b>1</b> rejected · <b>2</b> pending</div>
+            </div>
+            <div class="dflt">If no majority by deadline, CISO recommendation (Mandate remediation) applies automatically.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit chip -->
+      <div class="audit-chip">
+        <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M12 11v5"/><circle cx="12" cy="10" r=".9" fill="currentColor"/></svg>
+        All decisions are logged to the <b>immutable audit trail</b> — decision, timestamp, decision maker, justification, new expiry or remediation deadline, and voting record (if committee).
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Mandate remediation modal -->
+<div class="overlay" id="mandateModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="title">
+        <div class="chip mandate">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/><line x1="12" y1="10" x2="12" y2="15"/><circle cx="12" cy="18" r=".9" fill="currentColor"/></svg>
+        </div>
+        <div>
+          <h3>Mandate remediation · RA-2026-0189</h3>
+          <div class="sub">Legacy payment gateway · TLS 1.0 · $8.4M exposure</div>
+        </div>
+      </div>
+      <button class="close-x" onclick="closeModal('mandateModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Remediation deadline<span class="req">*</span></label>
+          <input type="date" value="2026-06-17"/>
+          <div class="hint">CISO suggests 8 weeks (17 Jun 2026)</div>
+        </div>
+        <div class="field">
+          <label>Budget authorization<span class="opt">optional</span></label>
+          <input type="text" value="$ 450,000" placeholder="$ 0"/>
+          <div class="hint">Adds pre-approved budget line to the remediation project.</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Assigned accountability<span class="req">*</span></label>
+        <select>
+          <option>Priya Menon · Control Owner · Payments Platform</option>
+          <option>Aditi Rao · CISO</option>
+          <option>Jane Kaur · CTO</option>
+          <option>Other executive…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Justification<span class="req">*</span></label>
+        <textarea rows="4">Two consecutive extensions and a third lapse indicate vendor TLS 1.2 patch is unreliable. An 8-week remediation window with authorized budget for in-house gateway refactor is required. No further acceptance will be granted on this finding.</textarea>
+        <div class="hint">215 / 200 chars minimum</div>
+      </div>
+      <div class="field">
+        <label>Create remediation project in</label>
+        <select>
+          <option>SE workspace · Payments Platform · tracked with weekly status</option>
+          <option>DM workspace · Vendor management track</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div class="left">
+        <svg viewBox="0 0 24 24" width="12" height="12" style="stroke:currentColor;fill:none;stroke-width:2"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        Decision will be logged immutably and notified to CO, CISO, and Security Engineering.
+      </div>
+      <div class="right">
+        <button class="btn" onclick="closeModal('mandateModal')">Cancel</button>
+        <button class="btn danger">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
+          Submit mandate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk approve modal -->
+<div class="overlay" id="bulkModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="title">
+        <div class="chip bulk">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <h3>Bulk approve renewal</h3>
+          <div class="sub">Apply the same expiry and justification to all selected risks.</div>
+        </div>
+      </div>
+      <button class="close-x" onclick="closeModal('bulkModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Affected risks · 2 selected</label>
+        <div class="affected-list">
+          <div class="affected-item">
+            <span class="id">RA-2026-0204</span>
+            <span class="nm">Redundant SSO paths during Okta migration · EU tenants</span>
+            <span class="bz">Payments &amp; CX</span>
+          </div>
+          <div class="affected-item">
+            <span class="id">RA-2026-0251</span>
+            <span class="nm">Mobile app pinning disabled for instrumentation · iOS beta</span>
+            <span class="bz">Payments &amp; CX</span>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>New expiry · applied to all<span class="req">*</span></label>
+          <input type="date" value="2026-07-21"/>
+          <div class="hint">Default +90 days · editable</div>
+        </div>
+        <div class="field">
+          <label>Escalation target on next lapse<span class="opt">policy</span></label>
+          <select>
+            <option>Security Committee (per org policy)</option>
+            <option>Board of Directors</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Shared justification<span class="req">*</span></label>
+        <textarea rows="3">Both acceptances relate to in-flight migrations with dependency on external vendors. Confirmed engineering readiness for 90-day window. CO to provide biweekly status to CISO; no further renewals without remediation plan.</textarea>
+        <div class="hint">208 / 200 chars minimum</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div class="left">
+        <svg viewBox="0 0 24 24" width="12" height="12" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M12 9v3M12 15h.01"/><circle cx="12" cy="12" r="10"/></svg>
+        Decisions logged per risk with a shared justification reference.
+      </div>
+      <div class="right">
+        <button class="btn" onclick="closeModal('bulkModal')">Cancel</button>
+        <button class="btn ok">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          Apply to 2 risks
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Theme picker (same pattern as other BO files)
+const themeBtn=document.getElementById('themeBtn');const themePop=document.getElementById('themePop');const themeLabel=document.getElementById('themeLabel');
+let currentFam='coffee';let currentMode='dark';
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open');});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&!themeBtn.contains(e.target))themePop.classList.remove('open');});
+function applyTheme(){document.body.className=currentFam+' '+currentMode;const famName=currentFam.charAt(0).toUpperCase()+currentFam.slice(1);const modeName=currentMode.charAt(0).toUpperCase()+currentMode.slice(1);themeLabel.textContent=famName+' · '+modeName;document.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===currentFam));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===currentMode));}
+document.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{currentFam=c.dataset.fam;applyTheme();}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{currentMode=b.dataset.mode;applyTheme();}));
+
+// Expand/collapse rows
+function toggleExpand(id,btn){const row=document.getElementById(id);if(!row)return;const tr=btn.closest('tr');if(row.style.display==='table-row'){row.style.display='none';btn.classList.remove('open');tr.classList.remove('expanded');}else{row.style.display='table-row';btn.classList.add('open');tr.classList.add('expanded');}}
+document.querySelectorAll('.acc .expand-btn').forEach(b=>{if(!b.onclick){b.addEventListener('click',function(){const tr=this.closest('tr');const id=tr.dataset.id;const expId='exp-'+id;let expRow=document.getElementById(expId);if(expRow){toggleExpand(expId,this);}else{alert('Additional rows use the same panel pattern as RA-2026-0189 above.');}});}});
+
+// Init r1 expanded
+document.getElementById('exp-r1').style.display='table-row';document.querySelector('tr[data-id="r1"]').classList.add('expanded');
+
+// Checkboxes / bulk bar
+function updateBulk(){const selected=document.querySelectorAll('.acc tbody tr:not(.exp-row) .chk.on').length;const bar=document.getElementById('bulkBar');document.getElementById('bulkCount').textContent=selected;if(selected>0){bar.classList.remove('hidden');}else{bar.classList.add('hidden');}const totalRows=document.querySelectorAll('.acc tbody tr:not(.exp-row)').length;const chkAll=document.getElementById('chkAll');chkAll.classList.toggle('on',selected===totalRows&&selected>0);}
+function toggleRow(id){const row=document.querySelector(`tr[data-id="${id}"]`);if(!row)return;const chk=row.querySelector('.chk');chk.classList.toggle('on');updateBulk();}
+function toggleAll(){const chkAll=document.getElementById('chkAll');const on=!chkAll.classList.contains('on');document.querySelectorAll('.acc tbody tr:not(.exp-row) .chk').forEach(c=>c.classList.toggle('on',on));chkAll.classList.toggle('on',on);updateBulk();}
+function clearSelection(){document.querySelectorAll('.acc tbody tr:not(.exp-row) .chk.on').forEach(c=>c.classList.remove('on'));document.getElementById('chkAll').classList.remove('on');updateBulk();}
+updateBulk();
+
+// Modal
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',(e)=>{if(e.target===o)o.classList.remove('open');}));
+
+// Top-level seg (individual vs committee) — scroll helper
+document.querySelectorAll('.ph .seg button').forEach((b,i)=>{b.addEventListener('click',()=>{document.querySelectorAll('.ph .seg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(i===1){document.querySelector('.vote-card').scrollIntoView({behavior:'smooth',block:'start'});}else{document.querySelector('.queue-card').scrollIntoView({behavior:'smooth',block:'start'});}});});
+
+applyTheme();
+</script>
+</body>
+</html>

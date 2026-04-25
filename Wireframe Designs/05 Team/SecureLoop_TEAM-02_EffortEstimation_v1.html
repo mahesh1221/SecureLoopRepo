@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-02 · Effort Estimation Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-ui:"IBM Plex Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+/* shell */
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.avatar.sm{width:22px;height:22px;font-size:10px}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn.sev-good{background:var(--status-good);border-color:var(--status-good);color:var(--brand-ink);font-weight:600}
+body.dark .btn.sev-good{color:#0B1E14}
+.btn.sev-crit{background:var(--sev-critical);border-color:var(--sev-critical);color:#fff;font-weight:600}
+.btn svg.icon{width:14px;height:14px}
+.btn-icon{width:36px;height:36px;padding:0}
+.btn-icon svg{width:16px;height:16px}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* state switcher / role switcher */
+.role-switcher{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.role-switcher button{padding:6px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:96px}
+.role-switcher button:hover{color:var(--ink-100)}
+.role-switcher button.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+.segmented{display:inline-flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:96px;text-align:center}
+.seg-btn:hover{color:var(--ink-100)} .seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* content */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1440px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-6)}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.1}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2)}
+
+/* hero workload summary card */
+.work-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6) var(--s-8);margin-bottom:var(--s-6)}
+.work-top{display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-8);align-items:center;padding-bottom:var(--s-6);border-bottom:1px solid var(--line)}
+.work-hero{display:flex;align-items:baseline;gap:var(--s-3)}
+.work-hero-num{font-family:var(--font-mono);font-size:var(--text-3xl);font-weight:700;color:var(--brand);letter-spacing:-0.02em;line-height:1}
+.work-hero-unit{font-family:var(--font-ui);font-size:var(--text-lg);color:var(--ink-60);font-weight:500}
+.work-hero-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+
+.breakdown-block{display:flex;flex-direction:column;gap:var(--s-3)}
+.breakdown-row{display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.breakdown-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);min-width:112px}
+.bd-chip{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:500;font-family:var(--font-ui)}
+.bd-chip .hrs{font-family:var(--font-mono);font-weight:600}
+.bd-chip .dot{width:6px;height:6px;border-radius:50%}
+.bd-chip.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .bd-chip.crit .dot{background:var(--sev-critical)}
+.bd-chip.high{background:var(--sev-high-bg);color:var(--sev-high)} .bd-chip.high .dot{background:var(--sev-high)}
+.bd-chip.med{background:var(--sev-medium-bg);color:var(--sev-medium)} .bd-chip.med .dot{background:var(--sev-medium)}
+.bd-chip.low{background:var(--sev-low-bg);color:var(--sev-low)} .bd-chip.low .dot{background:var(--sev-low)}
+.bd-chip.neutral{background:var(--bg-raised);color:var(--ink-80);border:1px solid var(--line)}
+
+/* sprint capacity bar */
+.sprint-bar-wrap{padding-top:var(--s-4)}
+.sprint-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-2)}
+.sprint-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600}
+.sprint-values{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)}
+.sprint-values .out{color:var(--sev-high);font-weight:600}
+.sprint-values .cap{color:var(--ink-100);font-weight:600}
+.sprint-bar{position:relative;height:12px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden}
+.sprint-fill{height:100%;border-radius:var(--r-full);position:relative;transition:width 320ms cubic-bezier(.2,.7,.2,1)}
+.sprint-fill.ok{background:var(--status-good)}
+.sprint-fill.over{background:var(--sev-critical)}
+.sprint-fill.warn{background:var(--sev-high)}
+.sprint-cap-mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink-100);border-radius:1px}
+.sprint-cap-mark::after{content:"cap";position:absolute;top:-16px;left:-12px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-60);font-weight:600}
+
+/* per-member list (manager view) */
+.member-panel{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-6);overflow:hidden}
+.member-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.member-title{display:flex;align-items:center;gap:var(--s-2);font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.member-title svg{width:16px;height:16px;color:var(--ink-60)}
+.member-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:var(--s-4);align-items:center;padding:var(--s-3) var(--s-6);border-bottom:1px solid var(--line);transition:background 140ms}
+.member-row:hover{background:var(--bg-hover)}
+.member-row:last-child{border-bottom:none}
+.mem-id{display:flex;align-items:center;gap:var(--s-3)}
+.mem-name{font-size:var(--text-body);font-weight:500}
+.mem-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:2px}
+.mem-bar{position:relative;height:8px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden;min-width:200px}
+.mem-bar-fill{height:100%;border-radius:var(--r-full)}
+.mem-bar-cap{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink-100);border-radius:1px}
+.mem-hrs{font-family:var(--font-mono);font-size:var(--text-label);font-weight:600;min-width:88px;text-align:right}
+.mem-hrs .val{color:var(--ink-100);font-size:var(--text-body)}
+.mem-hrs .cap{color:var(--ink-60);font-size:var(--text-micro)}
+
+/* detailed findings list */
+.table-wrap{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;margin-bottom:var(--s-6)}
+.table-head-row{display:grid;grid-template-columns:minmax(260px,1fr) 100px 100px 160px 100px 44px;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600;align-items:center}
+.row{display:grid;grid-template-columns:minmax(260px,1fr) 100px 100px 160px 100px 44px;gap:var(--s-3);padding:var(--s-4);border-bottom:1px solid var(--line);align-items:center;transition:background 140ms}
+.row:hover{background:var(--bg-hover)}
+.row:last-child{border-bottom:none}
+.cell-title{font-weight:500;color:var(--ink-100);font-size:var(--text-body);cursor:pointer;line-height:1.4}
+.cell-title:hover{color:var(--brand)}
+.cell-title-sub{display:flex;align-items:center;gap:var(--s-2);margin-top:3px;font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+
+.hrs-cell{font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;color:var(--ink-100)}
+.complex-pill{display:inline-flex;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.complex-pill.low{background:var(--status-good-bg);color:var(--status-good)}
+.complex-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.complex-pill.high{background:var(--sev-critical-bg);color:var(--sev-critical)}
+
+.fix-method{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-label);color:var(--ink-80);font-family:var(--font-mono)}
+.fix-method svg{width:14px;height:14px;color:var(--ink-60)}
+
+.flag-btn{width:28px;height:28px;border-radius:var(--r-sm);background:transparent;border:1px solid var(--line);color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 140ms}
+.flag-btn:hover{color:var(--sev-high);border-color:var(--sev-high)}
+.flag-btn svg{width:12px;height:12px}
+.flag-btn.flagged{color:var(--sev-high);border-color:var(--sev-high);background:var(--sev-high-bg)}
+
+/* row-menu */
+.row-menu-btn{width:28px;height:28px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.row-menu-btn:hover{background:var(--bg-raised);color:var(--ink-100)}
+.row-menu-btn svg{width:14px;height:14px}
+
+/* flagged queue (manager only) */
+.flag-queue{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.flag-queue-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.flag-queue-title{display:flex;align-items:center;gap:var(--s-2);font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.flag-queue-title .num-badge{display:inline-flex;padding:2px 8px;background:var(--sev-high-bg);color:var(--sev-high);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;letter-spacing:0.04em}
+.flag-item{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-4);align-items:flex-start}
+.flag-item:last-child{border-bottom:none}
+.flag-icon-wrap{width:32px;height:32px;border-radius:50%;background:var(--sev-high-bg);color:var(--sev-high);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flag-icon-wrap svg{width:14px;height:14px}
+.flag-title{font-weight:500;font-size:var(--text-body);color:var(--ink-100);margin-bottom:var(--s-1)}
+.flag-meta{display:flex;align-items:center;gap:var(--s-3);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-bottom:var(--s-3)}
+.flag-reason{color:var(--ink-80);font-size:var(--text-body);line-height:1.5;margin-bottom:var(--s-3);padding:var(--s-3);background:var(--bg-raised);border-left:2px solid var(--sev-high);border-radius:var(--r-xs)}
+.flag-compare{display:flex;gap:var(--s-6);margin-bottom:var(--s-3);font-family:var(--font-mono);font-size:var(--text-label)}
+.flag-compare-block{padding:var(--s-2) var(--s-3);background:var(--bg-raised);border-radius:var(--r-xs);min-width:140px}
+.flag-compare-label{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.flag-compare-val{color:var(--ink-100);font-weight:600}
+.flag-compare-val.suggested{color:var(--sev-high)}
+.flag-actions{display:flex;gap:var(--s-2);flex-direction:column}
+
+/* settings collapsed */
+.settings-collapsed{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);color:var(--ink-60);cursor:pointer}
+.settings-collapsed:hover{background:var(--bg-hover);color:var(--ink-100)}
+.settings-collapsed svg{width:12px;height:12px}
+
+/* section title row */
+.section-h{display:flex;align-items:center;justify-content:space-between;margin:var(--s-6) 0 var(--s-3)}
+.section-h-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.015em}
+.section-h-meta{color:var(--ink-60);font-size:var(--text-label)}
+
+/* trend chip */
+.trend-chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.trend-chip.up-bad{color:var(--sev-critical)}
+.trend-chip.dn-good{color:var(--status-good)}
+.trend-chip svg{width:10px;height:10px}
+
+/* view-only on toggle */
+body.tm .manager-only{display:none}
+body.mgr .member-only{display:none}
+</style>
+</head>
+<body class="coffee dark tm">
+
+<div class="app">
+  <!-- RAIL -->
+  <aside class="rail" aria-label="Primary">
+    <div class="logo">S</div>
+    <button class="rail-btn" title="My Findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn active" title="Effort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn" title="Fixes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></button>
+    <button class="rail-btn" title="Rollbacks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
+    <button class="rail-btn" title="Workload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>My Work</span><span class="sep">/</span>
+        <span class="current">Effort &amp; Capacity</span>
+        <span class="id-pill">TEAM-02</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="role-switcher" role="tablist" aria-label="View role">
+        <button class="active" data-role="tm">Team Member</button>
+        <button data-role="mgr">Manager</button>
+      </div>
+
+      <button class="settings-collapsed" title="Sprint capacity settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Sprint capacity: 60 hrs / 2-week
+      </button>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop" role="dialog">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row">
+            <button class="mode-btn active" data-mode="dark">Dark</button>
+            <button class="mode-btn" data-mode="light">Light</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-chip">
+        <span class="avatar">NR</span>
+        <div><div class="user-chip-name member-only">Nikhil Rao</div><div class="user-chip-name manager-only">Priya Menon</div><div class="user-chip-role member-only">Cloud Team</div><div class="user-chip-role manager-only">Cloud Team · Manager</div></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="page-eyebrow member-only">My Work · Capacity planning</div>
+          <div class="page-eyebrow manager-only">Team Lead · Cloud Team · Capacity planning</div>
+          <h1 class="page-title member-only">86 hours of work is in front of you</h1>
+          <h1 class="page-title manager-only">412 hours across your 5 team members</h1>
+          <p class="page-sub member-only">You're 26 hrs over your 60 hr sprint capacity. Flag any estimate that looks wrong.</p>
+          <p class="page-sub manager-only">3 members over capacity · 2 estimate challenges waiting for review</p>
+        </div>
+        <div style="display:flex;gap:var(--s-2)">
+          <button class="btn ghost"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Export CSV</button>
+          <button class="btn primary manager-only"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>Send to Sprint Planning</button>
+        </div>
+      </div>
+
+      <!-- WORKLOAD CARD -->
+      <div class="work-card">
+        <div class="work-top">
+          <div>
+            <div class="work-hero-label member-only">Total hours outstanding</div>
+            <div class="work-hero-label manager-only">Team hours outstanding</div>
+            <div class="work-hero">
+              <span class="work-hero-num member-only">86</span>
+              <span class="work-hero-num manager-only">412</span>
+              <span class="work-hero-unit">hrs</span>
+              <span class="trend-chip up-bad" style="margin-left:var(--s-3)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                <span class="member-only">+12 vs last week</span>
+                <span class="manager-only">+47 vs last week</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="breakdown-block">
+            <div class="breakdown-row">
+              <span class="breakdown-label">By severity</span>
+              <span class="bd-chip crit"><span class="dot"></span>Critical · <span class="hrs member-only">28 hrs</span><span class="hrs manager-only">132 hrs</span></span>
+              <span class="bd-chip high"><span class="dot"></span>High · <span class="hrs member-only">34 hrs</span><span class="hrs manager-only">168 hrs</span></span>
+              <span class="bd-chip med"><span class="dot"></span>Medium · <span class="hrs member-only">18 hrs</span><span class="hrs manager-only">82 hrs</span></span>
+              <span class="bd-chip low"><span class="dot"></span>Low · <span class="hrs member-only">6 hrs</span><span class="hrs manager-only">30 hrs</span></span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">By complexity</span>
+              <span class="bd-chip neutral">High complexity · <span class="hrs member-only">36 hrs</span><span class="hrs manager-only">184 hrs</span></span>
+              <span class="bd-chip neutral">Medium · <span class="hrs member-only">32 hrs</span><span class="hrs manager-only">152 hrs</span></span>
+              <span class="bd-chip neutral">Low · <span class="hrs member-only">18 hrs</span><span class="hrs manager-only">76 hrs</span></span>
+            </div>
+          </div>
+
+          <div style="text-align:right">
+            <div class="work-hero-label">Open findings</div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100)"><span class="member-only">12</span><span class="manager-only">41</span></div>
+          </div>
+        </div>
+
+        <!-- sprint capacity bar -->
+        <div class="sprint-bar-wrap">
+          <div class="sprint-row">
+            <span class="sprint-label">Sprint capacity · 2 weeks</span>
+            <div class="sprint-values">
+              <span class="member-only"><span class="out">86 hrs</span> outstanding · <span class="cap">60 hrs</span> capacity · <span style="color:var(--sev-critical);font-weight:600">+26 hrs over</span></span>
+              <span class="manager-only"><span class="out">412 hrs</span> outstanding · <span class="cap">300 hrs</span> team capacity · <span style="color:var(--sev-critical);font-weight:600">+112 hrs over</span></span>
+            </div>
+          </div>
+          <div class="sprint-bar">
+            <div class="sprint-fill over" style="width:100%"></div>
+            <div class="sprint-cap-mark" style="left:70%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANAGER ONLY : per-member list -->
+      <div class="manager-only">
+        <div class="section-h">
+          <h2 class="section-h-title">Per-member capacity</h2>
+          <span class="section-h-meta">5 members · 3 over capacity</span>
+        </div>
+        <div class="member-panel">
+          <div class="member-row">
+            <div class="mem-id"><span class="avatar">NR</span><div><div class="mem-name">Nikhil Rao</div><div class="mem-sub">Cloud · 12 findings open</div></div></div>
+            <div class="mem-bar"><div class="mem-bar-fill" style="width:100%;background:var(--sev-critical)"></div><div class="mem-bar-cap" style="left:70%"></div></div>
+            <div class="mem-hrs"><div class="val" style="color:var(--sev-critical)">86 hrs</div><div class="cap">cap 60</div></div>
+            <div><button class="btn ghost" style="padding:4px var(--s-2);height:auto">View →</button></div>
+          </div>
+          <div class="member-row">
+            <div class="mem-id"><span class="avatar" style="background:#3D9970;color:#fff">AK</span><div><div class="mem-name">Aaliyah Khan</div><div class="mem-sub">Cloud · 9 findings open</div></div></div>
+            <div class="mem-bar"><div class="mem-bar-fill" style="width:88%;background:var(--sev-high)"></div><div class="mem-bar-cap" style="left:70%"></div></div>
+            <div class="mem-hrs"><div class="val" style="color:var(--sev-high)">72 hrs</div><div class="cap">cap 60</div></div>
+            <div><button class="btn ghost" style="padding:4px var(--s-2);height:auto">View →</button></div>
+          </div>
+          <div class="member-row">
+            <div class="mem-id"><span class="avatar" style="background:#FF851B;color:#fff">JD</span><div><div class="mem-name">Jamal Diallo</div><div class="mem-sub">Cloud · 7 findings open</div></div></div>
+            <div class="mem-bar"><div class="mem-bar-fill" style="width:94%;background:var(--sev-critical)"></div><div class="mem-bar-cap" style="left:70%"></div></div>
+            <div class="mem-hrs"><div class="val" style="color:var(--sev-critical)">96 hrs</div><div class="cap">cap 60</div></div>
+            <div><button class="btn ghost" style="padding:4px var(--s-2);height:auto">View →</button></div>
+          </div>
+          <div class="member-row">
+            <div class="mem-id"><span class="avatar" style="background:#7FDBFF;color:#0B1E14">SL</span><div><div class="mem-name">Sophia Lindqvist</div><div class="mem-sub">Cloud · 8 findings open</div></div></div>
+            <div class="mem-bar"><div class="mem-bar-fill" style="width:82%;background:var(--sev-high)"></div><div class="mem-bar-cap" style="left:70%"></div></div>
+            <div class="mem-hrs"><div class="val" style="color:var(--sev-high)">68 hrs</div><div class="cap">cap 60</div></div>
+            <div><button class="btn ghost" style="padding:4px var(--s-2);height:auto">View →</button></div>
+          </div>
+          <div class="member-row">
+            <div class="mem-id"><span class="avatar" style="background:#B10DC9;color:#fff">MT</span><div><div class="mem-name">Mateo Torres</div><div class="mem-sub">Cloud · 5 findings open</div></div></div>
+            <div class="mem-bar"><div class="mem-bar-fill" style="width:60%;background:var(--status-good)"></div><div class="mem-bar-cap" style="left:70%"></div></div>
+            <div class="mem-hrs"><div class="val" style="color:var(--status-good)">48 hrs</div><div class="cap">cap 60</div></div>
+            <div><button class="btn ghost" style="padding:4px var(--s-2);height:auto">View →</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS: detailed findings vs flagged estimates (manager only) -->
+      <div class="section-h">
+        <h2 class="section-h-title member-only">Detailed findings &amp; effort</h2>
+        <h2 class="section-h-title manager-only">Team findings by effort</h2>
+        <div class="segmented">
+          <button class="seg-btn active">All</button>
+          <button class="seg-btn manager-only">Flagged estimates <span style="color:var(--sev-high);font-family:var(--font-mono);font-size:10px;margin-left:4px">2</span></button>
+          <button class="seg-btn">Sort: hours ↓</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head-row">
+          <div>Finding</div>
+          <div>Effort</div>
+          <div>Complexity</div>
+          <div>Suggested fix</div>
+          <div>Context</div>
+          <div></div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="cell-title">EKS cluster "prod-east" uses deprecated API version</div>
+            <div class="cell-title-sub">Kubernetes drift · FND-2026-00438</div>
+          </div>
+          <div class="hrs-cell">18</div>
+          <div><span class="complex-pill high">High</span></div>
+          <div class="fix-method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>IaC (Terraform)</div>
+          <div><span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">multi-tier deps</span></div>
+          <div><button class="flag-btn" title="Flag this estimate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></button></div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="cell-title">Lambda env var has plaintext DB password</div>
+            <div class="cell-title-sub">Secret exposure · FND-2026-00412</div>
+          </div>
+          <div class="hrs-cell">6</div>
+          <div><span class="complex-pill med">Medium</span></div>
+          <div class="fix-method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>Script</div>
+          <div><span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">similar avg 4.8h</span></div>
+          <div><button class="flag-btn flagged" title="Flagged"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path></svg></button></div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="cell-title">IAM role "eks-node-role" has * permissions on S3</div>
+            <div class="cell-title-sub">Over-permissive IAM · FND-2026-00476</div>
+          </div>
+          <div class="hrs-cell">4</div>
+          <div><span class="complex-pill med">Medium</span></div>
+          <div class="fix-method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>IaC (Terraform)</div>
+          <div><span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">similar avg 3.5h</span></div>
+          <div><button class="flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></button></div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="cell-title">Unencrypted RDS snapshot shared to external AWS account</div>
+            <div class="cell-title-sub">Data exposure · FND-2026-00501</div>
+          </div>
+          <div class="hrs-cell">3</div>
+          <div><span class="complex-pill low">Low</span></div>
+          <div class="fix-method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>API call</div>
+          <div><span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">similar avg 2.5h</span></div>
+          <div><button class="flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></button></div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="cell-title">S3 bucket "payments-logs-prod" has public read access</div>
+            <div class="cell-title-sub">Misconfiguration · FND-2026-00482</div>
+          </div>
+          <div class="hrs-cell">2.5</div>
+          <div><span class="complex-pill low">Low</span></div>
+          <div class="fix-method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>API call</div>
+          <div><span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">similar avg 2h</span></div>
+          <div><button class="flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></button></div>
+        </div>
+      </div>
+
+      <!-- MANAGER FLAG REVIEW QUEUE -->
+      <div class="manager-only">
+        <div class="section-h">
+          <h2 class="section-h-title">Estimate challenges awaiting review</h2>
+        </div>
+        <div class="flag-queue">
+          <div class="flag-queue-head">
+            <div class="flag-queue-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--sev-high)"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path></svg>
+              Flagged by team members
+              <span class="num-badge">2 pending</span>
+            </div>
+          </div>
+
+          <div class="flag-item">
+            <div class="flag-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path></svg></div>
+            <div>
+              <div class="flag-title">Lambda env var has plaintext DB password · FND-2026-00412</div>
+              <div class="flag-meta"><span class="avatar sm" style="background:#3D9970;color:#fff">AK</span>Aaliyah Khan · Cloud · 2 hrs ago</div>
+              <div class="flag-reason">"Estimate assumes we can just flip to Secrets Manager — but this Lambda has 3 downstream consumers that hard-code the env var. Need a coordinated rollout window with Invoice-Svc and Billing-Svc teams. Realistic is 12 hrs not 6."</div>
+              <div class="flag-compare">
+                <div class="flag-compare-block"><div class="flag-compare-label">Original estimate</div><div class="flag-compare-val">6 hrs</div></div>
+                <div class="flag-compare-block"><div class="flag-compare-label">Suggested new</div><div class="flag-compare-val suggested">12 hrs</div></div>
+                <div class="flag-compare-block"><div class="flag-compare-label">Δ</div><div class="flag-compare-val" style="color:var(--sev-high)">+6 hrs (+100%)</div></div>
+              </div>
+            </div>
+            <div class="flag-actions">
+              <button class="btn sev-good"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Approve 12h</button>
+              <button class="btn">Override</button>
+              <button class="btn ghost" style="color:var(--sev-critical)">Reject</button>
+            </div>
+          </div>
+
+          <div class="flag-item">
+            <div class="flag-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path></svg></div>
+            <div>
+              <div class="flag-title">CloudTrail logging disabled in us-west-2 · FND-2026-00455</div>
+              <div class="flag-meta"><span class="avatar sm" style="background:#FF851B;color:#fff">JD</span>Jamal Diallo · Cloud · yesterday</div>
+              <div class="flag-reason">"Estimate of 2 hrs doesn't account for the Terraform state-drift we've accumulated in us-west-2. State needs re-import before I can safely re-apply. Adding 3 hrs for drift cleanup."</div>
+              <div class="flag-compare">
+                <div class="flag-compare-block"><div class="flag-compare-label">Original estimate</div><div class="flag-compare-val">2 hrs</div></div>
+                <div class="flag-compare-block"><div class="flag-compare-label">Suggested new</div><div class="flag-compare-val suggested">5 hrs</div></div>
+                <div class="flag-compare-block"><div class="flag-compare-label">Δ</div><div class="flag-compare-val" style="color:var(--sev-high)">+3 hrs (+150%)</div></div>
+              </div>
+            </div>
+            <div class="flag-actions">
+              <button class="btn sev-good"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>Approve 5h</button>
+              <button class="btn">Override</button>
+              <button class="btn ghost" style="color:var(--sev-critical)">Reject</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');
+  document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePop.classList.remove('open')});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* ROLE SWITCHER (state-switcher-sync inside central mutator) */
+function setRole(role){
+  document.body.classList.remove('tm','mgr');
+  document.body.classList.add(role);
+  document.querySelectorAll('.role-switcher button').forEach(b=>b.classList.toggle('active',b.dataset.role===role));
+}
+document.querySelectorAll('.role-switcher button').forEach(b=>b.addEventListener('click',()=>setRole(b.dataset.role)));
+
+applyTheme();
+</script>
+</body>
+</html>

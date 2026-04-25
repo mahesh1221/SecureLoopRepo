@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SecureLoop · Risk Acceptance Register · AUD-05</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DS v1 tokens — 4 themes via body class ============ */
+:root{
+  --font-display:'Space Grotesk',sans-serif;
+  --font-ui:'IBM Plex Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --text-micro:10px; --text-label:11px; --text-body:13px; --text-lg:15px;
+  --text-xl:20px; --text-2xl:28px; --text-3xl:44px;
+  --r-xs:3px; --r-sm:6px; --r-md:10px; --r-full:999px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px; --s-12:48px;
+}
+body.coffee.dark{
+  --bg-page:#120804; --bg-base:#1A0F08; --bg-raised:#25170D; --bg-overlay:#2B1810; --bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07); --line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2; --ink-80:#D4CBB0; --ink-60:#A69B80; --ink-40:#7A7058; --ink-20:#3D3428;
+  --brand:#F3EEE2; --brand-ink:#120804; --brand-dim:rgba(243,238,226,.12); --brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B; --sev-critical-bg:rgba(255,107,91,.14);
+  --sev-high:#FFB04D; --sev-high-bg:rgba(255,176,77,.14);
+  --sev-medium:#FFD97A; --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5; --sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#8FE5B3; --status-good-bg:rgba(143,229,179,.14);
+  --logo-weight:700;
+}
+body.coffee.light{
+  --bg-page:#F3EEE2; --bg-base:#FBF8F1; --bg-raised:#EDE7D8; --bg-overlay:#FFFDF7; --bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10); --line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810; --ink-80:#4A2E1D; --ink-60:#6B5544; --ink-40:#907D68; --ink-20:#C9C0AA;
+  --brand:#6F4E37; --brand-ink:#F3EEE2; --brand-dim:rgba(111,78,55,.14); --brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637; --sev-critical-bg:rgba(201,70,55,.14);
+  --sev-high:#B8651D; --sev-high-bg:rgba(184,101,29,.14);
+  --sev-medium:#9E7F10; --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1; --sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50; --status-good-bg:rgba(46,139,80,.14);
+  --logo-weight:600;
+}
+body.blue.dark{
+  --bg-page:#0A1628; --bg-base:#0F1E35; --bg-raised:#162B48; --bg-overlay:#1C3557; --bg-hover:#22406B;
+  --line:rgba(232,244,253,.08); --line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD; --ink-80:#C0D5E8; --ink-60:#7A96B4; --ink-40:#556F8A; --ink-20:#2C4058;
+  --brand:#E8F4FD; --brand-ink:#0A1628; --brand-dim:rgba(232,244,253,.12); --brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B; --sev-critical-bg:rgba(255,122,107,.14);
+  --sev-high:#FFB347; --sev-high-bg:rgba(255,179,71,.14);
+  --sev-medium:#FFD97A; --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5; --sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#7EE0A8; --status-good-bg:rgba(126,224,168,.14);
+  --logo-weight:700;
+}
+body.blue.light{
+  --bg-page:#F2F8FD; --bg-base:#FFFFFF; --bg-raised:#E5EFF8; --bg-overlay:#FFFFFF; --bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08); --line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628; --ink-80:#1F3A5C; --ink-60:#4A6380; --ink-40:#7A8FA8; --ink-20:#B5C5D8;
+  --brand:#1E5A8A; --brand-ink:#F2F8FD; --brand-dim:rgba(30,90,138,.14); --brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A; --sev-critical-bg:rgba(199,62,58,.14);
+  --sev-high:#C17A1A; --sev-high-bg:rgba(193,122,26,.14);
+  --sev-medium:#9E7F10; --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1; --sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50; --status-good-bg:rgba(46,139,80,.14);
+  --logo-weight:600;
+}
+
+/* ============ base ============ */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-ui); font-size:var(--text-body); font-weight:400;
+  background:var(--bg-page); color:var(--ink-100);
+  letter-spacing:-.003em; line-height:1.5;
+  min-height:100vh;
+  display:flex;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit; text-decoration:none}
+button{font-family:inherit}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px; border-radius:var(--r-xs)}
+
+/* universal svg guard */
+svg{ width:16px; height:16px; flex-shrink:0 }
+
+/* mono numerics */
+.mono{ font-family:var(--font-mono); font-feature-settings:'tnum' }
+
+/* ============ shell ============ */
+.shell{ display:flex; min-height:100vh }
+.rail{
+  width:64px; flex-shrink:0;
+  background:var(--bg-base); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center;
+  padding:var(--s-3) 0 var(--s-3);
+  position:sticky; top:0; height:100vh;
+}
+.rail .logo{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--brand); color:var(--brand-ink);
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:var(--logo-weight);
+  font-size:18px; letter-spacing:-.02em;
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-6);
+}
+.rail-item{
+  width:40px; height:40px; display:grid; place-items:center;
+  border-radius:var(--r-sm); color:var(--ink-60);
+  margin-bottom:var(--s-2); cursor:pointer; transition:all 140ms;
+  position:relative;
+}
+.rail-item svg{ width:18px; height:18px }
+.rail-item:hover{ background:var(--bg-raised); color:var(--ink-100) }
+.rail-item.active{ background:var(--brand-dim); color:var(--brand) }
+.rail-item.active::before{
+  content:""; position:absolute; left:-12px; top:8px; bottom:8px; width:2px;
+  background:var(--brand); border-radius:var(--r-xs);
+}
+
+.main{ flex:1; display:flex; flex-direction:column; min-width:0 }
+
+/* ============ topbar ============ */
+.topbar{
+  height:56px; flex-shrink:0;
+  background:var(--bg-base); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--s-6);
+  position:sticky; top:0; z-index:30;
+}
+.crumbs{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-label); color:var(--ink-60) }
+.crumbs .sep{ color:var(--ink-40) }
+.crumbs .current{ color:var(--ink-100); font-weight:500 }
+.id-pill{
+  padding:2px 6px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono);
+  font-size:var(--text-micro); letter-spacing:.04em; font-weight:600;
+}
+.top-right{ display:flex; align-items:center; gap:var(--s-3) }
+
+/* theme picker */
+.tp-btn{
+  height:32px; padding:0 var(--s-3); display:inline-flex; align-items:center; gap:var(--s-2);
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-size:var(--text-label); font-weight:500; cursor:pointer;
+  transition:all 140ms;
+}
+.tp-btn:hover{ background:var(--bg-hover); border-color:var(--line-strong) }
+.tp-swatches{ display:flex; flex-direction:column; gap:2px }
+.tp-sw{ width:14px; height:6px; border-radius:1px; border:1px solid var(--line-strong) }
+.tp-popover{
+  position:absolute; top:calc(100% + 8px); right:0;
+  width:340px; background:var(--bg-overlay); border:1px solid var(--line-strong);
+  border-radius:var(--r-md); padding:var(--s-4);
+  box-shadow:0 12px 48px rgba(0,0,0,.4);
+  z-index:80; display:none;
+}
+.tp-popover.open{ display:block }
+.tp-section{ margin-bottom:var(--s-4) }
+.tp-section:last-child{ margin-bottom:0 }
+.tp-label{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); margin-bottom:var(--s-2); font-weight:600;
+}
+.tp-families{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2) }
+.tp-card{
+  background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:var(--s-3); cursor:pointer; transition:all 140ms;
+  text-align:left;
+}
+.tp-card:hover{ border-color:var(--line-strong) }
+.tp-card.active{ box-shadow:0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,.12); border-color:transparent }
+.tp-card .tp-preview{ display:flex; gap:3px; margin-bottom:var(--s-2) }
+.tp-card .tp-preview span{ width:16px; height:16px; border-radius:var(--r-xs); border:1px solid var(--line-strong) }
+.tp-card .tp-name{ font-weight:600; font-size:var(--text-body); color:var(--ink-100) }
+.tp-card .tp-desc{ font-size:var(--text-micro); color:var(--ink-60); margin-top:2px }
+.tp-modes{ display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm) }
+.tp-mode{
+  flex:1; padding:6px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-size:var(--text-label); font-weight:500; cursor:pointer; transition:all 140ms;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.tp-mode:hover{ color:var(--ink-100) }
+.tp-mode.active{ background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12) }
+.tp-mode svg{ width:14px; height:14px }
+
+/* ============ buttons ============ */
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:8px var(--s-4); height:36px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-body); font-weight:500;
+  cursor:pointer; transition:all 140ms; white-space:nowrap;
+}
+.btn:hover{ background:var(--bg-hover); border-color:var(--line-strong) }
+.btn.primary{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600 }
+.btn.primary:hover{ filter:brightness(1.08) }
+.btn.primary:disabled{ opacity:.5; cursor:not-allowed; filter:none }
+.btn.ghost{ background:transparent }
+.btn.ghost:hover{ background:var(--bg-raised) }
+.btn svg{ width:14px; height:14px }
+.icon-btn{
+  width:36px; height:36px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer; transition:all 140ms;
+}
+.icon-btn:hover{ background:var(--bg-raised); color:var(--ink-100); border-color:var(--line) }
+
+/* ============ inputs ============ */
+.input, .select, .textarea{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-label); outline:none;
+  width:100%;
+}
+.input:focus, .select:focus, .textarea:focus{
+  border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim);
+}
+.select{ appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat:no-repeat; background-position:right 8px center; padding-right:28px }
+
+/* ============ badges ============ */
+.p-badge, .status-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  font-family:var(--font-ui); font-size:9px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
+}
+.crit{ background:var(--sev-critical-bg); color:var(--sev-critical) }
+.high{ background:var(--sev-high-bg); color:var(--sev-high) }
+.med{ background:var(--sev-medium-bg); color:var(--sev-medium) }
+.low{ background:var(--sev-low-bg); color:var(--sev-low) }
+.good{ background:var(--status-good-bg); color:var(--status-good) }
+.accepted{ background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong) }
+.dot{ width:8px; height:8px; border-radius:var(--r-full); display:inline-block; flex-shrink:0 }
+
+/* ============ cards ============ */
+.card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.card:hover{ border-color:var(--line-strong) }
+
+/* ============ segmented ============ */
+.segmented{ display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm) }
+.seg-btn{
+  padding:4px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; min-width:64px; text-align:center;
+}
+.seg-btn:hover{ color:var(--ink-100) }
+.seg-btn.active{ background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12) }
+
+/* ============ layout helpers ============ */
+.page{ padding:var(--s-6); flex:1; overflow-y:auto }
+.page-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-6);
+  margin-bottom:var(--s-6);
+}
+.page-title{
+  font-family:var(--font-display); font-size:var(--text-2xl); font-weight:600;
+  letter-spacing:-.02em; margin:0 0 var(--s-2); color:var(--ink-100);
+}
+.page-sub{ font-size:var(--text-body); color:var(--ink-60); margin:0 }
+
+.section-title{
+  font-family:var(--font-display); font-size:var(--text-xl); font-weight:600;
+  letter-spacing:-.015em; margin:0 0 var(--s-3); color:var(--ink-100);
+}
+.eyebrow{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+}
+
+/* ============ read-only auditor banner (persistent) ============ */
+/* solid bg (no transparency) via two-layer background: coloured tint over solid base */
+.ro-banner{
+  flex-shrink:0;
+  background:linear-gradient(var(--sev-low-bg), var(--sev-low-bg)), var(--bg-base);
+  border-bottom:1px solid var(--line-strong);
+  padding:10px var(--s-6);
+  display:flex; align-items:center; gap:var(--s-3);
+  color:var(--ink-100); font-size:var(--text-label);
+  position:sticky; top:56px; z-index:29;
+}
+.ro-banner .ro-eye{
+  width:28px; height:28px; display:grid; place-items:center;
+  background:var(--sev-low); color:var(--bg-page); border-radius:var(--r-full);
+  flex-shrink:0;
+}
+.ro-banner .ro-eye svg{ width:14px; height:14px; color:var(--bg-page) }
+.ro-banner .ro-text{ flex:1; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap }
+.ro-banner .ro-text strong{ color:var(--ink-100); font-weight:600; letter-spacing:.04em }
+.ro-banner .ro-text .ro-sep{ color:var(--ink-40) }
+.ro-banner .ro-meta{
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  font-family:var(--font-mono); font-size:var(--text-micro); color:var(--ink-80);
+  padding:3px 8px; background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs);
+}
+
+/* ============ tables ============ */
+.t{
+  width:100%; border-collapse:collapse;
+  font-size:var(--text-label);
+}
+.t thead th{
+  text-align:left; padding:10px var(--s-3);
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+  border-bottom:1px solid var(--line);
+  background:var(--bg-base);
+  position:sticky; top:0;
+}
+.t tbody td{
+  padding:10px var(--s-3);
+  border-bottom:1px solid var(--line);
+  color:var(--ink-100); vertical-align:middle;
+}
+.t tbody tr:hover{ background:var(--bg-raised) }
+.t tbody tr.selected{ background:var(--brand-dim) }
+.t tbody tr.selected td{ color:var(--ink-100) }
+.t tbody tr:last-child td{ border-bottom:none }
+.t tbody tr.expired td{ background:var(--sev-critical-bg) }
+.t tbody tr.expired:hover td{ background:var(--sev-critical-bg); filter:brightness(1.05) }
+
+/* ============ chips ============ */
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:var(--r-full);
+  background:var(--bg-raised); border:1px solid var(--line);
+  color:var(--ink-80); font-size:var(--text-label); font-weight:500;
+}
+.chip.brand{ background:var(--brand-dim); border-color:transparent; color:var(--brand) }
+.chip.ghost{ background:transparent }
+.chip svg{ width:12px; height:12px }
+
+/* ============ callout (chip + tint + all-sides border) ============ */
+.callout{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:var(--s-4) var(--s-6);
+  background:var(--brand-dim); border:1px solid var(--line-strong);
+  border-radius:var(--r-md);
+}
+.callout .co-chip{
+  width:30px; height:30px; border-radius:var(--r-full);
+  display:grid; place-items:center;
+  background:var(--brand); color:var(--brand-ink);
+  flex-shrink:0;
+}
+.callout .co-chip svg{ width:16px; height:16px }
+.callout.warn{ background:var(--sev-high-bg); border-color:var(--sev-high) }
+.callout.warn .co-chip{ background:var(--sev-high); color:var(--bg-page) }
+.callout.crit{ background:var(--sev-critical-bg); border-color:var(--sev-critical) }
+.callout.crit .co-chip{ background:var(--sev-critical); color:var(--bg-page) }
+.callout.good{ background:var(--status-good-bg); border-color:var(--status-good) }
+.callout.good .co-chip{ background:var(--status-good); color:var(--bg-page) }
+.callout .co-body{ flex:1 }
+.callout .co-title{ font-weight:600; color:var(--ink-100); font-size:var(--text-body); margin:0 0 2px }
+.callout .co-desc{ color:var(--ink-80); font-size:var(--text-label); margin:0 }
+
+/* ============ KPI cards ============ */
+.kpi-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--s-3); margin-bottom:var(--s-6) }
+.kpi{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4); display:flex; flex-direction:column; gap:var(--s-2);
+}
+.kpi .k-label{
+  font-size:var(--text-micro); text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-60); font-weight:600;
+}
+.kpi .k-value{
+  font-family:var(--font-mono); font-size:var(--text-2xl); font-weight:700; letter-spacing:-.02em;
+  color:var(--ink-100); line-height:1;
+}
+.kpi .k-value.sev-crit{ color:var(--sev-critical) }
+.kpi .k-value.sev-high{ color:var(--sev-high) }
+.kpi .k-value.sev-good{ color:var(--status-good) }
+.kpi .k-meta{ font-size:var(--text-label); color:var(--ink-60) }
+
+/* ============ utility ============ */
+.row{ display:flex; align-items:center; gap:var(--s-3) }
+.row.between{ justify-content:space-between }
+.row.wrap{ flex-wrap:wrap }
+.col{ display:flex; flex-direction:column; gap:var(--s-3) }
+.spacer{ flex:1 }
+.muted{ color:var(--ink-60) }
+.strong{ font-weight:600; color:var(--ink-100) }
+.nowrap{ white-space:nowrap }
+
+/* grain overlay */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:200;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+  opacity:.025; mix-blend-mode:overlay;
+}
+body.coffee.light::before, body.blue.light::before{ opacity:.05 }
+
+/* ============ animations ============ */
+@keyframes riseIn{ from{ opacity:0; transform:translateY(16px) scale(.98) } to{ opacity:1; transform:none } }
+.rise{ animation:riseIn 320ms cubic-bezier(.2,.7,.2,1) both }
+</style>
+</head>
+<body class="coffee dark">
+<aside class="rail">
+  <div class="logo">S</div>
+  <div class="rail-item" title="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+  <div class="rail-item " title="Evidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div>
+  <div class="rail-item " title="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+  <div class="rail-item " title="Fix logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 11 11 13 15 9"/></svg></div>
+  <div class="rail-item active" title="Risk acceptances"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+  <div class="rail-item" title="Activity log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+  <div class="spacer"></div>
+  <div class="rail-item" title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <nav class="crumbs">
+      <span>SecureLoop</span>
+      <span class="sep">/</span>
+      <span>Auditor Portal</span>
+      <span class="sep">/</span>
+      <span class="current">Risk acceptance register</span>
+      <span class="id-pill">AUD-05-1</span>
+    </nav>
+    <div class="top-right">
+      <div class="chip brand" title="Auditor session">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="mono" id="countdownPill">2d 14h 23m</span>
+      </div>
+      <div style="position:relative">
+        <button class="tp-btn" id="tpToggle" aria-haspopup="true" aria-expanded="false">
+          <span class="tp-swatches">
+            <span class="tp-sw" id="tpSw1" style="background:var(--bg-raised)"></span>
+            <span class="tp-sw" id="tpSw2" style="background:var(--brand)"></span>
+          </span>
+          <span id="tpLabel">Coffee · Dark</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="tp-popover" id="tpPopover" role="dialog" aria-label="Theme picker">
+          <div class="tp-section">
+            <div class="tp-label">Palette family</div>
+            <div class="tp-families">
+              <button class="tp-card" data-family="coffee">
+                <div class="tp-preview">
+                  <span style="background:#1A0F08"></span>
+                  <span style="background:#F3EEE2"></span>
+                  <span style="background:#6F4E37"></span>
+                </div>
+                <div class="tp-name">Coffee</div>
+                <div class="tp-desc">Warm · Investigation</div>
+              </button>
+              <button class="tp-card" data-family="blue">
+                <div class="tp-preview">
+                  <span style="background:#0F1E35"></span>
+                  <span style="background:#E8F4FD"></span>
+                  <span style="background:#1E5A8A"></span>
+                </div>
+                <div class="tp-name">Blue</div>
+                <div class="tp-desc">Cool · Enterprise</div>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-label">Appearance</div>
+            <div class="tp-modes">
+              <button class="tp-mode" data-mode="dark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                Dark
+              </button>
+              <button class="tp-mode" data-mode="light">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                Light
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- persistent read-only banner -->
+  <div class="ro-banner">
+    <div class="ro-eye">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div class="ro-text">
+      <strong>READ-ONLY AUDITOR ACCESS</strong>
+      <span class="muted">No modifications permitted. All actions logged.</span>
+      <span class="ro-sep">·</span>
+      <span class="ro-meta">Engagement&nbsp;<span style="color:var(--ink-100)">Enterprise-FINTECH-001</span></span>
+      <span class="ro-meta">Framework&nbsp;<span style="color:var(--ink-100)">SOC 2 Type II</span></span>
+      <span class="ro-meta">Session&nbsp;<span style="color:var(--ink-100)">a4f9-0c21-b771</span></span>
+    </div>
+  </div>
+
+<style>
+/* ---------- AUD-05 page ---------- */
+.wrap{padding:var(--s-6) var(--s-8);max-width:1560px;margin:0 auto}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:var(--s-6);gap:var(--s-6)}
+.page-head h1{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);margin:0 0 var(--s-1) 0;letter-spacing:-.5px}
+.page-head .sub{color:var(--ink-60);font-size:var(--text-body)}
+.page-head .rt{display:flex;gap:var(--s-3);align-items:center}
+
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-6)}
+.kpi{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6)}
+.kpi .lbl{font-size:var(--text-label);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-60);margin-bottom:var(--s-2);font-weight:500}
+.kpi .val{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);line-height:1;margin-bottom:var(--s-2)}
+.kpi .foot{font-size:var(--text-label);color:var(--ink-60);display:flex;align-items:center;gap:var(--s-1)}
+.kpi.good .val{color:var(--status-good)}
+.kpi.crit .val{color:var(--sev-critical)}
+.kpi.warn .val{color:var(--sev-high)}
+.kpi.crit{border-left:3px solid var(--sev-critical)}
+.kpi.good{border-left:3px solid var(--status-good)}
+.kpi.warn{border-left:3px solid var(--sev-high)}
+
+/* compliance-gap callout — LOCKED PATTERN */
+.gap-cal{display:flex;gap:var(--s-4);background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);margin-bottom:var(--s-6);align-items:center}
+.gap-cal .chip{width:30px;height:30px;border-radius:50%;background:var(--sev-critical);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gap-cal .chip svg{width:16px;height:16px;stroke:var(--brand-ink)}
+.gap-cal .txt{flex:1}
+.gap-cal .ttl{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);color:var(--sev-critical);margin-bottom:var(--s-1);letter-spacing:-.2px}
+.gap-cal .body{font-size:var(--text-body);color:var(--ink-80);line-height:1.5}
+
+/* tabs */
+.tabs{display:flex;gap:0;margin-bottom:var(--s-4);border-bottom:1px solid var(--line)}
+.tab{padding:var(--s-3) var(--s-4);font-size:var(--text-body);color:var(--ink-60);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:var(--s-2);font-weight:500;transition:all .15s}
+.tab:hover{color:var(--ink-80)}
+.tab.active{color:var(--ink-100);border-bottom-color:var(--brand)}
+.tab.crit{color:var(--sev-critical)}
+.tab.crit.active{border-bottom-color:var(--sev-critical)}
+.tab .cnt{background:var(--bg-overlay);padding:2px 8px;border-radius:var(--r-full);font-size:var(--text-micro);font-weight:600;color:var(--ink-80);border:1px solid var(--line)}
+.tab.crit .cnt{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:var(--sev-critical)}
+.tab.active .cnt{background:var(--brand-dim);color:var(--ink-100);border-color:var(--line-strong)}
+.tab .dot-red{width:6px;height:6px;border-radius:50%;background:var(--sev-critical);margin-right:2px}
+
+/* filter bar */
+.filt{display:flex;gap:var(--s-3);align-items:center;margin-bottom:var(--s-4);flex-wrap:wrap}
+.filt .search{flex:0 0 280px;position:relative}
+.filt .search input{width:100%;padding:8px 12px 8px 34px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body)}
+.filt .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-60)}
+.filt .sel{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 30px 8px 12px;color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A69B80' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:14px}
+.filt .spacer{flex:1}
+.filt .rcount{font-size:var(--text-label);color:var(--ink-60)}
+.filt .rcount strong{color:var(--ink-100);font-weight:600}
+
+/* register layout: table + sidebar */
+.reg{display:grid;grid-template-columns:1fr 420px;gap:var(--s-6)}
+
+/* table */
+.reg-table{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.rt-head{display:grid;grid-template-columns:120px 110px 100px 80px 1fr 110px 110px 130px 80px;gap:var(--s-2);padding:var(--s-3) var(--s-4);background:var(--bg-overlay);border-bottom:1px solid var(--line);font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-60);font-weight:600}
+.rt-row{display:grid;grid-template-columns:120px 110px 100px 80px 1fr 110px 110px 130px 80px;gap:var(--s-2);padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;font-size:var(--text-body);align-items:center}
+.rt-row:last-child{border-bottom:none}
+.rt-row:hover{background:var(--bg-hover)}
+.rt-row.selected{background:var(--brand-dim);border-left:3px solid var(--brand);padding-left:calc(var(--s-4) - 3px)}
+.rt-row.expired{background:rgba(255,107,91,.06)}
+.rt-row.expired:hover{background:rgba(255,107,91,.12)}
+.rt-row.expired.selected{background:rgba(255,107,91,.16)}
+.rt-row .mono{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)}
+.rt-row .lnk{color:var(--ink-100);text-decoration:none;border-bottom:1px dotted var(--ink-40);font-family:var(--font-mono);font-size:var(--text-label);cursor:pointer}
+.rt-row .lnk:hover{border-bottom-style:solid;color:var(--brand)}
+.rt-row .sev{font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;padding:2px 6px;border-radius:var(--r-xs);display:inline-block;width:fit-content;text-transform:uppercase;letter-spacing:.05em}
+.rt-row .sev.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.rt-row .sev.high{background:var(--sev-high-bg);color:var(--sev-high)}
+.rt-row .sev.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.rt-row .bo{color:var(--ink-80)}
+.rt-row .st{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);font-weight:600}
+.rt-row .st.active{color:var(--status-good)}
+.rt-row .st.expired{color:var(--sev-critical)}
+.rt-row .st.expiring{color:var(--sev-high)}
+.rt-row .st svg{width:14px;height:14px}
+.rt-row .days{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60);text-align:right}
+.rt-row .days.neg{color:var(--sev-critical);font-weight:600}
+
+/* detail sidebar */
+.detail{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-md);position:sticky;top:calc(64px + 56px + 16px);max-height:calc(100vh - 180px);overflow-y:auto;align-self:start}
+.detail .hdr{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);background:var(--bg-overlay)}
+.detail .hdr .eyebrow{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-60);margin-bottom:var(--s-1)}
+.detail .hdr h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);margin:0 0 var(--s-2) 0}
+.detail .hdr .id{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60)}
+.detail .hdr .pkg{display:inline-flex;align-items:center;gap:6px;background:var(--status-good-bg);color:var(--status-good);padding:4px 8px;border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;margin-top:var(--s-2);text-transform:uppercase;letter-spacing:.05em}
+.detail .hdr .pkg svg{width:12px;height:12px}
+
+.detail .sect{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line)}
+.detail .sect:last-child{border-bottom:none}
+.detail .sect .st-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-60);margin-bottom:var(--s-2);font-weight:600}
+.detail .sect .st-body{font-size:var(--text-body);color:var(--ink-100);line-height:1.55}
+
+/* expired banner in sidebar */
+.exp-banner{background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-3)}
+.exp-banner .t{color:var(--sev-critical);font-weight:700;font-size:var(--text-body);display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-1)}
+.exp-banner .t svg{width:14px;height:14px}
+.exp-banner .d{font-size:var(--text-label);color:var(--ink-80);line-height:1.4}
+
+/* justification block */
+.just{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);font-size:var(--text-body);color:var(--ink-80);line-height:1.6;font-style:italic}
+
+/* compensating controls list */
+.cc-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.cc{display:flex;gap:var(--s-3);align-items:flex-start;padding:var(--s-2) var(--s-3);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm)}
+.cc .check{width:18px;height:18px;border-radius:50%;background:var(--status-good-bg);color:var(--status-good);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cc .check svg{width:12px;height:12px}
+.cc .c-txt{font-size:var(--text-body);color:var(--ink-100);line-height:1.4}
+.cc .c-sub{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+
+/* BO sign-off block */
+.bo-block{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)}
+.bo-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:var(--text-body)}
+.bo-row:last-child{border-bottom:none}
+.bo-row .k{color:var(--ink-60);font-size:var(--text-label)}
+.bo-row .v{color:var(--ink-100);font-family:var(--font-mono);font-size:var(--text-label)}
+.bo-row .v.name{font-family:var(--font-ui);font-weight:500}
+.bo-row .method{display:inline-flex;align-items:center;gap:4px;background:var(--brand-dim);padding:2px 6px;border-radius:var(--r-xs);font-size:var(--text-micro)}
+
+/* traceability xrefs */
+.xref{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) var(--s-4);background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-2);text-decoration:none;color:inherit;transition:all .12s;cursor:pointer}
+.xref:last-child{margin-bottom:0}
+.xref:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.xref .l{display:flex;align-items:center;gap:var(--s-3);flex:1;min-width:0}
+.xref .l-icon{width:28px;height:28px;border-radius:var(--r-sm);background:var(--brand-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink-100)}
+.xref .l-icon svg{width:14px;height:14px}
+.xref .l-txt{min-width:0}
+.xref .l-lbl{font-size:var(--text-micro);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-60);margin-bottom:2px}
+.xref .l-val{font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-100);font-weight:500;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.xref .l-sub{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.xref .arr{color:var(--ink-40);flex-shrink:0}
+.xref .arr svg{width:16px;height:16px}
+
+/* escalation timeline */
+.esc-tl{display:flex;flex-direction:column;gap:var(--s-3);margin-top:var(--s-2)}
+.esc-row{display:flex;gap:var(--s-3);align-items:flex-start;position:relative}
+.esc-row::before{content:"";position:absolute;left:7px;top:18px;bottom:-12px;width:1px;background:var(--line)}
+.esc-row:last-child::before{display:none}
+.esc-row .dot{width:14px;height:14px;border-radius:50%;background:var(--sev-critical);flex-shrink:0;margin-top:3px;border:2px solid var(--bg-raised);box-shadow:0 0 0 1px var(--sev-critical)}
+.esc-row .dot.done{background:var(--status-good);box-shadow:0 0 0 1px var(--status-good)}
+.esc-row .dot.pending{background:var(--bg-raised);border-color:var(--ink-40);box-shadow:0 0 0 1px var(--ink-40)}
+.esc-row .e-body{flex:1;min-width:0}
+.esc-row .e-ttl{font-size:var(--text-body);color:var(--ink-100);font-weight:500;line-height:1.3}
+.esc-row .e-meta{font-size:var(--text-micro);color:var(--ink-60);margin-top:3px;font-family:var(--font-mono)}
+.esc-row .e-note{font-size:var(--text-label);color:var(--ink-80);margin-top:4px;line-height:1.4;font-style:italic}
+</style>
+<style>
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r-sm);font-size:var(--text-body);font-family:var(--font-ui);font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .12s}
+.btn.ghost{background:transparent;color:var(--ink-80);border-color:var(--line)}
+.btn.ghost:hover{background:var(--bg-hover);color:var(--ink-100);border-color:var(--line-strong)}
+</style>
+<div class="wrap">
+  
+<div class="page-head">
+  <div>
+    <h1>Risk acceptance register</h1>
+    <div class="sub">Full visibility · expired acceptances flagged as compliance gaps · 12 total records in audit scope</div>
+  </div>
+  <div class="rt">
+    <button class="btn ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export register (CSV)
+    </button>
+  </div>
+</div>
+
+  
+<div class="kpis">
+  <div class="kpi">
+    <div class="lbl">Total acceptances</div>
+    <div class="val">12</div>
+    <div class="foot">Across all statuses · window 01 Jan → 31 Mar 2026</div>
+  </div>
+  <div class="kpi good">
+    <div class="lbl">Active</div>
+    <div class="val">6</div>
+    <div class="foot">Currently within expiry · valid sign-off</div>
+  </div>
+  <div class="kpi crit">
+    <div class="lbl">Expired · compliance gaps</div>
+    <div class="val">4</div>
+    <div class="foot">No authorized sign-off · flag as findings</div>
+  </div>
+  <div class="kpi warn">
+    <div class="lbl">Expiring soon</div>
+    <div class="val">2</div>
+    <div class="foot">Within 30 days · renewal required</div>
+  </div>
+</div>
+
+  
+<div class="gap-cal">
+  <div class="chip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  </div>
+  <div class="txt">
+    <div class="ttl">COMPLIANCE GAP · 4 risk acceptance(s) have expired</div>
+    <div class="body">These represent un-remediated accepted risks that no longer have authorized Business Owner sign-off. Treat as compliance gaps for audit purposes. Escalation history per acceptance available in detail panel (right).</div>
+  </div>
+</div>
+
+  
+<div class="tabs">
+  <div class="tab">All acceptances <span class="cnt">12</span></div>
+  <div class="tab">Active <span class="cnt">6</span></div>
+  <div class="tab crit active"><span class="dot-red"></span>Expired · compliance gaps <span class="cnt">4</span></div>
+  <div class="tab">Expiring soon &lt;30d <span class="cnt">2</span></div>
+</div>
+
+  
+<div class="filt">
+  <div class="search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search finding ID, control ID, BO name…" readonly>
+  </div>
+  <select class="sel"><option>Business owner · All</option><option>Selected</option></select>
+  <select class="sel"><option>Expiry range · All</option><option>Q1 2026</option></select>
+  <select class="sel"><option>Compensating controls · All</option><option>Has compensating</option><option>No compensating</option></select>
+  <select class="sel"><option>Sort · Days since expiry ↓</option><option>Sign-off date</option><option>Severity</option></select>
+  <div class="spacer"></div>
+  <div class="rcount"><strong>4</strong> expired acceptances shown</div>
+</div>
+
+  <div class="reg">
+    <div>
+<div class="reg-table">
+  <div class="rt-head">
+    <div>Acceptance ID</div>
+    <div>Finding</div>
+    <div>Control</div>
+    <div>Sev</div>
+    <div>Business owner</div>
+    <div>Sign-off</div>
+    <div>Expiry</div>
+    <div>Status</div>
+    <div style="text-align:right">Days</div>
+  </div>
+  
+<div class="rt-row selected expired">
+  <div class="mono">RA-00187</div>
+  <div class="lnk">F-4298</div>
+  <div class="lnk">CC6.1</div>
+  <div><span class="sev crit">CRIT</span></div>
+  <div class="bo">Marcus Lee · VP Eng</div>
+  <div class="mono">10 Oct 2025</div>
+  <div class="mono">10 Jan 2026</div>
+  <div class="st expired"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>EXPIRED · GAP</div>
+  <div class="days neg">+103d</div>
+</div>
+  
+<div class="rt-row expired">
+  <div class="mono">RA-00193</div>
+  <div class="lnk">F-4356</div>
+  <div class="lnk">CC7.2</div>
+  <div><span class="sev high">HIGH</span></div>
+  <div class="bo">Jennifer Wu · CTO</div>
+  <div class="mono">22 Oct 2025</div>
+  <div class="mono">22 Jan 2026</div>
+  <div class="st expired"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>EXPIRED · GAP</div>
+  <div class="days neg">+91d</div>
+</div>
+  
+<div class="rt-row expired">
+  <div class="mono">RA-00201</div>
+  <div class="lnk">F-4412</div>
+  <div class="lnk">CC6.3</div>
+  <div><span class="sev high">HIGH</span></div>
+  <div class="bo">Marcus Lee · VP Eng</div>
+  <div class="mono">05 Nov 2025</div>
+  <div class="mono">05 Feb 2026</div>
+  <div class="st expired"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>EXPIRED · GAP</div>
+  <div class="days neg">+77d</div>
+</div>
+  
+<div class="rt-row expired">
+  <div class="mono">RA-00218</div>
+  <div class="lnk">F-4489</div>
+  <div class="lnk">CC8.1</div>
+  <div><span class="sev med">MED</span></div>
+  <div class="bo">David Park · Head of Infra</div>
+  <div class="mono">18 Dec 2025</div>
+  <div class="mono">18 Mar 2026</div>
+  <div class="st expired"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>EXPIRED · GAP</div>
+  <div class="days neg">+36d</div>
+</div>
+</div>
+</div>
+    
+<aside class="detail">
+  <div class="hdr">
+    <div class="eyebrow">Risk acceptance detail</div>
+    <h3>RA-00187</h3>
+    <div class="id">LinkedIn to F-4298 · CC6.1 · Critical severity</div>
+    <span class="pkg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Included in evidence package
+    </span>
+  </div>
+
+  <div class="sect">
+    <div class="exp-banner">
+      <div class="t">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        ACCEPTANCE EXPIRED on 10 Jan 2026
+      </div>
+      <div class="d">103 days since expiry. No renewal or remediation recorded. Risk has reverted to un-accepted state — flag as compliance gap in audit report.</div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="st-lbl">Justification</div>
+    <div class="just">
+      "Legacy IAM service used only by internal batch ETL jobs on isolated VPC. Full MFA enforcement would require 6-week reauthoring of 14 downstream scheduled jobs — accepted until Q2 2026 migration to new pipeline completes. Residual risk mitigated by network segmentation and CloudTrail anomaly detection."
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="st-lbl">Compensating controls</div>
+    <div class="cc-list">
+      <div class="cc">
+        <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div>
+          <div class="c-txt">VPC network segmentation — legacy IAM reachable only from internal 10.30.0.0/16</div>
+          <div class="c-sub">Verified by SE on 12 Oct 2025 · AWS Config rule compliant</div>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div>
+          <div class="c-txt">CloudTrail anomaly detection on IAM API calls</div>
+          <div class="c-sub">Alerts routed to SecOps · 0 anomalies 30d</div>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div>
+          <div class="c-txt">Service account credentials rotated every 30 days via HashiCorp Vault</div>
+          <div class="c-sub">Automated · last rotation 03 Apr 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="st-lbl">Business owner sign-off</div>
+    <div class="bo-block">
+      <div class="bo-row"><div class="k">Name</div><div class="v name">Marcus Lee</div></div>
+      <div class="bo-row"><div class="k">Title</div><div class="v name">VP Engineering</div></div>
+      <div class="bo-row"><div class="k">Email</div><div class="v">m.lee@acme-fin.corp</div></div>
+      <div class="bo-row"><div class="k">Signed at</div><div class="v">2025-10-10T16:24:08Z</div></div>
+      <div class="bo-row"><div class="k">Method</div><div class="v"><span class="method">In-platform digital sign-off</span></div></div>
+      <div class="bo-row"><div class="k">IP on sign-off</div><div class="v">203.0.113.47</div></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="st-lbl">Traceability</div>
+    <div class="xref">
+      <div class="l">
+        <div class="l-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+        </div>
+        <div class="l-txt">
+          <div class="l-lbl">Originating finding</div>
+          <div class="l-val">F-4298</div>
+          <div class="l-sub">Legacy IAM MFA bypass · Critical</div>
+        </div>
+      </div>
+      <div class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+    <div class="xref">
+      <div class="l">
+        <div class="l-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="l-txt">
+          <div class="l-lbl">Compliance control</div>
+          <div class="l-val">CC6.1</div>
+          <div class="l-sub">Logical access security · SOC 2 Type II</div>
+        </div>
+      </div>
+      <div class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="st-lbl">Escalation history · CISO-06 workflow</div>
+    <div class="esc-tl">
+      <div class="esc-row">
+        <div class="dot done"></div>
+        <div class="e-body">
+          <div class="e-ttl">Pre-expiry reminder sent to CO + CISO</div>
+          <div class="e-meta">26 Dec 2025 · T−15d</div>
+        </div>
+      </div>
+      <div class="esc-row">
+        <div class="dot done"></div>
+        <div class="e-body">
+          <div class="e-ttl">Expiry notification to BO (Marcus Lee)</div>
+          <div class="e-meta">10 Jan 2026 · T+0 · email + in-platform</div>
+        </div>
+      </div>
+      <div class="esc-row">
+        <div class="dot"></div>
+        <div class="e-body">
+          <div class="e-ttl">Grace period lapsed · escalated to Security Committee</div>
+          <div class="e-meta">24 Jan 2026 · T+14d</div>
+          <div class="e-note">Finding status updated to "Escalated — Awaiting Response from Security Committee"</div>
+        </div>
+      </div>
+      <div class="esc-row">
+        <div class="dot pending"></div>
+        <div class="e-body">
+          <div class="e-ttl">Committee response pending</div>
+          <div class="e-meta">Open · 89 days outstanding</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+  </div>
+</div>
+</div><script>
+(function(){
+  const body=document.body;
+  const toggle=document.getElementById('tpToggle');
+  const pop=document.getElementById('tpPopover');
+  const label=document.getElementById('tpLabel');
+  const sw1=document.getElementById('tpSw1');
+  const sw2=document.getElementById('tpSw2');
+  const fams=pop.querySelectorAll('.tp-card');
+  const modes=pop.querySelectorAll('.tp-mode');
+  const SW={
+    coffee:{dark:['#1A0F08','#F3EEE2'],light:['#EDE7D8','#6F4E37']},
+    blue:{dark:['#162B48','#E8F4FD'],light:['#E5EFF8','#1E5A8A']}
+  };
+  function sync(){
+    const f=body.classList.contains('blue')?'blue':'coffee';
+    const m=body.classList.contains('light')?'light':'dark';
+    label.textContent=(f[0].toUpperCase()+f.slice(1))+' · '+(m[0].toUpperCase()+m.slice(1));
+    const s=SW[f][m];
+    sw1.style.background=s[0]; sw2.style.background=s[1];
+    fams.forEach(c=>c.classList.toggle('active', c.dataset.family===f));
+    modes.forEach(b=>b.classList.toggle('active', b.dataset.mode===m));
+  }
+  toggle.addEventListener('click',e=>{e.stopPropagation(); pop.classList.toggle('open'); toggle.setAttribute('aria-expanded', pop.classList.contains('open'));});
+  document.addEventListener('click',e=>{ if(!pop.contains(e.target) && e.target!==toggle) pop.classList.remove('open'); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') pop.classList.remove('open'); });
+  fams.forEach(c=>c.addEventListener('click',()=>{
+    const f=c.dataset.family;
+    body.classList.remove('coffee','blue'); body.classList.add(f);
+    sync();
+  }));
+  modes.forEach(b=>b.addEventListener('click',()=>{
+    const m=b.dataset.mode;
+    body.classList.remove('dark','light'); body.classList.add(m);
+    sync();
+  }));
+  sync();
+})();
+</script>
+</body></html>

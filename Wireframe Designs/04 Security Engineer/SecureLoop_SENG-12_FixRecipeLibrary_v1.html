@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENG-12 · Fix Recipe Library · SecureLoop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+  --syn-keyword: #C794E5; --syn-string: #A5D6A7; --syn-func: #FFB04D; --syn-comment: #7A7058; --syn-number: #81C7D8;
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #B8651D; --syn-comment: #907D68; --syn-number: #2E86C1;
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #C17A1A; --syn-comment: #7A8FA8; --syn-number: #1E5A8A;
+}
+html, body {
+  height: 100%; background: var(--bg-page); color: var(--ink-100);
+  font-family: var(--font-ui); font-weight: 300; font-size: var(--text-body); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease; overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Shell */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail { background: var(--bg-base); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1); }
+.rail-logo { width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink); border-radius: var(--r-sm); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl); margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow); }
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item { width: 40px; height: 40px; display: grid; place-items: center; color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; position: relative; }
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before { content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0; }
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line); background: var(--bg-base); height: 56px; flex-shrink: 0; }
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill { padding: 2px 6px; background: var(--brand-dim); color: var(--brand); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: 0.04em; font-weight: 600; margin-left: 2px; }
+
+/* Theme picker */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 5px 10px 5px 6px; height: 32px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover { position: absolute; top: calc(100% + 8px); right: 0; width: 280px; padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity 160ms, transform 160ms; }
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* Common buttons */
+.btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 8px var(--s-4); height: 36px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-body); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.primary:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+.btn-small { padding: 6px var(--s-3); height: 30px; font-size: var(--text-label); }
+
+/* Severity badges */
+.sev-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.sev-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev-badge.med  { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.sev-badge.low  { background: var(--sev-low-bg); color: var(--sev-low); }
+.sev-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* Status badges */
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; width: fit-content; }
+.status-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.status-badge.good { background: var(--status-good-bg); color: var(--status-good); }
+.status-badge.warn { background: var(--sev-high-bg); color: var(--sev-high); }
+.status-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.status-badge.neutral { background: var(--bg-raised); color: var(--ink-60); border: 1px solid var(--line-strong); }
+.status-badge.info { background: var(--sev-low-bg); color: var(--sev-low); }
+
+/* Avatar */
+.avatar { width: 24px; height: 24px; border-radius: var(--r-full); background: var(--brand-dim); color: var(--brand); display: grid; place-items: center; font-family: var(--font-display); font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.avatar-sm { width: 20px; height: 20px; font-size: 9px; }
+
+/* Scrollbar */
+.scroll::-webkit-scrollbar { width: 10px; height: 6px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.scroll::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+.content { flex: 1; overflow: hidden; padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); }
+.page-title-block { display: flex; flex-direction: column; gap: 4px; }
+.page-eyebrow { font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.page-title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 500; color: var(--ink-100); letter-spacing: -.02em; line-height: 1.2; }
+.page-title em { font-style: normal; font-weight: 700; color: var(--brand); }
+
+/* Two column: library + detail */
+.split { display: grid; grid-template-columns: 1fr 480px; gap: var(--s-4); flex: 1; min-height: 0; overflow: hidden; }
+
+.library-col { display: flex; flex-direction: column; gap: var(--s-3); min-width: 0; overflow: hidden; }
+
+/* Filter bar */
+.filter-bar { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); flex-wrap: wrap; flex-shrink: 0; }
+.filter-label { font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.filter-select { padding: 6px var(--s-3); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; appearance: none; padding-right: 28px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px; }
+body.coffee.light .filter-select, body.blue.light .filter-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+.search-input { flex: 1; min-width: 200px; padding: 6px var(--s-3) 6px 32px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 10px center; background-size: 13px; }
+.search-input:focus { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-dim); }
+
+/* Min success rate slider */
+.slider-group { display: flex; align-items: center; gap: var(--s-2); padding: 4px 10px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.slider { width: 80px; accent-color: var(--brand); }
+.slider-val { font-family: var(--font-mono); font-size: 10px; color: var(--brand); font-weight: 700; width: 28px; text-align: right; letter-spacing: -.01em; }
+
+/* Library table */
+.lib-table { flex: 1; background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+.lt-thead, .lt-row { display: grid; grid-template-columns: minmax(0, 1.8fr) 110px 110px 110px 80px 90px; gap: var(--s-3); align-items: center; padding: var(--s-3) var(--s-4); }
+.lt-thead { background: var(--bg-raised); border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; flex-shrink: 0; }
+.lt-rows { flex: 1; overflow-y: auto; }
+.lt-row { border-bottom: 1px solid var(--line); font-size: var(--text-body); cursor: pointer; transition: background 140ms; position: relative; }
+.lt-row:hover { background: var(--bg-raised); }
+.lt-row.selected { background: var(--brand-dim); }
+.lt-row.selected::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand); }
+
+.recipe-name { font-family: var(--font-ui); font-size: var(--text-label); color: var(--brand); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recipe-meta { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); margin-top: 3px; letter-spacing: -.01em; }
+.type-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 10px; color: var(--ink-80); font-weight: 600; letter-spacing: -.01em; }
+
+.success-cell { display: flex; flex-direction: column; gap: 3px; }
+.success-val { font-family: var(--font-mono); font-size: var(--text-body); font-weight: 700; letter-spacing: -.01em; }
+.success-val.good { color: var(--status-good); }
+.success-val.warn { color: var(--sev-medium); }
+.success-val.bad { color: var(--sev-critical); }
+.success-bar { width: 100%; height: 3px; background: var(--bg-raised); border-radius: var(--r-full); overflow: hidden; }
+.success-fill { height: 100%; border-radius: var(--r-full); }
+.success-fill.good { background: var(--status-good); }
+.success-fill.warn { background: var(--sev-medium); }
+.success-fill.bad { background: var(--sev-critical); }
+
+.used-cell { font-family: var(--font-mono); font-size: var(--text-body); color: var(--ink-100); font-weight: 700; letter-spacing: -.01em; }
+
+.status-active { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--status-good-bg); color: var(--status-good); border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.status-pending { background: var(--sev-medium-bg); color: var(--sev-medium); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.status-archived { background: var(--bg-raised); color: var(--ink-60); border: 1px solid var(--line-strong); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+/* Detail viewer (right panel) */
+.detail-panel { background: var(--bg-base); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; display: flex; flex-direction: column; }
+.dp-head { padding: var(--s-4); border-bottom: 1px solid var(--line); background: var(--bg-raised); }
+.dp-crumb { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; margin-bottom: 3px; }
+.dp-title { font-family: var(--font-display); font-size: var(--text-lg); color: var(--ink-100); font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+.dp-desc { font-family: var(--font-ui); font-size: var(--text-label); color: var(--ink-80); line-height: 1.55; margin-top: 6px; font-weight: 400; }
+.dp-tags { display: flex; gap: 4px; margin-top: var(--s-2); flex-wrap: wrap; }
+
+.dp-body { flex: 1; overflow-y: auto; padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
+
+.section-label { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; margin-bottom: 6px; }
+
+.code-block { padding: var(--s-3); background: var(--bg-page); border: 1px solid var(--line-strong); border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 10px; color: var(--ink-100); line-height: 1.6; white-space: pre-wrap; max-height: 160px; overflow-y: auto; letter-spacing: -.01em; }
+.code-block .syn-k { color: var(--syn-keyword); font-weight: 700; }
+.code-block .syn-s { color: var(--syn-string); }
+.code-block .syn-f { color: var(--syn-func); }
+.code-block .syn-c { color: var(--syn-comment); font-style: italic; }
+
+.checklist { display: flex; flex-direction: column; gap: 4px; padding: var(--s-3); background: var(--bg-raised); border-radius: var(--r-sm); }
+.check-item { display: flex; align-items: flex-start; gap: 6px; font-family: var(--font-ui); font-size: 10px; color: var(--ink-80); line-height: 1.5; font-weight: 400; }
+.check-dot { width: 4px; height: 4px; background: var(--brand); border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+
+.metrics-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-2); }
+.metric-tile { padding: var(--s-3); background: var(--bg-raised); border-radius: var(--r-sm); text-align: center; }
+.metric-val { font-family: var(--font-mono); font-size: var(--text-xl); color: var(--ink-100); font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+.metric-val.good { color: var(--status-good); }
+.metric-val.warn { color: var(--sev-medium); }
+.metric-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .06em; text-transform: uppercase; font-weight: 500; margin-top: 4px; }
+
+.low-warn { display: none; align-items: flex-start; gap: var(--s-2); padding: var(--s-2) var(--s-3); background: var(--sev-high-bg); border-left: 3px solid var(--sev-high); border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 10px; color: var(--ink-80); line-height: 1.5; font-weight: 400; }
+.low-warn.visible { display: flex; }
+
+.sandbox-logs { display: flex; flex-direction: column; gap: 4px; padding: var(--s-2) var(--s-3); background: var(--bg-raised); border-radius: var(--r-sm); max-height: 100px; overflow-y: auto; }
+.log-entry { font-family: var(--font-mono); font-size: 10px; color: var(--ink-80); letter-spacing: -.01em; display: flex; gap: var(--s-2); }
+.log-ts { color: var(--ink-60); flex-shrink: 0; }
+.log-entry.pass { color: var(--status-good); }
+
+.dp-foot { padding: var(--s-3) var(--s-4); border-top: 1px solid var(--line); display: flex; gap: var(--s-2); background: var(--bg-base); }
+.dp-foot .btn { flex: 1; justify-content: center; }
+
+</style>
+</head>
+<body class="coffee dark">
+<div class="app"><aside class="rail"><div class="rail-logo">S</div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M8 10H5M19 10h-3M8 14H5M19 14h-3M8 18H5M19 18h-3M12 2v4M9 4l3-2 3 2"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div><div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div></aside><div class="main"><div class="topbar">
+  <div class="crumb"><span>SecureLoop</span><span class="sep">/</span><span>Fix recipes</span><span class="sep">/</span><span class="current">Library</span><span class="id-pill">SENG-12</span></div>
+  <div class="theme-picker-wrap">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+      <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+      <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+      <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="theme-popover" id="themePopover" role="dialog">
+      <div class="tp-section">
+        <div class="tp-section-label">Palette family</div>
+        <div class="tp-family-grid">
+          <button class="tp-family-card active" data-family="coffee">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+            <span class="tp-family-name">Coffee</span>
+            <span class="tp-family-desc">Warm · Investigation</span>
+          </button>
+          <button class="tp-family-card" data-family="blue">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+            <span class="tp-family-name">Blue</span>
+            <span class="tp-family-desc">Cool · Enterprise</span>
+          </button>
+        </div>
+      </div>
+      <div class="tp-section">
+        <div class="tp-section-label">Appearance</div>
+        <div class="tp-mode-row">
+          <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+          <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <div class="page-head">
+    <div class="page-title-block">
+      <span class="page-eyebrow">Verified fix recipes · global library across tenants · Platform Admin approval workflow</span>
+      <h1 class="page-title">Fix recipe <em>library</em></h1>
+    </div>
+    <button class="btn primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Submit new recipe
+    </button>
+  </div>
+
+  <div class="split">
+    <div class="library-col">
+      <div class="filter-bar">
+        <span class="filter-label">Vuln type</span>
+        <select class="filter-select"><option>All types</option><option>SQL Injection</option><option>XSS</option><option>IAM misconfig</option><option>Weak TLS</option></select>
+        <span class="filter-label" style="margin-left: var(--s-2);">Asset type</span>
+        <select class="filter-select"><option>All</option><option>Web app</option><option>API</option><option>Cloud IAM</option><option>Database</option></select>
+        <div class="slider-group">
+          <span class="filter-label">Min success</span>
+          <input type="range" class="slider" min="0" max="100" value="70">
+          <span class="slider-val">70%</span>
+        </div>
+        <input type="text" class="search-input" placeholder="Search recipes…">
+      </div>
+
+      <div class="lib-table">
+        <div class="lt-thead">
+          <div>Recipe name</div>
+          <div>Vuln type</div>
+          <div>Asset type</div>
+          <div>Success rate</div>
+          <div>Used</div>
+          <div>Status</div>
+        </div>
+        <div class="lt-rows scroll">
+          <div class="lt-row selected">
+            <div><div class="recipe-name">Parameterised-query migration · PHP mysqli</div><div class="recipe-meta">v2.1 · updated 8d ago · by aisha.nasir@acme</div></div>
+            <div><span class="type-chip">SQL Injection</span></div>
+            <div><span class="type-chip">PHP web app</span></div>
+            <div class="success-cell"><span class="success-val good">94%</span><div class="success-bar"><div class="success-fill good" style="width: 94%;"></div></div></div>
+            <div class="used-cell">247×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">Least-privilege IAM refactor · AWS</div><div class="recipe-meta">v3.0 · updated 14d ago · platform-admin</div></div>
+            <div><span class="type-chip">IAM misconfig</span></div>
+            <div><span class="type-chip">AWS IAM</span></div>
+            <div class="success-cell"><span class="success-val good">89%</span><div class="success-bar"><div class="success-fill good" style="width: 89%;"></div></div></div>
+            <div class="used-cell">184×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">Content-Security-Policy deployment</div><div class="recipe-meta">v1.4 · updated 22d ago · by liu.wen@acme</div></div>
+            <div><span class="type-chip">XSS</span></div>
+            <div><span class="type-chip">Web app</span></div>
+            <div class="success-cell"><span class="success-val good">87%</span><div class="success-bar"><div class="success-fill good" style="width: 87%;"></div></div></div>
+            <div class="used-cell">156×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">TLS 1.3 enforcement · nginx</div><div class="recipe-meta">v2.2 · updated 1m ago · by aisha.nasir@acme</div></div>
+            <div><span class="type-chip">Weak TLS</span></div>
+            <div><span class="type-chip">Load balancer</span></div>
+            <div class="success-cell"><span class="success-val good">96%</span><div class="success-bar"><div class="success-fill good" style="width: 96%;"></div></div></div>
+            <div class="used-cell">132×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">Secret rotation · GitHub Actions</div><div class="recipe-meta">v1.0 · submitted 3d ago · awaiting review</div></div>
+            <div><span class="type-chip">Secrets leak</span></div>
+            <div><span class="type-chip">CI/CD</span></div>
+            <div class="success-cell"><span class="success-val warn">—</span><div class="success-bar"></div></div>
+            <div class="used-cell" style="color: var(--ink-60);">0</div>
+            <div><span class="status-pending">Pending approval</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">Input validation · Node express</div><div class="recipe-meta">v1.2 · updated 45d ago · archived</div></div>
+            <div><span class="type-chip">Injection</span></div>
+            <div><span class="type-chip">Node.js API</span></div>
+            <div class="success-cell"><span class="success-val bad">62%</span><div class="success-bar"><div class="success-fill bad" style="width: 62%;"></div></div></div>
+            <div class="used-cell">89×</div>
+            <div><span class="status-archived">Archived</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">CORS hardening · API gateway</div><div class="recipe-meta">v1.1 · updated 10d ago · by marcus.park@acme</div></div>
+            <div><span class="type-chip">Misconfig</span></div>
+            <div><span class="type-chip">API</span></div>
+            <div class="success-cell"><span class="success-val good">81%</span><div class="success-bar"><div class="success-fill good" style="width: 81%;"></div></div></div>
+            <div class="used-cell">67×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+          <div class="lt-row">
+            <div><div class="recipe-name">HSTS preload · multi-domain</div><div class="recipe-meta">v2.0 · updated 19d ago · platform-admin</div></div>
+            <div><span class="type-chip">Transport</span></div>
+            <div><span class="type-chip">Web app</span></div>
+            <div class="success-cell"><span class="success-val good">99%</span><div class="success-bar"><div class="success-fill good" style="width: 99%;"></div></div></div>
+            <div class="used-cell">54×</div>
+            <div><span class="status-active">Active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail viewer -->
+    <aside class="detail-panel">
+      <div class="dp-head">
+        <div class="dp-crumb">Recipe detail · v2.1 · sandbox-verified</div>
+        <div class="dp-title">Parameterised-query migration · PHP mysqli</div>
+        <div class="dp-desc">Refactors vulnerable string-concatenated mysqli queries into parameterised prepared statements. Targets legacy PHP codebases using mysqli_query directly — performs AST-based detection and suggests bind-parameter replacements.</div>
+        <div class="dp-tags">
+          <span class="type-chip">SQL Injection</span>
+          <span class="type-chip">CWE-89</span>
+          <span class="type-chip">PHP 7.x+</span>
+        </div>
+      </div>
+
+      <div class="dp-body scroll">
+
+        <div>
+          <div class="section-label">Fix artifact · code preview</div>
+          <div class="code-block"><span class="syn-c">// Before — vulnerable concatenation</span>
+<span class="syn-k">$username</span> = <span class="syn-k">$_POST</span>[<span class="syn-s">'username'</span>];
+<span class="syn-k">$query</span> = <span class="syn-s">"SELECT * FROM users WHERE username='$username'"</span>;
+<span class="syn-k">$result</span> = <span class="syn-f">mysqli_query</span>(<span class="syn-k">$conn</span>, <span class="syn-k">$query</span>);
+
+<span class="syn-c">// After — parameterised binding</span>
+<span class="syn-k">$stmt</span> = <span class="syn-f">mysqli_prepare</span>(<span class="syn-k">$conn</span>,
+    <span class="syn-s">"SELECT * FROM users WHERE username=?"</span>);
+<span class="syn-f">mysqli_stmt_bind_param</span>(<span class="syn-k">$stmt</span>, <span class="syn-s">"s"</span>, <span class="syn-k">$username</span>);
+<span class="syn-f">mysqli_stmt_execute</span>(<span class="syn-k">$stmt</span>);
+<span class="syn-k">$result</span> = <span class="syn-f">mysqli_stmt_get_result</span>(<span class="syn-k">$stmt</span>);</div>
+        </div>
+
+        <div>
+          <div class="section-label">Pre-execution checklist · shown to Control Owner before applying</div>
+          <div class="checklist">
+            <div class="check-item"><span class="check-dot"></span><span>Confirm PHP version is 7.0 or higher — mysqli_prepare requires PHP 7+</span></div>
+            <div class="check-item"><span class="check-dot"></span><span>Create database backup before running migration script</span></div>
+            <div class="check-item"><span class="check-dot"></span><span>Review all generated prepared statements in the diff before approving merge</span></div>
+            <div class="check-item"><span class="check-dot"></span><span>Run existing test suite to confirm no regressions in query behaviour</span></div>
+            <div class="check-item"><span class="check-dot"></span><span>Monitor database query logs for 30 minutes post-deployment</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">Sandbox test logs · SE must prove recipe tested before submission</div>
+          <div class="sandbox-logs">
+            <div class="log-entry"><span class="log-ts">T+0.00s</span><span>Fork sandbox-7842 from acme/payment-service@3.4.1</span></div>
+            <div class="log-entry"><span class="log-ts">T+2.14s</span><span>Parse AST · detected 14 mysqli_query calls</span></div>
+            <div class="log-entry"><span class="log-ts">T+4.82s</span><span>Generate prepared statements · 14/14 transformed</span></div>
+            <div class="log-entry"><span class="log-ts">T+8.21s</span><span>Run test suite · 847/847 pass</span></div>
+            <div class="log-entry pass"><span class="log-ts">T+12.4s</span><span>✓ SQLi regression test · all payloads rejected</span></div>
+            <div class="log-entry pass"><span class="log-ts">T+15.1s</span><span>✓ Recipe verified · ready for submission</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">Usage metrics · tracked globally</div>
+          <div class="metrics-row">
+            <div class="metric-tile"><div class="metric-val">247×</div><div class="metric-lbl">Times used</div></div>
+            <div class="metric-tile"><div class="metric-val good">94%</div><div class="metric-lbl">Success rate</div></div>
+            <div class="metric-tile"><div class="metric-val">41s</div><div class="metric-lbl">Avg exec</div></div>
+          </div>
+        </div>
+
+        <!-- Hidden warning for low success rate -->
+        <div class="low-warn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sev-high)" stroke-width="2" stroke-linecap="round" style="flex-shrink: 0; margin-top: 1px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span><strong style="color: var(--ink-100);">Low success rate:</strong> This recipe has dropped below the 70% success threshold. Consider reviewing recent failure cases before using.</span>
+        </div>
+
+      </div>
+
+      <div class="dp-foot">
+        <button class="btn btn-small">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Clone &amp; customise
+        </button>
+        <button class="btn btn-small primary">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Apply to finding
+        </button>
+      </div>
+    </aside>
+  </div>
+</div>
+</div></div>
+<script>
+// Theme picker
+(function(){
+  const pickerBtn = document.getElementById('themePickerBtn');
+  if (!pickerBtn) return;
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+})();
+
+document.querySelectorAll('.lt-row').forEach(r => r.addEventListener('click', () => {
+  document.querySelectorAll('.lt-row').forEach(x => x.classList.remove('selected'));
+  r.classList.add('selected');
+}));
+
+</script>
+</body>
+</html>

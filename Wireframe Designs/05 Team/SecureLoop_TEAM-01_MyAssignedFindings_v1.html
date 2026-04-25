@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-01 · My Assigned Findings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-ui:"IBM Plex Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{
+  --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;
+  --brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;
+  --brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);
+}
+body.blue.dark{
+  --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;
+  --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;
+  --brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);
+}
+body.blue.light{
+  --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;
+  --brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+/* ============ SHELL ============ */
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)}
+.rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.topbar-actions{display:flex;align-items:center;gap:var(--s-2)}
+
+/* search */
+.search{display:flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);min-width:280px;color:var(--ink-60);font-size:var(--text-label)}
+.search svg{width:14px;height:14px}
+.search kbd{margin-left:auto;font-family:var(--font-mono);font-size:var(--text-micro);padding:2px 6px;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-60)}
+
+/* user chip */
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.avatar.sm{width:24px;height:24px;font-size:10px}
+.avatar.lg{width:36px;height:36px;font-size:var(--text-body)}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn-icon{width:36px;height:36px;padding:0}
+.btn-icon svg{width:16px;height:16px}
+.btn svg.icon{width:14px;height:14px}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* segmented */
+.segmented{display:inline-flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;cursor:pointer;transition:all 140ms;min-width:90px;text-align:center}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* content */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1440px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-6)}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2);display:flex;align-items:center;gap:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.1}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2)}
+
+/* team badge (auto-detected) */
+.team-badge{display:inline-flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:600;letter-spacing:0.02em}
+.team-badge svg{width:12px;height:12px}
+.team-badge .auto{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:500;letter-spacing:0.04em;margin-left:var(--s-1);padding-left:var(--s-2);border-left:1px solid var(--line-strong)}
+
+/* HERO stats row */
+.hero-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--s-3);margin-bottom:var(--s-6)}
+.hero-card,.kpi-tile{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6)}
+.hero-card{display:flex;align-items:center;gap:var(--s-6)}
+.hero-count{font-family:var(--font-mono);font-size:var(--text-3xl);font-weight:700;color:var(--brand);letter-spacing:-0.02em;line-height:1}
+.hero-body{flex:1}
+.hero-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.hero-break{display:flex;gap:var(--s-2);flex-wrap:wrap}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:500}
+.hero-chip .dot{width:6px;height:6px;border-radius:50%}
+.hero-chip.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .hero-chip.crit .dot{background:var(--sev-critical)}
+.hero-chip.high{background:var(--sev-high-bg);color:var(--sev-high)} .hero-chip.high .dot{background:var(--sev-high)}
+.hero-chip.med{background:var(--sev-medium-bg);color:var(--sev-medium)} .hero-chip.med .dot{background:var(--sev-medium)}
+.hero-chip.low{background:var(--sev-low-bg);color:var(--sev-low)} .hero-chip.low .dot{background:var(--sev-low)}
+
+.kpi-tile{display:flex;flex-direction:column;justify-content:space-between;min-height:96px}
+.kpi-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.kpi-value{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;color:var(--ink-100);letter-spacing:-0.01em}
+.kpi-trend{display:inline-flex;align-items:center;gap:4px;font-size:var(--text-micro);color:var(--ink-60);margin-top:var(--s-2);font-family:var(--font-mono);font-weight:500}
+.kpi-trend.up-bad{color:var(--sev-critical)}
+.kpi-trend.dn-good{color:var(--status-good)}
+.kpi-trend svg{width:10px;height:10px}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-4);flex-wrap:wrap}
+.toolbar-grow{flex:1;min-width:0}
+.filter-pill{display:inline-flex;align-items:center;gap:6px;padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--text-label);color:var(--ink-80);cursor:pointer}
+.filter-pill:hover{background:var(--bg-hover)}
+.filter-pill svg{width:12px;height:12px;color:var(--ink-60)}
+.filter-pill .count{padding:1px 6px;background:var(--brand);color:var(--brand-ink);border-radius:var(--r-full);font-family:var(--font-mono);font-size:10px;font-weight:700;margin-left:2px}
+
+/* TABLE */
+.table-wrap{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.table-head{display:grid;grid-template-columns:minmax(280px,1fr) 100px 180px 140px 140px 120px 140px 44px;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-60);font-weight:600;align-items:center}
+.th-sort{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.th-sort:hover{color:var(--ink-100)}
+.th-sort svg{width:10px;height:10px}
+.row{display:grid;grid-template-columns:minmax(280px,1fr) 100px 180px 140px 140px 120px 140px 44px;gap:var(--s-3);padding:var(--s-4);border-bottom:1px solid var(--line);align-items:center;transition:background 140ms}
+.row:hover{background:var(--bg-hover)}
+.row:last-child{border-bottom:none}
+.row.new{animation:fadeIn 320ms cubic-bezier(.2,.7,.2,1)}
+@keyframes fadeIn{from{background:var(--status-good-bg);opacity:0}to{opacity:1}}
+
+.cell-title{font-weight:500;color:var(--ink-100);font-size:var(--text-body);line-height:1.4;cursor:pointer}
+.cell-title:hover{color:var(--brand)}
+.cell-title-sub{display:flex;align-items:center;gap:var(--s-2);margin-top:3px;font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+.cell-title-sub .fid{color:var(--ink-40)}
+
+/* severity pills */
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+.sev-pill.high{background:var(--sev-high-bg);color:var(--sev-high)} .sev-pill.high .dot{background:var(--sev-high)}
+.sev-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)} .sev-pill.med .dot{background:var(--sev-medium)}
+.sev-pill.low{background:var(--sev-low-bg);color:var(--sev-low)} .sev-pill.low .dot{background:var(--sev-low)}
+
+/* asset cell */
+.asset-cell{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-80);font-size:var(--text-label);min-width:0}
+.asset-cell svg{width:14px;height:14px;color:var(--ink-60);flex-shrink:0}
+.asset-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-mono);letter-spacing:0.02em}
+
+/* due date */
+.due-cell{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)}
+.due-cell .cd{display:block;font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.due-cell.overdue .cd{color:var(--sev-critical);font-weight:600}
+
+/* status badge */
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-label);font-weight:500;background:var(--bg-raised);color:var(--ink-80);border:1px solid var(--line);cursor:pointer;font-family:var(--font-ui)}
+.status-badge:hover{border-color:var(--line-strong)}
+.status-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-60)}
+.status-badge.inprog .dot{background:var(--sev-low)}
+.status-badge.blocked{background:var(--sev-critical-bg);color:var(--sev-critical);border-color:transparent}
+.status-badge.blocked .dot{background:var(--sev-critical)}
+.status-badge.pending .dot{background:var(--sev-medium)}
+.status-badge.applied{background:var(--status-good-bg);color:var(--status-good);border-color:transparent}
+.status-badge.applied .dot{background:var(--status-good)}
+
+/* effort + complexity */
+.effort-cell{display:flex;flex-direction:column;gap:2px}
+.effort-hrs{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-100);font-weight:600}
+.effort-complex{font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono);letter-spacing:0.04em}
+
+/* SLA health bar */
+.sla-cell{min-width:0}
+.sla-bar{height:4px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden;position:relative}
+.sla-fill{height:100%;border-radius:var(--r-full);transition:width 280ms}
+.sla-fill.ok{background:var(--status-good)}
+.sla-fill.warn{background:var(--sev-high)}
+.sla-fill.crit{background:var(--sev-critical)}
+.sla-label{display:flex;justify-content:space-between;margin-bottom:4px;font-family:var(--font-mono);font-size:10px;color:var(--ink-60);letter-spacing:0.04em}
+.sla-label .pct{color:var(--ink-80);font-weight:600}
+
+/* row-menu */
+.row-menu-btn{width:28px;height:28px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.row-menu-btn:hover{background:var(--bg-raised);color:var(--ink-100)}
+.row-menu-btn svg{width:14px;height:14px}
+
+/* team-view toggle header */
+.view-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4)}
+.list-meta{color:var(--ink-60);font-size:var(--text-label)}
+.list-meta strong{color:var(--ink-100);font-weight:600}
+
+/* pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-top:1px solid var(--line);font-size:var(--text-label);color:var(--ink-60)}
+.page-btns{display:flex;gap:var(--s-1)}
+.page-btn{width:28px;height:28px;border-radius:var(--r-xs);background:transparent;border:1px solid transparent;color:var(--ink-60);cursor:pointer;font-family:var(--font-mono);font-size:var(--text-label);display:flex;align-items:center;justify-content:center}
+.page-btn.active{background:var(--brand);color:var(--brand-ink);font-weight:600}
+.page-btn:hover:not(.active){background:var(--bg-hover);color:var(--ink-100)}
+
+/* empty state */
+.empty{padding:var(--s-12);text-align:center;color:var(--ink-60)}
+.empty-icon{width:64px;height:64px;margin:0 auto var(--s-4);border-radius:50%;background:var(--bg-raised);display:flex;align-items:center;justify-content:center;color:var(--ink-40)}
+.empty-icon svg{width:28px;height:28px}
+.empty-title{color:var(--ink-100);font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:var(--s-2)}
+.empty-sub{max-width:400px;margin:0 auto;line-height:1.55}
+
+/* assigned-to cell (team view) */
+.assigned-cell{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);color:var(--ink-80)}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+  <!-- RAIL -->
+  <aside class="rail" aria-label="Primary">
+    <div class="logo">S</div>
+    <button class="rail-btn active" title="My Findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn" title="Effort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn" title="Fixes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></button>
+    <button class="rail-btn" title="Rollbacks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
+    <button class="rail-btn" title="Team Workload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>My Work</span><span class="sep">/</span>
+        <span class="current">Assigned Findings</span>
+        <span class="id-pill">TEAM-01</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="search" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Search findings</span>
+        <kbd>⌘K</kbd>
+      </div>
+
+      <button class="btn btn-icon" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn" aria-haspopup="dialog" aria-expanded="false">
+          <span class="theme-swatches" aria-hidden="true"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop" role="dialog" aria-label="Theme picker">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row">
+            <button class="mode-btn active" data-mode="dark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>Dark</button>
+            <button class="mode-btn" data-mode="light"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>Light</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-chip">
+        <span class="avatar">NR</span>
+        <div><div class="user-chip-name">Nikhil Rao</div><div class="user-chip-role">Cloud Team</div></div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="page-eyebrow">
+            <span>My Work · Assigned to me</span>
+            <span class="team-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z"></path></svg>
+              Cloud Team
+              <span class="auto">auto-detected</span>
+            </span>
+          </div>
+          <h1 class="page-title">12 findings need your attention</h1>
+          <p class="page-sub">Cloud-team-only view · 3 Critical, 5 High, 4 Medium · sorted by due date</p>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="hero-row">
+        <div class="hero-card">
+          <div class="hero-count">12</div>
+          <div class="hero-body">
+            <div class="hero-label">My Open Findings</div>
+            <div class="hero-break">
+              <span class="hero-chip crit"><span class="dot"></span>3 Critical</span>
+              <span class="hero-chip high"><span class="dot"></span>5 High</span>
+              <span class="hero-chip med"><span class="dot"></span>4 Medium</span>
+              <span class="hero-chip low"><span class="dot"></span>0 Low</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-tile">
+          <div>
+            <div class="kpi-label">Effort Outstanding</div>
+            <div class="kpi-value">86<span style="color:var(--ink-60);font-size:var(--text-body);font-weight:400"> hrs</span></div>
+          </div>
+          <div class="kpi-trend up-bad">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            +12 vs last week
+          </div>
+        </div>
+
+        <div class="kpi-tile">
+          <div>
+            <div class="kpi-label">Overdue</div>
+            <div class="kpi-value" style="color:var(--sev-critical)">2</div>
+          </div>
+          <div class="kpi-trend" style="color:var(--ink-60)">tickets past due</div>
+        </div>
+
+        <div class="kpi-tile">
+          <div>
+            <div class="kpi-label">SLA Compliance</div>
+            <div class="kpi-value" style="color:var(--status-good)">92%</div>
+          </div>
+          <div class="kpi-trend dn-good">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            +4 vs last week
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="segmented" role="group" aria-label="View scope">
+          <button class="seg-btn active" id="viewMine">My tickets<span style="color:var(--ink-60);font-family:var(--font-mono);font-size:10px;margin-left:4px">12</span></button>
+          <button class="seg-btn" id="viewTeam">Full team view<span style="color:var(--ink-60);font-family:var(--font-mono);font-size:10px;margin-left:4px">41</span></button>
+        </div>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>Severity<span class="count">3</span></button>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Due date</button>
+        <button class="filter-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12"></path><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>Status</button>
+        <div class="toolbar-grow"></div>
+        <button class="btn ghost"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Export CSV</button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="view-toggle-row">
+        <div class="list-meta"><strong>12</strong> findings · <strong>2 overdue</strong> · live-synced via WebSocket</div>
+        <div class="list-meta" style="display:flex;align-items:center;gap:var(--s-2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--status-good);box-shadow:0 0 0 3px var(--status-good-bg)"></span>Real-time updates on</div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="th-sort">Title <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div class="th-sort">Severity <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div>Asset</div>
+          <div class="th-sort">Due <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg></div>
+          <div>Status</div>
+          <div class="th-sort">Effort <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+          <div>SLA Health</div>
+          <div></div>
+        </div>
+
+        <!-- ROWS -->
+        <div class="row">
+          <div>
+            <div class="cell-title">S3 bucket "payments-logs-prod" has public read access</div>
+            <div class="cell-title-sub"><span>Misconfiguration</span><span class="fid">· FND-2026-00482</span></div>
+          </div>
+          <div><span class="sev-pill crit"><span class="dot"></span>Critical</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg><span class="asset-name">payments-logs-prod</span></div>
+          <div class="due-cell overdue">22 Apr 2026<span class="cd">1 day overdue</span></div>
+          <div><button class="status-badge inprog"><span class="dot"></span>In Progress</button></div>
+          <div class="effort-cell"><span class="effort-hrs">2.5 hrs</span><span class="effort-complex">Low</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>Breach</span><span class="pct" style="color:var(--sev-critical)">0%</span></div>
+            <div class="sla-bar"><div class="sla-fill crit" style="width:100%"></div></div>
+          </div>
+          <div><button class="row-menu-btn" aria-label="Row actions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">IAM role "eks-node-role" has * permissions on S3</div>
+            <div class="cell-title-sub"><span>Over-permissive IAM</span><span class="fid">· FND-2026-00476</span></div>
+          </div>
+          <div><span class="sev-pill crit"><span class="dot"></span>Critical</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg><span class="asset-name">eks-node-role</span></div>
+          <div class="due-cell">24 Apr 2026<span class="cd">in 3 days</span></div>
+          <div><button class="status-badge"><span class="dot"></span>Open</button></div>
+          <div class="effort-cell"><span class="effort-hrs">4 hrs</span><span class="effort-complex">Medium</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>18% time left</span><span class="pct" style="color:var(--sev-critical)">18%</span></div>
+            <div class="sla-bar"><div class="sla-fill crit" style="width:18%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row new">
+          <div>
+            <div class="cell-title">Unencrypted RDS snapshot shared to external AWS account</div>
+            <div class="cell-title-sub"><span>Data exposure</span><span class="fid">· FND-2026-00501</span><span style="color:var(--status-good);font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;font-weight:600">· NEW · 2 min ago</span></div>
+          </div>
+          <div><span class="sev-pill crit"><span class="dot"></span>Critical</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg><span class="asset-name">orders-db-replica</span></div>
+          <div class="due-cell">26 Apr 2026<span class="cd">in 5 days</span></div>
+          <div><button class="status-badge"><span class="dot"></span>Open</button></div>
+          <div class="effort-cell"><span class="effort-hrs">3 hrs</span><span class="effort-complex">Low</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>36% time left</span><span class="pct" style="color:var(--sev-high)">36%</span></div>
+            <div class="sla-bar"><div class="sla-fill warn" style="width:36%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">EC2 security group allows 0.0.0.0/0 on port 22 (SSH)</div>
+            <div class="cell-title-sub"><span>Network exposure</span><span class="fid">· FND-2026-00468</span></div>
+          </div>
+          <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span class="asset-name">bastion-prod-01</span></div>
+          <div class="due-cell">28 Apr 2026<span class="cd">in 7 days</span></div>
+          <div><button class="status-badge pending"><span class="dot"></span>Pending Retest</button></div>
+          <div class="effort-cell"><span class="effort-hrs">1 hr</span><span class="effort-complex">Low</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>58% time left</span><span class="pct" style="color:var(--status-good)">58%</span></div>
+            <div class="sla-bar"><div class="sla-fill ok" style="width:58%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">CloudTrail logging disabled in us-west-2 region</div>
+            <div class="cell-title-sub"><span>Audit gap</span><span class="fid">· FND-2026-00455</span></div>
+          </div>
+          <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 10h20"></path></svg><span class="asset-name">us-west-2 account</span></div>
+          <div class="due-cell">29 Apr 2026<span class="cd">in 8 days</span></div>
+          <div><button class="status-badge blocked"><span class="dot"></span>Blocked</button></div>
+          <div class="effort-cell"><span class="effort-hrs">2 hrs</span><span class="effort-complex">Low</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>Blocked</span><span class="pct" style="color:var(--ink-60)">pause</span></div>
+            <div class="sla-bar"><div class="sla-fill" style="width:62%;background:var(--ink-40)"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">KMS key rotation disabled on "payments-kms-v1"</div>
+            <div class="cell-title-sub"><span>Key management</span><span class="fid">· FND-2026-00442</span></div>
+          </div>
+          <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg><span class="asset-name">payments-kms-v1</span></div>
+          <div class="due-cell">03 May 2026<span class="cd">in 12 days</span></div>
+          <div><button class="status-badge"><span class="dot"></span>Open</button></div>
+          <div class="effort-cell"><span class="effort-hrs">1 hr</span><span class="effort-complex">Low</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>74% time left</span><span class="pct" style="color:var(--status-good)">74%</span></div>
+            <div class="sla-bar"><div class="sla-fill ok" style="width:74%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">EKS cluster "prod-east" uses deprecated API version</div>
+            <div class="cell-title-sub"><span>Kubernetes drift</span><span class="fid">· FND-2026-00438</span></div>
+          </div>
+          <div><span class="sev-pill med"><span class="dot"></span>Medium</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span class="asset-name">eks-prod-east</span></div>
+          <div class="due-cell">06 May 2026<span class="cd">in 15 days</span></div>
+          <div><button class="status-badge"><span class="dot"></span>Open</button></div>
+          <div class="effort-cell"><span class="effort-hrs">18 hrs</span><span class="effort-complex">High</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>82% time left</span><span class="pct" style="color:var(--status-good)">82%</span></div>
+            <div class="sla-bar"><div class="sla-fill ok" style="width:82%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="cell-title">Lambda function environment variable contains plaintext DB password</div>
+            <div class="cell-title-sub"><span>Secret exposure</span><span class="fid">· FND-2026-00412</span></div>
+          </div>
+          <div><span class="sev-pill high"><span class="dot"></span>High</span></div>
+          <div class="asset-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg><span class="asset-name">invoice-processor-lambda</span></div>
+          <div class="due-cell">08 May 2026<span class="cd">in 17 days</span></div>
+          <div><button class="status-badge applied"><span class="dot"></span>Fix Applied</button></div>
+          <div class="effort-cell"><span class="effort-hrs">6 hrs</span><span class="effort-complex">Medium</span></div>
+          <div class="sla-cell">
+            <div class="sla-label"><span>89% time left</span><span class="pct" style="color:var(--status-good)">89%</span></div>
+            <div class="sla-bar"><div class="sla-fill ok" style="width:89%"></div></div>
+          </div>
+          <div><button class="row-menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div>
+        </div>
+
+        <!-- pagination -->
+        <div class="pagination">
+          <div>Showing <strong style="color:var(--ink-100)">1 – 8</strong> of 12 findings</div>
+          <div class="page-btns">
+            <button class="page-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* THEME */
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');
+  document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();const on=themePop.classList.toggle('open');themeBtn.setAttribute('aria-expanded',on)});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+/* VIEW TOGGLE (demo) */
+document.getElementById('viewMine').addEventListener('click',function(){
+  document.getElementById('viewMine').classList.add('active');
+  document.getElementById('viewTeam').classList.remove('active');
+  document.querySelector('.page-title').textContent='12 findings need your attention';
+  document.querySelector('.page-sub').textContent='Cloud-team-only view · 3 Critical, 5 High, 4 Medium · sorted by due date';
+});
+document.getElementById('viewTeam').addEventListener('click',function(){
+  document.getElementById('viewMine').classList.remove('active');
+  document.getElementById('viewTeam').classList.add('active');
+  document.querySelector('.page-title').textContent='41 findings across your Cloud Team';
+  document.querySelector('.page-sub').textContent='Full team view · 5 members · 8 Critical, 14 High, 19 Medium · "Assigned to" column shown';
+});
+
+applyTheme();
+</script>
+</body>
+</html>

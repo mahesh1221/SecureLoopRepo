@@ -39,6 +39,12 @@ export * from './components/Kbd';
 // Dataviz primitives
 export * from './components/Gauge';
 
+// Sprint 0 — CR-1 through CR-4
+export * from './components/Wizard';
+export * from './components/Callout';
+export * from './components/Breadcrumb';
+export * from './components/FontLoader';
+
 // Utils
 export { cn } from './utils/cn';
 export { useClickOutside } from './utils/useClickOutside';

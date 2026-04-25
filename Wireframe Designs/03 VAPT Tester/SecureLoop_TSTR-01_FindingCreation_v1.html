@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSTR-01 · Scanner-Linked Finding Creation · SecureLoop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+  --syn-keyword: #C794E5; --syn-string: #A5D6A7; --syn-func: #FFB04D; --syn-comment: #7A7058; --syn-number: #81C7D8;
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #B8651D; --syn-comment: #907D68; --syn-number: #2E86C1;
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #C17A1A; --syn-comment: #7A8FA8; --syn-number: #1E5A8A;
+}
+html, body {
+  height: 100%; background: var(--bg-page); color: var(--ink-100);
+  font-family: var(--font-ui); font-weight: 300; font-size: var(--text-body); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease; overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Shell */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail { background: var(--bg-base); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1); }
+.rail-logo { width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink); border-radius: var(--r-sm); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl); margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow); }
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item { width: 40px; height: 40px; display: grid; place-items: center; color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; position: relative; }
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before { content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0; }
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line); background: var(--bg-base); height: 56px; flex-shrink: 0; }
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill { padding: 2px 6px; background: var(--brand-dim); color: var(--brand); border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: 0.04em; font-weight: 600; margin-left: 2px; }
+
+/* Theme picker */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 5px 10px 5px 6px; height: 32px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover { position: absolute; top: calc(100% + 8px); right: 0; width: 280px; padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity 160ms, transform 160ms; }
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* Common buttons */
+.btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 8px var(--s-4); height: 36px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-body); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.primary:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+.btn-small { padding: 6px var(--s-3); height: 30px; font-size: var(--text-label); }
+
+/* Severity badges */
+.sev-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.sev-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev-badge.high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev-badge.med  { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.sev-badge.low  { background: var(--sev-low-bg); color: var(--sev-low); }
+.sev-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* Status badges */
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; width: fit-content; }
+.status-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.status-badge.good { background: var(--status-good-bg); color: var(--status-good); }
+.status-badge.warn { background: var(--sev-high-bg); color: var(--sev-high); }
+.status-badge.crit { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.status-badge.neutral { background: var(--bg-raised); color: var(--ink-60); border: 1px solid var(--line-strong); }
+.status-badge.info { background: var(--sev-low-bg); color: var(--sev-low); }
+
+/* Avatar */
+.avatar { width: 24px; height: 24px; border-radius: var(--r-full); background: var(--brand-dim); color: var(--brand); display: grid; place-items: center; font-family: var(--font-display); font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.avatar-sm { width: 20px; height: 20px; font-size: 9px; }
+
+/* Scrollbar */
+.scroll::-webkit-scrollbar { width: 10px; height: 6px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.scroll::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+.workspace { display: grid; grid-template-columns: 600px 1fr; height: calc(100% - 56px); overflow: hidden; }
+.left-pane { display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--bg-base); overflow: hidden; }
+.right-pane { display: flex; flex-direction: column; overflow: hidden; }
+
+/* Scanner import panel */
+.scanner-panel { padding: var(--s-4); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--s-3); flex-shrink: 0; }
+.scanner-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.scanner-title { font-family: var(--font-display); font-size: var(--text-body); font-weight: 600; color: var(--ink-100); letter-spacing: -.01em; }
+.scanner-sub { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.scanner-row { display: grid; grid-template-columns: 180px 1fr; gap: var(--s-2); }
+.filter-select { padding: 8px var(--s-3); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; appearance: none; padding-right: 28px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px; }
+body.coffee.light .filter-select, body.blue.light .filter-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+.import-progress { padding: var(--s-2) var(--s-3); background: var(--status-good-bg); border: 1px solid var(--status-good); border-radius: var(--r-sm); font-family: var(--font-ui); font-size: var(--text-label); color: var(--status-good); font-weight: 500; display: flex; align-items: center; gap: var(--s-2); }
+
+/* Draft list */
+.drafts-panel { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.drafts-head { padding: var(--s-3) var(--s-4); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.drafts-title { font-family: var(--font-display); font-size: var(--text-body); font-weight: 600; color: var(--ink-100); letter-spacing: -.01em; }
+.count-chip { padding: 2px 8px; background: var(--brand-dim); color: var(--brand); border-radius: var(--r-full); font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
+.drafts-list { flex: 1; overflow-y: auto; }
+.draft-row { display: grid; grid-template-columns: 3px 1fr 80px auto 80px; gap: var(--s-3); align-items: center; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); cursor: pointer; transition: background 140ms; }
+.draft-row:hover { background: var(--bg-raised); }
+.draft-row.selected { background: var(--brand-dim); }
+.draft-stripe { width: 3px; height: 32px; border-radius: var(--r-xs); align-self: stretch; }
+.draft-stripe.draft { background: var(--ink-40); }
+.draft-stripe.enriched { background: var(--sev-medium); }
+.draft-stripe.confirmed { background: var(--status-good); }
+.draft-title { font-family: var(--font-ui); font-size: var(--text-label); color: var(--ink-100); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; }
+.draft-asset { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); margin-top: 3px; letter-spacing: -.01em; }
+.draft-source { font-family: var(--font-mono); font-size: 9px; color: var(--ink-80); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+
+/* Right form */
+.form-head { padding: var(--s-4) var(--s-6); border-bottom: 1px solid var(--line); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.form-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600; color: var(--ink-100); letter-spacing: -.01em; }
+.form-meta { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; margin-top: 2px; }
+.autosave { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 9px; color: var(--status-good); letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+
+.form-body { flex: 1; overflow-y: auto; padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+.field { display: flex; flex-direction: column; gap: 6px; position: relative; }
+.field-label { font-family: var(--font-mono); font-size: var(--text-micro); color: var(--ink-60); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.field-row { display: flex; justify-content: space-between; align-items: baseline; }
+.char-count { font-family: var(--font-mono); font-size: 10px; color: var(--ink-60); }
+.input, .select, .textarea { padding: 9px var(--s-3); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-body); font-weight: 500; outline: none; width: 100%; transition: border-color 140ms, box-shadow 140ms; }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-dim); }
+.textarea { resize: vertical; min-height: 80px; font-weight: 400; line-height: 1.55; }
+.select { appearance: none; padding-right: 32px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; cursor: pointer; }
+body.coffee.light .select, body.blue.light .select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+
+/* KB suggest dropdown */
+.kb-suggest { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg-base); border: 1px solid var(--brand); border-radius: var(--r-sm); box-shadow: 0 12px 32px rgba(0,0,0,.35); z-index: 10; max-height: 280px; overflow-y: auto; }
+.kb-item { padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line); cursor: pointer; transition: background 140ms; display: flex; align-items: center; gap: var(--s-3); }
+.kb-item:hover, .kb-item.focused { background: var(--bg-raised); }
+.kb-item:last-child { border-bottom: none; }
+.kb-text { flex: 1; min-width: 0; }
+.kb-title { font-family: var(--font-ui); font-size: var(--text-label); color: var(--ink-100); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kb-meta { font-family: var(--font-mono); font-size: 9px; color: var(--ink-60); letter-spacing: .02em; margin-top: 2px; }
+.kb-conf { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: var(--r-xs); font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .04em; flex-shrink: 0; }
+.kb-conf.high { background: var(--status-good-bg); color: var(--status-good); }
+.kb-conf.med { background: var(--sev-medium-bg); color: var(--sev-medium); }
+
+/* RTE compact */
+.rte-wrap { border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; background: var(--bg-raised); }
+.rte-toolbar { padding: 6px; background: var(--bg-base); border-bottom: 1px solid var(--line); display: flex; gap: 2px; }
+.rte-tool { width: 26px; height: 26px; background: transparent; border: none; border-radius: var(--r-xs); color: var(--ink-60); cursor: pointer; display: grid; place-items: center; transition: all 140ms; font-weight: 600; }
+.rte-tool:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rte-area { padding: var(--s-3); background: transparent; border: none; outline: none; color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-body); font-weight: 400; line-height: 1.55; resize: vertical; min-height: 100px; width: 100%; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+
+/* Contribute to KB checkbox */
+.kb-contribute { display: flex; align-items: flex-start; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: var(--sev-low-bg); border: 1px solid var(--sev-low); border-radius: var(--r-sm); cursor: pointer; }
+.kb-contribute input { margin-top: 2px; accent-color: var(--brand); }
+.kb-contribute-text { flex: 1; font-family: var(--font-ui); font-size: var(--text-label); color: var(--ink-80); line-height: 1.5; font-weight: 400; }
+.kb-contribute-text strong { color: var(--ink-100); font-weight: 600; }
+
+.form-foot { padding: var(--s-3) var(--s-6); border-top: 1px solid var(--line); display: flex; gap: var(--s-3); justify-content: flex-end; flex-shrink: 0; background: var(--bg-base); }
+
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app"><aside class="rail"><div class="rail-logo">S</div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M8 10H5M19 10h-3M8 14H5M19 14h-3M8 18H5M19 18h-3M12 2v4M9 4l3-2 3 2"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="rail-item "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div></aside><div class="main"><div class="topbar">
+  <div class="crumb"><span>SecureLoop</span><span class="sep">/</span><span>Findings</span><span class="sep">/</span><span class="current">Create from scanner</span><span class="id-pill">TSTR-01</span></div>
+  <div class="theme-picker-wrap">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+      <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+      <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+      <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="theme-popover" id="themePopover" role="dialog">
+      <div class="tp-section">
+        <div class="tp-section-label">Palette family</div>
+        <div class="tp-family-grid">
+          <button class="tp-family-card active" data-family="coffee">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+            <span class="tp-family-name">Coffee</span>
+            <span class="tp-family-desc">Warm · Investigation</span>
+          </button>
+          <button class="tp-family-card" data-family="blue">
+            <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+            <span class="tp-family-name">Blue</span>
+            <span class="tp-family-desc">Cool · Enterprise</span>
+          </button>
+        </div>
+      </div>
+      <div class="tp-section">
+        <div class="tp-section-label">Appearance</div>
+        <div class="tp-mode-row">
+          <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+          <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="workspace">
+  <!-- LEFT: Scanner + drafts -->
+  <section class="left-pane">
+    <div class="scanner-panel">
+      <div class="scanner-head">
+        <div>
+          <div class="scanner-title">Scanner import</div>
+          <div class="scanner-sub" style="margin-top: 2px;">ENG-2026-0184 · Q1 Payment Platform VAPT</div>
+        </div>
+      </div>
+      <div class="scanner-row">
+        <select class="filter-select">
+          <option>Nessus (.nessus XML)</option>
+          <option>Burp Suite (.xml)</option>
+          <option>OpenVAS (.xml)</option>
+        </select>
+        <button class="btn btn-small primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import scan results
+        </button>
+      </div>
+      <div class="import-progress">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        <strong>14 findings imported as drafts.</strong> Review and enrich below.
+      </div>
+    </div>
+
+    <div class="drafts-panel">
+      <div class="drafts-head">
+        <div class="drafts-title">Draft findings</div>
+        <span class="count-chip">14 drafts</span>
+      </div>
+      <div class="drafts-list scroll">
+        <div class="draft-row selected">
+          <div class="draft-stripe draft"></div>
+          <div>
+            <div class="draft-title">SQL Injection in login.php (auth-service-prod)</div>
+            <div class="draft-asset">auth-service-prod · 10.0.2.14</div>
+          </div>
+          <span class="sev-badge crit">Crit</span>
+          <span class="draft-source">NESSUS</span>
+          <span class="status-badge neutral">Draft</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe enriched"></div>
+          <div>
+            <div class="draft-title">Reflected XSS in search endpoint (customer-portal)</div>
+            <div class="draft-asset">customer-portal-web · 10.0.4.22</div>
+          </div>
+          <span class="sev-badge high">High</span>
+          <span class="draft-source">BURP</span>
+          <span class="status-badge warn">Enriched</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe draft"></div>
+          <div>
+            <div class="draft-title">Weak TLS cipher suite on LB-01</div>
+            <div class="draft-asset">LB-01-customer-edge</div>
+          </div>
+          <span class="sev-badge med">Med</span>
+          <span class="draft-source">NESSUS</span>
+          <span class="status-badge neutral">Draft</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe confirmed"></div>
+          <div>
+            <div class="draft-title">Hard-coded API key in mobile app binary</div>
+            <div class="draft-asset">mobile-app-android</div>
+          </div>
+          <span class="sev-badge crit">Crit</span>
+          <span class="draft-source">MANUAL</span>
+          <span class="status-badge good">Confirmed</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe draft"></div>
+          <div>
+            <div class="draft-title">Missing security headers on admin console</div>
+            <div class="draft-asset">admin-console-legacy</div>
+          </div>
+          <span class="sev-badge low">Low</span>
+          <span class="draft-source">BURP</span>
+          <span class="status-badge neutral">Draft</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe enriched"></div>
+          <div>
+            <div class="draft-title">Outdated library with CVE-2024-31485</div>
+            <div class="draft-asset">payment-gateway-prod</div>
+          </div>
+          <span class="sev-badge med">Med</span>
+          <span class="draft-source">NESSUS</span>
+          <span class="status-badge warn">Enriched</span>
+        </div>
+        <div class="draft-row">
+          <div class="draft-stripe draft"></div>
+          <div>
+            <div class="draft-title">Broken access control on order endpoint</div>
+            <div class="draft-asset">order-service-prod</div>
+          </div>
+          <span class="sev-badge high">High</span>
+          <span class="draft-source">BURP</span>
+          <span class="status-badge neutral">Draft</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: Finding form -->
+  <section class="right-pane">
+    <div class="form-head">
+      <div>
+        <div class="form-title">Enrich finding</div>
+        <div class="form-meta">Imported Jan 18, 14:22 UTC · auth-service-prod</div>
+      </div>
+      <span class="autosave">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Saved 12s ago
+      </span>
+    </div>
+
+    <div class="form-body scroll">
+
+      <div class="field">
+        <div class="field-row">
+          <span class="field-label">Title · vulnerability first, asset second</span>
+          <span class="char-count">54 / 100</span>
+        </div>
+        <input type="text" class="input" id="titleField" value="SQL Injection in login.php (auth-service-prod)" autocomplete="off">
+
+        <!-- KB auto-suggest -->
+        <div class="kb-suggest" id="kbSuggest">
+          <div class="kb-item focused">
+            <div class="kb-text">
+              <div class="kb-title">SQL Injection — authentication bypass pattern</div>
+              <div class="kb-meta">KB-0142 · Injection · CWE-89</div>
+            </div>
+            <span class="sev-badge crit">Crit</span>
+            <span class="kb-conf high">High · 94%</span>
+          </div>
+          <div class="kb-item">
+            <div class="kb-text">
+              <div class="kb-title">SQL Injection — login endpoint UNION-based</div>
+              <div class="kb-meta">KB-0143 · Injection · CWE-89</div>
+            </div>
+            <span class="sev-badge crit">Crit</span>
+            <span class="kb-conf high">High · 89%</span>
+          </div>
+          <div class="kb-item">
+            <div class="kb-text">
+              <div class="kb-title">SQL Injection — blind time-based</div>
+              <div class="kb-meta">KB-0158 · Injection · CWE-89</div>
+            </div>
+            <span class="sev-badge high">High</span>
+            <span class="kb-conf med">Medium · 72%</span>
+          </div>
+          <div class="kb-item">
+            <div class="kb-text">
+              <div class="kb-title">SQLi via stored procedure call</div>
+              <div class="kb-meta">KB-0201 · Injection · CWE-89</div>
+            </div>
+            <span class="sev-badge high">High</span>
+            <span class="kb-conf med">Medium · 66%</span>
+          </div>
+          <div class="kb-item">
+            <div class="kb-text">
+              <div class="kb-title">NoSQL Injection — MongoDB operator abuse</div>
+              <div class="kb-meta">KB-0303 · Injection · CWE-943</div>
+            </div>
+            <span class="sev-badge high">High</span>
+            <span class="kb-conf med">Medium · 58%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <span class="field-label">Category</span>
+          <select class="select">
+            <option>Injection · SQL Injection</option>
+            <option>Cross-Site Scripting</option>
+            <option>Broken Access Control</option>
+            <option>Configuration Error</option>
+            <option>Cryptographic Failure</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">Severity (CVSS-derived)</span>
+          <select class="select">
+            <option>Critical · 9.8</option>
+            <option>High · 7.5</option>
+            <option>Medium · 5.4</option>
+            <option>Low · 3.2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Description · pre-filled from KB-0142</span>
+        <div class="rte-wrap">
+          <div class="rte-toolbar">
+            <button class="rte-tool"><strong>B</strong></button>
+            <button class="rte-tool"><em>I</em></button>
+            <button class="rte-tool" style="text-decoration: underline;">U</button>
+            <button class="rte-tool"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg></button>
+            <button class="rte-tool"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+          </div>
+          <textarea class="rte-area">The login.php endpoint on auth-service-prod is vulnerable to SQL injection via the `username` parameter. Input is concatenated directly into a SQL query without parameterised binding or input validation. An attacker can bypass authentication and extract data from the underlying database by submitting crafted payloads such as `admin' OR '1'='1' --`. Verified with sqlmap — confirmed union-based and error-based injection are both possible.</textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Business impact · pre-filled</span>
+        <textarea class="textarea">Attacker can bypass authentication on the primary customer login flow, gaining unauthorised access to user accounts. Through union-based injection, sensitive PII (emails, password hashes, payment references) can be extracted from the user database. Given 4.1M active customer records, a successful exploitation scenario places the company at significant regulatory risk (GDPR Art. 32) and estimated $2.8M – $4.5M in breach-related costs.</textarea>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Remediation recommendation · pre-filled</span>
+        <div class="rte-wrap">
+          <div class="rte-toolbar">
+            <button class="rte-tool"><strong>B</strong></button>
+            <button class="rte-tool"><em>I</em></button>
+            <button class="rte-tool"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+          </div>
+          <textarea class="rte-area">Step 1: Replace all string-concatenated SQL queries with parameterised prepared statements (PDO or mysqli_prepare).
+Step 2: Apply input validation — reject any username containing SQL metacharacters at the API layer.
+Step 3: Rotate any database credentials that may have been exposed through error-based injection output.
+Step 4: Enable query logging at the database level for 30 days post-fix to confirm no residual exploitation attempts succeed.
+Step 5: Schedule a retest with the original tester per SLA.</textarea>
+        </div>
+      </div>
+
+      <label class="kb-contribute">
+        <input type="checkbox">
+        <div class="kb-contribute-text">
+          <strong>Save as new KB entry.</strong> On save, platform runs deduplication check against existing KB. If similar entries exist, side-by-side comparison modal appears. Submissions flagged for Security Engineer review before becoming available to all testers.
+        </div>
+      </label>
+
+    </div>
+
+    <div class="form-foot">
+      <button class="btn">Save as draft</button>
+      <button class="btn">Enrich &amp; continue →</button>
+      <button class="btn primary">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        Confirm finding
+      </button>
+    </div>
+  </section>
+</div>
+</div></div>
+
+<script>
+// Theme picker
+(function(){
+  const pickerBtn = document.getElementById('themePickerBtn');
+  if (!pickerBtn) return;
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+})();
+
+// Draft row selection
+document.querySelectorAll('.draft-row').forEach(row => {
+  row.addEventListener('click', () => {
+    document.querySelectorAll('.draft-row').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+  });
+});
+
+// KB suggest: hide when clicking outside title field
+const titleField = document.getElementById('titleField');
+const kbSuggest = document.getElementById('kbSuggest');
+document.addEventListener('click', (e) => {
+  if (!titleField.contains(e.target) && !kbSuggest.contains(e.target)) {
+    kbSuggest.style.display = 'none';
+  }
+});
+titleField.addEventListener('focus', () => { kbSuggest.style.display = 'block'; });
+document.querySelectorAll('.kb-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.kb-item').forEach(i => i.classList.remove('focused'));
+    item.classList.add('focused');
+    kbSuggest.style.display = 'none';
+  });
+});
+
+</script>
+</body>
+</html>

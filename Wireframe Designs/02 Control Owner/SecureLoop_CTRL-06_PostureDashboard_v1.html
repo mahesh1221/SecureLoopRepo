@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTRL-06 · My Posture · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --backdrop: rgba(0,0,0,.52);
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(43,24,16,.35);
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --backdrop: rgba(10,22,40,.30);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease;
+  overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* APP SHELL */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail {
+  background: var(--bg-base); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1);
+}
+.rail-logo {
+  width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink);
+  border-radius: var(--r-sm); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl);
+  margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow);
+}
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer;
+  transition: all 140ms; position: relative;
+}
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before {
+  content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar {
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line);
+  background: var(--bg-base); height: 56px; flex-shrink: 0;
+}
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill {
+  padding: 2px 6px; background: var(--brand-dim); color: var(--brand);
+  border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro);
+  letter-spacing: 0.04em; font-weight: 600; margin-left: 2px;
+}
+
+/* THEME PICKER */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms;
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40;
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* CONTENT */
+.content { flex: 1; overflow-y: auto; padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+.content::-webkit-scrollbar { width: 10px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+
+/* Page head */
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); }
+.page-title-block { display: flex; flex-direction: column; gap: 4px; }
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.page-eyebrow::before {
+  content: ""; width: 6px; height: 6px;
+  background: var(--status-good); border-radius: 50%;
+  box-shadow: 0 0 6px var(--status-good);
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+.page-title em { font-style: normal; font-weight: 700; color: var(--brand); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 8px var(--s-4); height: 36px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+
+/* HERO */
+.hero {
+  display: grid;
+  grid-template-columns: 280px 1fr 260px;
+  gap: var(--s-8);
+  align-items: center;
+  padding: var(--s-6);
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.gauge-wrap {
+  width: 240px; height: 240px;
+  position: relative;
+  margin: 0 auto;
+}
+.gauge-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.gauge-value {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+.gauge-max {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  font-weight: 500;
+  margin-top: 4px;
+  letter-spacing: .04em;
+}
+
+.hero-info { display: flex; flex-direction: column; gap: var(--s-3); min-width: 0; }
+.hero-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1.15;
+}
+.hero-heading em { font-style: normal; font-weight: 700; color: var(--brand); }
+.hero-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-80);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+.trend-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  background: var(--status-good-bg);
+  color: var(--status-good);
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 600;
+  width: fit-content;
+}
+
+.hero-stats {
+  display: flex; flex-direction: column; gap: var(--s-3);
+  padding: var(--s-4);
+  background: var(--bg-raised);
+  border-radius: var(--r-sm);
+}
+.hs-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+}
+.hs-label { color: var(--ink-60); font-weight: 400; }
+.hs-val {
+  font-family: var(--font-mono);
+  color: var(--ink-100);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.hs-val.good { color: var(--status-good); }
+.hs-val.warn { color: var(--sev-high); }
+.hs-val.crit { color: var(--sev-critical); }
+
+/* MAIN 2-COL */
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--s-4);
+}
+
+/* Section card */
+.sec-card {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.sec-head {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sec-title {
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.sec-sub {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .02em;
+}
+
+/* LEFT: Framework breakdown */
+.fw-list { display: flex; flex-direction: column; }
+.fw-card {
+  padding: var(--s-4);
+  display: grid;
+  grid-template-columns: 44px 1fr 120px;
+  gap: var(--s-4);
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 140ms;
+}
+.fw-card:last-child { border-bottom: none; }
+.fw-card:hover { background: var(--bg-raised); }
+
+.fw-badge {
+  width: 44px; height: 44px;
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  flex-shrink: 0;
+}
+.fw-badge.nist { background: var(--brand-dim); color: var(--brand); }
+.fw-badge.cis { background: var(--sev-low-bg); color: var(--sev-low); }
+.fw-badge.soc { background: var(--status-good-bg); color: var(--status-good); }
+.fw-badge.owasp { background: var(--sev-high-bg); color: var(--sev-high); }
+.fw-badge.csa { background: var(--sev-medium-bg); color: var(--sev-medium); }
+
+.fw-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fw-name-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+.fw-name {
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.fw-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--r-xs);
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.fw-status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.fw-status.compliant { background: var(--status-good-bg); color: var(--status-good); }
+.fw-status.at-risk { background: var(--sev-high-bg); color: var(--sev-high); }
+
+.fw-meta-row {
+  display: flex; align-items: center; gap: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  flex-wrap: wrap;
+}
+.fw-meta-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.fw-meta-chip strong { color: var(--ink-100); font-weight: 700; }
+.fw-meta-chip.good strong { color: var(--status-good); }
+.fw-meta-chip.warn strong { color: var(--sev-critical); }
+.fw-meta-chip .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-40); }
+
+/* Progress circle on right */
+.fw-progress {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.fw-score-ring {
+  width: 48px; height: 48px;
+  position: relative;
+}
+.fw-score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.fw-score-val {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+}
+.fw-progress-bar-row {
+  display: flex; flex-direction: column; gap: 3px;
+  width: 120px;
+}
+.fw-progress-track {
+  height: 4px;
+  background: var(--bg-raised);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.fw-progress-fill {
+  height: 100%;
+  border-radius: var(--r-full);
+}
+.fw-progress-fill.good { background: var(--status-good); }
+.fw-progress-fill.warn { background: var(--sev-high); }
+.fw-progress-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: -.01em;
+  text-align: right;
+}
+
+/* RIGHT COLUMN sections */
+.right-col { display: flex; flex-direction: column; gap: var(--s-4); }
+
+/* Audit deadlines */
+.deadline-list { display: flex; flex-direction: column; }
+.deadline-item {
+  padding: var(--s-3) var(--s-4);
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: var(--s-3);
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 140ms;
+}
+.deadline-item:last-child { border-bottom: none; }
+.deadline-item:hover { background: var(--bg-raised); }
+
+.dl-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dl-name {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--ink-100);
+}
+.dl-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .02em;
+}
+.dl-countdown {
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.dl-days {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.dl-days.ok { color: var(--status-good); }
+.dl-days.soon { color: var(--sev-high); }
+.dl-days.urgent { color: var(--sev-critical); }
+.dl-unit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* Assigned controls summary with pie */
+.summary-block {
+  padding: var(--s-4);
+  display: flex;
+  gap: var(--s-4);
+  align-items: center;
+}
+.pie-wrap {
+  width: 120px; height: 120px;
+  position: relative;
+  flex-shrink: 0;
+}
+.pie-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.pie-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.pie-total {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.pie-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.summary-legend {
+  display: flex; flex-direction: column; gap: var(--s-2);
+  flex: 1;
+}
+.legend-item { display: flex; align-items: center; gap: var(--s-2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot.compliant { background: var(--status-good); }
+.legend-dot.open { background: var(--sev-critical); }
+.legend-dot.accepted { background: var(--ink-60); }
+.legend-text { flex: 1; display: flex; justify-content: space-between; align-items: baseline; }
+.legend-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 500;
+}
+.legend-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+/* Trend chart */
+.trend-card { padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); }
+.trend-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+}
+.trend-toggles { display: flex; gap: 6px; }
+.toggle-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  color: var(--ink-80);
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.toggle-chip:hover { border-color: var(--line-strong); }
+.toggle-chip.active {
+  background: var(--brand-dim);
+  border-color: var(--brand);
+  color: var(--ink-100);
+}
+.tc-dot { width: 6px; height: 6px; border-radius: 50%; }
+.tc-dot.posture { background: var(--brand); }
+.tc-dot.open { background: var(--sev-critical); }
+.tc-dot.closed { background: var(--status-good); }
+
+.period-select {
+  padding: 5px var(--s-2);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 10px;
+}
+body.coffee.light .period-select, body.blue.light .period-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.chart-wrap {
+  position: relative;
+  height: 140px;
+  width: 100%;
+}
+.chart-wrap svg { width: 100%; height: 100%; }
+</style>
+</head>
+
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="rail-logo">S</div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l2.39 4.84L20 8.27l-4 3.9.94 5.5L12 15.77l-4.94 2.9L8 12.17 4 8.27l5.61-1.43L12 2z"/></svg></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <span>SecureLoop</span>
+        <span class="sep">/</span>
+        <span class="current">My posture</span>
+        <span class="id-pill">CTRL-06</span>
+      </div>
+      <div class="theme-picker-wrap">
+        <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+          <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+          <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+          <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-popover" id="themePopover" role="dialog">
+          <div class="tp-section">
+            <div class="tp-section-label">Palette family</div>
+            <div class="tp-family-grid">
+              <button class="tp-family-card active" data-family="coffee">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+                <span class="tp-family-name">Coffee</span>
+                <span class="tp-family-desc">Warm · Investigation</span>
+              </button>
+              <button class="tp-family-card" data-family="blue">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+                <span class="tp-family-name">Blue</span>
+                <span class="tp-family-desc">Cool · Enterprise</span>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-section-label">Appearance</div>
+            <div class="tp-mode-row">
+              <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Page head -->
+      <div class="page-head">
+        <div class="page-title-block">
+          <span class="page-eyebrow">Sarah Chen · Security Operations · Last updated 2m ago</span>
+          <h1 class="page-title">My compliance <em>posture</em></h1>
+        </div>
+        <button class="btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export my compliance report (PDF)
+        </button>
+      </div>
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 240 240">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--sev-high)"/>
+                <stop offset="100%" stop-color="var(--status-good)"/>
+              </linearGradient>
+            </defs>
+            <circle cx="120" cy="120" r="100" fill="none" stroke="var(--bg-raised)" stroke-width="14"/>
+            <circle cx="120" cy="120" r="100" fill="none" stroke="url(#gauge-grad)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="628.32" stroke-dashoffset="144.51"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-value">77</div>
+            <div class="gauge-max">/ 100</div>
+          </div>
+        </div>
+
+        <div class="hero-info">
+          <div class="hero-heading">You're in <em>good standing</em> across your assigned controls.</div>
+          <div class="hero-sub">Posture score combines control compliance, finding resolution, and risk acceptance usage. Score of 70+ indicates healthy compliance management.</div>
+          <span class="trend-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            +6 points over 30 days
+          </span>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hs-row"><span class="hs-label">Controls compliant</span><span class="hs-val good">26 of 34</span></div>
+          <div class="hs-row"><span class="hs-label">Open findings</span><span class="hs-val warn">7</span></div>
+          <div class="hs-row"><span class="hs-label">Risk accepted</span><span class="hs-val">4</span></div>
+          <div class="hs-row"><span class="hs-label">Critical findings</span><span class="hs-val crit">1</span></div>
+        </div>
+      </div>
+
+      <!-- 2-COL -->
+      <div class="cols">
+
+        <!-- LEFT: Framework breakdown -->
+        <section class="sec-card">
+          <div class="sec-head">
+            <div class="sec-title">Per-framework breakdown</div>
+            <div class="sec-sub">Click to filter controls by framework</div>
+          </div>
+          <div class="fw-list">
+
+            <div class="fw-card">
+              <div class="fw-badge nist">NIST</div>
+              <div class="fw-body">
+                <div class="fw-name-row">
+                  <span class="fw-name">NIST-CSF</span>
+                  <span class="fw-status compliant">Compliant</span>
+                </div>
+                <div class="fw-meta-row">
+                  <span class="fw-meta-chip good"><strong>10 of 12</strong> compliant</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip warn"><strong>2</strong> open</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip"><strong>1</strong> accepted</span>
+                </div>
+              </div>
+              <div class="fw-progress">
+                <div class="fw-score-ring">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-raised)" stroke-width="4"/>
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-good)" stroke-width="4" stroke-linecap="round"
+                      stroke-dasharray="125.66" stroke-dashoffset="20.1"/>
+                  </svg>
+                  <div class="fw-score-val">84</div>
+                </div>
+                <div class="fw-progress-bar-row">
+                  <div class="fw-progress-track"><div class="fw-progress-fill good" style="width: 83%;"></div></div>
+                  <div class="fw-progress-label">83% compliant</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fw-card">
+              <div class="fw-badge cis">CIS</div>
+              <div class="fw-body">
+                <div class="fw-name-row">
+                  <span class="fw-name">CIS v8</span>
+                  <span class="fw-status compliant">Compliant</span>
+                </div>
+                <div class="fw-meta-row">
+                  <span class="fw-meta-chip good"><strong>8 of 9</strong> compliant</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip warn"><strong>1</strong> open</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip"><strong>0</strong> accepted</span>
+                </div>
+              </div>
+              <div class="fw-progress">
+                <div class="fw-score-ring">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-raised)" stroke-width="4"/>
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-good)" stroke-width="4" stroke-linecap="round"
+                      stroke-dasharray="125.66" stroke-dashoffset="13.82"/>
+                  </svg>
+                  <div class="fw-score-val">89</div>
+                </div>
+                <div class="fw-progress-bar-row">
+                  <div class="fw-progress-track"><div class="fw-progress-fill good" style="width: 89%;"></div></div>
+                  <div class="fw-progress-label">89% compliant</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fw-card">
+              <div class="fw-badge soc">SOC</div>
+              <div class="fw-body">
+                <div class="fw-name-row">
+                  <span class="fw-name">SOC 2 Type II</span>
+                  <span class="fw-status at-risk">At risk</span>
+                </div>
+                <div class="fw-meta-row">
+                  <span class="fw-meta-chip"><strong>4 of 7</strong> compliant</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip warn"><strong>3</strong> open</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip"><strong>2</strong> accepted</span>
+                </div>
+              </div>
+              <div class="fw-progress">
+                <div class="fw-score-ring">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-raised)" stroke-width="4"/>
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--sev-high)" stroke-width="4" stroke-linecap="round"
+                      stroke-dasharray="125.66" stroke-dashoffset="53.78"/>
+                  </svg>
+                  <div class="fw-score-val">57</div>
+                </div>
+                <div class="fw-progress-bar-row">
+                  <div class="fw-progress-track"><div class="fw-progress-fill warn" style="width: 57%;"></div></div>
+                  <div class="fw-progress-label">57% compliant</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fw-card">
+              <div class="fw-badge owasp">ASVS</div>
+              <div class="fw-body">
+                <div class="fw-name-row">
+                  <span class="fw-name">OWASP ASVS</span>
+                  <span class="fw-status compliant">Compliant</span>
+                </div>
+                <div class="fw-meta-row">
+                  <span class="fw-meta-chip good"><strong>3 of 4</strong> compliant</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip warn"><strong>1</strong> open</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip"><strong>0</strong> accepted</span>
+                </div>
+              </div>
+              <div class="fw-progress">
+                <div class="fw-score-ring">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-raised)" stroke-width="4"/>
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-good)" stroke-width="4" stroke-linecap="round"
+                      stroke-dasharray="125.66" stroke-dashoffset="31.42"/>
+                  </svg>
+                  <div class="fw-score-val">75</div>
+                </div>
+                <div class="fw-progress-bar-row">
+                  <div class="fw-progress-track"><div class="fw-progress-fill good" style="width: 75%;"></div></div>
+                  <div class="fw-progress-label">75% compliant</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fw-card">
+              <div class="fw-badge csa">CSA</div>
+              <div class="fw-body">
+                <div class="fw-name-row">
+                  <span class="fw-name">CSA CCM</span>
+                  <span class="fw-status compliant">Compliant</span>
+                </div>
+                <div class="fw-meta-row">
+                  <span class="fw-meta-chip good"><strong>1 of 2</strong> compliant</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip warn"><strong>0</strong> open</span>
+                  <span class="dot"></span>
+                  <span class="fw-meta-chip"><strong>1</strong> accepted</span>
+                </div>
+              </div>
+              <div class="fw-progress">
+                <div class="fw-score-ring">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-raised)" stroke-width="4"/>
+                    <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-good)" stroke-width="4" stroke-linecap="round"
+                      stroke-dasharray="125.66" stroke-dashoffset="50.27"/>
+                  </svg>
+                  <div class="fw-score-val">60</div>
+                </div>
+                <div class="fw-progress-bar-row">
+                  <div class="fw-progress-track"><div class="fw-progress-fill good" style="width: 60%;"></div></div>
+                  <div class="fw-progress-label">60% compliant</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- RIGHT column -->
+        <div class="right-col">
+
+          <!-- Audit deadlines -->
+          <section class="sec-card">
+            <div class="sec-head">
+              <div class="sec-title">Audit deadlines</div>
+            </div>
+            <div class="deadline-list">
+              <div class="deadline-item">
+                <div class="dl-info">
+                  <span class="dl-name">SOC 2 Type II</span>
+                  <span class="dl-date">Mon, May 18 2026</span>
+                </div>
+                <div class="dl-countdown">
+                  <span class="dl-days urgent">28</span>
+                  <span class="dl-unit">days</span>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="dl-info">
+                  <span class="dl-name">NIST-CSF</span>
+                  <span class="dl-date">Fri, Jun 26 2026</span>
+                </div>
+                <div class="dl-countdown">
+                  <span class="dl-days soon">67</span>
+                  <span class="dl-unit">days</span>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="dl-info">
+                  <span class="dl-name">CIS v8</span>
+                  <span class="dl-date">Wed, Aug 19 2026</span>
+                </div>
+                <div class="dl-countdown">
+                  <span class="dl-days ok">121</span>
+                  <span class="dl-unit">days</span>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="dl-info">
+                  <span class="dl-name">OWASP ASVS</span>
+                  <span class="dl-date">Thu, Oct 22 2026</span>
+                </div>
+                <div class="dl-countdown">
+                  <span class="dl-days ok">185</span>
+                  <span class="dl-unit">days</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Assigned summary with pie -->
+          <section class="sec-card">
+            <div class="sec-head">
+              <div class="sec-title">Assigned controls summary</div>
+            </div>
+            <div class="summary-block">
+              <div class="pie-wrap">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--bg-raised)" stroke-width="12"/>
+                  <!-- Compliant: 26/34 = 76.5% — 230.9 / 301.6 -->
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--status-good)" stroke-width="12"
+                    stroke-dasharray="230.9 301.6" transform="rotate(0 60 60)"/>
+                  <!-- Open: 7/34 = 20.6% — 62.1 / 301.6 -->
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--sev-critical)" stroke-width="12"
+                    stroke-dasharray="62.1 301.6" stroke-dashoffset="-230.9" transform="rotate(0 60 60)"/>
+                  <!-- Accepted: 1/34 = 2.9% — 8.6 / 301.6 -->
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--ink-60)" stroke-width="12"
+                    stroke-dasharray="8.6 301.6" stroke-dashoffset="-293" transform="rotate(0 60 60)"/>
+                </svg>
+                <div class="pie-center">
+                  <div class="pie-total">34</div>
+                  <div class="pie-label">Total</div>
+                </div>
+              </div>
+              <div class="summary-legend">
+                <div class="legend-item">
+                  <span class="legend-dot compliant"></span>
+                  <div class="legend-text">
+                    <span class="legend-label">Compliant</span>
+                    <span class="legend-count">26</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot open"></span>
+                  <div class="legend-text">
+                    <span class="legend-label">With open findings</span>
+                    <span class="legend-count">7</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot accepted"></span>
+                  <div class="legend-text">
+                    <span class="legend-label">Risk accepted</span>
+                    <span class="legend-count">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Trend chart -->
+          <section class="sec-card">
+            <div class="sec-head">
+              <div class="sec-title">Trend</div>
+              <select class="period-select">
+                <option>Last 90 days</option>
+                <option>Last 30 days</option>
+                <option>Last 60 days</option>
+                <option>Last 180 days</option>
+              </select>
+            </div>
+            <div class="trend-card">
+              <div class="trend-head">
+                <div class="trend-toggles">
+                  <label class="toggle-chip active"><span class="tc-dot posture"></span>Posture</label>
+                  <label class="toggle-chip active"><span class="tc-dot open"></span>Open</label>
+                  <label class="toggle-chip"><span class="tc-dot closed"></span>Closed</label>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <svg viewBox="0 0 360 140" preserveAspectRatio="none">
+                  <!-- grid -->
+                  <line x1="24" y1="20" x2="354" y2="20" stroke="var(--line)" stroke-width="1"/>
+                  <line x1="24" y1="60" x2="354" y2="60" stroke="var(--line)" stroke-width="1"/>
+                  <line x1="24" y1="100" x2="354" y2="100" stroke="var(--line)" stroke-width="1"/>
+                  <line x1="24" y1="120" x2="354" y2="120" stroke="var(--line-strong)" stroke-width="1"/>
+                  <text x="20" y="24" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)" text-anchor="end">100</text>
+                  <text x="20" y="64" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)" text-anchor="end">60</text>
+                  <text x="20" y="104" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)" text-anchor="end">20</text>
+
+                  <!-- Open (red thin) -->
+                  <polyline points="24,60 60,62 100,58 140,52 180,56 220,50 260,52 300,48 340,52"
+                    fill="none" stroke="var(--sev-critical)" stroke-width="1.5" stroke-linecap="round"/>
+                  <!-- Posture (brand thick) -->
+                  <polyline points="24,48 60,46 100,42 140,40 180,36 220,34 260,30 300,26 340,22"
+                    fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round"/>
+                  <circle cx="340" cy="22" r="4" fill="var(--brand)" stroke="var(--bg-base)" stroke-width="2"/>
+
+                  <text x="24" y="134" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)">Jan 21</text>
+                  <text x="180" y="134" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)" text-anchor="middle">Mar 6</text>
+                  <text x="340" y="134" font-family="JetBrains Mono" font-size="8" fill="var(--ink-60)" text-anchor="end">Today</text>
+                </svg>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Theme picker
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // Trend toggles
+  document.querySelectorAll('.toggle-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('active'));
+  });
+</script>
+</body>
+</html>

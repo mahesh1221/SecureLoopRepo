@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Contract Signature · SecureLoop</title>
+<style>
+/* ============ FONTS ============ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ============ TOKENS ============ */
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px; --text-label:11px; --text-body:13px; --text-lg:15px;
+  --text-xl:20px; --text-2xl:28px; --text-3xl:44px;
+  --r-xs:3px; --r-sm:6px; --r-md:10px; --r-full:999px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px; --s-12:48px;
+}
+
+/* Coffee Dark (default) */
+body.coffee.dark{
+  --bg-page:#120804; --bg-base:#1A0F08; --bg-raised:#25170D; --bg-overlay:#2B1810; --bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07); --line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2; --ink-80:#D4CBB0; --ink-60:#A69B80; --ink-40:#7A7058; --ink-20:#3D3428;
+  --brand:#F3EEE2; --brand-ink:#120804; --brand-dim:rgba(243,238,226,.12); --brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B; --sev-high:#FFB04D; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14); --sev-high-bg:rgba(255,176,77,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(143,229,179,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2; --bg-base:#FBF8F1; --bg-raised:#EDE7D8; --bg-overlay:#FFFDF7; --bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10); --line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810; --ink-80:#4A2E1D; --ink-60:#6B5544; --ink-40:#907D68; --ink-20:#C9C0AA;
+  --brand:#6F4E37; --brand-ink:#F3EEE2; --brand-dim:rgba(111,78,55,.14); --brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637; --sev-high:#B8651D; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.14); --sev-high-bg:rgba(184,101,29,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(43,24,16,.35);
+}
+body.blue.dark{
+  --bg-page:#0A1628; --bg-base:#0F1E35; --bg-raised:#162B48; --bg-overlay:#1C3557; --bg-hover:#22406B;
+  --line:rgba(232,244,253,.08); --line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD; --ink-80:#C0D5E8; --ink-60:#7A96B4; --ink-40:#556F8A; --ink-20:#2C4058;
+  --brand:#E8F4FD; --brand-ink:#0A1628; --brand-dim:rgba(232,244,253,.12); --brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B; --sev-high:#FFB347; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14); --sev-high-bg:rgba(255,179,71,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(126,224,168,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.blue.light{
+  --bg-page:#F2F8FD; --bg-base:#FFFFFF; --bg-raised:#E5EFF8; --bg-overlay:#FFFFFF; --bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08); --line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628; --ink-80:#1F3A5C; --ink-60:#4A6380; --ink-40:#7A8FA8; --ink-20:#B5C5D8;
+  --brand:#1E5A8A; --brand-ink:#F2F8FD; --brand-dim:rgba(30,90,138,.14); --brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A; --sev-high:#C17A1A; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.14); --sev-high-bg:rgba(193,122,26,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(10,22,40,.30);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-page); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-body); font-weight:400;
+  letter-spacing:-0.003em; line-height:1.5;
+  min-height:100vh;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' seed='3'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  opacity:.025;
+}
+body.coffee.light::before,body.blue.light::before{opacity:.05}
+
+a{color:inherit}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* Universal SVG icon default — prevents unbounded SVGs from expanding */
+svg{width:16px; height:16px; flex-shrink:0}
+
+/* ============ APP SHELL ============ */
+.app{position:relative; z-index:1; display:grid; grid-template-columns:64px 1fr; min-height:100vh}
+.rail{
+  background:var(--bg-base); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center; padding:var(--s-4) 0; gap:var(--s-2);
+  position:sticky; top:0; height:100vh;
+}
+.logo{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--brand); color:var(--brand-ink);
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:700; font-size:var(--text-lg);
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-3);
+}
+body.coffee.light .logo,body.blue.light .logo{font-weight:600}
+.rail-item{
+  width:40px; height:40px; border-radius:var(--r-sm);
+  display:grid; place-items:center; color:var(--ink-60);
+  cursor:pointer; transition:all 140ms; border:1px solid transparent;
+}
+.rail-item:hover{background:var(--bg-raised); color:var(--ink-100)}
+.rail-item.active{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line-strong)}
+.rail-item svg{width:18px; height:18px}
+
+.main{display:flex; flex-direction:column; min-width:0}
+.topbar{
+  height:56px; display:flex; align-items:center; gap:var(--s-3);
+  padding:0 var(--s-6); border-bottom:1px solid var(--line); background:var(--bg-page);
+  position:sticky; top:0; z-index:5;
+}
+.crumb{display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-label); color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .current{color:var(--ink-100); font-weight:500}
+.crumb a{cursor:pointer; text-decoration:none}
+.crumb a:hover{color:var(--ink-100)}
+
+.spacer{flex:1}
+
+.search{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px; width:260px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-60); font-size:var(--text-label);
+}
+.search input{flex:1; background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label)}
+.search svg{width:14px; height:14px}
+
+/* Theme picker */
+.theme-btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer;
+}
+.theme-btn:hover{background:var(--bg-hover)}
+.theme-btn .sw{display:flex; flex-direction:column; gap:1px}
+.theme-btn .sw span{width:14px; height:5px; border-radius:1px; border:1px solid var(--line-strong); display:block}
+.theme-btn .sw .s1{background:var(--bg-raised)}
+.theme-btn .sw .s2{background:var(--brand)}
+.theme-btn .chev{width:10px; height:10px; color:var(--ink-60)}
+
+.theme-popover{
+  position:absolute; top:52px; right:var(--s-6); z-index:20;
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  padding:var(--s-4); width:360px; display:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+.theme-popover.open{display:block}
+.theme-popover h4{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-2) 0;
+}
+.fam-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-bottom:var(--s-4)}
+.fam-card{
+  padding:var(--s-3); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); cursor:pointer; transition:all 140ms;
+}
+.fam-card:hover{border-color:var(--line-strong)}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .name{font-family:var(--font-display); font-size:var(--text-body); font-weight:600; margin-bottom:var(--s-1)}
+.fam-card .desc{font-size:10px; color:var(--ink-60); margin-bottom:var(--s-2)}
+.fam-swatches{display:flex; gap:3px; height:16px}
+.fam-swatches i{flex:1; border-radius:2px; display:block}
+.mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2)}
+.mode-btn{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-2);
+  padding:var(--s-2); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); color:var(--ink-80); cursor:pointer; font-size:var(--text-label); font-family:inherit;
+}
+.mode-btn.active{background:var(--brand); color:var(--brand-ink); border-color:var(--brand)}
+.mode-btn svg{width:12px; height:12px}
+
+/* ============ CONTENT ============ */
+.content{flex:1; padding:var(--s-6); overflow-y:auto; min-height:0}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:8px var(--s-4); height:36px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-body); font-weight:500;
+  cursor:pointer; transition:all 140ms;
+}
+.btn:hover{background:var(--bg-hover); border-color:var(--line-strong)}
+.btn.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5; cursor:not-allowed}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg{width:14px; height:14px}
+
+.icon-btn{
+  width:36px; height:36px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer; transition:all 140ms;
+}
+.icon-btn:hover{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line)}
+.icon-btn svg{width:16px; height:16px}
+
+/* Inputs */
+.input,.select,.textarea{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-label); outline:none;
+  width:100%;
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim);
+}
+.input::placeholder{color:var(--ink-40)}
+.textarea{font-family:var(--font-ui); resize:vertical; min-height:80px}
+
+/* Cards */
+.card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.card:hover{border-color:var(--line-strong)}
+
+/* Badges */
+.p-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  font-family:var(--font-ui); font-size:9px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;
+}
+.p-badge.crit{background:var(--sev-critical-bg); color:var(--sev-critical)}
+.p-badge.high{background:var(--sev-high-bg); color:var(--sev-high)}
+.p-badge.med{background:var(--sev-medium-bg); color:var(--sev-medium)}
+.p-badge.low{background:var(--sev-low-bg); color:var(--sev-low)}
+.p-badge.good{background:var(--status-good-bg); color:var(--status-good)}
+.p-badge.neutral{background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong)}
+
+.id-pill{
+  padding:2px 6px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono); font-size:var(--text-micro);
+  letter-spacing:0.04em; font-weight:600;
+}
+
+/* Segmented pill */
+.segmented{display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm)}
+.seg-btn{
+  padding:4px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; min-width:64px; text-align:center;
+}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Page header */
+.page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-6); margin-bottom:var(--s-6)}
+.page-title{
+  font-family:var(--font-display); font-size:var(--text-2xl); font-weight:600;
+  letter-spacing:-0.02em; line-height:1.1; margin:0 0 var(--s-1) 0;
+}
+.page-sub{font-size:var(--text-label); color:var(--ink-60)}
+.page-head .actions{display:flex; gap:var(--s-2); align-items:center}
+
+/* Section title */
+.sec-title{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-3) 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px; height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+
+/* Modal */
+.modal-backdrop{
+  position:fixed; inset:0; z-index:50; background:var(--modal-backdrop);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:none; align-items:flex-start; justify-content:center;
+  padding:var(--s-6) var(--s-4);
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:880px; max-width:100%; max-height:calc(100vh - 48px);
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  display:flex; flex-direction:column; overflow:hidden;
+  animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--s-4) var(--s-6); border-bottom:1px solid var(--line);
+}
+.modal-head .t{font-family:var(--font-display); font-size:var(--text-xl); font-weight:600; letter-spacing:-0.015em}
+.modal-body{padding:var(--s-6); overflow-y:auto; flex:1}
+.modal-foot{
+  display:flex; justify-content:flex-end; gap:var(--s-2);
+  padding:var(--s-4) var(--s-6); border-top:1px solid var(--line);
+  background:var(--bg-base);
+}
+@keyframes riseIn{
+  from{opacity:0; transform:translateY(16px) scale(.98)}
+  to{opacity:1; transform:none}
+}
+
+/* ============ LGL-02-1 ============ */
+/* Contract summary header */
+.ctr-summary{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4) var(--s-6); margin-bottom:var(--s-4);
+  display:flex; flex-wrap:wrap;
+  gap:var(--s-6) var(--s-8); align-items:center;
+}
+.ctr-id{display:flex; flex-direction:column; gap:2px}
+.ctr-id .n{
+  font-family:var(--font-mono); font-size:var(--text-lg); font-weight:700;
+  color:var(--ink-100); letter-spacing:0.04em;
+}
+.ctr-id .t{font-size:10px; color:var(--ink-60); letter-spacing:0.04em; text-transform:uppercase; font-weight:600}
+.ctr-cell{display:flex; flex-direction:column; gap:2px}
+.ctr-cell .l{
+  font-size:10px; color:var(--ink-60); letter-spacing:0.08em;
+  text-transform:uppercase; font-weight:600;
+}
+.ctr-cell .v{font-size:var(--text-body); color:var(--ink-100); font-weight:500}
+.ctr-cell .v.mono{font-family:var(--font-mono); letter-spacing:0.04em}
+
+/* Two-column workflow layout */
+.sig-grid{display:grid; grid-template-columns:1fr 340px; gap:var(--s-4); align-items:flex-start}
+
+/* Method selector */
+.method-row{
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--s-3);
+  margin-bottom:var(--s-4);
+}
+.method-card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4); cursor:pointer; transition:all 180ms;
+  display:flex; flex-direction:column; gap:var(--s-2);
+  position:relative;
+}
+.method-card:hover{border-color:var(--line-strong)}
+.method-card.active{
+  background:var(--brand-dim); border-color:var(--brand);
+  box-shadow:0 0 0 1px var(--brand);
+}
+.method-card.active::after{
+  content:""; position:absolute; top:var(--s-3); right:var(--s-3);
+  width:18px; height:18px; border-radius:var(--r-full);
+  background:var(--brand); color:var(--brand-ink);
+}
+.method-card .chk{
+  position:absolute; top:var(--s-3); right:var(--s-3);
+  width:18px; height:18px; border-radius:var(--r-full);
+  border:1.5px solid var(--line-strong); background:var(--bg-raised);
+  display:grid; place-items:center;
+}
+.method-card.active .chk{
+  background:var(--brand); border-color:var(--brand); color:var(--brand-ink);
+}
+.method-card.active .chk svg{width:11px; height:11px; display:block}
+.method-card:not(.active) .chk svg{display:none}
+
+.method-card .ico{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--bg-raised); color:var(--ink-80);
+  display:grid; place-items:center; margin-bottom:var(--s-2);
+}
+.method-card.active .ico{background:var(--brand); color:var(--brand-ink)}
+.method-card .ico svg{width:18px; height:18px}
+.method-card .t{
+  font-family:var(--font-display); font-size:var(--text-lg); font-weight:600;
+  letter-spacing:-0.01em; line-height:1.2;
+}
+.method-card .d{font-size:var(--text-label); color:var(--ink-60); line-height:1.5}
+.method-card .tags{display:flex; gap:4px; margin-top:var(--s-2); flex-wrap:wrap}
+
+/* Workflow panel */
+.workflow{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-6);
+}
+.wf-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:var(--s-4); padding-bottom:var(--s-3); border-bottom:1px solid var(--line);
+}
+.wf-title{
+  font-family:var(--font-display); font-size:var(--text-xl); font-weight:600;
+  letter-spacing:-0.015em;
+}
+
+/* Recipients table */
+.rec-table{
+  width:100%; border-collapse:collapse;
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  overflow:hidden; background:var(--bg-base);
+}
+.rec-table th{
+  padding:var(--s-2) var(--s-3); background:var(--bg-raised);
+  text-align:left; vertical-align:middle;
+  font-family:var(--font-ui); font-size:var(--text-micro);
+  letter-spacing:0.08em; text-transform:uppercase;
+  font-weight:600; color:var(--ink-60); border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+.rec-table td{
+  padding:var(--s-3); border-bottom:1px solid var(--line);
+  vertical-align:middle;
+  font-size:var(--text-label); color:var(--ink-100);
+}
+.rec-table tr:last-child td{border-bottom:none}
+
+.order-badge{
+  width:24px; height:24px; border-radius:var(--r-full);
+  background:var(--brand-dim); color:var(--brand);
+  display:inline-grid; place-items:center;
+  font-family:var(--font-mono); font-size:var(--text-label); font-weight:700;
+}
+
+.name-stack{display:flex; flex-direction:column; gap:4px}
+.name-stack .nm{
+  font-size:var(--text-label); font-weight:500; color:var(--ink-100);
+  background:transparent; border:none; outline:none;
+  font-family:inherit; padding:2px 0;
+  border-bottom:1px dashed transparent; width:100%;
+}
+.name-stack .nm:hover{border-bottom-color:var(--line-strong)}
+.name-stack .nm:focus{border-bottom-color:var(--brand)}
+.name-stack .sub{
+  font-size:10px; color:var(--ink-60); letter-spacing:0.02em;
+  background:transparent; border:none; outline:none;
+  font-family:inherit; padding:2px 0; width:100%;
+  border-bottom:1px dashed transparent;
+}
+.name-stack .sub:hover{border-bottom-color:var(--line-strong)}
+.name-stack .sub:focus{border-bottom-color:var(--brand); color:var(--ink-100)}
+
+.email-input{
+  background:transparent; border:none; outline:none;
+  font-family:var(--font-mono); font-size:var(--text-label);
+  color:var(--ink-80); letter-spacing:0.02em; padding:2px 0;
+  border-bottom:1px dashed transparent; width:100%;
+}
+.email-input:hover{border-bottom-color:var(--line-strong)}
+.email-input:focus{border-bottom-color:var(--brand); color:var(--ink-100)}
+
+.rec-select{
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-xs);
+  padding:6px var(--s-2); color:var(--ink-100); font-family:inherit; font-size:var(--text-label);
+  outline:none; cursor:pointer; min-width:180px;
+}
+.rec-select:focus{border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim)}
+
+.type-select{min-width:110px}
+
+.trash{
+  width:28px; height:28px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer;
+}
+.trash:hover{background:var(--sev-critical-bg); color:var(--sev-critical); border-color:var(--sev-critical)}
+.trash svg{width:14px; height:14px}
+
+.order-controls{
+  display:flex; align-items:center; gap:var(--s-2);
+  margin-top:var(--s-3); padding:var(--s-3);
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+}
+.order-controls > svg{width:16px; height:16px; color:var(--ink-60); flex-shrink:0}
+.order-controls .l{font-size:var(--text-label); color:var(--ink-60); font-weight:500}
+
+.add-recipient{margin-top:var(--s-3)}
+
+/* Status tracker sidebar */
+.tracker{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-6); position:sticky; top:calc(56px + var(--s-6));
+}
+.tr-title{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin-bottom:var(--s-3);
+}
+.tr-progress{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:var(--s-3); background:var(--bg-raised);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  margin-bottom:var(--s-4);
+}
+.tr-bar{
+  flex:1; height:6px; background:var(--bg-page);
+  border-radius:var(--r-full); overflow:hidden;
+}
+.tr-bar-fill{height:100%; background:var(--status-good); width:33%}
+.tr-progress .n{font-family:var(--font-mono); font-size:var(--text-label); font-weight:700; color:var(--ink-100)}
+
+.sig-timeline{display:flex; flex-direction:column}
+.sig-step{
+  display:grid; grid-template-columns:28px 1fr; gap:var(--s-3);
+  padding:var(--s-3) 0; position:relative;
+}
+.sig-step:not(:last-child)::after{
+  content:""; position:absolute; left:13.5px; top:36px; bottom:-4px; width:1.5px;
+  background:var(--line-strong);
+}
+.sig-step.signed:not(:last-child)::after{background:var(--status-good)}
+.sig-step .dot{
+  width:28px; height:28px; border-radius:var(--r-full);
+  display:grid; place-items:center; flex-shrink:0;
+  background:var(--bg-raised); border:1.5px solid var(--line-strong); color:var(--ink-60);
+}
+.sig-step.signed .dot{background:var(--status-good); border-color:var(--status-good); color:var(--brand-ink)}
+.sig-step.sent .dot{background:var(--sev-low-bg); border-color:var(--sev-low); color:var(--sev-low)}
+.sig-step.viewed .dot{background:var(--sev-high-bg); border-color:var(--sev-high); color:var(--sev-high)}
+.sig-step.declined .dot{background:var(--sev-critical-bg); border-color:var(--sev-critical); color:var(--sev-critical)}
+.sig-step .dot svg{width:14px; height:14px}
+
+.sig-body{display:flex; flex-direction:column; gap:4px; padding-top:2px}
+.sig-name{font-size:var(--text-body); font-weight:500; color:var(--ink-100); line-height:1.3}
+.sig-title{font-size:10px; color:var(--ink-60); letter-spacing:0.04em}
+.sig-status{
+  font-family:var(--font-mono); font-size:10px; color:var(--ink-80);
+  letter-spacing:0.04em; margin-top:4px;
+}
+.sig-ts{
+  font-family:var(--font-mono); font-size:10px; color:var(--ink-60);
+  letter-spacing:0.04em;
+}
+.sig-actions{margin-top:var(--s-2); display:flex; gap:var(--s-2)}
+.sig-actions .btn{height:28px; padding:0 var(--s-3); font-size:10px}
+
+/* Action bar */
+.action-bar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:var(--s-4); padding:var(--s-4);
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+}
+.action-bar-left{display:flex; gap:var(--s-2); align-items:center}
+.action-bar-right{display:flex; gap:var(--s-2)}
+
+/* Reminder schedule hint */
+.hint-card{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:12px 18px; background:var(--sev-low-bg); border:1px solid var(--sev-low);
+  border-radius:var(--r-sm); margin-top:var(--s-3);
+}
+.hint-card .chip{
+  width:30px; height:30px; border-radius:var(--r-full);
+  background:var(--sev-low); color:var(--brand-ink);
+  display:grid; place-items:center; flex-shrink:0;
+}
+.hint-card .chip svg{width:14px; height:14px}
+.hint-card .txt{font-size:var(--text-label); color:var(--ink-100); line-height:1.5}
+.hint-card .txt b{font-weight:600}
+</style>
+</head>
+<body class="coffee dark">
+<div class="app">
+  <aside class="rail"><div class="logo">S</div>
+<div class="rail-item" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+<div class="rail-item" title="Contracts" aria-label="Contracts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+<div class="rail-item" title="Clause Library" aria-label="Clause Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+<div class="rail-item active" title="Signatures" aria-label="Signatures"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s3-3 7-3 4 2 7 2 4-2 4-2"/><path d="M3 21h18"/></svg></div>
+<div class="rail-item" title="Repository" aria-label="Repository"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+<div style="flex:1"></div>
+<div class="rail-item" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><a>SecureLoop</a> <span class="sep">/</span> <a>Legal</a> <span class="sep">/</span> <a>Contracts</a> <span class="sep">/</span> <a>CTR-2026-0184</a> <span class="sep">/</span> <span class="current">Signature</span></div>
+      <span class="id-pill">LGL-02-1</span>
+      
+      <div class="spacer"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search SecureLoop…"/></div>
+      <button class="theme-btn" id="themeBtn" aria-label="Theme picker">
+        <span class="sw"><span class="s1"></span><span class="s2"></span></span>
+        <span id="themeLabel">Coffee · Dark</span>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="theme-popover" id="themePop">
+        <h4>Palette family</h4>
+        <div class="fam-grid">
+          <div class="fam-card active" data-fam="coffee">
+            <div class="name">Coffee</div>
+            <div class="desc">Warm · Investigation</div>
+            <div class="fam-swatches"><i style="background:#120804"></i><i style="background:#25170D"></i><i style="background:#F3EEE2"></i></div>
+          </div>
+          <div class="fam-card" data-fam="blue">
+            <div class="name">Blue</div>
+            <div class="desc">Cool · Enterprise</div>
+            <div class="fam-swatches"><i style="background:#0A1628"></i><i style="background:#162B48"></i><i style="background:#E8F4FD"></i></div>
+          </div>
+        </div>
+        <h4>Appearance</h4>
+        <div class="mode-grid">
+          <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Light</button>
+          <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+        </div>
+      </div>
+    </header>
+    <section class="content">
+      
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Contract Signature</h1>
+    <div class="page-sub">LGL-02 · Digital (eIDAS/ESIGN) · Wet · Hybrid · Immutable audit trail per party</div>
+  </div>
+  <div class="actions">
+    <button class="btn ghost">Back to Contract Editor</button>
+  </div>
+</div>
+
+
+<div class="ctr-summary">
+  <div class="ctr-id">
+    <div class="n">CTR-2026-0184</div>
+    <div class="t">Contract ID</div>
+  </div>
+  <div class="ctr-cell">
+    <span class="l">Type</span>
+    <span class="v">Customer MSA + SoW</span>
+  </div>
+  <div class="ctr-cell">
+    <span class="l">Parties</span>
+    <span class="v">Acme Corp · SecureLoop Ltd</span>
+  </div>
+  <div class="ctr-cell">
+    <span class="l">Value</span>
+    <span class="v mono">$248,500</span>
+  </div>
+  <div class="ctr-cell">
+    <span class="l">Effective</span>
+    <span class="v mono">2026-05-01</span>
+  </div>
+  <div class="ctr-cell">
+    <span class="l">Expiry</span>
+    <span class="v mono">2027-04-30</span>
+  </div>
+  <span class="p-badge low">SENT FOR SIGNATURE</span>
+</div>
+
+<div class="sec-title">Signature method</div>
+
+<div class="method-row">
+  <div class="method-card active" data-method="digital">
+    <div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"/><polyline points="12 2 12 15"/><polyline points="8 6 12 2 16 6"/></svg></div>
+    <div class="t">Digital signature</div>
+    <div class="d">Fastest path. DocuSign or Adobe Sign envelope sent directly to signatories.</div>
+    <div class="tags">
+      <span class="p-badge good">eIDAS</span>
+      <span class="p-badge good">ESIGN</span>
+      <span class="p-badge neutral">REAL-TIME STATUS</span>
+    </div>
+  </div>
+  <div class="method-card" data-method="wet">
+    <div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s3-3 7-3 4 2 7 2 4-2 4-2"/><path d="M3 21h18"/></svg></div>
+    <div class="t">Wet signature</div>
+    <div class="d">Download PDF, sign offline, upload signed scan. OCR extracts signature dates.</div>
+    <div class="tags">
+      <span class="p-badge neutral">OCR VALIDATION</span>
+      <span class="p-badge neutral">FOR GOV / REGULATED</span>
+    </div>
+  </div>
+  <div class="method-card" data-method="hybrid">
+    <div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l16 16M20 4L4 20"/></svg></div>
+    <div class="t">Hybrid</div>
+    <div class="d">Per-party method — some signatories digital, others wet. System manages mixed workflow.</div>
+    <div class="tags">
+      <span class="p-badge neutral">PER-PARTY METHOD</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="sig-grid">
+  
+<div class="workflow">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">Digital signature recipients</div>
+      <div style="font-size:var(--text-label); color:var(--ink-60); margin-top:2px">Configure envelope via DocuSign API. Polling every 5 min with webhook fallback.</div>
+    </div>
+    <span class="p-badge good">INTEGRATION: DOCUSIGN</span>
+  </div>
+  <table class="rec-table">
+    <thead>
+      <tr>
+        <th style="width:56px">Order</th>
+        <th>Name · Title</th>
+        <th>Email</th>
+        <th style="width:200px">Role</th>
+        <th style="width:130px">Type</th>
+        <th style="width:40px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="order-badge">1</span></td>
+        <td>
+          <div class="name-stack">
+            <input class="nm" value="Priya Sharma"/>
+            <input class="sub" value="Chief Legal Officer, Acme Corp"/>
+          </div>
+        </td>
+        <td><input class="email-input" value="p.sharma@acme.example"/></td>
+        <td>
+          <select class="rec-select">
+            <option>Customer — Signatory</option><option>Customer — Counter-sign</option>
+          </select>
+        </td>
+        <td>
+          <select class="rec-select type-select">
+            <option>Sign</option><option>Approve</option><option>View only</option>
+          </select>
+        </td>
+        <td><button class="trash" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>
+      </tr>
+      <tr>
+        <td><span class="order-badge">2</span></td>
+        <td>
+          <div class="name-stack">
+            <input class="nm" value="Mahesh Iyer"/>
+            <input class="sub" value="CEO, SecureLoop Ltd"/>
+          </div>
+        </td>
+        <td><input class="email-input" value="mahesh@secureloop.example"/></td>
+        <td>
+          <select class="rec-select">
+            <option>Our Side — Signatory</option>
+          </select>
+        </td>
+        <td>
+          <select class="rec-select type-select">
+            <option>Sign</option><option>Approve</option><option>View only</option>
+          </select>
+        </td>
+        <td><button class="trash" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>
+      </tr>
+      <tr>
+        <td><span class="order-badge">3</span></td>
+        <td>
+          <div class="name-stack">
+            <input class="nm" value="Jane Reinhardt"/>
+            <input class="sub" value="Legal Counsel, SecureLoop"/>
+          </div>
+        </td>
+        <td><input class="email-input" value="jane@secureloop.example"/></td>
+        <td>
+          <select class="rec-select">
+            <option>Our Side — Witness</option>
+          </select>
+        </td>
+        <td>
+          <select class="rec-select type-select">
+            <option>View only</option><option>Sign</option><option>Approve</option>
+          </select>
+        </td>
+        <td><button class="trash" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="add-recipient">
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add recipient</span></button>
+  </div>
+  <div class="order-controls">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+    <span class="l" style="margin-left:var(--s-2)">Signing order</span>
+    <div class="segmented" style="margin-left:auto">
+      <button class="seg-btn active">Sequential</button>
+      <button class="seg-btn">Parallel</button>
+    </div>
+  </div>
+  <div class="hint-card">
+    <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+    <div class="txt"><b>Auto-reminders:</b> Daily after 3 days · Escalate to Legal after 7 days of inaction. Manual reminder available per signatory. Configurable per org in Settings.</div>
+  </div>
+</div>
+
+  
+<aside class="tracker">
+  <div class="tr-title">Signing progress</div>
+  <div class="tr-progress">
+    <div class="tr-bar"><div class="tr-bar-fill"></div></div>
+    <span class="n">1 / 3</span>
+  </div>
+  <div class="tr-title">Signatories</div>
+  <div class="sig-timeline">
+    <div class="sig-step signed">
+      <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="sig-body">
+        <div class="sig-name">Priya Sharma</div>
+        <div class="sig-title">CLO · Acme Corp</div>
+        <div class="sig-status"><span class="p-badge good" style="display:inline-flex">SIGNED</span></div>
+        <div class="sig-ts">2026-04-21 · 14:37 UTC</div>
+        <div class="sig-ts" style="color:var(--ink-40)">IP 203.0.113.42 · Verified</div>
+      </div>
+    </div>
+    <div class="sig-step viewed">
+      <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="sig-body">
+        <div class="sig-name">Mahesh Iyer</div>
+        <div class="sig-title">CEO · SecureLoop Ltd</div>
+        <div class="sig-status"><span class="p-badge high" style="display:inline-flex">VIEWED</span></div>
+        <div class="sig-ts">Viewed 2026-04-22 · 09:12 UTC</div>
+        <div class="sig-actions">
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Remind</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="sig-step">
+      <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="sig-body">
+        <div class="sig-name">Jane Reinhardt</div>
+        <div class="sig-title">Legal Counsel · Witness</div>
+        <div class="sig-status"><span class="p-badge neutral" style="display:inline-flex">PENDING</span></div>
+        <div class="sig-ts" style="color:var(--ink-60)">Awaits turn — sequential</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+</div>
+
+
+<div class="action-bar">
+  <div class="action-bar-left">
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>View audit trail</span></button>
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Download draft PDF</span></button>
+  </div>
+  <div class="action-bar-right">
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><span>Cancel signature process</span></button>
+    <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Send for signature</span></button>
+  </div>
+</div>
+
+
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  const body=document.body;
+  const btn=document.getElementById('themeBtn');
+  const pop=document.getElementById('themePop');
+  const label=document.getElementById('themeLabel');
+  let fam='coffee', mode='dark';
+  function apply(){
+    body.classList.remove('coffee','blue','dark','light');
+    body.classList.add(fam,mode);
+    label.textContent = (fam[0].toUpperCase()+fam.slice(1))+' · '+(mode[0].toUpperCase()+mode.slice(1));
+    pop.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+    pop.querySelectorAll('.mode-btn').forEach(c=>c.classList.toggle('active',c.dataset.mode===mode));
+  }
+  btn.addEventListener('click',(e)=>{e.stopPropagation();pop.classList.toggle('open')});
+  document.addEventListener('click',(e)=>{if(!pop.contains(e.target) && e.target!==btn)pop.classList.remove('open')});
+  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')pop.classList.remove('open')});
+  pop.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;apply()}));
+  pop.querySelectorAll('.mode-btn').forEach(c=>c.addEventListener('click',()=>{mode=c.dataset.mode;apply()}));
+  apply();
+})();
+
+// Method selector
+document.querySelectorAll('.method-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.method-card').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+// Sequential/Parallel segmented
+document.querySelectorAll('.segmented').forEach(s=>{
+  s.querySelectorAll('.seg-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      s.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+});
+
+</script>
+</body>
+</html>

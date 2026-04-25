@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · FIN-01 P&L Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select,textarea{font:inherit}
+
+/* ── TOKENS: COFFEE DARK (default) ───────────────────────────── */
+body.coffee.dark{
+  --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;
+  --bg-overlay:#2B1810;--bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;
+  --ink-40:#7A7058;--ink-20:#3D3428;
+  --brand:#F3EEE2;--brand-ink:#120804;
+  --brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B;--sev-critical-bg:rgba(255,107,91,.14);
+  --sev-high:#FFB04D;--sev-high-bg:rgba(255,176,77,.14);
+  --sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#8FE5B3;--status-good-bg:rgba(143,229,179,.14);
+  --backdrop:rgba(0,0,0,.52);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;
+  --bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;
+  --ink-40:#907D68;--ink-20:#C9C0AA;
+  --brand:#6F4E37;--brand-ink:#F3EEE2;
+  --brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637;--sev-critical-bg:rgba(201,70,55,.14);
+  --sev-high:#B8651D;--sev-high-bg:rgba(184,101,29,.14);
+  --sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);
+  --backdrop:rgba(43,24,16,.35);
+}
+body.blue.dark{
+  --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;
+  --bg-overlay:#1C3557;--bg-hover:#22406B;
+  --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;
+  --ink-40:#556F8A;--ink-20:#2C4058;
+  --brand:#E8F4FD;--brand-ink:#0A1628;
+  --brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B;--sev-critical-bg:rgba(255,122,107,.14);
+  --sev-high:#FFB347;--sev-high-bg:rgba(255,179,71,.14);
+  --sev-medium:#FFD97A;--sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low:#7AB8E5;--sev-low-bg:rgba(122,184,229,.14);
+  --status-good:#7EE0A8;--status-good-bg:rgba(126,224,168,.14);
+  --backdrop:rgba(0,0,0,.52);
+}
+body.blue.light{
+  --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;
+  --bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;
+  --ink-40:#7A8FA8;--ink-20:#B5C5D8;
+  --brand:#1E5A8A;--brand-ink:#F2F8FD;
+  --brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A;--sev-critical-bg:rgba(199,62,58,.14);
+  --sev-high:#C17A1A;--sev-high-bg:rgba(193,122,26,.14);
+  --sev-medium:#9E7F10;--sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low:#2E86C1;--sev-low-bg:rgba(46,134,193,.14);
+  --status-good:#2E8B50;--status-good-bg:rgba(46,139,80,.14);
+  --backdrop:rgba(10,22,40,.30);
+}
+
+/* ── FONTS ────────────────────────────────────────────────────── */
+:root{
+  --font-display:'Space Grotesk',sans-serif;
+  --font-ui:'IBM Plex Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;
+  --text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;
+  --s-6:24px;--s-8:32px;--s-12:48px;
+}
+
+/* ── BASE ─────────────────────────────────────────────────────── */
+html,body{height:100%;letter-spacing:-0.003em}
+body{
+  font-family:var(--font-ui);
+  font-size:var(--text-body);
+  font-weight:400;
+  background:var(--bg-page);
+  color:var(--ink-100);
+  display:flex;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* ── GRAIN OVERLAY ────────────────────────────────────────────── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity:0.025;
+  pointer-events:none;
+  z-index:9999;
+}
+body.coffee.light::before,body.blue.light::before{opacity:0.05}
+
+/* ── FOCUS ────────────────────────────────────────────────────── */
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ── LEFT RAIL ────────────────────────────────────────────────── */
+.rail{
+  width:64px;min-height:100vh;
+  background:var(--bg-base);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;
+  padding:var(--s-4) 0;
+  gap:var(--s-2);
+  flex-shrink:0;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+}
+.logo{
+  width:36px;height:36px;
+  background:var(--brand);
+  color:var(--brand-ink);
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-2);
+}
+.nav-sep{width:32px;height:1px;background:var(--line);margin:var(--s-1) 0}
+.nav-item{
+  width:40px;height:40px;
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-40);
+  transition:all 140ms;
+}
+.nav-item:hover{background:var(--bg-hover);color:var(--ink-80)}
+.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+
+/* ── TOPBAR ───────────────────────────────────────────────────── */
+.topbar{
+  position:fixed;left:64px;right:0;top:0;height:56px;
+  background:var(--bg-base);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:var(--s-4);
+  padding:0 var(--s-6);
+  z-index:90;
+}
+.breadcrumb{
+  display:flex;align-items:center;gap:var(--s-2);
+  font-size:var(--text-body);color:var(--ink-60);
+}
+.breadcrumb span{color:var(--ink-40);font-size:var(--text-micro)}
+.breadcrumb .current{color:var(--ink-100);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.theme-btn{
+  display:flex;align-items:center;gap:var(--s-2);
+  padding:4px var(--s-3);
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  color:var(--ink-80);
+  font-size:var(--text-label);font-weight:500;
+  transition:all 140ms;
+  position:relative;
+}
+.theme-btn:hover{border-color:var(--line-strong);background:var(--bg-hover)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.swatch{width:14px;height:6px;border-radius:var(--r-xs)}
+
+/* ── THEME POPOVER ────────────────────────────────────────────── */
+.theme-popover{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:280px;
+  background:var(--bg-overlay);
+  border:1px solid var(--line-strong);
+  border-radius:var(--r-md);
+  padding:var(--s-4);
+  box-shadow:0 8px 32px rgba(0,0,0,.32);
+  display:none;z-index:200;
+}
+.theme-popover.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.pop-label{font-size:var(--text-micro);font-weight:600;color:var(--ink-40);
+  letter-spacing:0.08em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.family-cards{display:flex;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{
+  flex:1;padding:var(--s-3);
+  background:var(--bg-raised);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  cursor:pointer;transition:all 140ms;
+}
+.family-card:hover{border-color:var(--line-strong)}
+.family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.family-swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fs{width:20px;height:12px;border-radius:var(--r-xs)}
+.family-name{font-size:var(--text-label);font-weight:600;color:var(--ink-100)}
+.family-desc{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px}
+.mode-btns{display:flex;gap:var(--s-2)}
+.mode-btn{
+  flex:1;padding:6px var(--s-3);
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  font-size:var(--text-label);font-weight:500;color:var(--ink-60);
+  display:flex;align-items:center;justify-content:center;gap:var(--s-1);
+  transition:all 140ms;
+}
+.mode-btn:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+
+/* ── CONTENT AREA ─────────────────────────────────────────────── */
+.content{
+  margin-left:64px;
+  margin-top:56px;
+  flex:1;
+  display:flex;
+  height:calc(100vh - 56px);
+  overflow:hidden;
+}
+.main-area{
+  flex:1;
+  overflow-y:auto;
+  padding:var(--s-6);
+  display:flex;flex-direction:column;gap:var(--s-4);
+}
+
+/* ── PAGE HEADER ──────────────────────────────────────────────── */
+.page-header{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap}
+.id-pill{
+  padding:2px 6px;
+  background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-xs);
+  font-family:var(--font-mono);font-size:var(--text-micro);
+  letter-spacing:0.04em;font-weight:600;
+}
+.page-title{
+  font-family:var(--font-display);font-size:var(--text-2xl);
+  font-weight:700;letter-spacing:-0.020em;color:var(--ink-100);
+}
+.page-actions{margin-left:auto;display:flex;gap:var(--s-2);align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+  padding:8px var(--s-4);height:36px;
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);color:var(--ink-100);
+  font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;
+  transition:all 140ms;
+}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── SEGMENTED LEVEL TABS ─────────────────────────────────────── */
+.level-tabs{
+  display:flex;gap:0;
+  background:var(--bg-raised);
+  border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  padding:3px;
+  align-self:flex-start;
+}
+.level-tab{
+  padding:6px var(--s-4);
+  background:transparent;border:none;border-radius:var(--r-xs);
+  color:var(--ink-60);
+  font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;
+  cursor:pointer;transition:all 140ms;
+  display:flex;align-items:center;gap:var(--s-2);
+  white-space:nowrap;
+}
+.level-tab:hover{color:var(--ink-100)}
+.level-tab.active{
+  background:var(--bg-base);color:var(--ink-100);
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.tab-badge{
+  padding:1px 6px;background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-full);
+  font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600;
+}
+.level-tab.active .tab-badge{background:var(--bg-raised)}
+
+/* ── SUMMARY CARDS ────────────────────────────────────────────── */
+.cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4)}
+.kpi-card{
+  background:var(--bg-base);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:var(--s-4);
+  display:flex;flex-direction:column;gap:var(--s-2);
+  transition:border-color 140ms;
+}
+.kpi-card:hover{border-color:var(--line-strong)}
+.kpi-label{
+  font-size:var(--text-label);font-weight:500;color:var(--ink-60);
+  letter-spacing:0.04em;text-transform:uppercase;
+  display:flex;align-items:center;gap:var(--s-2);
+}
+.kpi-label svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.kpi-value{
+  font-family:var(--font-mono);font-size:var(--text-3xl);
+  font-weight:700;letter-spacing:-0.015em;color:var(--ink-100);
+  line-height:1.1;
+}
+.kpi-value.margin-good{color:var(--status-good)}
+.kpi-value.margin-warn{color:var(--sev-medium)}
+.kpi-value.margin-crit{color:var(--sev-critical)}
+.kpi-value.ai-credits{color:var(--sev-high)}
+.kpi-meta{display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.kpi-trend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:var(--text-label);font-weight:500;
+  padding:2px 6px;border-radius:var(--r-xs);
+}
+.kpi-trend.up{background:var(--status-good-bg);color:var(--status-good)}
+.kpi-trend.down{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.kpi-period{font-size:var(--text-label);color:var(--ink-40)}
+.cost-breakdown-chips{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-top:var(--s-1)}
+.cost-chip{
+  font-size:var(--text-micro);padding:2px 6px;
+  border-radius:var(--r-full);border:1px solid var(--line-strong);
+  color:var(--ink-60);font-weight:500;
+}
+
+/* ── ALERT BANNERS ────────────────────────────────────────────── */
+.alerts-section{display:flex;flex-direction:column;gap:var(--s-2)}
+.alert-banner{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-3) var(--s-4);
+  border-radius:var(--r-sm);
+  border:1px solid;
+}
+.alert-banner.crit{
+  background:var(--sev-critical-bg);
+  border-color:var(--sev-critical);
+  color:var(--sev-critical);
+}
+.alert-banner.warn{
+  background:var(--sev-high-bg);
+  border-color:var(--sev-high);
+  color:var(--sev-high);
+}
+.alert-banner svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.alert-text{flex:1;font-size:var(--text-body);font-weight:500}
+.alert-btn{
+  padding:4px var(--s-3);height:28px;
+  background:transparent;
+  border:1px solid currentColor;border-radius:var(--r-xs);
+  font-size:var(--text-label);font-weight:600;color:inherit;
+  cursor:pointer;transition:opacity 140ms;
+  font-family:var(--font-ui);
+}
+.alert-btn:hover{opacity:.7}
+
+/* ── TABLE AREA + FILTER PANEL ────────────────────────────────── */
+.table-filter-layout{
+  display:flex;gap:var(--s-4);
+  flex:1;min-height:0;
+}
+.table-section{
+  flex:1;
+  background:var(--bg-base);border:1px solid var(--line);
+  border-radius:var(--r-md);
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.table-toolbar{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-3) var(--s-4);
+  border-bottom:1px solid var(--line);
+  flex-shrink:0;
+}
+.result-count{font-size:var(--text-label);color:var(--ink-60)}
+.table-scroll{overflow-y:auto;flex:1}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:var(--s-2) var(--s-4);
+  font-size:var(--text-label);font-weight:600;
+  color:var(--ink-60);letter-spacing:0.04em;text-transform:uppercase;
+  text-align:left;
+  border-bottom:1px solid var(--line);
+  background:var(--bg-raised);
+  white-space:nowrap;
+  position:sticky;top:0;z-index:2;
+}
+thead th.num{text-align:right}
+tbody tr{border-bottom:1px solid var(--line);transition:background 140ms}
+tbody tr:hover{background:var(--bg-hover)}
+tbody tr:last-child{border-bottom:none}
+td{
+  padding:var(--s-3) var(--s-4);
+  font-size:var(--text-body);color:var(--ink-80);
+  vertical-align:middle;
+}
+td.num{text-align:right;font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-100)}
+td.mono{font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-60)}
+.eng-id{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60)}
+.type-chip{
+  display:inline-flex;padding:2px 8px;
+  background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-full);
+  font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;
+}
+.margin-cell{font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;text-align:right}
+.margin-cell.good{color:var(--status-good)}
+.margin-cell.warn{color:var(--sev-medium)}
+.margin-cell.bad{color:var(--sev-critical)}
+.status-dot{
+  width:7px;height:7px;border-radius:var(--r-full);
+  display:inline-block;margin-right:6px;flex-shrink:0;
+}
+.status-active{background:var(--status-good)}
+.status-closed{background:var(--ink-40)}
+.action-link{
+  font-size:var(--text-label);color:var(--brand);font-weight:500;
+  cursor:pointer;transition:opacity 140ms;
+  white-space:nowrap;
+}
+.action-link:hover{opacity:.7}
+.breakdown-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:var(--r-xs);
+  background:var(--bg-raised);border:1px solid var(--line);
+  cursor:pointer;transition:all 140ms;color:var(--ink-60);
+  margin-left:var(--s-2);
+}
+.breakdown-icon:hover{background:var(--bg-hover);border-color:var(--line-strong);color:var(--ink-100)}
+.breakdown-icon svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── FILTER PANEL ─────────────────────────────────────────────── */
+.filter-panel{
+  width:256px;flex-shrink:0;
+  background:var(--bg-base);border:1px solid var(--line);
+  border-radius:var(--r-md);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:width 280ms cubic-bezier(.2,.7,.2,1);
+}
+.filter-panel.collapsed{width:40px}
+.filter-header{
+  display:flex;align-items:center;gap:var(--s-2);
+  padding:var(--s-3) var(--s-4);
+  border-bottom:1px solid var(--line);
+  flex-shrink:0;
+  cursor:pointer;user-select:none;
+}
+.filter-title{font-size:var(--text-body);font-weight:600;color:var(--ink-80);flex:1;white-space:nowrap;overflow:hidden}
+.filter-toggle-icon{color:var(--ink-40);flex-shrink:0}
+.filter-toggle-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.filter-body{overflow-y:auto;flex:1;padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-4)}
+.filter-panel.collapsed .filter-body{display:none}
+.filter-panel.collapsed .filter-title{display:none}
+.filter-group{}
+.filter-group-label{
+  font-size:var(--text-micro);font-weight:600;color:var(--ink-40);
+  letter-spacing:0.08em;text-transform:uppercase;
+  margin-bottom:var(--s-2);
+}
+.filter-presets{display:flex;flex-wrap:wrap;gap:var(--s-1)}
+.preset-chip{
+  padding:3px var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-xs);
+  font-size:var(--text-label);color:var(--ink-60);font-weight:500;
+  cursor:pointer;transition:all 140ms;
+}
+.preset-chip:hover,.preset-chip.active{
+  background:var(--brand-dim);border-color:var(--brand);color:var(--brand);
+}
+.filter-select{
+  width:100%;padding:6px var(--s-3);
+  background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);color:var(--ink-100);
+  font-size:var(--text-body);font-weight:400;
+  appearance:none;cursor:pointer;
+}
+.filter-select:focus{border-color:var(--brand)}
+.filter-actions{display:flex;gap:var(--s-2);padding-top:var(--s-2)}
+.filter-actions .btn{flex:1;justify-content:center;height:32px;font-size:var(--text-label);padding:4px var(--s-3)}
+
+/* ── MODAL OVERLAY ────────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:var(--backdrop);
+  backdrop-filter:blur(8px);
+  z-index:500;
+  display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  width:880px;max-width:calc(100vw - 48px);
+  max-height:calc(100vh - 48px);
+  background:var(--bg-overlay);
+  border:1px solid var(--line-strong);
+  border-radius:var(--r-md);
+  display:flex;flex-direction:column;
+  animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);
+  overflow:hidden;
+}
+.modal-head{
+  display:flex;align-items:center;
+  padding:var(--s-4) var(--s-6);
+  border-bottom:1px solid var(--line);
+  flex-shrink:0;
+}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--ink-100)}
+.modal-sub{font-size:var(--text-body);color:var(--ink-60);margin-left:var(--s-2)}
+.modal-close{
+  margin-left:auto;
+  width:32px;height:32px;border-radius:var(--r-sm);
+  background:var(--bg-raised);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-60);cursor:pointer;transition:all 140ms;
+}
+.modal-close:hover{background:var(--bg-hover);color:var(--ink-100)}
+.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.modal-body{overflow-y:auto;flex:1;padding:var(--s-6)}
+.modal-foot{
+  padding:var(--s-4) var(--s-6);
+  border-top:1px solid var(--line);
+  display:flex;gap:var(--s-3);justify-content:flex-end;
+  flex-shrink:0;
+}
+
+/* ── COST BREAKDOWN MODAL CONTENT ─────────────────────────────── */
+.breakdown-header{
+  display:flex;align-items:flex-start;gap:var(--s-4);
+  padding:var(--s-4);
+  background:var(--bg-raised);border-radius:var(--r-sm);
+  margin-bottom:var(--s-6);
+}
+.breakdown-kv{display:flex;flex-direction:column;gap:4px}
+.breakdown-kv-label{font-size:var(--text-label);color:var(--ink-60);font-weight:500}
+.breakdown-kv-value{font-size:var(--text-body);font-weight:600;color:var(--ink-100)}
+.breakdown-section{margin-bottom:var(--s-6)}
+.breakdown-section-title{
+  display:flex;align-items:center;gap:var(--s-2);
+  font-size:var(--text-body);font-weight:600;color:var(--ink-80);
+  margin-bottom:var(--s-3);
+  padding-bottom:var(--s-2);
+  border-bottom:1px solid var(--line);
+}
+.breakdown-section-title svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;color:var(--ink-40)}
+.bd-table{width:100%;border-collapse:collapse}
+.bd-table th{
+  padding:var(--s-2) var(--s-3);
+  font-size:var(--text-label);font-weight:600;color:var(--ink-40);
+  letter-spacing:0.04em;text-transform:uppercase;
+  text-align:left;border-bottom:1px solid var(--line);
+}
+.bd-table th.r{text-align:right}
+.bd-table td{
+  padding:var(--s-2) var(--s-3);
+  font-size:var(--text-body);color:var(--ink-80);
+  border-bottom:1px solid var(--line);
+}
+.bd-table td.r{text-align:right;font-family:var(--font-mono)}
+.bd-table tr:last-child td{border-bottom:none}
+.bd-total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:var(--s-3) var(--s-3);
+  background:var(--brand-dim);border-radius:var(--r-sm);
+  margin-top:var(--s-4);
+}
+.bd-total-label{font-size:var(--text-body);font-weight:600;color:var(--ink-80)}
+.bd-total-value{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;color:var(--ink-100)}
+.ai-credits-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;background:var(--sev-high-bg);color:var(--sev-high);
+  border-radius:var(--r-full);font-size:var(--text-micro);font-weight:600;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+</style>
+</head>
+<body class="coffee dark">
+
+<!-- LEFT RAIL -->
+<nav class="rail">
+  <div class="logo">S</div>
+  <div class="nav-sep"></div>
+  <!-- Dashboard -->
+  <button class="nav-item" title="Dashboard" aria-label="Dashboard">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+  </button>
+  <!-- Engagements -->
+  <button class="nav-item" title="Engagements" aria-label="Engagements">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/><path d="M5 6h6M5 8h6M5 10h4"/></svg>
+  </button>
+  <!-- Finance (active) -->
+  <button class="nav-item active" title="Finance" aria-label="Finance">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg>
+  </button>
+  <!-- Reports -->
+  <button class="nav-item" title="Reports" aria-label="Reports">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6L9 2z"/><path d="M9 2v4h4M6 9h4M6 11h2"/></svg>
+  </button>
+  <div class="nav-sep" style="margin-top:auto"></div>
+  <!-- Settings -->
+  <button class="nav-item" title="Settings" aria-label="Settings">
+    <svg viewBox="0 0 16 16" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.5 3.5l1 1M11.5 11.5l1 1M11.5 3.5l1-1M3.5 12.5l-1 1"/></svg>
+  </button>
+</nav>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="breadcrumb">
+    <span>SecureLoop</span>
+    <span>›</span>
+    <span>Finance</span>
+    <span>›</span>
+    <span class="current">P&amp;L Dashboard</span>
+  </div>
+  <div class="topbar-right">
+    <!-- Real-time indicator -->
+    <div style="display:flex;align-items:center;gap:6px;font-size:var(--text-label);color:var(--ink-60)">
+      <span style="width:7px;height:7px;border-radius:999px;background:var(--status-good);display:inline-block;box-shadow:0 0 6px var(--status-good)"></span>
+      Live
+    </div>
+    <!-- Export -->
+    <button class="btn" aria-label="Export">
+      <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>
+      Export
+    </button>
+    <!-- Theme picker -->
+    <div style="position:relative">
+      <button class="theme-btn" id="themeBtn" aria-label="Theme picker" aria-haspopup="true" aria-expanded="false">
+        <div class="theme-swatches">
+          <div class="swatch" id="sw1" style="background:#1A0F08"></div>
+          <div class="swatch" id="sw2" style="background:#F3EEE2"></div>
+        </div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-width="1.75"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="theme-popover" id="themePopover" role="dialog" aria-label="Theme selector">
+        <div class="pop-label">Palette Family</div>
+        <div class="family-cards">
+          <div class="family-card active" id="fc-coffee" onclick="setFamily('coffee')">
+            <div class="family-swatches">
+              <div class="fs" style="background:#1A0F08"></div>
+              <div class="fs" style="background:#F3EEE2"></div>
+              <div class="fs" style="background:#FF6B5B"></div>
+            </div>
+            <div class="family-name">Coffee</div>
+            <div class="family-desc">Warm · Investigation</div>
+          </div>
+          <div class="family-card" id="fc-blue" onclick="setFamily('blue')">
+            <div class="family-swatches">
+              <div class="fs" style="background:#0F1E35"></div>
+              <div class="fs" style="background:#E8F4FD"></div>
+              <div class="fs" style="background:#FF7A6B"></div>
+            </div>
+            <div class="family-name">Blue</div>
+            <div class="family-desc">Cool · Enterprise</div>
+          </div>
+        </div>
+        <div class="pop-label">Appearance</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="mb-dark" onclick="setMode('dark')">
+            <svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M11 7.5A5 5 0 0 1 5.5 2a5.002 5.002 0 1 0 5.5 5.5z"/></svg>
+            Dark
+          </button>
+          <button class="mode-btn" id="mb-light" onclick="setMode('light')">
+            <svg width="13" height="13" viewBox="0 0 13 13" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="2.5"/><path d="M6.5 1v1.5M6.5 10v1.5M1 6.5h1.5M10 6.5h1.5M2.9 2.9l1 1M9.1 9.1l1 1M9.1 2.9l1-1M2.9 9.1l-1 1"/></svg>
+            Light
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="content">
+  <main class="main-area">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="id-pill">FIN-01-1</div>
+      <h1 class="page-title">P&amp;L Dashboard</h1>
+      <div class="page-actions">
+        <button class="btn" onclick="openBreakdownModal()">
+          <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+          Cost Breakdown
+        </button>
+        <button class="btn">
+          <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>
+          Export CSV
+        </button>
+        <button class="btn primary">
+          <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>
+          Export PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- LEVEL TABS -->
+    <div style="display:flex;align-items:center;gap:var(--s-4)">
+      <div class="level-tabs" role="tablist">
+        <button class="level-tab active" role="tab" aria-selected="true" id="tab-eng" onclick="switchLevel('engagement')">
+          Engagement Level
+          <span class="tab-badge">47</span>
+        </button>
+        <button class="level-tab" role="tab" aria-selected="false" id="tab-cust" onclick="switchLevel('customer')">
+          Customer Level
+          <span class="tab-badge">12</span>
+        </button>
+        <button class="level-tab" role="tab" aria-selected="false" id="tab-org" onclick="switchLevel('org')">
+          Organization-Wide
+        </button>
+      </div>
+      <span style="font-size:var(--text-label);color:var(--ink-40)">Q2 2026 · Apr 1 – Apr 22</span>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards-row">
+      <!-- Total Revenue -->
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg viewBox="0 0 16 16"><path d="M8 2v12M5 5h4.5a2 2 0 0 1 0 4H5v4h5.5a2 2 0 0 0 0-4"/></svg>
+          Total Revenue
+        </div>
+        <div class="kpi-value">$2.4M</div>
+        <div class="kpi-meta">
+          <span class="kpi-trend up">
+            <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" fill="none" stroke-width="2"><path d="M2 7l3-4 3 4"/></svg>
+            +18% YoY
+          </span>
+          <span class="kpi-period">vs $2.0M last Q2</span>
+        </div>
+      </div>
+      <!-- Total Costs -->
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg viewBox="0 0 16 16"><path d="M2 4h12l-1 8H3L2 4zM6 4V3a2 2 0 0 1 4 0v1"/></svg>
+          Total Costs
+        </div>
+        <div class="kpi-value">$1.6M</div>
+        <div class="kpi-meta">
+          <span class="kpi-trend down">
+            <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" fill="none" stroke-width="2"><path d="M2 3l3 4 3-4"/></svg>
+            +24% YoY
+          </span>
+        </div>
+        <div class="cost-breakdown-chips">
+          <span class="cost-chip">Sub $720K</span>
+          <span class="cost-chip">Internal $840K</span>
+          <span class="cost-chip ai-credits-tag">AI $42K</span>
+        </div>
+      </div>
+      <!-- Gross Margin -->
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg viewBox="0 0 16 16"><path d="M2 14L8 4l6 10"/><path d="M5 10h6"/></svg>
+          Gross Margin %
+        </div>
+        <div class="kpi-value margin-warn" id="marginValue">32.4%</div>
+        <div class="kpi-meta">
+          <span class="kpi-trend down">
+            <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" fill="none" stroke-width="2"><path d="M2 3l3 4 3-4"/></svg>
+            −3.1pp YoY
+          </span>
+          <span class="kpi-period">Target: 40%</span>
+        </div>
+      </div>
+      <!-- AI Credits -->
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg viewBox="0 0 16 16"><path d="M8 2L10 6l4 .5-3 2.5 1 4-4-2.5L4 13l1-4-3-2.5L6 6z"/></svg>
+          AI Credit Costs
+        </div>
+        <div class="kpi-value ai-credits">$42K</div>
+        <div class="kpi-meta">
+          <span class="kpi-trend up">
+            <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" fill="none" stroke-width="2"><path d="M2 7l3-4 3 4"/></svg>
+            +67% QoQ
+          </span>
+          <span class="kpi-period">8,400 sessions</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERT BANNERS -->
+    <div class="alerts-section" id="alertsSection">
+      <div class="alert-banner crit">
+        <svg viewBox="0 0 16 16"><path d="M8 2L1.5 13h13L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg>
+        <span class="alert-text">3 engagements below 25% margin threshold — immediate attention required</span>
+        <button class="alert-btn" onclick="filterByAlert('margin')">View</button>
+      </div>
+      <div class="alert-banner warn">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 10.5v.5"/></svg>
+        <span class="alert-text">2 engagements with subcontractor costs &gt;110% of budget — cost overrun flagged</span>
+        <button class="alert-btn" onclick="filterByAlert('overrun')">View</button>
+      </div>
+    </div>
+
+    <!-- TABLE + FILTER LAYOUT -->
+    <div class="table-filter-layout" style="min-height:320px">
+
+      <!-- TABLE SECTION -->
+      <div class="table-section" id="tableSection">
+        <div class="table-toolbar">
+          <span class="result-count" id="resultCount">Showing 47 engagements</span>
+          <div style="margin-left:auto;display:flex;gap:var(--s-2)">
+            <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3)">
+              <svg viewBox="0 0 16 16" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+              Filter
+            </button>
+            <button class="btn" style="height:28px;font-size:var(--text-label);padding:0 var(--s-3)">
+              <svg viewBox="0 0 16 16" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h12M4 8h8M6 12h4M10 2l2 2-2 2"/></svg>
+              Sort
+            </button>
+          </div>
+        </div>
+
+        <!-- ENGAGEMENT LEVEL TABLE (default) -->
+        <div class="table-scroll" id="engTable">
+          <table>
+            <thead>
+              <tr>
+                <th>Engagement ID</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Start</th>
+                <th class="num">Revenue</th>
+                <th class="num">Sub Cost</th>
+                <th class="num">Internal</th>
+                <th class="num">AI Credits</th>
+                <th class="num">Margin $</th>
+                <th class="num">Margin %</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="eng-id">ENG-2026-041</span></td>
+                <td style="font-weight:500">Nexus Financial</td>
+                <td><span class="type-chip">VAPT</span></td>
+                <td class="mono">Mar 1</td>
+                <td class="num">$84,000</td>
+                <td class="num">$28,000</td>
+                <td class="num">$18,000</td>
+                <td class="num" style="color:var(--sev-high)">$3,200</td>
+                <td class="num">$34,800</td>
+                <td><span class="margin-cell good">41.4%</span></td>
+                <td><span class="status-dot status-active"></span>Active</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="eng-id">ENG-2026-038</span></td>
+                <td style="font-weight:500">Orion HealthTech</td>
+                <td><span class="type-chip">Red Team</span></td>
+                <td class="mono">Feb 14</td>
+                <td class="num">$120,000</td>
+                <td class="num">$62,000</td>
+                <td class="num">$24,000</td>
+                <td class="num" style="color:var(--sev-high)">$5,800</td>
+                <td class="num">$28,200</td>
+                <td><span class="margin-cell warn">23.5%</span></td>
+                <td><span class="status-dot status-active"></span>Active</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr style="background:var(--sev-critical-bg)">
+                <td><span class="eng-id">ENG-2026-035</span></td>
+                <td style="font-weight:500">Apex Logistics</td>
+                <td><span class="type-chip">VAPT</span></td>
+                <td class="mono">Jan 28</td>
+                <td class="num">$56,000</td>
+                <td class="num">$38,000</td>
+                <td class="num">$14,000</td>
+                <td class="num" style="color:var(--sev-high)">$1,400</td>
+                <td class="num" style="color:var(--sev-critical)">$2,600</td>
+                <td><span class="margin-cell bad">4.6%</span></td>
+                <td><span class="status-dot status-active"></span>Active</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="eng-id">ENG-2026-033</span></td>
+                <td style="font-weight:500">Vega Retail Group</td>
+                <td><span class="type-chip">Audit</span></td>
+                <td class="mono">Jan 15</td>
+                <td class="num">$42,000</td>
+                <td class="num">$12,000</td>
+                <td class="num">$10,000</td>
+                <td class="num" style="color:var(--sev-high)">$960</td>
+                <td class="num">$19,040</td>
+                <td><span class="margin-cell good">45.3%</span></td>
+                <td><span class="status-dot status-closed"></span>Closed</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="eng-id">ENG-2026-029</span></td>
+                <td style="font-weight:500">Strata Cloud</td>
+                <td><span class="type-chip">VAPT</span></td>
+                <td class="mono">Jan 8</td>
+                <td class="num">$95,000</td>
+                <td class="num">$30,000</td>
+                <td class="num">$22,000</td>
+                <td class="num" style="color:var(--sev-high)">$4,100</td>
+                <td class="num">$38,900</td>
+                <td><span class="margin-cell good">40.9%</span></td>
+                <td><span class="status-dot status-active"></span>Active</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr style="background:var(--sev-high-bg)">
+                <td><span class="eng-id">ENG-2026-026</span></td>
+                <td style="font-weight:500">Meridian Bank</td>
+                <td><span class="type-chip">Red Team</span></td>
+                <td class="mono">Dec 12</td>
+                <td class="num">$180,000</td>
+                <td class="num">$108,000</td>
+                <td class="num">$38,000</td>
+                <td class="num" style="color:var(--sev-high)">$7,200</td>
+                <td class="num">$26,800</td>
+                <td><span class="margin-cell warn">14.9%</span></td>
+                <td><span class="status-dot status-active"></span>Active</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="eng-id">ENG-2026-021</span></td>
+                <td style="font-weight:500">Polaris Energy</td>
+                <td><span class="type-chip">VAPT</span></td>
+                <td class="mono">Nov 20</td>
+                <td class="num">$68,000</td>
+                <td class="num">$18,000</td>
+                <td class="num">$15,000</td>
+                <td class="num" style="color:var(--sev-high)">$2,100</td>
+                <td class="num">$32,900</td>
+                <td><span class="margin-cell good">48.4%</span></td>
+                <td><span class="status-dot status-closed"></span>Closed</td>
+                <td style="white-space:nowrap">
+                  <span class="action-link">View</span>
+                  <button class="breakdown-icon" onclick="openBreakdownModal()" title="Cost Breakdown" aria-label="Cost Breakdown">
+                    <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CUSTOMER LEVEL TABLE (hidden) -->
+        <div class="table-scroll" id="custTable" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th class="num">Engagements</th>
+                <th class="num">Total Revenue</th>
+                <th class="num">Total Costs</th>
+                <th class="num">Avg Margin %</th>
+                <th class="num">Lifetime Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500">Nexus Financial</td>
+                <td class="num">5</td>
+                <td class="num">$312,000</td>
+                <td class="num">$189,000</td>
+                <td><span class="margin-cell good">39.4%</span></td>
+                <td class="num">$1.2M</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Meridian Bank</td>
+                <td class="num">4</td>
+                <td class="num">$480,000</td>
+                <td class="num">$312,000</td>
+                <td><span class="margin-cell warn">35.0%</span></td>
+                <td class="num">$2.1M</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Orion HealthTech</td>
+                <td class="num">3</td>
+                <td class="num">$290,000</td>
+                <td class="num">$198,000</td>
+                <td><span class="margin-cell warn">31.7%</span></td>
+                <td class="num">$840K</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Strata Cloud</td>
+                <td class="num">6</td>
+                <td class="num">$410,000</td>
+                <td class="num">$230,000</td>
+                <td><span class="margin-cell good">43.9%</span></td>
+                <td class="num">$1.8M</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Apex Logistics</td>
+                <td class="num">2</td>
+                <td class="num">$98,000</td>
+                <td class="num">$82,000</td>
+                <td><span class="margin-cell bad">16.3%</span></td>
+                <td class="num">$320K</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ORG LEVEL TABLE (hidden) -->
+        <div class="table-scroll" id="orgTable" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>Quarter</th>
+                <th class="num">Engagements</th>
+                <th class="num">Total Revenue</th>
+                <th class="num">Total Costs</th>
+                <th class="num">AI Credits</th>
+                <th class="num">Gross Margin</th>
+                <th class="num">Margin %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500">Q2 2026 <span style="font-size:var(--text-label);color:var(--brand);margin-left:6px">YTD</span></td>
+                <td class="num">18</td>
+                <td class="num">$2.4M</td>
+                <td class="num">$1.6M</td>
+                <td class="num" style="color:var(--sev-high)">$42K</td>
+                <td class="num">$778K</td>
+                <td><span class="margin-cell warn">32.4%</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Q1 2026</td>
+                <td class="num">29</td>
+                <td class="num">$3.1M</td>
+                <td class="num">$1.9M</td>
+                <td class="num" style="color:var(--sev-high)">$31K</td>
+                <td class="num">$1.18M</td>
+                <td><span class="margin-cell good">38.1%</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Q4 2025</td>
+                <td class="num">34</td>
+                <td class="num">$3.8M</td>
+                <td class="num">$2.2M</td>
+                <td class="num" style="color:var(--sev-high)">$18K</td>
+                <td class="num">$1.58M</td>
+                <td><span class="margin-cell good">41.6%</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Q3 2025</td>
+                <td class="num">28</td>
+                <td class="num">$3.2M</td>
+                <td class="num">$1.95M</td>
+                <td class="num" style="color:var(--sev-high)">$9K</td>
+                <td class="num">$1.24M</td>
+                <td><span class="margin-cell good">38.8%</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Q2 2025</td>
+                <td class="num">24</td>
+                <td class="num">$2.0M</td>
+                <td class="num">$1.14M</td>
+                <td class="num" style="color:var(--sev-high)">$3K</td>
+                <td class="num">$857K</td>
+                <td><span class="margin-cell good">42.9%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FILTER PANEL -->
+      <div class="filter-panel" id="filterPanel">
+        <div class="filter-header" onclick="toggleFilter()" role="button" tabindex="0" aria-expanded="true" id="filterToggle">
+          <svg class="filter-toggle-icon" viewBox="0 0 16 16" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+          <span class="filter-title">Filters</span>
+          <span class="filter-toggle-icon" id="filterChevron">
+            <svg viewBox="0 0 14 14"><path d="M10 5L7 8 4 5"/></svg>
+          </span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group">
+            <div class="filter-group-label">Date Range</div>
+            <div class="filter-presets">
+              <button class="preset-chip">MTD</button>
+              <button class="preset-chip active">QTD</button>
+              <button class="preset-chip">YTD</button>
+              <button class="preset-chip">Custom</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-label">Engagement Type</div>
+            <div class="filter-presets">
+              <button class="preset-chip">All</button>
+              <button class="preset-chip">VAPT</button>
+              <button class="preset-chip">Red Team</button>
+              <button class="preset-chip">Audit</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-label">Status</div>
+            <select class="filter-select" aria-label="Status filter">
+              <option>All</option>
+              <option>Active</option>
+              <option>Closed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-label">Margin Range</div>
+            <div style="display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);color:var(--ink-60)">
+              <input type="range" min="0" max="100" value="0" style="flex:1;accent-color:var(--brand)" aria-label="Minimum margin">
+              <span>0–100%</span>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-label">Customer</div>
+            <input type="text" placeholder="Search customers…" style="
+              width:100%;padding:6px var(--s-3);
+              background:var(--bg-raised);border:1px solid var(--line);
+              border-radius:var(--r-sm);color:var(--ink-100);
+              font-size:var(--text-body);font-family:var(--font-ui);
+            " aria-label="Customer search">
+          </div>
+          <div class="filter-actions">
+            <button class="btn" style="justify-content:center">Clear All</button>
+            <button class="btn primary" style="justify-content:center">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- COST BREAKDOWN MODAL -->
+<div class="modal-overlay" id="breakdownModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" style="width:880px">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modalTitle">Cost Breakdown</div>
+        <div class="modal-sub">ENG-2026-041 · Nexus Financial · VAPT</div>
+      </div>
+      <button class="modal-close" onclick="closeBreakdownModal()" aria-label="Close">
+        <svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Header summary -->
+      <div class="breakdown-header">
+        <div class="breakdown-kv">
+          <div class="breakdown-kv-label">Total Revenue</div>
+          <div class="breakdown-kv-value" style="font-family:var(--font-mono)">$84,000</div>
+        </div>
+        <div class="breakdown-kv">
+          <div class="breakdown-kv-label">Total Costs</div>
+          <div class="breakdown-kv-value" style="font-family:var(--font-mono)">$49,200</div>
+        </div>
+        <div class="breakdown-kv">
+          <div class="breakdown-kv-label">Gross Margin</div>
+          <div class="breakdown-kv-value" style="font-family:var(--font-mono);color:var(--status-good)">$34,800 (41.4%)</div>
+        </div>
+        <div class="breakdown-kv">
+          <div class="breakdown-kv-label">Status</div>
+          <div class="breakdown-kv-value">Active · 38 days in</div>
+        </div>
+      </div>
+
+      <!-- Subcontractor costs -->
+      <div class="breakdown-section">
+        <div class="breakdown-section-title">
+          <svg viewBox="0 0 16 16"><path d="M13 4H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/><path d="M12 4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v1"/></svg>
+          Subcontractor Costs
+        </div>
+        <table class="bd-table">
+          <thead>
+            <tr><th>Vendor</th><th>Milestone</th><th>Payment Date</th><th class="r">Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CyberSec Partners</td><td>External Penetration Testing Phase 1</td><td>Mar 15, 2026</td><td class="r">$14,000</td></tr>
+            <tr><td>CyberSec Partners</td><td>External Penetration Testing Phase 2</td><td>Apr 8, 2026</td><td class="r">$14,000</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:flex-end;padding-top:var(--s-2);font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-60)">Subtotal: $28,000</div>
+      </div>
+
+      <!-- Internal labor -->
+      <div class="breakdown-section">
+        <div class="breakdown-section-title">
+          <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="2.5"/><path d="M3.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/></svg>
+          Internal Labor Costs
+        </div>
+        <table class="bd-table">
+          <thead>
+            <tr><th>Team Member</th><th>Role</th><th class="r">Hours</th><th class="r">Rate/hr</th><th class="r">Total</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Rohan Mehta</td><td>Security Engineer</td><td class="r">48</td><td class="r">$180</td><td class="r">$8,640</td></tr>
+            <tr><td>Priya Sharma</td><td>VAPT Tester</td><td class="r">72</td><td class="r">$130</td><td class="r">$9,360</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:flex-end;padding-top:var(--s-2);font-family:var(--font-mono);font-size:var(--text-body);color:var(--ink-60)">Subtotal: $18,000</div>
+      </div>
+
+      <!-- AI Credits -->
+      <div class="breakdown-section">
+        <div class="breakdown-section-title">
+          <svg viewBox="0 0 16 16"><path d="M8 2L10 6l4 .5-3 2.5 1 4-4-2.5L4 13l1-4-3-2.5L6 6z"/></svg>
+          AI Credit Charges
+          <span class="ai-credits-tag">Separate Line</span>
+        </div>
+        <table class="bd-table">
+          <thead>
+            <tr><th>Feature</th><th class="r">Sessions</th><th class="r">Credits</th><th class="r">Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Impact Generation</td><td class="r">24</td><td class="r">1,440</td><td class="r">$1,440</td></tr>
+            <tr><td>Remediation Suggestion</td><td class="r">18</td><td class="r">720</td><td class="r">$720</td></tr>
+            <tr><td>Report Auto-Generation</td><td class="r">2</td><td class="r">800</td><td class="r">$800</td></tr>
+            <tr><td>AI Sidekick (SE)</td><td class="r">12</td><td class="r">240</td><td class="r">$240</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:flex-end;padding-top:var(--s-2);font-family:var(--font-mono);font-size:var(--text-body);color:var(--sev-high)">Subtotal: $3,200</div>
+      </div>
+
+      <!-- Reconciliation total -->
+      <div class="bd-total">
+        <span class="bd-total-label">Total Costs (reconciles to main view)</span>
+        <span class="bd-total-value">$49,200</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeBreakdownModal()">Close</button>
+      <button class="btn">
+        <svg viewBox="0 0 16 16" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 12h10"/></svg>
+        Download PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME SYSTEM ──────────────────────────────────────────────────
+let currentFamily = 'coffee', currentMode = 'dark';
+const SWATCH_MAP = {
+  coffee: { dark: ['#1A0F08','#F3EEE2'], light: ['#FBF8F1','#6F4E37'] },
+  blue:   { dark: ['#0F1E35','#E8F4FD'], light: ['#FFFFFF','#1E5A8A'] }
+};
+const LABEL_MAP = {
+  coffee: { dark: 'Coffee · Dark', light: 'Coffee · Light' },
+  blue:   { dark: 'Blue · Dark',   light: 'Blue · Light'   }
+};
+
+function applyTheme() {
+  document.body.className = currentFamily + ' ' + currentMode;
+  document.getElementById('sw1').style.background = SWATCH_MAP[currentFamily][currentMode][0];
+  document.getElementById('sw2').style.background = SWATCH_MAP[currentFamily][currentMode][1];
+  document.getElementById('themeLabel').textContent = LABEL_MAP[currentFamily][currentMode];
+  document.getElementById('fc-coffee').classList.toggle('active', currentFamily === 'coffee');
+  document.getElementById('fc-blue').classList.toggle('active', currentFamily === 'blue');
+  document.getElementById('mb-dark').classList.toggle('active', currentMode === 'dark');
+  document.getElementById('mb-light').classList.toggle('active', currentMode === 'light');
+}
+function setFamily(f) { currentFamily = f; applyTheme(); }
+function setMode(m)   { currentMode = m;   applyTheme(); }
+
+// Theme popover
+const themeBtn = document.getElementById('themeBtn');
+const themePopover = document.getElementById('themePopover');
+themeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = themePopover.classList.toggle('open');
+  themeBtn.setAttribute('aria-expanded', open);
+});
+document.addEventListener('click', (e) => {
+  if (!themePopover.contains(e.target) && e.target !== themeBtn) {
+    themePopover.classList.remove('open');
+    themeBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    themePopover.classList.remove('open');
+    themeBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// ── LEVEL TABS ────────────────────────────────────────────────────
+function switchLevel(level) {
+  ['engagement','customer','org'].forEach(l => {
+    const tab = document.getElementById('tab-' + (l === 'engagement' ? 'eng' : l === 'customer' ? 'cust' : 'org'));
+    const table = document.getElementById(l === 'engagement' ? 'engTable' : l === 'customer' ? 'custTable' : 'orgTable');
+    const active = l === level;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active);
+    table.style.display = active ? 'block' : 'none';
+  });
+  const counts = { engagement: '47 engagements', customer: '12 customers', org: '5 quarters' };
+  document.getElementById('resultCount').textContent = 'Showing ' + counts[level];
+}
+
+// ── FILTER PANEL ──────────────────────────────────────────────────
+function toggleFilter() {
+  const panel = document.getElementById('filterPanel');
+  const toggle = document.getElementById('filterToggle');
+  const collapsed = panel.classList.toggle('collapsed');
+  toggle.setAttribute('aria-expanded', !collapsed);
+}
+
+// Preset chip toggle
+document.querySelectorAll('.preset-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    const group = this.closest('.filter-presets');
+    group.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ── ALERT FILTER ──────────────────────────────────────────────────
+function filterByAlert(type) {
+  // Simulate filter — highlight relevant rows
+  const rows = document.querySelectorAll('#engTable tbody tr');
+  rows.forEach(row => row.style.outline = '');
+  if (type === 'margin') {
+    // rows with bad/warn margin
+    rows.forEach(row => {
+      const cell = row.querySelector('.margin-cell');
+      if (cell && (cell.classList.contains('bad') || cell.classList.contains('warn'))) {
+        row.style.outline = '2px solid var(--sev-critical)';
+      }
+    });
+  } else if (type === 'overrun') {
+    rows.forEach((row, i) => {
+      if (i === 1 || i === 5) row.style.outline = '2px solid var(--sev-high)';
+    });
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openBreakdownModal() {
+  document.getElementById('breakdownModal').classList.add('open');
+  document.getElementById('breakdownModal').querySelector('.modal-close').focus();
+}
+function closeBreakdownModal() {
+  document.getElementById('breakdownModal').classList.remove('open');
+}
+document.getElementById('breakdownModal').addEventListener('click', function(e) {
+  if (e.target === this) closeBreakdownModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('breakdownModal').classList.contains('open')) {
+    closeBreakdownModal();
+  }
+});
+</script>
+</body>
+</html>

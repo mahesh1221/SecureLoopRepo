@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>SecureLoop · BO-02-1 · Business Owner Risk Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-.003em;-webkit-font-smoothing:antialiased;overflow:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::after,body.coffee.light::after,body.blue.light::after{opacity:.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:64px 1fr;grid-template-rows:56px 1fr;height:100vh}
+.rail{grid-row:1/3;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2)}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:18px;box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-3)}
+body.light .logo{font-weight:600}
+.nav-ic{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--ink-40);cursor:pointer;transition:all 140ms;position:relative}
+.nav-ic:hover{color:var(--ink-100);background:var(--bg-raised)}
+.nav-ic.active{color:var(--brand);background:var(--brand-dim)}
+.nav-ic.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:2px;background:var(--brand);border-radius:var(--r-full)}
+.nav-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+.topbar{grid-column:2;height:56px;background:var(--bg-page);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 var(--s-6);gap:var(--s-6);position:relative}
+.crumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .cur{color:var(--ink-100);font-weight:500}
+.topbar-spacer{flex:1}
+.tb-actions{display:flex;align-items:center;gap:var(--s-2)}
+.icon-btn{width:36px;height:36px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:var(--r-sm);color:var(--ink-60);cursor:pointer;transition:all 140ms}
+.icon-btn:hover{background:var(--bg-raised);color:var(--ink-100);border-color:var(--line)}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:6px 10px;height:32px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer}
+.sw-stack{display:flex;flex-direction:column;gap:2px}
+.sw-stack span{display:block;width:14px;height:5px;border-radius:1px}
+.sw-stack .s1{background:var(--bg-page)}.sw-stack .s2{background:var(--brand)}
+.theme-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+.pop{position:absolute;top:52px;right:var(--s-6);z-index:60;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);width:340px;box-shadow:0 12px 36px rgba(0,0,0,.35);display:none}
+.pop.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+.pop h5{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.fam-card{padding:var(--s-3);border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-raised);cursor:pointer}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fam-card .swatches span{width:20px;height:20px;border-radius:var(--r-xs);border:1px solid var(--line)}
+.fam-card .name{font-size:var(--text-body);font-weight:600}
+.fam-card .desc{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;margin-top:2px}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
+.mode-btn{display:flex;align-items:center;justify-content:center;gap:var(--s-2);padding:10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);cursor:pointer;font-size:var(--text-body);font-weight:500}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+.main{grid-column:2;overflow-y:auto;height:calc(100vh - 56px)}
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1440px;margin:0 auto}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-6)}
+.page-head-l{max-width:720px}
+.eyebrow{display:inline-flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-3)}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600}
+.eyebrow .label{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+h1.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-.02em;color:var(--ink-100);line-height:1.15;margin-bottom:var(--s-2)}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);line-height:1.55}
+.page-head-r{display:flex;align-items:center;gap:var(--s-2)}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* KPI tiles */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3);margin-bottom:var(--s-6)}
+.kpi{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6)}
+.kpi .lab{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.kpi .num{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:600;color:var(--ink-100);line-height:1;letter-spacing:-.01em}
+.kpi .sub{font-size:var(--text-label);color:var(--ink-60);margin-top:var(--s-2)}
+.kpi.danger .num{color:var(--sev-critical)}
+.kpi.warn .num{color:var(--sev-high)}
+.kpi.good .num{color:var(--status-good)}
+
+/* Tabs */
+.tabs{display:flex;gap:var(--s-1);border-bottom:1px solid var(--line);margin-bottom:var(--s-6)}
+.tab{padding:var(--s-3) var(--s-4);background:transparent;border:none;color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;position:relative;transition:color 140ms}
+.tab:hover{color:var(--ink-100)}
+.tab.active{color:var(--ink-100)}
+.tab.active::after{content:"";position:absolute;bottom:-1px;left:var(--s-4);right:var(--s-4);height:2px;background:var(--brand);border-radius:var(--r-full) var(--r-full) 0 0}
+.tab .count{margin-left:6px;padding:2px 6px;background:var(--bg-raised);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);font-weight:500}
+.tab.active .count{background:var(--brand-dim);color:var(--brand)}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-4);flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:var(--s-2);padding:7px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);min-width:280px}
+.search svg{width:13px;height:13px;stroke:var(--ink-60);fill:none;stroke-width:2}
+.search input{flex:1;background:transparent;border:none;outline:none;color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-label)}
+.select{padding:7px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-label);cursor:pointer;outline:none}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);color:var(--ink-80);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.chip:hover{border-color:var(--line-strong);color:var(--ink-100)}
+.chip.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.chip svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2}
+.filter-spacer{flex:1}
+.clear-link{font-size:var(--text-label);color:var(--ink-60);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.clear-link:hover{color:var(--ink-100)}
+
+/* Split layout */
+.split{display:grid;grid-template-columns:1.35fr 1fr;gap:var(--s-4);margin-bottom:var(--s-6)}
+
+/* Table */
+.card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.card-head{padding:var(--s-4) var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--ink-100);letter-spacing:-.01em}
+.card-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+table.acc{width:100%;border-collapse:collapse;font-size:var(--text-label)}
+table.acc thead th{text-align:left;padding:var(--s-3) var(--s-4);font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;background:var(--bg-raised);border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer}
+table.acc thead th.sorted{color:var(--brand)}
+table.acc thead th svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;vertical-align:middle;margin-left:3px}
+table.acc tbody tr{border-bottom:1px solid var(--line);cursor:pointer;transition:background 140ms}
+table.acc tbody tr:hover{background:var(--bg-raised)}
+table.acc tbody tr:last-child{border-bottom:none}
+table.acc td{padding:var(--s-3) var(--s-4);color:var(--ink-100);vertical-align:middle}
+table.acc .risk-desc{font-weight:500;color:var(--ink-100);max-width:260px;line-height:1.4}
+table.acc .risk-desc .rid{display:block;font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;font-weight:400;margin-top:2px}
+table.acc .mono{font-family:var(--font-mono);font-size:var(--text-label);letter-spacing:.02em}
+.days-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600;letter-spacing:.04em}
+.days-badge .dt{width:6px;height:6px;border-radius:var(--r-full);background:currentColor}
+.days-badge.safe{background:var(--status-good-bg);color:var(--status-good)}
+.days-badge.warn{background:var(--sev-high-bg);color:var(--sev-high)}
+.days-badge.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.days-badge.gone{background:var(--bg-raised);color:var(--ink-60);border:1px solid var(--line-strong)}
+.cc-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-80)}
+.biz-pill{padding:2px 8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-micro);color:var(--ink-80);white-space:nowrap}
+.row-escalated{background:rgba(255,107,91,.05)}
+body.coffee.light .row-escalated,body.blue.light .row-escalated{background:rgba(201,70,55,.06)}
+
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:var(--s-3) var(--s-4);border-top:1px solid var(--line);background:var(--bg-raised)}
+.pagination .info{font-size:var(--text-label);color:var(--ink-60);font-family:var(--font-mono)}
+.pagination .ctrl{display:flex;gap:var(--s-2);align-items:center}
+.pagination button{width:28px;height:28px;display:grid;place-items:center;background:transparent;border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-60);cursor:pointer}
+.pagination button:hover:not(:disabled){color:var(--ink-100);border-color:var(--line-strong)}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.pagination button svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* Timeline (SVG Gantt) */
+.timeline-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column}
+.timeline-head{padding:var(--s-4);border-bottom:1px solid var(--line)}
+.timeline-legend{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-2);flex-wrap:wrap}
+.leg-item{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em}
+.leg-sw{width:12px;height:8px;border-radius:var(--r-xs)}
+.leg-sw.safe{background:var(--status-good)}
+.leg-sw.warn{background:var(--sev-high)}
+.leg-sw.crit{background:var(--sev-critical)}
+.timeline-body{padding:var(--s-3) var(--s-4);overflow:auto;flex:1}
+.gantt-svg{display:block;width:100%;height:auto}
+
+/* Digest settings */
+.settings-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4);margin-bottom:var(--s-6)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap}
+.settings-label h4{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--ink-100);margin-bottom:2px}
+.settings-label p{font-size:var(--text-label);color:var(--ink-60)}
+.settings-controls{display:flex;align-items:center;gap:var(--s-3)}
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-size:var(--text-label);font-weight:500;cursor:pointer;min-width:60px}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* empty state */
+.empty{padding:var(--s-12) var(--s-8);text-align:center;color:var(--ink-60)}
+.empty svg{width:48px;height:48px;stroke:var(--ink-40);fill:none;stroke-width:1.5;margin:0 auto var(--s-4)}
+.empty h3{font-family:var(--font-display);font-size:var(--text-xl);color:var(--ink-100);margin-bottom:var(--s-2)}
+.empty p{font-size:var(--text-body);max-width:420px;margin:0 auto;line-height:1.55}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body class="coffee dark">
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <div class="nav-ic" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="nav-ic active" title="Risk Acceptances"><svg viewBox="0 0 24 24"><path d="M12 2l9 4v6c0 5-3.8 9.3-9 10-5.2-.7-9-5-9-10V6l9-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div class="nav-ic" title="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+    <div class="nav-ic" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+  </aside>
+
+  <header class="topbar">
+    <div class="crumb">
+      <span>SecureLoop</span><span class="sep">/</span>
+      <span>Business Owner</span><span class="sep">/</span>
+      <span class="cur">Risk Acceptances</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="tb-actions">
+      <button class="icon-btn" title="Digest settings" onclick="document.getElementById('digestCard').scrollIntoView({behavior:'smooth'})">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <button class="theme-btn" id="themeBtn">
+        <div class="sw-stack"><span class="s1"></span><span class="s2"></span></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="pop" id="pop">
+      <h5>Palette family</h5>
+      <div class="fam-grid">
+        <div class="fam-card active" data-family="coffee"><div class="swatches"><span style="background:#120804"></span><span style="background:#25170D"></span><span style="background:#F3EEE2"></span></div><div class="name">Coffee</div><div class="desc">Warm · Investigation</div></div>
+        <div class="fam-card" data-family="blue"><div class="swatches"><span style="background:#0A1628"></span><span style="background:#162B48"></span><span style="background:#E8F4FD"></span></div><div class="name">Blue</div><div class="desc">Cool · Enterprise</div></div>
+      </div>
+      <h5>Appearance</h5>
+      <div class="mode-row">
+        <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>Dark</button>
+        <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>Light</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="content">
+      <div class="page-head">
+        <div class="page-head-l">
+          <div class="eyebrow"><span class="id-pill">BO-02-1</span><span class="label">Risk Acceptance Dashboard</span></div>
+          <h1 class="page-title">Risks you have accepted</h1>
+          <p class="page-sub">All active acceptances under your business authority, ordered by nearest expiry. Extension requests and escalations are flagged inline.</p>
+        </div>
+        <div class="page-head-r">
+          <button class="btn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">Active acceptances</div><div class="num">12</div><div class="sub">across 5 business areas</div></div>
+        <div class="kpi warn"><div class="lab">Expiring this month</div><div class="num">3</div><div class="sub">14 May, 22 May, 30 May</div></div>
+        <div class="kpi warn"><div class="lab">Expiring next month</div><div class="num">2</div><div class="sub">08 Jun, 19 Jun</div></div>
+        <div class="kpi danger"><div class="lab">Expired · escalated</div><div class="num">1</div><div class="sub">routed to Security Committee</div></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active">All acceptances <span class="count">12</span></button>
+        <button class="tab">Pending your decision <span class="count">2</span></button>
+        <button class="tab">Extension requests <span class="count">1</span></button>
+        <button class="tab">Escalated <span class="count">1</span></button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search by risk or business area…"/>
+        </div>
+        <select class="select"><option>Status · All</option><option>Active</option><option>Expiring Soon</option><option>Expired</option></select>
+        <select class="select"><option>Business Area · All</option><option>Finance</option><option>HR</option><option>Operations</option><option>Customer Payments</option></select>
+        <select class="select"><option>Severity · All</option><option>High</option><option>Medium</option><option>Low</option></select>
+        <button class="chip active"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Expiring this month</button>
+        <button class="chip">Expiring next month</button>
+        <button class="chip">Expired</button>
+        <div class="filter-spacer"></div>
+        <button class="clear-link">Clear filters</button>
+      </div>
+
+      <!-- Split: Table + Timeline -->
+      <div class="split">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Active acceptances</div>
+              <div class="card-sub">12 risks · sorted by nearest expiry</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+          <table class="acc">
+            <thead>
+              <tr>
+                <th style="width:30%">Risk</th>
+                <th>Business area</th>
+                <th>Accepted</th>
+                <th class="sorted">Expires on <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></th>
+                <th>Days</th>
+                <th>Comp. controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-escalated">
+                <td class="risk-desc">Unsupported HR data warehouse retained past EOL<span class="rid">RA-2026-0189</span></td>
+                <td><span class="biz-pill">HR &amp; Payroll</span></td>
+                <td class="mono">14 Nov 2025</td>
+                <td class="mono" style="color:var(--sev-critical)">12 Apr 2026</td>
+                <td><span class="days-badge gone">Expired · 5d ago</span></td>
+                <td><span class="cc-count">3</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">SSO provider migration paused for EU tenants<span class="rid">RA-2026-0204</span></td>
+                <td><span class="biz-pill">Operations</span></td>
+                <td class="mono">21 Feb 2026</td>
+                <td class="mono">14 May 2026</td>
+                <td><span class="days-badge crit"><span class="dt"></span>26 days</span></td>
+                <td><span class="cc-count">5</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Vendor email gateway lacks DMARC strict policy<span class="rid">RA-2026-0218</span></td>
+                <td><span class="biz-pill">Corporate IT</span></td>
+                <td class="mono">03 Mar 2026</td>
+                <td class="mono">22 May 2026</td>
+                <td><span class="days-badge crit"><span class="dt"></span>34 days</span></td>
+                <td><span class="cc-count">4</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Analyst workstations on deprecated endpoint agent<span class="rid">RA-2026-0241</span></td>
+                <td><span class="biz-pill">Finance</span></td>
+                <td class="mono">08 Mar 2026</td>
+                <td class="mono">30 May 2026</td>
+                <td><span class="days-badge warn"><span class="dt"></span>42 days</span></td>
+                <td><span class="cc-count">6</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Third-party payroll API using legacy auth<span class="rid">RA-2026-0278</span></td>
+                <td><span class="biz-pill">HR &amp; Payroll</span></td>
+                <td class="mono">15 Mar 2026</td>
+                <td class="mono">08 Jun 2026</td>
+                <td><span class="days-badge warn"><span class="dt"></span>51 days</span></td>
+                <td><span class="cc-count">4</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Sandbox cluster without MFA for contractor access<span class="rid">RA-2026-0312</span></td>
+                <td><span class="biz-pill">Engineering</span></td>
+                <td class="mono">22 Mar 2026</td>
+                <td class="mono">19 Jun 2026</td>
+                <td><span class="days-badge warn"><span class="dt"></span>62 days</span></td>
+                <td><span class="cc-count">3</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Legacy payment gateway on vendor-unsupported TLS<span class="rid">RA-2026-0417</span></td>
+                <td><span class="biz-pill">Customer Payments</span></td>
+                <td class="mono">17 Apr 2026</td>
+                <td class="mono">31 Jul 2026</td>
+                <td><span class="days-badge safe"><span class="dt"></span>104 days</span></td>
+                <td><span class="cc-count">4</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">Customer portal self-registration without captcha<span class="rid">RA-2026-0455</span></td>
+                <td><span class="biz-pill">Customer Payments</span></td>
+                <td class="mono">02 Apr 2026</td>
+                <td class="mono">22 Aug 2026</td>
+                <td><span class="days-badge safe"><span class="dt"></span>126 days</span></td>
+                <td><span class="cc-count">3</span></td>
+              </tr>
+              <tr>
+                <td class="risk-desc">BI tool exporting raw PII to analyst workstations<span class="rid">RA-2026-0491</span></td>
+                <td><span class="biz-pill">Finance</span></td>
+                <td class="mono">10 Apr 2026</td>
+                <td class="mono">14 Sep 2026</td>
+                <td><span class="days-badge safe"><span class="dt"></span>149 days</span></td>
+                <td><span class="cc-count">5</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="pagination">
+            <div class="info">Showing 1–9 of 12 · 25 per page</div>
+            <div class="ctrl">
+              <button disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <span style="font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80)">Page 1 / 1</span>
+              <button disabled><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="timeline-card">
+          <div class="timeline-head">
+            <div class="card-title">Expiry timeline</div>
+            <div class="card-sub">Next 180 days · hover for risk &amp; expiry</div>
+            <div class="timeline-legend">
+              <span class="leg-item"><span class="leg-sw safe"></span>60+ days</span>
+              <span class="leg-item"><span class="leg-sw warn"></span>30–60 days</span>
+              <span class="leg-item"><span class="leg-sw crit"></span>Under 30 days</span>
+              <span class="leg-item" style="color:var(--ink-40)">Today marker · dashed line</span>
+            </div>
+          </div>
+          <div class="timeline-body">
+            <svg class="gantt-svg" viewBox="0 0 620 480" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,system-ui,sans-serif">
+              <defs>
+                <linearGradient id="todayGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="var(--brand)" stop-opacity=".3"/>
+                  <stop offset="1" stop-color="var(--brand)" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- month columns backdrop -->
+              <g data-role="col">
+                <rect x="110" y="4" width="85" height="460" fill="var(--bg-raised)" opacity=".3"/>
+                <rect x="280" y="4" width="85" height="460" fill="var(--bg-raised)" opacity=".3"/>
+                <rect x="450" y="4" width="85" height="460" fill="var(--bg-raised)" opacity=".3"/>
+              </g>
+              <!-- month headers -->
+              <g font-size="9" fill="var(--ink-60)" font-weight="600" letter-spacing=".08em" text-anchor="middle">
+                <text x="152" y="16">MAY 2026</text>
+                <text x="237" y="16">JUN</text>
+                <text x="322" y="16">JUL</text>
+                <text x="407" y="16">AUG</text>
+                <text x="492" y="16">SEP</text>
+                <text x="577" y="16">OCT</text>
+              </g>
+              <!-- vertical month grid -->
+              <g stroke="var(--line)" stroke-width="1">
+                <line x1="110" y1="22" x2="110" y2="464"/>
+                <line x1="195" y1="22" x2="195" y2="464"/>
+                <line x1="280" y1="22" x2="280" y2="464"/>
+                <line x1="365" y1="22" x2="365" y2="464"/>
+                <line x1="450" y1="22" x2="450" y2="464"/>
+                <line x1="535" y1="22" x2="535" y2="464"/>
+                <line x1="620" y1="22" x2="620" y2="464"/>
+              </g>
+              <!-- today line (apr 17, 2026 ~ x=90) -->
+              <g>
+                <line x1="95" y1="22" x2="95" y2="464" stroke="var(--brand)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <rect x="72" y="22" width="46" height="14" rx="2" fill="var(--brand)"/>
+                <text x="95" y="32" font-size="8" fill="var(--brand-ink)" font-weight="700" text-anchor="middle" letter-spacing=".08em">TODAY</text>
+              </g>
+
+              <!-- bars (1 row per risk, 9 rows, 38px pitch starting y=40) -->
+              <!-- Row 1: Expired 12 Apr (x=78) - red -->
+              <g transform="translate(0,40)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">HR Warehouse</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0189</text>
+                <rect x="78" y="6" width="12" height="14" rx="2" fill="var(--sev-critical)" opacity=".9"/>
+                <circle cx="84" cy="13" r="3" fill="var(--sev-critical)"/>
+                <text x="98" y="17" font-size="8" fill="var(--sev-critical)" font-weight="600">Expired</text>
+              </g>
+              <!-- Row 2: 14 May (x=152) -->
+              <g transform="translate(0,80)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">SSO migration</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0204</text>
+                <rect x="95" y="10" width="57" height="8" rx="3" fill="var(--sev-critical)" opacity=".9"/>
+                <circle cx="152" cy="14" r="4" fill="var(--sev-critical)"/>
+              </g>
+              <!-- Row 3: 22 May (x=174) -->
+              <g transform="translate(0,120)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">DMARC gap</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0218</text>
+                <rect x="95" y="10" width="79" height="8" rx="3" fill="var(--sev-critical)" opacity=".9"/>
+                <circle cx="174" cy="14" r="4" fill="var(--sev-critical)"/>
+              </g>
+              <!-- Row 4: 30 May (x=196) -->
+              <g transform="translate(0,160)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">Endpoint agent</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0241</text>
+                <rect x="95" y="10" width="101" height="8" rx="3" fill="var(--sev-high)" opacity=".9"/>
+                <circle cx="196" cy="14" r="4" fill="var(--sev-high)"/>
+              </g>
+              <!-- Row 5: 08 Jun (x=217) -->
+              <g transform="translate(0,200)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">Payroll API</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0278</text>
+                <rect x="95" y="10" width="122" height="8" rx="3" fill="var(--sev-high)" opacity=".9"/>
+                <circle cx="217" cy="14" r="4" fill="var(--sev-high)"/>
+              </g>
+              <!-- Row 6: 19 Jun (x=248) -->
+              <g transform="translate(0,240)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">Sandbox MFA</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0312</text>
+                <rect x="95" y="10" width="153" height="8" rx="3" fill="var(--sev-high)" opacity=".9"/>
+                <circle cx="248" cy="14" r="4" fill="var(--sev-high)"/>
+              </g>
+              <!-- Row 7: 31 Jul (x=354) -->
+              <g transform="translate(0,280)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">Payment gateway</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0417</text>
+                <rect x="95" y="10" width="259" height="8" rx="3" fill="var(--status-good)" opacity=".9"/>
+                <circle cx="354" cy="14" r="4" fill="var(--status-good)"/>
+              </g>
+              <!-- Row 8: 22 Aug (x=416) -->
+              <g transform="translate(0,320)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">Portal captcha</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0455</text>
+                <rect x="95" y="10" width="321" height="8" rx="3" fill="var(--status-good)" opacity=".9"/>
+                <circle cx="416" cy="14" r="4" fill="var(--status-good)"/>
+              </g>
+              <!-- Row 9: 14 Sep (x=478) -->
+              <g transform="translate(0,360)">
+                <text x="0" y="14" font-size="9" fill="var(--ink-80)" font-weight="500">BI PII export</text>
+                <text x="0" y="24" font-size="8" fill="var(--ink-60)" font-family="JetBrains Mono,monospace">RA-0491</text>
+                <rect x="95" y="10" width="383" height="8" rx="3" fill="var(--status-good)" opacity=".9"/>
+                <circle cx="478" cy="14" r="4" fill="var(--status-good)"/>
+              </g>
+              <!-- Cluster warning callout: 3 risks crit in May -->
+              <g transform="translate(140,412)">
+                <rect x="0" y="0" width="160" height="44" rx="4" fill="var(--sev-critical-bg)" stroke="var(--sev-critical)" stroke-width="1" opacity=".95"/>
+                <circle cx="12" cy="14" r="6" fill="var(--sev-critical)"/>
+                <text x="12" y="18" font-size="9" fill="var(--brand-ink)" font-weight="700" text-anchor="middle">3</text>
+                <text x="26" y="16" font-size="9" fill="var(--sev-critical)" font-weight="600">Cluster alert</text>
+                <text x="26" y="28" font-size="8" fill="var(--ink-80)">3 risks expiring in May 2026.</text>
+                <text x="26" y="38" font-size="8" fill="var(--ink-60)">Consider staggering renewals.</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIGEST SETTINGS -->
+      <div class="settings-card" id="digestCard">
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Weekly email digest</h4>
+            <p>A summary of your active acceptances and upcoming expiries. Delivered to rohan.shah@acme.com.</p>
+          </div>
+          <div class="settings-controls">
+            <div class="segmented">
+              <button class="seg-btn">Off</button>
+              <button class="seg-btn active">On</button>
+            </div>
+            <select class="select" style="min-width:120px"><option>Day · Friday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option></select>
+            <div class="segmented">
+              <button class="seg-btn active">09:00</button>
+              <button class="seg-btn">14:00</button>
+            </div>
+            <button class="btn"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Preview</button>
+            <button class="btn" style="background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600">Save</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const pop=document.getElementById('pop');
+const themeBtn=document.getElementById('themeBtn');
+const themeLabel=document.getElementById('themeLabel');
+let curFamily='coffee',curMode='dark';
+function applyTheme(){
+  document.body.className=`${curFamily} ${curMode}`;
+  themeLabel.textContent=`${curFamily[0].toUpperCase()+curFamily.slice(1)} · ${curMode[0].toUpperCase()+curMode.slice(1)}`;
+  document.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.family===curFamily));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===curMode));
+}
+themeBtn.addEventListener('click',e=>{e.stopPropagation();pop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!pop.contains(e.target)&&e.target!==themeBtn)pop.classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')pop.classList.remove('open')});
+document.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{curFamily=c.dataset.family;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{curMode=b.dataset.mode;applyTheme()}));
+
+// tabs + chips (visual only)
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active')}));
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('active')));
+document.querySelectorAll('.seg-btn').forEach(b=>b.addEventListener('click',()=>{b.parentElement.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+</script>
+</body>
+</html>

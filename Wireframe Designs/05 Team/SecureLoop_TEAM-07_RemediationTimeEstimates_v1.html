@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>SecureLoop · TEAM-07 · Remediation Time Estimates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:"Space Grotesk",system-ui,sans-serif;--font-ui:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.12);--sev-high-bg:rgba(184,101,29,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.12);--sev-high-bg:rgba(193,122,26,.12);--sev-medium-bg:rgba(158,127,16,.12);--sev-low-bg:rgba(46,134,193,.12);--status-good-bg:rgba(46,139,80,.12)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:400;letter-spacing:-0.003em;line-height:1.55;background:var(--bg-page);color:var(--ink-100);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::before{opacity:.05}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+
+/* shell (shared) */
+.app{display:flex;min-height:100vh}
+.rail{width:64px;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2);position:sticky;top:0;height:100vh;z-index:10}
+.rail .logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-4)}
+body.light .rail .logo{font-weight:600}
+.rail-btn{width:40px;height:40px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 140ms}
+.rail-btn:hover{background:var(--bg-hover);color:var(--ink-100)} .rail-btn.active{background:var(--brand-dim);color:var(--brand)}
+.rail-btn svg{width:18px;height:18px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:56px;display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);background:var(--bg-base);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.breadcrumb{display:flex;align-items:center;gap:var(--s-2);color:var(--ink-60);font-size:var(--text-body)}
+.breadcrumb .sep{color:var(--ink-40)} .breadcrumb .current{color:var(--ink-100);font-weight:500}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;font-weight:600}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:var(--s-2);padding:4px var(--s-2) 4px 4px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:var(--text-label);flex-shrink:0}
+.user-chip-name{color:var(--ink-100);font-weight:500}
+.user-chip-role{color:var(--ink-60);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;white-space:nowrap}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg.icon{width:14px;height:14px}
+
+/* theme picker */
+.theme-picker{position:relative}
+.theme-btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:6px var(--s-3);height:36px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer;transition:all 140ms}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:flex;flex-direction:column;gap:2px}
+.theme-swatches span{width:16px;height:6px;border-radius:1px;display:block}
+.theme-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:40;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);min-width:300px;box-shadow:0 20px 40px rgba(0,0,0,.35);display:none}
+.theme-pop.open{display:block}
+.theme-pop-label{font-size:var(--text-micro);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.family-card{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;text-align:left;transition:all 140ms}
+.family-card:hover{border-color:var(--line-strong)} .family-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12);border-color:var(--brand)}
+.family-card-name{font-family:var(--font-display);font-size:var(--text-body);font-weight:600;margin-bottom:2px}
+.family-card-desc{font-size:var(--text-micro);color:var(--ink-60);margin-bottom:var(--s-2)}
+.family-card-swatches{display:flex;gap:2px}
+.family-card-swatches span{width:20px;height:20px;border-radius:var(--r-xs)}
+.mode-row{display:flex;gap:var(--s-2)}
+.mode-btn{flex:1;padding:var(--s-2) var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-80);cursor:pointer;transition:all 140ms;display:inline-flex;align-items:center;justify-content:center;font-size:var(--text-body)}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+
+/* content */
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1280px;margin:0 auto;width:100%}
+.page-head{margin-bottom:var(--s-6)}
+.page-eyebrow{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.02em;line-height:1.2}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);margin-top:var(--s-2);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+
+.sev-pill{display:inline-flex;align-items:center;gap:5px;padding:2px var(--s-2);border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.sev-pill .dot{width:5px;height:5px;border-radius:50%}
+.sev-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)} .sev-pill.crit .dot{background:var(--sev-critical)}
+
+/* effort hero strip */
+.estimate-hero{display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-6);align-items:center;background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6) var(--s-8);margin-bottom:var(--s-6)}
+.effort-display{display:flex;align-items:baseline;gap:var(--s-3)}
+.effort-badge{display:inline-flex;align-items:center;gap:var(--s-2);padding:var(--s-3) var(--s-4);background:var(--brand-dim);border:1px solid var(--brand);border-radius:var(--r-sm);cursor:help;position:relative}
+.effort-badge:hover{background:var(--brand);color:var(--brand-ink)}
+.effort-num{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);line-height:1}
+.effort-badge:hover .effort-num{color:var(--brand-ink)}
+.effort-unit{font-family:var(--font-ui);font-size:var(--text-body);color:var(--ink-60);font-weight:500}
+.effort-badge:hover .effort-unit{color:var(--brand-ink)}
+.effort-range{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60);margin-left:var(--s-2);padding-left:var(--s-2);border-left:1px solid var(--line-strong)}
+.effort-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+
+.hover-hint{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:var(--s-2)}
+.hover-hint svg{width:10px;height:10px}
+
+/* confidence indicator */
+.confidence-box{text-align:right}
+.conf-val{display:inline-flex;align-items:center;gap:var(--s-2);padding:4px var(--s-3);background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-label);font-weight:700;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:var(--s-2)}
+.conf-val.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.conf-val.low{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.conf-val svg{width:12px;height:12px}
+.conf-sub{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.04em;color:var(--ink-60)}
+
+/* breakdown card */
+.breakdown-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-6);overflow:hidden}
+.bc-head{padding:var(--s-4) var(--s-6);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.bc-head h2{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.01em}
+.bc-body{padding:var(--s-6)}
+.bc-section{margin-bottom:var(--s-6)}
+.bc-section:last-child{margin-bottom:0}
+.bc-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-3)}
+
+/* driver rows — each row shows one factor contributing to estimate */
+.drivers{display:flex;flex-direction:column;gap:var(--s-2)}
+.driver{display:grid;grid-template-columns:180px 1fr auto;gap:var(--s-3);align-items:center;padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-radius:var(--r-sm);border:1px solid var(--line)}
+.driver-name{font-size:var(--text-label);color:var(--ink-80);display:flex;align-items:center;gap:var(--s-2)}
+.driver-name svg{width:12px;height:12px;color:var(--ink-60);flex-shrink:0}
+.driver-bar{height:6px;background:var(--bg-base);border-radius:var(--r-full);overflow:hidden;position:relative}
+.driver-fill{height:100%;border-radius:var(--r-full);background:var(--brand)}
+.driver-fill.low{background:var(--status-good)}
+.driver-fill.high{background:var(--sev-high)}
+.driver-val{font-family:var(--font-mono);font-size:var(--text-label);font-weight:700;color:var(--ink-100);min-width:64px;text-align:right}
+.driver-val .unit{color:var(--ink-60);font-weight:500;font-size:var(--text-micro)}
+
+/* historical data list */
+.hist-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.hist-row{display:grid;grid-template-columns:1fr auto auto;gap:var(--s-3);padding:var(--s-3) var(--s-4);background:var(--bg-raised);border-radius:var(--r-sm);align-items:center}
+.hist-title{font-size:var(--text-label);color:var(--ink-80);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-fid{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-left:var(--s-2)}
+.hist-hrs{font-family:var(--font-mono);font-size:var(--text-label);font-weight:700;color:var(--ink-100)}
+.hist-date{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em}
+
+/* actual time override */
+.actual-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-6)}
+.ac-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-4)}
+.ac-head h2{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.01em}
+.actual-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:var(--s-6);align-items:flex-end}
+.actual-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:var(--s-2)}
+.actual-val{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:700;color:var(--ink-100);line-height:1}
+.actual-val .unit{font-family:var(--font-ui);font-size:var(--text-body);color:var(--ink-60);font-weight:500;margin-left:var(--s-1)}
+.actual-arrow{display:flex;align-items:center;justify-content:center;color:var(--ink-40)}
+.actual-arrow svg{width:20px;height:20px}
+.actual-input-wrap input{width:100%;padding:var(--s-3) var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;transition:border-color 140ms}
+.actual-input-wrap input:focus{outline:none;border-color:var(--line-strong)}
+.actual-delta{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:var(--text-label);font-weight:600;margin-top:var(--s-2)}
+.actual-delta.over{color:var(--sev-high)} .actual-delta.under{color:var(--status-good)} .actual-delta.spot{color:var(--ink-60)}
+.actual-delta svg{width:12px;height:12px}
+
+.actual-foot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s-6);padding-top:var(--s-4);border-top:1px solid var(--line)}
+.af-helper{font-size:var(--text-label);color:var(--ink-60);line-height:1.5;max-width:520px}
+.af-helper svg{width:12px;height:12px;color:var(--status-good);display:inline-block;vertical-align:middle;margin-right:4px}
+
+/* manager aggregate block (at bottom, smaller) */
+.mgr-agg-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-6)}
+.mgr-agg-head{display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-3)}
+.mgr-agg-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600}
+.mgr-agg-badge{display:inline-flex;align-items:center;gap:6px;padding:3px var(--s-2);background:var(--sev-medium-bg);color:var(--sev-medium);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.mgr-agg-badge svg{width:10px;height:10px}
+.agg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4)}
+.agg-tile{padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.agg-tile-label{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-60);margin-bottom:4px}
+.agg-tile-val{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:700;color:var(--ink-100)}
+.agg-tile-sub{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);margin-top:4px;letter-spacing:0.04em}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <button class="rail-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></button>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></button>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></button>
+    <div style="flex:1"></div>
+    <button class="rail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="breadcrumb">
+        <span>SecureLoop Portal</span><span class="sep">/</span>
+        <span>My Findings</span><span class="sep">/</span>
+        <span class="current">FND-2026-00476 · Remediation Estimate</span>
+        <span class="id-pill">TEAM-07</span>
+      </nav>
+      <div class="spacer"></div>
+
+      <div class="theme-picker">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-swatches"><span id="sw1" style="background:#120804"></span><span id="sw2" style="background:#F3EEE2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="theme-pop" id="themePop">
+          <div class="theme-pop-label">Palette family</div>
+          <div class="family-cards">
+            <button class="family-card active" data-fam="coffee"><div class="family-card-name">Coffee</div><div class="family-card-desc">Warm · Investigation</div><div class="family-card-swatches"><span style="background:#120804"></span><span style="background:#F3EEE2"></span><span style="background:#6F4E37"></span></div></button>
+            <button class="family-card" data-fam="blue"><div class="family-card-name">Blue</div><div class="family-card-desc">Cool · Enterprise</div><div class="family-card-swatches"><span style="background:#0A1628"></span><span style="background:#E8F4FD"></span><span style="background:#1E5A8A"></span></div></button>
+          </div>
+          <div class="theme-pop-label">Appearance</div>
+          <div class="mode-row"><button class="mode-btn active" data-mode="dark">Dark</button><button class="mode-btn" data-mode="light">Light</button></div>
+        </div>
+      </div>
+      <div class="user-chip"><span class="avatar">NR</span><div><div class="user-chip-name">Nikhil Rao</div><div class="user-chip-role">Cloud Team</div></div></div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div class="page-eyebrow">Finding detail · Remediation time</div>
+        <h1 class="page-title">How long will this fix take?</h1>
+        <div class="page-sub">
+          <span class="sev-pill crit"><span class="dot"></span>Critical</span>
+          <span style="font-family:var(--font-mono)">FND-2026-00476 · IAM role has * S3 permissions</span>
+          <span>·</span>
+          <span>eks-node-role · AWS us-east-1</span>
+        </div>
+      </div>
+
+      <!-- ESTIMATE HERO -->
+      <div class="estimate-hero">
+        <div>
+          <div class="effort-label">Current estimate</div>
+          <div class="effort-display">
+            <div class="effort-badge" title="3 – 5.5 hrs · see breakdown below">
+              <span class="effort-num">4</span>
+              <span class="effort-unit">hrs</span>
+              <span class="effort-range">range 3 – 5.5</span>
+            </div>
+          </div>
+          <div class="hover-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Hover / tap the badge to see the full breakdown
+          </div>
+        </div>
+
+        <div style="text-align:center">
+          <div class="effort-label">Based on</div>
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-top:var(--s-2);color:var(--ink-100)">12 similar past fixes</div>
+          <div style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:var(--s-1)">All completed by Cloud Team · past 6 months</div>
+        </div>
+
+        <div class="confidence-box">
+          <div class="effort-label">Confidence</div>
+          <div class="conf-val">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            High
+          </div>
+          <div class="conf-sub">12 data points ≥ threshold</div>
+        </div>
+      </div>
+
+      <!-- BREAKDOWN CARD -->
+      <div class="breakdown-card">
+        <div class="bc-head">
+          <h2>Estimate breakdown</h2>
+          <span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">Formula weighted by team &amp; fix method</span>
+        </div>
+        <div class="bc-body">
+
+          <div class="bc-section">
+            <div class="bc-label">What the 4 hrs is made of</div>
+            <div class="drivers">
+              <div class="driver">
+                <div class="driver-name">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  Base effort (method)
+                </div>
+                <div class="driver-bar"><div class="driver-fill low" style="width:50%"></div></div>
+                <div class="driver-val">2.0<span class="unit"> hrs</span></div>
+              </div>
+              <div class="driver">
+                <div class="driver-name">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  Complexity factor (Medium · +50%)
+                </div>
+                <div class="driver-bar"><div class="driver-fill" style="width:25%"></div></div>
+                <div class="driver-val">1.0<span class="unit"> hrs</span></div>
+              </div>
+              <div class="driver">
+                <div class="driver-name">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                  Asset criticality (production · +10%)
+                </div>
+                <div class="driver-bar"><div class="driver-fill" style="width:10%"></div></div>
+                <div class="driver-val">0.4<span class="unit"> hrs</span></div>
+              </div>
+              <div class="driver">
+                <div class="driver-name">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path></svg>
+                  Coordination overhead (2 downstream deps)
+                </div>
+                <div class="driver-bar"><div class="driver-fill high" style="width:15%"></div></div>
+                <div class="driver-val">0.6<span class="unit"> hrs</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bc-section">
+            <div class="bc-label">Similar fixes by Cloud Team · 12 past matches</div>
+            <div class="hist-list">
+              <div class="hist-row">
+                <div class="hist-title">IAM role "lambda-exec-role" scoped to specific S3 bucket<span class="hist-fid">FND-2025-09812</span></div>
+                <div class="hist-hrs">3.8 hrs</div>
+                <div class="hist-date">08 Mar 2026 · Aaliyah</div>
+              </div>
+              <div class="hist-row">
+                <div class="hist-title">EC2 instance profile narrowed from s3:* to bucket-specific<span class="hist-fid">FND-2025-09744</span></div>
+                <div class="hist-hrs">3.5 hrs</div>
+                <div class="hist-date">02 Mar 2026 · Jamal</div>
+              </div>
+              <div class="hist-row">
+                <div class="hist-title">ECS task-role: s3:* replaced with GetObject on payments-*<span class="hist-fid">FND-2025-09655</span></div>
+                <div class="hist-hrs">4.2 hrs</div>
+                <div class="hist-date">24 Feb 2026 · Nikhil</div>
+              </div>
+              <div class="hist-row">
+                <div class="hist-title">EKS node-role restricted to prefix-matching S3 ARNs<span class="hist-fid">FND-2025-09521</span></div>
+                <div class="hist-hrs">5.5 hrs</div>
+                <div class="hist-date">12 Feb 2026 · Aaliyah</div>
+              </div>
+              <div class="hist-row">
+                <div class="hist-title">Show 8 more…</div>
+                <div class="hist-hrs" style="color:var(--ink-60);font-weight:500">avg 3.9 hrs</div>
+                <div class="hist-date">Oct 2025 – Feb 2026</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ACTUAL TIME OVERRIDE -->
+      <div class="actual-card">
+        <div class="ac-head">
+          <h2>Actual time taken</h2>
+          <span style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em">Auto-tracked · override if needed</span>
+        </div>
+        <div class="actual-grid">
+          <div>
+            <div class="actual-label">Auto-tracked</div>
+            <div class="actual-val">3.5<span class="unit">hrs</span></div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:0.04em;margin-top:var(--s-2)">From status timeline (Open → Fix Applied)</div>
+          </div>
+          <div class="actual-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+          <div>
+            <div class="actual-label">Your override (optional)</div>
+            <div class="actual-input-wrap"><input type="text" value="3.5" placeholder="—"></div>
+            <div class="actual-delta spot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              0.5 hrs under estimate · within range
+            </div>
+          </div>
+        </div>
+        <div class="actual-foot">
+          <div class="af-helper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Your actuals feed back into the estimate model. More data → higher confidence on future estimates for your team.
+          </div>
+          <button class="btn primary">Save actual time</button>
+        </div>
+      </div>
+
+      <!-- MANAGER AGGREGATE BLOCK -->
+      <div class="mgr-agg-card">
+        <div class="mgr-agg-head">
+          <h2 class="mgr-agg-title">Team estimate accuracy</h2>
+          <span class="mgr-agg-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2M10 17h4M5 8h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+            Manager-only
+          </span>
+        </div>
+        <div class="agg-grid">
+          <div class="agg-tile">
+            <div class="agg-tile-label">Accuracy (±20%)</div>
+            <div class="agg-tile-val" style="color:var(--status-good)">84%</div>
+            <div class="agg-tile-sub">last 30 fixes</div>
+          </div>
+          <div class="agg-tile">
+            <div class="agg-tile-label">Avg bias</div>
+            <div class="agg-tile-val">−0.3 hrs</div>
+            <div class="agg-tile-sub">slight underestimate</div>
+          </div>
+          <div class="agg-tile">
+            <div class="agg-tile-label">High-confidence %</div>
+            <div class="agg-tile-val" style="color:var(--status-good)">72%</div>
+            <div class="agg-tile-sub">threshold ≥ 10 data points</div>
+          </div>
+          <div class="agg-tile">
+            <div class="agg-tile-label">Feedback submitted</div>
+            <div class="agg-tile-val">28 / 41</div>
+            <div class="agg-tile-sub">actuals logged this quarter</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const themeBtn=document.getElementById('themeBtn'),themePop=document.getElementById('themePop');
+const themeLabel=document.getElementById('themeLabel'),sw1=document.getElementById('sw1'),sw2=document.getElementById('sw2');
+let fam='coffee',mode='dark';
+function applyTheme(){
+  document.body.classList.remove('coffee','blue','dark','light');document.body.classList.add(fam,mode);
+  document.querySelectorAll('.family-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  themeLabel.textContent=(fam==='coffee'?'Coffee':'Blue')+' · '+(mode==='dark'?'Dark':'Light');
+  const map={'coffee-dark':['#120804','#F3EEE2'],'coffee-light':['#F3EEE2','#6F4E37'],'blue-dark':['#0A1628','#E8F4FD'],'blue-light':['#F2F8FD','#1E5A8A']};
+  const [a,b]=map[fam+'-'+mode];sw1.style.background=a;sw2.style.background=b;
+}
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();themePop.classList.toggle('open')});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn)themePop.classList.remove('open')});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')themePop.classList.remove('open')});
+document.querySelectorAll('.family-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;applyTheme()}));
+
+applyTheme();
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>SecureLoop · BO-02-2 · Risk Extension Approval</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-display:'Space Grotesk',system-ui,sans-serif;--font-ui:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;--text-xl:20px;--text-2xl:28px;--text-3xl:44px;--r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px}
+body.coffee.dark{--bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;--line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);--ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;--brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);--sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;--sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14)}
+body.coffee.light{--bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;--line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);--ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;--brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);--sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+body.blue.dark{--bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;--line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);--ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;--brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);--sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;--sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14)}
+body.blue.light{--bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;--line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);--ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;--brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);--sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;--sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14)}
+
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;background:var(--bg-page);color:var(--ink-100);letter-spacing:-.003em;-webkit-font-smoothing:antialiased;overflow:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");opacity:.025;mix-blend-mode:overlay}
+body.light::after{opacity:.05}
+:focus:not(:focus-visible){outline:none}:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:64px 1fr;grid-template-rows:56px 1fr;height:100vh}
+.rail{grid-row:1/3;background:var(--bg-base);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:var(--s-3) 0;gap:var(--s-2)}
+.logo{width:36px;height:36px;border-radius:var(--r-sm);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:18px;box-shadow:0 0 16px var(--brand-glow);margin-bottom:var(--s-3)}
+body.light .logo{font-weight:600}
+.nav-ic{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--ink-40);cursor:pointer;transition:all 140ms;position:relative}
+.nav-ic:hover{color:var(--ink-100);background:var(--bg-raised)}
+.nav-ic.active{color:var(--brand);background:var(--brand-dim)}
+.nav-ic.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:2px;background:var(--brand);border-radius:var(--r-full)}
+.nav-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+.topbar{grid-column:2;height:56px;background:var(--bg-page);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 var(--s-6);gap:var(--s-6);position:relative}
+.crumb{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .cur{color:var(--ink-100);font-weight:500}
+.crumb a{color:var(--ink-60);text-decoration:none;cursor:pointer}
+.crumb a:hover{color:var(--ink-100)}
+.topbar-spacer{flex:1}
+.tb-actions{display:flex;align-items:center;gap:var(--s-2)}
+.theme-btn{display:flex;align-items:center;gap:var(--s-2);padding:6px 10px;height:32px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-size:var(--text-label);cursor:pointer}
+.sw-stack{display:flex;flex-direction:column;gap:2px}
+.sw-stack span{display:block;width:14px;height:5px;border-radius:1px}
+.sw-stack .s1{background:var(--bg-page)}.sw-stack .s2{background:var(--brand)}
+.theme-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.pop{position:absolute;top:52px;right:var(--s-6);z-index:60;background:var(--bg-overlay);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4);width:340px;box-shadow:0 12px 36px rgba(0,0,0,.35);display:none}
+.pop.open{display:block;animation:riseIn 280ms cubic-bezier(.2,.7,.2,1)}
+.pop h5{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2)}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4)}
+.fam-card{padding:var(--s-3);border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg-raised);cursor:pointer}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .swatches{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fam-card .swatches span{width:20px;height:20px;border-radius:var(--r-xs);border:1px solid var(--line)}
+.fam-card .name{font-size:var(--text-body);font-weight:600}
+.fam-card .desc{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;margin-top:2px}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
+.mode-btn{display:flex;align-items:center;justify-content:center;gap:var(--s-2);padding:10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);cursor:pointer;font-size:var(--text-body);font-weight:500}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+.main{grid-column:2;overflow-y:auto;height:calc(100vh - 56px)}
+.content{padding:var(--s-6) var(--s-8) var(--s-12);max-width:1340px;margin:0 auto}
+
+/* Review status banner */
+.status-banner{background:var(--bg-base);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--s-4) var(--s-6);margin-bottom:var(--s-6);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap}
+.status-chain{display:flex;align-items:center;gap:0;flex:1}
+.chain-node{display:flex;flex-direction:column;align-items:center;min-width:120px;position:relative}
+.chain-node .node-dot{width:32px;height:32px;border-radius:var(--r-full);display:grid;place-items:center;border:2px solid var(--line);background:var(--bg-raised);color:var(--ink-60);margin-bottom:6px}
+.chain-node .node-dot svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.chain-node.done .node-dot{background:var(--status-good);border-color:var(--status-good);color:#0B1A10}
+body.coffee.light .chain-node.done .node-dot,body.blue.light .chain-node.done .node-dot{color:#FFF}
+.chain-node.active .node-dot{background:var(--brand-dim);border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 4px var(--brand-dim)}
+.chain-node .node-lab{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;text-align:center}
+.chain-node.done .node-lab,.chain-node.active .node-lab{color:var(--ink-100)}
+.chain-node .node-sub{font-size:var(--text-micro);color:var(--ink-60);margin-top:2px;font-family:var(--font-mono);letter-spacing:.04em}
+.chain-link{flex:1;height:2px;background:var(--line);margin:0 4px;position:relative;top:-14px;min-width:20px}
+.chain-link.done{background:var(--status-good)}
+.status-meta{text-align:right;font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60);letter-spacing:.02em}
+.status-meta .v{color:var(--ink-100);font-size:var(--text-body);font-weight:500;display:block}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s-6);gap:var(--s-6)}
+.page-head-l{max-width:720px}
+.eyebrow{display:inline-flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-3)}
+.id-pill{padding:2px 6px;background:var(--brand-dim);color:var(--brand);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.04em;font-weight:600}
+.eyebrow .label{font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.finding-ref{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-80);margin-left:var(--s-2)}
+h1.page-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-.02em;color:var(--ink-100);line-height:1.15;margin-bottom:var(--s-2)}
+.page-sub{color:var(--ink-60);font-size:var(--text-body);line-height:1.55}
+.segmented{display:flex;gap:2px;padding:3px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg-btn{padding:5px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);color:var(--ink-60);font-size:var(--text-label);font-weight:500;cursor:pointer;min-width:100px}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Compare grid */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);margin-bottom:var(--s-6)}
+.col-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.col-head{padding:var(--s-4);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--bg-raised)}
+.col-head-left{display:flex;align-items:center;gap:var(--s-3)}
+.col-icon{width:32px;height:32px;border-radius:var(--r-sm);display:grid;place-items:center}
+.col-icon.old{background:var(--bg-hover);color:var(--ink-60)}
+.col-icon.new{background:var(--brand-dim);color:var(--brand)}
+.col-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.col-tag{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600}
+.col-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--ink-100);margin-top:2px}
+.col-badge{font-family:var(--font-mono);font-size:var(--text-micro);padding:3px 8px;border-radius:var(--r-xs);letter-spacing:.04em;font-weight:600}
+.col-badge.old{background:var(--bg-hover);color:var(--ink-60)}
+.col-badge.new{background:var(--brand-dim);color:var(--brand)}
+.col-body{padding:var(--s-6)}
+.kv-row{display:grid;grid-template-columns:140px 1fr;gap:var(--s-3);padding:var(--s-3) 0;border-bottom:1px solid var(--line)}
+.kv-row:last-child{border-bottom:none}
+.kv-row .k{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;padding-top:2px}
+.kv-row .v{color:var(--ink-100);font-size:var(--text-body);line-height:1.55}
+.kv-row .mono{font-family:var(--font-mono);font-size:var(--text-label);letter-spacing:.02em}
+.justification-box{background:var(--bg-raised);border-left:3px solid var(--brand-dim);padding:var(--s-3);border-radius:var(--r-sm);color:var(--ink-80);line-height:1.55;font-size:var(--text-label)}
+.justification-box.diff{border-left-color:var(--sev-high)}
+.diff-hl{background:var(--sev-high-bg);padding:1px 3px;border-radius:2px;color:var(--sev-high)}
+.cc-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.cc-list li{display:flex;align-items:flex-start;gap:6px;color:var(--ink-80);line-height:1.4;font-size:var(--text-label)}
+.cc-list li svg{width:12px;height:12px;stroke:var(--status-good);fill:none;stroke-width:2.5;flex-shrink:0;margin-top:3px}
+.cc-list li.added svg{stroke:var(--sev-high)}
+.cc-list li.added{color:var(--sev-high)}
+.date-input{display:inline-flex;align-items:center;gap:var(--s-2);padding:7px var(--s-3);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-xs);color:var(--ink-100);font-family:var(--font-mono);font-size:var(--text-body)}
+.date-input svg{width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2}
+
+/* CISO notes */
+.ciso-note{background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);margin-top:var(--s-2)}
+.ciso-note .who{display:flex;align-items:center;gap:var(--s-2);margin-bottom:6px}
+.ciso-note .avatar{width:20px;height:20px;border-radius:var(--r-full);background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:10px}
+.ciso-note .name{font-size:var(--text-label);color:var(--ink-100);font-weight:500}
+.ciso-note .stamp{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--ink-60);letter-spacing:.04em;margin-left:auto}
+.ciso-note p{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+/* Extension history */
+.hist-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6);margin-bottom:var(--s-6)}
+.hist-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-4)}
+.hist-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--ink-100)}
+.hist-warn{display:inline-flex;align-items:center;gap:6px;padding:6px var(--s-3);background:var(--sev-high-bg);border:1px solid var(--sev-high);border-radius:var(--r-sm);color:var(--sev-high);font-size:var(--text-label);font-weight:500}
+.hist-warn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
+.timeline{position:relative;padding-left:var(--s-6)}
+.timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:var(--s-3) 0;display:grid;grid-template-columns:1fr auto 1fr;gap:var(--s-4);align-items:center}
+.tl-item::before{content:"";position:absolute;left:-22px;top:20px;width:14px;height:14px;border-radius:var(--r-full);background:var(--bg-base);border:2px solid var(--line-strong)}
+.tl-item.initial::before{background:var(--brand);border-color:var(--brand)}
+.tl-item.ext::before{background:var(--sev-high);border-color:var(--sev-high)}
+.tl-col{display:flex;flex-direction:column}
+.tl-date{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-100);letter-spacing:.02em}
+.tl-lab{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);font-weight:600;margin-bottom:2px}
+.tl-arrow{color:var(--ink-40);font-family:var(--font-mono)}
+.tl-meta{font-size:var(--text-label);color:var(--ink-60);grid-column:1/4;padding-top:4px}
+.tl-meta .by{color:var(--ink-80)}
+
+/* Decision footer card */
+.decision-card{background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-6)}
+.esc-preview{background:var(--sev-critical-bg);border:1px solid var(--sev-critical);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-4);display:flex;gap:var(--s-3);align-items:flex-start}
+.esc-preview .chip-icon{width:28px;height:28px;border-radius:var(--r-full);background:var(--sev-critical);color:var(--brand-ink);display:grid;place-items:center;flex-shrink:0}
+body.coffee.light .esc-preview .chip-icon,body.blue.light .esc-preview .chip-icon{color:#FFF}
+.esc-preview svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4}
+.esc-preview .label{font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--sev-critical);font-weight:600;margin-bottom:2px}
+.esc-preview p{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+.decision-actions{display:flex;align-items:center;justify-content:flex-end;gap:var(--s-3)}
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);padding:10px var(--s-6);height:44px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;cursor:pointer}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--status-good);color:#0B1A10;border-color:var(--status-good);font-weight:600}
+body.coffee.light .btn.primary,body.blue.light .btn.primary{color:#FFF}
+.btn.danger{background:transparent;border-color:var(--sev-critical);color:var(--sev-critical);font-weight:600}
+.btn.danger:hover{background:var(--sev-critical-bg)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body class="coffee dark">
+<div class="app">
+  <aside class="rail">
+    <div class="logo">S</div>
+    <div class="nav-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="nav-ic active"><svg viewBox="0 0 24 24"><path d="M12 2l9 4v6c0 5-3.8 9.3-9 10-5.2-.7-9-5-9-10V6l9-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+    <div class="nav-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+  </aside>
+
+  <header class="topbar">
+    <div class="crumb">
+      <span>SecureLoop</span><span class="sep">/</span>
+      <a>Business Owner</a><span class="sep">/</span>
+      <a>Risk Acceptances</a><span class="sep">/</span>
+      <span class="cur">RA-2026-0204 · Extension review</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="tb-actions">
+      <button class="theme-btn" id="themeBtn">
+        <div class="sw-stack"><span class="s1"></span><span class="s2"></span></div>
+        <span id="themeLabel">Coffee · Dark</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="pop" id="pop">
+      <h5>Palette family</h5>
+      <div class="fam-grid">
+        <div class="fam-card active" data-family="coffee"><div class="swatches"><span style="background:#120804"></span><span style="background:#25170D"></span><span style="background:#F3EEE2"></span></div><div class="name">Coffee</div><div class="desc">Warm · Investigation</div></div>
+        <div class="fam-card" data-family="blue"><div class="swatches"><span style="background:#0A1628"></span><span style="background:#162B48"></span><span style="background:#E8F4FD"></span></div><div class="name">Blue</div><div class="desc">Cool · Enterprise</div></div>
+      </div>
+      <h5>Appearance</h5>
+      <div class="mode-row">
+        <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>Dark</button>
+        <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>Light</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="content">
+
+      <!-- Review chain banner -->
+      <div class="status-banner">
+        <div class="status-chain">
+          <div class="chain-node done">
+            <div class="node-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="node-lab">Control owner submitted</div>
+            <div class="node-sub">Priya Menon · 14 Apr</div>
+          </div>
+          <div class="chain-link done"></div>
+          <div class="chain-node done">
+            <div class="node-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="node-lab">CISO reviewed · supports</div>
+            <div class="node-sub">Aditi Rao · 16 Apr</div>
+          </div>
+          <div class="chain-link"></div>
+          <div class="chain-node active">
+            <div class="node-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="12" x2="16" y2="14"/></svg></div>
+            <div class="node-lab">Awaiting your decision</div>
+            <div class="node-sub">Rohan Shah · Business Owner</div>
+          </div>
+        </div>
+        <div class="status-meta">
+          <span class="v">Action needed</span>
+          <span>Current expiry in 26 days</span>
+        </div>
+      </div>
+
+      <div class="page-head">
+        <div class="page-head-l">
+          <div class="eyebrow">
+            <span class="id-pill">BO-02-2</span>
+            <span class="label">Risk Extension Approval</span>
+            <span class="finding-ref">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/></svg>
+              RA-2026-0204
+            </span>
+          </div>
+          <h1 class="page-title">An extension has been requested on a risk you accepted</h1>
+          <p class="page-sub">Compare the original acceptance with the extension request. The CISO has already reviewed and supports the request.</p>
+        </div>
+        <div class="segmented" id="viewToggle">
+          <button class="seg-btn active" data-v="side">Side by side</button>
+          <button class="seg-btn" data-v="compare">Compare justifications</button>
+        </div>
+      </div>
+
+      <!-- COMPARE GRID -->
+      <div class="compare-grid">
+        <!-- ORIGINAL -->
+        <div class="col-card">
+          <div class="col-head">
+            <div class="col-head-left">
+              <div class="col-icon old"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div><div class="col-tag">Original acceptance</div><div class="col-title">Approved 21 Feb 2026</div></div>
+            </div>
+            <span class="col-badge old">ORIGINAL</span>
+          </div>
+          <div class="col-body">
+            <div class="kv-row">
+              <div class="k">Finding</div>
+              <div class="v">SSO provider migration paused for EU tenants — legacy auth endpoints remain reachable during 90-day regulatory transition</div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Business area</div>
+              <div class="v"><span style="display:inline-block;padding:3px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)">Operations</span></div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Original expiry</div>
+              <div class="v mono" style="color:var(--sev-critical)">14 May 2026</div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Justification</div>
+              <div class="v">
+                <div class="justification-box">"EU tenants cannot migrate to the new SSO provider until the regulatory transition clock from EDPB guidance <span style="color:var(--ink-100)">closes on 30 Apr</span>. Legacy endpoints will be decommissioned immediately after that date. We are running enhanced monitoring during the interim period."</div>
+              </div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Compensating controls</div>
+              <div class="v">
+                <ul class="cc-list">
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>IP allow-listing on legacy SSO endpoints</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Step-up MFA on all admin sessions</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>SIEM correlation rules for anomalous token issuance</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Quarterly session log review by SOC</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Approved by</div>
+              <div class="v">Rohan Shah · Business Owner <span class="mono" style="color:var(--ink-60);font-size:var(--text-micro);margin-left:6px">21 FEB 2026 · 11:04 IST</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXTENSION REQUEST -->
+        <div class="col-card">
+          <div class="col-head">
+            <div class="col-head-left">
+              <div class="col-icon new"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <div><div class="col-tag">Extension request</div><div class="col-title">Submitted 14 Apr 2026</div></div>
+            </div>
+            <span class="col-badge new">EXTENSION</span>
+          </div>
+          <div class="col-body">
+            <div class="kv-row">
+              <div class="k">Finding</div>
+              <div class="v">Same finding — SSO provider migration (EU tenants)</div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Business area</div>
+              <div class="v"><span style="display:inline-block;padding:3px 10px;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-full);font-size:var(--text-label)">Operations</span></div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Proposed new expiry</div>
+              <div class="v">
+                <div class="date-input">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  12 Aug 2026
+                </div>
+                <span style="font-size:var(--text-micro);color:var(--ink-60);margin-left:8px;font-family:var(--font-mono)">+ 90 days</span>
+              </div>
+            </div>
+            <div class="kv-row">
+              <div class="k">CO justification</div>
+              <div class="v">
+                <div class="justification-box diff">"EDPB released an addendum on 09 Apr <span class="diff-hl">extending the regulatory transition clock to 31 Jul 2026</span>. EU tenant decommissioning cannot start before that date. We are adding two additional compensating controls during the extension window."</div>
+                <div class="ciso-note">
+                  <div class="who">
+                    <div class="avatar">A</div>
+                    <div class="name">Aditi Rao · CISO</div>
+                    <div class="stamp">16 APR · 09:12</div>
+                  </div>
+                  <p>Verified the EDPB addendum independently. Supports extension. Recommend reviewing the two new compensating controls below before approving.</p>
+                </div>
+              </div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Compensating controls</div>
+              <div class="v">
+                <ul class="cc-list">
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>IP allow-listing on legacy SSO endpoints</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Step-up MFA on all admin sessions</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>SIEM correlation rules for anomalous token issuance</li>
+                  <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Quarterly session log review by SOC</li>
+                  <li class="added"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>NEW · Continuous session analytics via UEBA (bundled 15 Apr)</li>
+                  <li class="added"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>NEW · Weekly SOC review of legacy endpoint traffic</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv-row">
+              <div class="k">Requested by</div>
+              <div class="v">Priya Menon · Control Owner, Identity Platform <span class="mono" style="color:var(--ink-60);font-size:var(--text-micro);margin-left:6px">14 APR 2026 · 16:48 IST</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="hist-card">
+        <div class="hist-head">
+          <div class="hist-title">Extension history</div>
+          <span style="font-size:var(--text-label);color:var(--ink-60)">1 prior extension on this acceptance</span>
+        </div>
+        <div class="timeline">
+          <div class="tl-item initial">
+            <div class="tl-col">
+              <span class="tl-lab">Initial acceptance</span>
+              <span class="tl-date">Expiry set · 14 May 2026</span>
+            </div>
+            <div class="tl-arrow">—</div>
+            <div class="tl-col"></div>
+            <div class="tl-meta">Approved by <span class="by">Rohan Shah (BO)</span> on 21 Feb 2026 · "EU tenants cannot migrate until EDPB transition clock closes on 30 Apr."</div>
+          </div>
+          <div class="tl-item ext">
+            <div class="tl-col">
+              <span class="tl-lab">Extension 1 (this request)</span>
+              <span class="tl-date">14 May 2026</span>
+            </div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-col">
+              <span class="tl-lab">Proposed</span>
+              <span class="tl-date">12 Aug 2026 (+90 d)</span>
+            </div>
+            <div class="tl-meta">Requested by <span class="by">Priya Menon (CO)</span> · reviewed by <span class="by">Aditi Rao (CISO)</span> · status: <span style="color:var(--sev-high)">awaiting your decision</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISION -->
+      <div class="decision-card">
+        <div class="esc-preview">
+          <div class="chip-icon"><svg viewBox="0 0 24 24"><path d="M10.3 3.9l-8 14A1 1 0 003.2 19h17.6a1 1 0 00.9-1.5l-8-14a1 1 0 00-1.8 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div>
+            <span class="label">If you reject or grace period lapses</span>
+            <p>This risk will be escalated to the <strong style="color:var(--ink-100)">Security Committee</strong> on <strong style="color:var(--ink-100)">24 May 2026</strong> (10 days after current expiry + grace period). You may be asked to make the final remediation decision.</p>
+          </div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="btn danger">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Reject extension
+          </button>
+          <button class="btn primary">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Approve extension · new expiry 12 Aug 2026
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const pop=document.getElementById('pop');
+const themeBtn=document.getElementById('themeBtn');
+const themeLabel=document.getElementById('themeLabel');
+let curFamily='coffee',curMode='dark';
+function applyTheme(){
+  document.body.className=`${curFamily} ${curMode}`;
+  themeLabel.textContent=`${curFamily[0].toUpperCase()+curFamily.slice(1)} · ${curMode[0].toUpperCase()+curMode.slice(1)}`;
+  document.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.family===curFamily));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===curMode));
+}
+themeBtn.addEventListener('click',e=>{e.stopPropagation();pop.classList.toggle('open')});
+document.addEventListener('click',e=>{if(!pop.contains(e.target)&&e.target!==themeBtn)pop.classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')pop.classList.remove('open')});
+document.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{curFamily=c.dataset.family;applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{curMode=b.dataset.mode;applyTheme()}));
+
+document.querySelectorAll('#viewToggle .seg-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#viewToggle .seg-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+</script>
+</body>
+</html>

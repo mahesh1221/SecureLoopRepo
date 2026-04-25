@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTRL-03 · Fix Execution Audit Log · SecureLoop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-page: #120804; --bg-base: #1A0F08; --bg-raised: #25170D; --bg-overlay: #2B1810; --bg-hover: #3D2817;
+  --line: rgba(243,238,226,.07); --line-strong: rgba(243,238,226,.14);
+  --ink-100: #F3EEE2; --ink-80: #D4CBB0; --ink-60: #A69B80; --ink-40: #7A7058; --ink-20: #3D3428;
+  --brand: #F3EEE2; --brand-ink: #120804; --brand-dim: rgba(243,238,226,.12); --brand-glow: rgba(243,238,226,.22);
+  --sev-critical: #FF6B5B; --sev-critical-bg: rgba(255,107,91,.14);
+  --sev-high: #FFB04D; --sev-high-bg: rgba(255,176,77,.14);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #8FE5B3; --status-good-bg: rgba(143,229,179,.14);
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --text-micro: 10px; --text-label: 11px; --text-body: 13px; --text-lg: 15px; --text-xl: 20px; --text-2xl: 28px; --text-3xl: 44px;
+  --r-xs: 3px; --r-sm: 6px; --r-md: 10px; --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-6: 24px; --s-8: 32px; --s-12: 48px;
+  --syn-keyword: #C794E5; --syn-string: #A5D6A7; --syn-func: #FFB04D; --syn-comment: #7A7058; --syn-number: #81C7D8;
+}
+body.coffee.light {
+  --bg-page: #F3EEE2; --bg-base: #FBF8F1; --bg-raised: #EDE7D8; --bg-overlay: #FFFDF7; --bg-hover: #E5DDC9;
+  --line: rgba(43,24,16,.10); --line-strong: rgba(43,24,16,.18);
+  --ink-100: #2B1810; --ink-80: #4A2E1D; --ink-60: #6B5544; --ink-40: #907D68; --ink-20: #C9C0AA;
+  --brand: #6F4E37; --brand-ink: #F3EEE2; --brand-dim: rgba(111,78,55,.14); --brand-glow: rgba(111,78,55,.24);
+  --sev-critical: #C94637; --sev-critical-bg: rgba(201,70,55,.12);
+  --sev-high: #B8651D; --sev-high-bg: rgba(184,101,29,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #B8651D; --syn-comment: #907D68; --syn-number: #2E86C1;
+}
+body.blue.dark {
+  --bg-page: #0A1628; --bg-base: #0F1E35; --bg-raised: #162B48; --bg-overlay: #1C3557; --bg-hover: #22406B;
+  --line: rgba(232,244,253,.08); --line-strong: rgba(232,244,253,.15);
+  --ink-100: #E8F4FD; --ink-80: #C0D5E8; --ink-60: #7A96B4; --ink-40: #556F8A; --ink-20: #2C4058;
+  --brand: #E8F4FD; --brand-ink: #0A1628; --brand-dim: rgba(232,244,253,.12); --brand-glow: rgba(232,244,253,.22);
+  --sev-critical: #FF7A6B; --sev-critical-bg: rgba(255,122,107,.15);
+  --sev-high: #FFB347; --sev-high-bg: rgba(255,179,71,.15);
+  --sev-medium: #FFD97A; --sev-medium-bg: rgba(255,217,122,.14);
+  --sev-low: #7AB8E5; --sev-low-bg: rgba(122,184,229,.14);
+  --status-good: #7EE0A8; --status-good-bg: rgba(126,224,168,.14);
+}
+body.blue.light {
+  --bg-page: #F2F8FD; --bg-base: #FFFFFF; --bg-raised: #E5EFF8; --bg-overlay: #FFFFFF; --bg-hover: #D5E4F1;
+  --line: rgba(10,22,40,.08); --line-strong: rgba(10,22,40,.16);
+  --ink-100: #0A1628; --ink-80: #1F3A5C; --ink-60: #4A6380; --ink-40: #7A8FA8; --ink-20: #B5C5D8;
+  --brand: #1E5A8A; --brand-ink: #F2F8FD; --brand-dim: rgba(30,90,138,.14); --brand-glow: rgba(30,90,138,.24);
+  --sev-critical: #C73E3A; --sev-critical-bg: rgba(199,62,58,.12);
+  --sev-high: #C17A1A; --sev-high-bg: rgba(193,122,26,.12);
+  --sev-medium: #9E7F10; --sev-medium-bg: rgba(158,127,16,.14);
+  --sev-low: #2E86C1; --sev-low-bg: rgba(46,134,193,.10);
+  --status-good: #2E8B50; --status-good-bg: rgba(46,139,80,.12);
+  --syn-keyword: #8E44AD; --syn-string: #2E8B50; --syn-func: #C17A1A; --syn-comment: #7A8FA8; --syn-number: #1E5A8A;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  transition: background 240ms ease, color 240ms ease;
+  overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body.coffee.light::before, body.blue.light::before { opacity: .05; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* APP SHELL */
+.app { display: grid; grid-template-columns: 64px 1fr; height: 100%; position: relative; z-index: 2; }
+.rail {
+  background: var(--bg-base); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; padding: var(--s-3) 0; gap: var(--s-1);
+}
+.rail-logo {
+  width: 36px; height: 36px; background: var(--brand); color: var(--brand-ink);
+  border-radius: var(--r-sm); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl);
+  margin-bottom: var(--s-3); box-shadow: 0 0 16px var(--brand-glow);
+}
+body.coffee.light .rail-logo, body.blue.light .rail-logo { font-weight: 600; }
+.rail-item {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  color: var(--ink-60); border-radius: var(--r-sm); cursor: pointer;
+  transition: all 140ms; position: relative;
+}
+.rail-item:hover { background: var(--bg-raised); color: var(--ink-100); }
+.rail-item.active { background: var(--bg-raised); color: var(--brand); }
+.rail-item.active::before {
+  content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: var(--brand); border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+
+.main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.topbar {
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-3) var(--s-6); border-bottom: 1px solid var(--line);
+  background: var(--bg-base); height: 56px; flex-shrink: 0;
+}
+.crumb { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-body); color: var(--ink-60); font-weight: 400; }
+.crumb .sep { color: var(--ink-20); }
+.crumb .current { color: var(--ink-100); font-weight: 500; }
+.crumb .id-pill {
+  padding: 2px 6px; background: var(--brand-dim); color: var(--brand);
+  border-radius: var(--r-xs); font-family: var(--font-mono); font-size: var(--text-micro);
+  letter-spacing: 0.04em; font-weight: 600; margin-left: 2px;
+}
+
+/* THEME PICKER */
+.theme-picker-wrap { margin-left: auto; position: relative; }
+.theme-picker-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 5px 10px 5px 6px; height: 32px;
+  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm);
+  color: var(--ink-100); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500;
+  cursor: pointer; transition: all 140ms;
+}
+.theme-picker-btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.tp-family-swatches { display: inline-flex; gap: 2px; padding: 2px; background: var(--bg-overlay); border-radius: var(--r-xs); height: 20px; align-items: center; pointer-events: none; }
+.tp-sw { width: 6px; height: 14px; border-radius: 2px; }
+body.coffee .tp-sw-bg { background: #120804; } body.coffee.light .tp-sw-bg { background: #F3EEE2; }
+body.coffee .tp-sw-accent { background: #F3EEE2; } body.coffee.light .tp-sw-accent { background: #6F4E37; }
+body.blue .tp-sw-bg { background: #0A1628; } body.blue.light .tp-sw-bg { background: #F2F8FD; }
+body.blue .tp-sw-accent { background: #E8F4FD; } body.blue.light .tp-sw-accent { background: #1E5A8A; }
+.tp-label { display: inline-flex; align-items: center; gap: 5px; }
+.tp-label .tp-sep { color: var(--ink-40); } .tp-label .tp-mode { color: var(--ink-80); font-weight: 400; }
+.tp-chevron { color: var(--ink-60); transition: transform 180ms; }
+.theme-picker-btn[aria-expanded="true"] .tp-chevron { transform: rotate(180deg); }
+.theme-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  padding: var(--s-3); background: var(--bg-base); border: 1px solid var(--line-strong); border-radius: var(--r-md);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 40;
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: opacity 160ms, transform 160ms;
+}
+.theme-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tp-section + .tp-section { margin-top: var(--s-3); }
+.tp-section-label { font-size: var(--text-micro); font-weight: 500; color: var(--ink-60); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s-2); }
+.tp-family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-family-card { display: flex; flex-direction: column; gap: 5px; padding: var(--s-2); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; transition: all 140ms; text-align: left; font-family: var(--font-ui); }
+.tp-family-card:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.tp-family-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand), 0 4px 12px rgba(0,0,0,0.12); }
+.tp-family-preview { display: flex; gap: 2px; height: 22px; border-radius: var(--r-xs); overflow: hidden; }
+.tp-pv-swatch { flex: 1; display: block; }
+.tp-family-name { font-size: var(--text-label); font-weight: 600; color: var(--ink-100); }
+.tp-family-desc { font-size: 9px; color: var(--ink-60); }
+.tp-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.tp-mode-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px var(--s-3); height: 30px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--ink-80); font-family: var(--font-ui); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: all 140ms; }
+.tp-mode-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.tp-mode-btn.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); color: var(--ink-100); }
+
+/* CONTENT */
+.content {
+  flex: 1; overflow-y: auto; padding: var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-4);
+}
+.content::-webkit-scrollbar { width: 10px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.content::-webkit-scrollbar-thumb:hover { background: var(--ink-40); }
+
+/* Page head */
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4);
+}
+.page-title-block { display: flex; flex-direction: column; gap: 4px; }
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--ink-100);
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+.page-title em { font-style: normal; font-weight: 700; color: var(--brand); }
+
+.page-stats { display: flex; gap: var(--s-6); align-items: flex-end; }
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  color: var(--ink-100);
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.stat-value.good { color: var(--status-good); }
+.stat-value.warn { color: var(--sev-critical); }
+
+/* Filter bar */
+.filter-bar {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
+.filter-select, .filter-input {
+  padding: 6px var(--s-3);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 140ms, box-shadow 140ms;
+}
+.filter-input { min-width: 200px; cursor: text; font-family: var(--font-mono); letter-spacing: -.01em; }
+.filter-input:focus, .filter-select:focus { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-dim); }
+.filter-select {
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+}
+body.coffee.light .filter-select, body.blue.light .filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.clear-link {
+  background: transparent;
+  border: none;
+  color: var(--brand);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 4px;
+}
+.clear-link:hover { text-decoration: underline; }
+.filter-spacer { flex: 1; min-width: 16px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: 8px var(--s-4); height: 36px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--line-strong); }
+.btn.primary {
+  background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600;
+}
+.btn.primary:hover { filter: brightness(1.1); }
+.btn-small { padding: 6px var(--s-3); height: 30px; font-size: var(--text-label); }
+
+/* Table */
+.audit-table {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.thead, .trow {
+  display: grid;
+  grid-template-columns: 32px 180px 140px 140px 110px 160px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: center;
+}
+.thead {
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  position: sticky; top: 0;
+  z-index: 5;
+}
+.th-sortable { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: color 140ms; }
+.th-sortable:hover { color: var(--ink-100); }
+
+.trow {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-body);
+  transition: background 140ms;
+  cursor: pointer;
+}
+.trow:hover { background: var(--bg-raised); }
+.trow.expanded { background: var(--bg-raised); }
+
+.expand-cell {
+  color: var(--ink-60);
+  transition: transform 180ms;
+  display: grid; place-items: center;
+}
+.trow.expanded .expand-cell { transform: rotate(90deg); color: var(--brand); }
+
+.cell-timestamp {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink-100);
+  letter-spacing: -.01em;
+}
+.cell-tz {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--ink-60);
+  font-size: var(--text-micro);
+  margin-top: 2px;
+  letter-spacing: .04em;
+}
+.cell-finding {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--brand);
+  letter-spacing: .02em;
+}
+
+.fix-type-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xs);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--ink-80);
+  font-weight: 600;
+  letter-spacing: .02em;
+  width: fit-content;
+}
+.trow:hover .fix-type-badge, .trow.expanded .fix-type-badge { background: var(--bg-base); }
+
+.outcome-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--r-xs);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.outcome-badge.success { background: var(--status-good-bg); color: var(--status-good); }
+.outcome-badge.failed { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.outcome-badge.partial { background: var(--sev-high-bg); color: var(--sev-high); }
+
+.owner-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.avatar {
+  width: 20px; height: 20px; border-radius: var(--r-full);
+  background: var(--brand-dim); color: var(--brand);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 9px; font-weight: 700;
+  flex-shrink: 0;
+}
+.owner-name {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cell-asset {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Expanded detail panel */
+.detail-panel {
+  display: none;
+  grid-column: 1 / -1;
+  padding: var(--s-4);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--line);
+}
+.detail-panel.open { display: block; animation: slideDown 220ms ease; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Record meta grid */
+.record-meta {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-3);
+}
+.meta-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.meta-field.wide { grid-column: span 2; }
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.meta-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-100);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meta-value.mono { font-family: var(--font-mono); letter-spacing: -.01em; }
+.meta-value.link { color: var(--brand); text-decoration: none; cursor: pointer; }
+.meta-value.link:hover { text-decoration: underline; }
+
+/* Detail sections */
+.detail-section {
+  background: var(--bg-base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  margin-bottom: var(--s-3);
+  overflow: hidden;
+}
+.ds-head {
+  padding: var(--s-3) var(--s-4);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+.ds-title {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.ds-hash {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-60);
+  letter-spacing: -.01em;
+}
+
+/* Before/after states */
+.state-grid {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  align-items: stretch;
+  gap: 0;
+}
+.state-col {
+  padding: var(--s-3) var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-2);
+}
+.state-col.before { background: var(--sev-critical-bg); }
+.state-col.after { background: var(--status-good-bg); }
+.state-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.state-col.before .state-label { color: var(--sev-critical); }
+.state-col.after .state-label { color: var(--status-good); }
+.state-content {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-100);
+  line-height: 1.55;
+  font-weight: 500;
+  letter-spacing: -.01em;
+}
+.arrow-col {
+  display: grid; place-items: center;
+  color: var(--ink-60);
+  background: var(--bg-base);
+}
+
+/* Code preview */
+.code-body {
+  padding: var(--s-3) var(--s-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  max-height: 280px;
+  overflow-y: auto;
+  line-height: 1.7;
+  white-space: pre;
+}
+.code-body::-webkit-scrollbar { width: 8px; }
+.code-body::-webkit-scrollbar-track { background: transparent; }
+.code-body::-webkit-scrollbar-thumb { background: var(--ink-20); border-radius: var(--r-sm); }
+.syn-keyword { color: var(--syn-keyword); font-weight: 600; }
+.syn-string { color: var(--syn-string); }
+.syn-func { color: var(--syn-func); }
+.syn-comment { color: var(--syn-comment); font-style: italic; }
+.syn-number { color: var(--syn-number); }
+
+/* Linked items */
+.link-list {
+  padding: var(--s-3) var(--s-4);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-3);
+}
+.link-item {
+  display: flex; flex-direction: column; gap: 4px;
+  min-width: 0;
+}
+.link-kind {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-60);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.link-id {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--brand);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  cursor: pointer;
+}
+.link-id:hover { text-decoration: underline; }
+.link-name {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 400;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Immutability notice */
+.immut-notice {
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-base);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; gap: var(--s-3);
+  margin-bottom: var(--s-3);
+}
+.immut-icon {
+  width: 32px; height: 32px;
+  background: var(--brand-dim);
+  color: var(--brand);
+  border-radius: var(--r-xs);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.immut-text {
+  flex: 1; min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.immut-text strong { color: var(--ink-100); font-weight: 700; }
+
+/* Admin annotation */
+.annotation-box {
+  background: var(--sev-medium-bg);
+  border: 1px solid var(--sev-medium);
+  border-left: 4px solid var(--sev-medium);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-3);
+}
+.annotation-head {
+  display: flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--sev-medium);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.annotation-body {
+  font-family: var(--font-ui);
+  font-style: italic;
+  font-size: var(--text-label);
+  color: var(--ink-80);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* Detail actions */
+.detail-actions {
+  display: flex; gap: var(--s-3);
+  justify-content: flex-end;
+  padding-top: var(--s-2);
+}
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-base);
+  border-top: 1px solid var(--line);
+}
+.pagination-info {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--ink-60);
+  letter-spacing: -.01em;
+}
+.pagination-ctrls { display: flex; gap: 4px; align-items: center; }
+.page-btn {
+  min-width: 28px; height: 28px;
+  padding: 0 6px;
+  display: grid; place-items: center;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  color: var(--ink-80);
+  cursor: pointer;
+  transition: all 140ms;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.page-btn:hover { border-color: var(--line-strong); color: var(--ink-100); }
+.page-btn.active { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.page-btn.disabled { opacity: .4; cursor: not-allowed; }
+
+/* Realtime toast */
+.toast {
+  position: fixed;
+  bottom: var(--s-6);
+  right: var(--s-6);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--brand);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; gap: var(--s-3);
+  box-shadow: 0 12px 32px rgba(0,0,0,.3);
+  z-index: 60;
+  animation: toastIn 320ms cubic-bezier(.2,.7,.2,1);
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.toast-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 8px var(--brand);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.toast-text {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--ink-100);
+  font-weight: 500;
+}
+</style>
+</head>
+
+<body class="coffee dark">
+
+<div class="app">
+  <aside class="rail">
+    <div class="rail-logo">S</div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+    <div class="rail-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <div class="rail-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <span>SecureLoop</span>
+        <span class="sep">/</span>
+        <span>My Controls</span>
+        <span class="sep">/</span>
+        <span class="current">Fix execution log</span>
+        <span class="id-pill">CTRL-03</span>
+      </div>
+      <div class="theme-picker-wrap">
+        <button class="theme-picker-btn" id="themePickerBtn" aria-expanded="false">
+          <span class="tp-family-swatches"><span class="tp-sw tp-sw-bg"></span><span class="tp-sw tp-sw-accent"></span></span>
+          <span class="tp-label"><span id="tpFamily">Coffee</span><span class="tp-sep">·</span><span class="tp-mode" id="tpMode">Dark</span></span>
+          <svg class="tp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-popover" id="themePopover" role="dialog">
+          <div class="tp-section">
+            <div class="tp-section-label">Palette family</div>
+            <div class="tp-family-grid">
+              <button class="tp-family-card active" data-family="coffee">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#120804"></span><span class="tp-pv-swatch" style="background:#F3EEE2"></span><span class="tp-pv-swatch" style="background:#6F4E37"></span></span>
+                <span class="tp-family-name">Coffee</span>
+                <span class="tp-family-desc">Warm · Investigation</span>
+              </button>
+              <button class="tp-family-card" data-family="blue">
+                <span class="tp-family-preview"><span class="tp-pv-swatch" style="background:#0A1628"></span><span class="tp-pv-swatch" style="background:#F2F8FD"></span><span class="tp-pv-swatch" style="background:#1E5A8A"></span></span>
+                <span class="tp-family-name">Blue</span>
+                <span class="tp-family-desc">Cool · Enterprise</span>
+              </button>
+            </div>
+          </div>
+          <div class="tp-section">
+            <div class="tp-section-label">Appearance</div>
+            <div class="tp-mode-row">
+              <button class="tp-mode-btn active" data-mode="dark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+              <button class="tp-mode-btn" data-mode="light"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>Light</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Page header -->
+      <div class="page-head">
+        <div class="page-title-block">
+          <span class="page-eyebrow">Immutable audit record · 90-day retention · SHA-256 signed</span>
+          <h1 class="page-title">Fix execution <em>log</em></h1>
+        </div>
+        <div class="page-stats">
+          <div class="stat"><span class="stat-label">Executions · 30d</span><span class="stat-value">127</span></div>
+          <div class="stat"><span class="stat-label">Success rate</span><span class="stat-value good">94%</span></div>
+          <div class="stat"><span class="stat-label">Failed</span><span class="stat-value warn">8</span></div>
+          <div class="stat"><span class="stat-label">Avg duration</span><span class="stat-value">42s</span></div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Period</span>
+        <select class="filter-select">
+          <option>Last 30 days</option>
+          <option>Last 7 days</option>
+          <option>Last 90 days</option>
+          <option>Custom range…</option>
+        </select>
+
+        <span class="filter-label" style="margin-left: var(--s-3);">Fix type</span>
+        <select class="filter-select">
+          <option>All types</option>
+          <option>Cloud API</option>
+          <option>IaC Template</option>
+          <option>Script</option>
+          <option>Pipeline</option>
+          <option>Manual</option>
+        </select>
+
+        <span class="filter-label" style="margin-left: var(--s-3);">Outcome</span>
+        <select class="filter-select">
+          <option>All outcomes</option>
+          <option>Success</option>
+          <option>Failed</option>
+          <option>Partial</option>
+        </select>
+
+        <input type="text" class="filter-input" placeholder="Search finding ID or asset…">
+
+        <button class="clear-link">Clear filters</button>
+
+        <div class="filter-spacer"></div>
+
+        <button class="btn btn-small">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export log (CSV)
+        </button>
+      </div>
+
+      <!-- Audit table -->
+      <div class="audit-table">
+        <div class="thead">
+          <div></div>
+          <div class="th-sortable">Timestamp <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="th-sortable">Finding</div>
+          <div class="th-sortable">Fix type</div>
+          <div class="th-sortable">Outcome</div>
+          <div class="th-sortable">Executed by</div>
+          <div class="th-sortable">Asset</div>
+        </div>
+
+        <!-- Row 1 — expanded -->
+        <div class="trow expanded" data-row="1">
+          <div class="expand-cell">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div>
+            <div class="cell-timestamp">Jan 18, 2026 · 14:22</div>
+            <div class="cell-tz">UTC+00:00</div>
+          </div>
+          <div class="cell-finding">FND-2026-0803</div>
+          <div><span class="fix-type-badge">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            Cloud API</span></div>
+          <div><span class="outcome-badge success">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Success</span></div>
+          <div class="owner-row"><div class="avatar">SC</div><span class="owner-name">Sarah Chen</span></div>
+          <div class="cell-asset">aws-prod-iam · ap-south-1</div>
+        </div>
+
+        <!-- Expanded detail panel -->
+        <div class="detail-panel open" data-panel="1">
+          <!-- Immutability notice -->
+          <div class="immut-notice">
+            <div class="immut-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="immut-text">
+              <strong>This record is immutable.</strong> Created Jan 18, 2026 14:22:41 UTC. Cannot be edited or deleted. Annotations can be appended by platform admin only.
+            </div>
+          </div>
+
+          <!-- Record meta -->
+          <div class="record-meta">
+            <div class="meta-field">
+              <span class="meta-label">Execution ID</span>
+              <span class="meta-value mono">EXEC-2026-3927</span>
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">Duration</span>
+              <span class="meta-value mono">41 seconds</span>
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">Approval mode</span>
+              <span class="meta-value">Single confirmation</span>
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">SHA-256</span>
+              <span class="meta-value mono" style="font-size: 10px;">a7f2c8d9…b4e1</span>
+            </div>
+          </div>
+
+          <!-- Before/after state -->
+          <div class="detail-section">
+            <div class="ds-head">
+              <span class="ds-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                State change
+              </span>
+            </div>
+            <div class="state-grid">
+              <div class="state-col before">
+                <span class="state-label">Before</span>
+                <div class="state-content">
+                  3 service accounts had <strong>AdministratorAccess</strong> + <strong>PowerUserAccess</strong> attached. Access to 47 AWS resources including production databases and payment Lambda functions.
+                </div>
+              </div>
+              <div class="arrow-col">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+              <div class="state-col after">
+                <span class="state-label">After</span>
+                <div class="state-content">
+                  <strong>AdministratorAccess</strong> and <strong>PowerUserAccess</strong> detached. <strong>ServiceAccount-LeastPrivilege-v2</strong> attached to 3 accounts. Scope reduced from 47 → 9 resources.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fix artifact snapshot -->
+          <div class="detail-section">
+            <div class="ds-head">
+              <span class="ds-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Fix artifact (snapshot at execution time)
+              </span>
+              <span class="ds-hash">Artifact v1.3 · sha: 9f4b2e1c</span>
+            </div>
+            <div class="code-body"><span class="syn-comment"># Fix artifact snapshot · captured at execution time · read-only</span>
+<span class="syn-comment"># Template: aws-iam-detach-excessive-policies · v1.3</span>
+<span class="syn-comment"># Reviewed by: Aisha Nasir (Security Engineer)</span>
+
+{
+  <span class="syn-string">"fix_id"</span>: <span class="syn-string">"aws-iam-detach-excessive-policies"</span>,
+  <span class="syn-string">"version"</span>: <span class="syn-string">"1.3"</span>,
+  <span class="syn-string">"target_accounts"</span>: [
+    <span class="syn-string">"arn:aws:iam::842013:role/svc-payment-processor"</span>,
+    <span class="syn-string">"arn:aws:iam::842013:role/svc-data-replication"</span>,
+    <span class="syn-string">"arn:aws:iam::842013:role/svc-batch-jobs"</span>
+  ],
+  <span class="syn-string">"policies_detached"</span>: [
+    <span class="syn-string">"arn:aws:iam::aws:policy/AdministratorAccess"</span>,
+    <span class="syn-string">"arn:aws:iam::aws:policy/PowerUserAccess"</span>
+  ],
+  <span class="syn-string">"policies_attached"</span>: [
+    <span class="syn-string">"arn:aws:iam::842013:policy/ServiceAccount-LeastPrivilege-v2"</span>
+  ],
+  <span class="syn-string">"execution_result"</span>: {
+    <span class="syn-string">"accounts_updated"</span>: <span class="syn-number">3</span>,
+    <span class="syn-string">"duration_ms"</span>: <span class="syn-number">41293</span>,
+    <span class="syn-string">"rollback_snapshot_id"</span>: <span class="syn-string">"rb-2026-3927-a7f2"</span>
+  }
+}</div>
+          </div>
+
+          <!-- Linked to -->
+          <div class="detail-section">
+            <div class="ds-head">
+              <span class="ds-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Linked records
+              </span>
+            </div>
+            <div class="link-list">
+              <div class="link-item">
+                <span class="link-kind">Finding</span>
+                <span class="link-id">FND-2026-0803</span>
+                <span class="link-name">Service accounts with excessive IAM permissions</span>
+              </div>
+              <div class="link-item">
+                <span class="link-kind">Control</span>
+                <span class="link-id">PR.AC-4</span>
+                <span class="link-name">Access permissions with least privilege</span>
+              </div>
+              <div class="link-item">
+                <span class="link-kind">Engagement</span>
+                <span class="link-id">ENG-2026-0184</span>
+                <span class="link-name">Q1 Payment Platform VAPT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin annotation -->
+          <div class="annotation-box">
+            <div class="annotation-head">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Platform Admin Annotation · Added Jan 19, 2026 09:14 UTC by Elena Petrova
+            </div>
+            <div class="annotation-body">
+              "Confirmed this execution was performed during scheduled change window. Cross-referenced with change advisory board approval CAB-2026-0172. Rollback validated via sandbox simulation prior to production execution. Record cleared for SOC 2 evidence package."
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="detail-actions">
+            <button class="btn btn-small">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              View finding
+            </button>
+            <button class="btn primary btn-small">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Export as evidence (PDF)
+            </button>
+          </div>
+        </div>
+
+        <!-- More rows -->
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 18, 2026 · 11:08</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0782</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Script</span></div>
+          <div><span class="outcome-badge success"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Success</span></div>
+          <div class="owner-row"><div class="avatar">SC</div><span class="owner-name">Sarah Chen</span></div>
+          <div class="cell-asset">okta-users-directory</div>
+        </div>
+
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 17, 2026 · 16:47</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0651</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>IaC Template</span></div>
+          <div><span class="outcome-badge failed"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Failed</span></div>
+          <div class="owner-row"><div class="avatar">MP</div><span class="owner-name">Marcus Park</span></div>
+          <div class="cell-asset">infra-terraform-prod</div>
+        </div>
+
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 17, 2026 · 14:02</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0614</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>Cloud API</span></div>
+          <div><span class="outcome-badge success"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Success</span></div>
+          <div class="owner-row"><div class="avatar">PR</div><span class="owner-name">Priya Ramirez</span></div>
+          <div class="cell-asset">aws-prod-s3-buckets</div>
+        </div>
+
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 16, 2026 · 10:23</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0587</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>Pipeline</span></div>
+          <div><span class="outcome-badge success"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Success</span></div>
+          <div class="owner-row"><div class="avatar">DL</div><span class="owner-name">David Liu</span></div>
+          <div class="cell-asset">github-actions · auth-service</div>
+        </div>
+
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 15, 2026 · 15:41</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0519</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Manual</span></div>
+          <div><span class="outcome-badge success"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Success</span></div>
+          <div class="owner-row"><div class="avatar">SC</div><span class="owner-name">Sarah Chen</span></div>
+          <div class="cell-asset">vpn-gateway-legacy</div>
+        </div>
+
+        <div class="trow">
+          <div class="expand-cell"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+          <div><div class="cell-timestamp">Jan 15, 2026 · 09:18</div><div class="cell-tz">UTC+00:00</div></div>
+          <div class="cell-finding">FND-2026-0482</div>
+          <div><span class="fix-type-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Script</span></div>
+          <div><span class="outcome-badge partial"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>Partial</span></div>
+          <div class="owner-row"><div class="avatar">PR</div><span class="owner-name">Priya Ramirez</span></div>
+          <div class="cell-asset">k8s-prod-cluster · us-east</div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="pagination-info">Showing 1 – 7 of 127 records</div>
+          <div class="pagination-ctrls">
+            <button class="page-btn disabled" aria-label="Previous">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn" aria-label="Next">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Real-time toast -->
+<div class="toast" id="realtimeToast">
+  <span class="toast-dot"></span>
+  <span class="toast-text">New execution record available</span>
+  <button class="btn btn-small primary">Refresh</button>
+</div>
+
+<script>
+  // Theme picker
+  const pickerBtn = document.getElementById('themePickerBtn');
+  const popover = document.getElementById('themePopover');
+  const tpFamily = document.getElementById('tpFamily');
+  const tpMode = document.getElementById('tpMode');
+  const familyLabels = { coffee: 'Coffee', blue: 'Blue' };
+  const modeLabels = { dark: 'Dark', light: 'Light' };
+  let currentFamily = 'coffee', currentMode = 'dark';
+  function applyTheme() {
+    document.body.classList.remove('coffee','blue','dark','light');
+    document.body.classList.add(currentFamily, currentMode);
+    tpFamily.textContent = familyLabels[currentFamily];
+    tpMode.textContent = modeLabels[currentMode];
+  }
+  function togglePopover(force) {
+    const isOpen = popover.classList.contains('open');
+    const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+    popover.classList.toggle('open', shouldOpen);
+    pickerBtn.setAttribute('aria-expanded', String(shouldOpen));
+  }
+  pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePopover(); });
+  document.querySelectorAll('.tp-family-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tp-family-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentFamily = card.dataset.family;
+      applyTheme();
+    });
+  });
+  document.querySelectorAll('.tp-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      applyTheme();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!popover.contains(e.target) && !pickerBtn.contains(e.target)) togglePopover(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') togglePopover(false); });
+  applyTheme();
+
+  // Row expansion
+  document.querySelectorAll('.trow').forEach(row => {
+    row.addEventListener('click', () => {
+      const rowId = row.dataset.row;
+      row.classList.toggle('expanded');
+      if (rowId) {
+        const panel = document.querySelector(`.detail-panel[data-panel="${rowId}"]`);
+        if (panel) panel.classList.toggle('open');
+      }
+    });
+  });
+
+  // Dismiss toast on refresh button
+  document.querySelector('.toast .btn').addEventListener('click', () => {
+    document.getElementById('realtimeToast').style.display = 'none';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Contract Lifecycle · SecureLoop</title>
+<style>
+/* ============ FONTS ============ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ============ TOKENS ============ */
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px; --text-label:11px; --text-body:13px; --text-lg:15px;
+  --text-xl:20px; --text-2xl:28px; --text-3xl:44px;
+  --r-xs:3px; --r-sm:6px; --r-md:10px; --r-full:999px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px; --s-12:48px;
+}
+
+/* Coffee Dark (default) */
+body.coffee.dark{
+  --bg-page:#120804; --bg-base:#1A0F08; --bg-raised:#25170D; --bg-overlay:#2B1810; --bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07); --line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2; --ink-80:#D4CBB0; --ink-60:#A69B80; --ink-40:#7A7058; --ink-20:#3D3428;
+  --brand:#F3EEE2; --brand-ink:#120804; --brand-dim:rgba(243,238,226,.12); --brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B; --sev-high:#FFB04D; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14); --sev-high-bg:rgba(255,176,77,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(143,229,179,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2; --bg-base:#FBF8F1; --bg-raised:#EDE7D8; --bg-overlay:#FFFDF7; --bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10); --line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810; --ink-80:#4A2E1D; --ink-60:#6B5544; --ink-40:#907D68; --ink-20:#C9C0AA;
+  --brand:#6F4E37; --brand-ink:#F3EEE2; --brand-dim:rgba(111,78,55,.14); --brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637; --sev-high:#B8651D; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.14); --sev-high-bg:rgba(184,101,29,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(43,24,16,.35);
+}
+body.blue.dark{
+  --bg-page:#0A1628; --bg-base:#0F1E35; --bg-raised:#162B48; --bg-overlay:#1C3557; --bg-hover:#22406B;
+  --line:rgba(232,244,253,.08); --line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD; --ink-80:#C0D5E8; --ink-60:#7A96B4; --ink-40:#556F8A; --ink-20:#2C4058;
+  --brand:#E8F4FD; --brand-ink:#0A1628; --brand-dim:rgba(232,244,253,.12); --brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B; --sev-high:#FFB347; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14); --sev-high-bg:rgba(255,179,71,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(126,224,168,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.blue.light{
+  --bg-page:#F2F8FD; --bg-base:#FFFFFF; --bg-raised:#E5EFF8; --bg-overlay:#FFFFFF; --bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08); --line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628; --ink-80:#1F3A5C; --ink-60:#4A6380; --ink-40:#7A8FA8; --ink-20:#B5C5D8;
+  --brand:#1E5A8A; --brand-ink:#F2F8FD; --brand-dim:rgba(30,90,138,.14); --brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A; --sev-high:#C17A1A; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.14); --sev-high-bg:rgba(193,122,26,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(10,22,40,.30);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-page); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-body); font-weight:400;
+  letter-spacing:-0.003em; line-height:1.5;
+  min-height:100vh;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' seed='3'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  opacity:.025;
+}
+body.coffee.light::before,body.blue.light::before{opacity:.05}
+
+a{color:inherit}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* Universal SVG icon default — prevents unbounded SVGs from expanding */
+svg{width:16px; height:16px; flex-shrink:0}
+
+/* ============ APP SHELL ============ */
+.app{position:relative; z-index:1; display:grid; grid-template-columns:64px 1fr; min-height:100vh}
+.rail{
+  background:var(--bg-base); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center; padding:var(--s-4) 0; gap:var(--s-2);
+  position:sticky; top:0; height:100vh;
+}
+.logo{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--brand); color:var(--brand-ink);
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:700; font-size:var(--text-lg);
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-3);
+}
+body.coffee.light .logo,body.blue.light .logo{font-weight:600}
+.rail-item{
+  width:40px; height:40px; border-radius:var(--r-sm);
+  display:grid; place-items:center; color:var(--ink-60);
+  cursor:pointer; transition:all 140ms; border:1px solid transparent;
+}
+.rail-item:hover{background:var(--bg-raised); color:var(--ink-100)}
+.rail-item.active{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line-strong)}
+.rail-item svg{width:18px; height:18px}
+
+.main{display:flex; flex-direction:column; min-width:0}
+.topbar{
+  height:56px; display:flex; align-items:center; gap:var(--s-3);
+  padding:0 var(--s-6); border-bottom:1px solid var(--line); background:var(--bg-page);
+  position:sticky; top:0; z-index:5;
+}
+.crumb{display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-label); color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .current{color:var(--ink-100); font-weight:500}
+.crumb a{cursor:pointer; text-decoration:none}
+.crumb a:hover{color:var(--ink-100)}
+
+.spacer{flex:1}
+
+.search{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px; width:260px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-60); font-size:var(--text-label);
+}
+.search input{flex:1; background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label)}
+.search svg{width:14px; height:14px}
+
+/* Theme picker */
+.theme-btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer;
+}
+.theme-btn:hover{background:var(--bg-hover)}
+.theme-btn .sw{display:flex; flex-direction:column; gap:1px}
+.theme-btn .sw span{width:14px; height:5px; border-radius:1px; border:1px solid var(--line-strong); display:block}
+.theme-btn .sw .s1{background:var(--bg-raised)}
+.theme-btn .sw .s2{background:var(--brand)}
+.theme-btn .chev{width:10px; height:10px; color:var(--ink-60)}
+
+.theme-popover{
+  position:absolute; top:52px; right:var(--s-6); z-index:20;
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  padding:var(--s-4); width:360px; display:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+.theme-popover.open{display:block}
+.theme-popover h4{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-2) 0;
+}
+.fam-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-bottom:var(--s-4)}
+.fam-card{
+  padding:var(--s-3); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); cursor:pointer; transition:all 140ms;
+}
+.fam-card:hover{border-color:var(--line-strong)}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .name{font-family:var(--font-display); font-size:var(--text-body); font-weight:600; margin-bottom:var(--s-1)}
+.fam-card .desc{font-size:10px; color:var(--ink-60); margin-bottom:var(--s-2)}
+.fam-swatches{display:flex; gap:3px; height:16px}
+.fam-swatches i{flex:1; border-radius:2px; display:block}
+.mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2)}
+.mode-btn{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-2);
+  padding:var(--s-2); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); color:var(--ink-80); cursor:pointer; font-size:var(--text-label); font-family:inherit;
+}
+.mode-btn.active{background:var(--brand); color:var(--brand-ink); border-color:var(--brand)}
+.mode-btn svg{width:12px; height:12px}
+
+/* ============ CONTENT ============ */
+.content{flex:1; padding:var(--s-6); overflow-y:auto; min-height:0}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:8px var(--s-4); height:36px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-body); font-weight:500;
+  cursor:pointer; transition:all 140ms;
+}
+.btn:hover{background:var(--bg-hover); border-color:var(--line-strong)}
+.btn.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5; cursor:not-allowed}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg{width:14px; height:14px}
+
+.icon-btn{
+  width:36px; height:36px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer; transition:all 140ms;
+}
+.icon-btn:hover{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line)}
+.icon-btn svg{width:16px; height:16px}
+
+/* Inputs */
+.input,.select,.textarea{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-label); outline:none;
+  width:100%;
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim);
+}
+.input::placeholder{color:var(--ink-40)}
+.textarea{font-family:var(--font-ui); resize:vertical; min-height:80px}
+
+/* Cards */
+.card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.card:hover{border-color:var(--line-strong)}
+
+/* Badges */
+.p-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  font-family:var(--font-ui); font-size:9px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;
+}
+.p-badge.crit{background:var(--sev-critical-bg); color:var(--sev-critical)}
+.p-badge.high{background:var(--sev-high-bg); color:var(--sev-high)}
+.p-badge.med{background:var(--sev-medium-bg); color:var(--sev-medium)}
+.p-badge.low{background:var(--sev-low-bg); color:var(--sev-low)}
+.p-badge.good{background:var(--status-good-bg); color:var(--status-good)}
+.p-badge.neutral{background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong)}
+
+.id-pill{
+  padding:2px 6px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono); font-size:var(--text-micro);
+  letter-spacing:0.04em; font-weight:600;
+}
+
+/* Segmented pill */
+.segmented{display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm)}
+.seg-btn{
+  padding:4px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; min-width:64px; text-align:center;
+}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Page header */
+.page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-6); margin-bottom:var(--s-6)}
+.page-title{
+  font-family:var(--font-display); font-size:var(--text-2xl); font-weight:600;
+  letter-spacing:-0.02em; line-height:1.1; margin:0 0 var(--s-1) 0;
+}
+.page-sub{font-size:var(--text-label); color:var(--ink-60)}
+.page-head .actions{display:flex; gap:var(--s-2); align-items:center}
+
+/* Section title */
+.sec-title{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-3) 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px; height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+
+/* Modal */
+.modal-backdrop{
+  position:fixed; inset:0; z-index:50; background:var(--modal-backdrop);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:none; align-items:flex-start; justify-content:center;
+  padding:var(--s-6) var(--s-4);
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:880px; max-width:100%; max-height:calc(100vh - 48px);
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  display:flex; flex-direction:column; overflow:hidden;
+  animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--s-4) var(--s-6); border-bottom:1px solid var(--line);
+}
+.modal-head .t{font-family:var(--font-display); font-size:var(--text-xl); font-weight:600; letter-spacing:-0.015em}
+.modal-body{padding:var(--s-6); overflow-y:auto; flex:1}
+.modal-foot{
+  display:flex; justify-content:flex-end; gap:var(--s-2);
+  padding:var(--s-4) var(--s-6); border-top:1px solid var(--line);
+  background:var(--bg-base);
+}
+@keyframes riseIn{
+  from{opacity:0; transform:translateY(16px) scale(.98)}
+  to{opacity:1; transform:none}
+}
+
+/* ============ LGL-04-1 ============ */
+/* Status tabs */
+.status-tabs{
+  display:flex; gap:2px; padding:4px;
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  margin-bottom:var(--s-4); overflow:hidden;
+}
+.stab{
+  padding:10px var(--s-4); background:transparent; border:none; border-radius:var(--r-sm);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; display:flex; align-items:center; gap:var(--s-2);
+  white-space:nowrap;
+}
+.stab:hover{color:var(--ink-100); background:var(--bg-raised)}
+.stab.active{background:var(--brand); color:var(--brand-ink); font-weight:600}
+.stab.primary-tab:not(.active){border:1px solid var(--brand-dim)}
+.stab .ct{
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:1px 6px; background:var(--bg-raised); border-radius:var(--r-xs);
+  color:var(--ink-80); letter-spacing:0.04em;
+}
+.stab.active .ct{background:rgba(18,8,4,.2); color:var(--brand-ink)}
+.stab.urgent:not(.active) .ct{background:var(--sev-high-bg); color:var(--sev-high)}
+
+/* Summary cards */
+.sum-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--s-3); margin-bottom:var(--s-4)}
+.sum-card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4); display:flex; flex-direction:column; gap:var(--s-2);
+}
+.sum-card .l{
+  font-size:var(--text-micro); letter-spacing:0.08em;
+  text-transform:uppercase; color:var(--ink-60); font-weight:600;
+}
+.sum-card .v{
+  font-family:var(--font-mono); font-size:var(--text-2xl); font-weight:700;
+  color:var(--ink-100); letter-spacing:-0.01em; line-height:1;
+}
+.sum-card .d{
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em;
+  color:var(--ink-60); margin-top:2px;
+}
+.sum-card .d .trend-up{color:var(--status-good)}
+.sum-card .d .trend-down{color:var(--sev-critical)}
+.sum-card.urgent{border-color:var(--sev-high); background:var(--sev-high-bg)}
+.sum-card.urgent .v{color:var(--sev-high)}
+
+/* Filters */
+.filter-bar{
+  display:flex; flex-wrap:wrap; gap:var(--s-2); align-items:center;
+  padding:var(--s-3); margin-bottom:var(--s-4);
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+}
+.filter-bar .search-box{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px; flex:1; min-width:280px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+}
+.filter-bar .search-box svg{width:14px; height:14px; color:var(--ink-60)}
+.filter-bar .search-box input{flex:1; background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label)}
+.f-select{
+  height:32px; padding:0 var(--s-3); background:var(--bg-raised);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:inherit; font-size:var(--text-label);
+  outline:none; cursor:pointer; min-width:140px;
+}
+
+/* Main grid: pairs table (left) + detail panel (right) */
+.pairs-grid{display:grid; grid-template-columns:1fr 380px; gap:var(--s-4); align-items:flex-start}
+
+/* Pair row */
+.pairs-wrap{display:flex; flex-direction:column; gap:var(--s-2)}
+.pair-row{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-3) var(--s-4); cursor:pointer; transition:all 140ms;
+  display:grid; grid-template-columns:auto 1fr auto 1fr auto auto;
+  gap:var(--s-3); align-items:center;
+}
+.pair-row:hover{border-color:var(--line-strong)}
+.pair-row.selected{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand)}
+.pair-row.warn{border-left:3px solid var(--sev-high)}
+.pair-row.crit{border-left:3px solid var(--sev-critical)}
+.pair-row.good{border-left:3px solid var(--status-good)}
+
+.pair-status{
+  width:32px; height:32px; border-radius:var(--r-full);
+  display:grid; place-items:center; flex-shrink:0;
+}
+.pair-status.good{background:var(--status-good-bg); color:var(--status-good)}
+.pair-status.warn{background:var(--sev-high-bg); color:var(--sev-high)}
+.pair-status.crit{background:var(--sev-critical-bg); color:var(--sev-critical)}
+.pair-status svg{width:16px; height:16px}
+
+.pair-side{display:flex; flex-direction:column; gap:2px; min-width:0}
+.pair-side .s-lbl{
+  font-size:9px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink-60); font-weight:600;
+}
+.pair-side .s-party{font-size:var(--text-body); font-weight:600; color:var(--ink-100); line-height:1.2}
+.pair-side .s-id{font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em; margin-top:2px}
+.pair-side .s-stat{display:flex; align-items:center; gap:6px; margin-top:4px}
+.pair-side .s-exp{font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em}
+.pair-side .s-exp.urgent{color:var(--sev-high); font-weight:600}
+.pair-side .s-exp.crit{color:var(--sev-critical); font-weight:600}
+
+.pair-connector{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:0 var(--s-2);
+}
+.pair-connector .line{width:32px; height:2px; background:var(--line-strong); border-radius:var(--r-full)}
+.pair-connector.good .line{background:var(--status-good)}
+.pair-connector.warn .line{background:var(--sev-high)}
+.pair-connector.crit .line{background:var(--sev-critical)}
+.pair-connector .lb{font-size:9px; color:var(--ink-40); letter-spacing:0.06em; font-weight:600; text-transform:uppercase}
+
+.pair-meta{display:flex; flex-direction:column; gap:4px; align-items:flex-end; text-align:right; min-width:80px}
+.pair-meta .val{font-family:var(--font-mono); font-size:var(--text-body); color:var(--ink-100); font-weight:600; letter-spacing:0.02em}
+.pair-meta .lb{font-size:9px; color:var(--ink-60); letter-spacing:0.08em; text-transform:uppercase; font-weight:600}
+
+.pair-actions{display:flex; gap:4px; flex-shrink:0}
+.pair-actions .icon-btn{width:32px; height:32px}
+
+/* Mismatch warning */
+.mismatch-warn{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:12px 18px; margin:var(--s-3) 0;
+  background:var(--sev-critical-bg); border:1px solid var(--sev-critical);
+  border-radius:var(--r-sm);
+}
+.mismatch-warn .chip{
+  width:30px; height:30px; border-radius:var(--r-full);
+  background:var(--sev-critical); color:var(--brand-ink);
+  display:grid; place-items:center; flex-shrink:0;
+}
+.mismatch-warn .chip svg{width:14px; height:14px}
+.mismatch-warn .txt{font-size:var(--text-label); color:var(--ink-100); line-height:1.5}
+.mismatch-warn .txt b{font-weight:600}
+
+/* Detail panel (right) */
+.detail{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  position:sticky; top:calc(56px + var(--s-6));
+  max-height:calc(100vh - 56px - var(--s-6) - var(--s-6));
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.dt-head{
+  padding:var(--s-4); border-bottom:1px solid var(--line);
+  display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-2);
+}
+.dt-head .t{
+  font-family:var(--font-display); font-size:var(--text-lg); font-weight:600;
+  letter-spacing:-0.01em; line-height:1.2;
+}
+.dt-head .sub{
+  font-family:var(--font-mono); font-size:10px; color:var(--ink-60);
+  letter-spacing:0.04em; margin-top:2px;
+}
+
+.dt-body{padding:var(--s-4); overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:var(--s-4)}
+.dt-section{display:flex; flex-direction:column; gap:var(--s-2)}
+.dt-title{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+}
+
+.dt-pair{
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2);
+}
+.dt-side-card{
+  padding:var(--s-3); background:var(--bg-raised);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  display:flex; flex-direction:column; gap:var(--s-2);
+}
+.dt-side-card .lbl{
+  font-size:9px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink-60); font-weight:600;
+}
+.dt-side-card .party{font-size:var(--text-label); font-weight:600; color:var(--ink-100); line-height:1.2}
+.dt-side-card .id{font-family:var(--font-mono); font-size:9px; color:var(--ink-60); letter-spacing:0.04em}
+.dt-side-card .meta{display:flex; flex-direction:column; gap:4px; margin-top:4px}
+.dt-side-card .meta-r{display:flex; justify-content:space-between; gap:4px; font-size:10px}
+.dt-side-card .meta-r .l{color:var(--ink-60)}
+.dt-side-card .meta-r .v{color:var(--ink-100); font-family:var(--font-mono); letter-spacing:0.04em}
+
+/* Notification timeline */
+.notif-tl{display:flex; flex-direction:column; position:relative; padding-left:14px}
+.notif-tl::before{
+  content:""; position:absolute; left:4px; top:4px; bottom:4px;
+  width:1.5px; background:var(--line-strong);
+}
+.notif-ev{
+  display:flex; flex-direction:column; gap:2px; padding:6px 0; position:relative;
+}
+.notif-ev::before{
+  content:""; position:absolute; left:-14px; top:11px;
+  width:10px; height:10px; border-radius:var(--r-full);
+  background:var(--bg-raised); border:2px solid var(--ink-60);
+}
+.notif-ev.sent::before{background:var(--sev-low); border-color:var(--sev-low)}
+.notif-ev.future::before{background:var(--bg-raised); border-color:var(--ink-40)}
+.notif-ev .lbl{font-size:var(--text-label); color:var(--ink-100); font-weight:500}
+.notif-ev .ts{font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em}
+.notif-ev.future .lbl{color:var(--ink-60)}
+
+.dt-foot{
+  padding:var(--s-3) var(--s-4); border-top:1px solid var(--line);
+  background:var(--bg-base); display:flex; flex-direction:column; gap:var(--s-2);
+}
+.dt-foot .action-row{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2)}
+.dt-foot .btn{height:32px; font-size:var(--text-label); padding:0 var(--s-3); justify-content:center}
+.dt-foot .btn svg{width:12px; height:12px}
+</style>
+</head>
+<body class="coffee dark">
+<div class="app">
+  <aside class="rail"><div class="logo">S</div>
+<div class="rail-item" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+<div class="rail-item active" title="Contracts" aria-label="Contracts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+<div class="rail-item" title="Clause Library" aria-label="Clause Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+<div class="rail-item" title="Signatures" aria-label="Signatures"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s3-3 7-3 4 2 7 2 4-2 4-2"/><path d="M3 21h18"/></svg></div>
+<div class="rail-item" title="Repository" aria-label="Repository"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+<div style="flex:1"></div>
+<div class="rail-item" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><a>SecureLoop</a> <span class="sep">/</span> <a>Legal</a> <span class="sep">/</span> <span class="current">Contracts</span></div>
+      <span class="id-pill">LGL-04-1</span>
+      
+      <div class="spacer"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search SecureLoop…"/></div>
+      <button class="theme-btn" id="themeBtn" aria-label="Theme picker">
+        <span class="sw"><span class="s1"></span><span class="s2"></span></span>
+        <span id="themeLabel">Coffee · Dark</span>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="theme-popover" id="themePop">
+        <h4>Palette family</h4>
+        <div class="fam-grid">
+          <div class="fam-card active" data-fam="coffee">
+            <div class="name">Coffee</div>
+            <div class="desc">Warm · Investigation</div>
+            <div class="fam-swatches"><i style="background:#120804"></i><i style="background:#25170D"></i><i style="background:#F3EEE2"></i></div>
+          </div>
+          <div class="fam-card" data-fam="blue">
+            <div class="name">Blue</div>
+            <div class="desc">Cool · Enterprise</div>
+            <div class="fam-swatches"><i style="background:#0A1628"></i><i style="background:#162B48"></i><i style="background:#E8F4FD"></i></div>
+          </div>
+        </div>
+        <h4>Appearance</h4>
+        <div class="mode-grid">
+          <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Light</button>
+          <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+        </div>
+      </div>
+    </header>
+    <section class="content">
+      
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Contract Lifecycle Dashboard</h1>
+    <div class="page-sub">LGL-04 · Back-to-back pair tracking · Dual expiry alerts (30d + 7d) · No auto-renewal</div>
+  </div>
+</div>
+
+
+<div class="status-tabs">
+  <button class="stab">All <span class="ct">312</span></button>
+  <button class="stab">Draft <span class="ct">14</span></button>
+  <button class="stab">Sent <span class="ct">8</span></button>
+  <button class="stab">Signed <span class="ct">5</span></button>
+  <button class="stab primary-tab active">Active <span class="ct">184</span></button>
+  <button class="stab primary-tab urgent">Expiring soon <span class="ct">27</span></button>
+  <button class="stab">Expired <span class="ct">62</span></button>
+  <button class="stab">Terminated <span class="ct">12</span></button>
+</div>
+
+
+<div class="sum-grid">
+  <div class="sum-card">
+    <span class="l">Total active contracts</span>
+    <span class="v">184</span>
+    <div class="d"><span class="trend-up">▲ 12</span><span>vs last quarter</span></div>
+  </div>
+  <div class="sum-card urgent">
+    <span class="l">Expiring in 30 days</span>
+    <span class="v">27</span>
+    <div class="d" style="color:var(--sev-high)"><span>4 pairs mismatched</span></div>
+  </div>
+  <div class="sum-card">
+    <span class="l">Total active contract value</span>
+    <span class="v">$8.24M</span>
+    <div class="d"><span class="trend-up">▲ 6.3%</span><span>QoQ</span></div>
+  </div>
+  <div class="sum-card">
+    <span class="l">Avg days to renewal decision</span>
+    <span class="v">18</span>
+    <div class="d"><span class="trend-down">▼ 3 days</span><span>faster than last year</span></div>
+  </div>
+</div>
+
+
+<div class="filter-bar">
+  <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search by contract ID, customer, subcontractor…"/></div>
+  <select class="f-select"><option>Customer: All</option><option>Acme Corp</option><option>NovaBank</option></select>
+  <select class="f-select"><option>Subcontractor: All</option><option>PenTesters LLC</option><option>CyberRecon GmbH</option></select>
+  <select class="f-select"><option>Type: All</option><option>MSA</option><option>SOW</option><option>NDA</option><option>DPA</option></select>
+  <select class="f-select"><option>Expiry: Any</option><option>Next 30 days</option><option>Next 90 days</option></select>
+  <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export pair</span></button>
+</div>
+
+<div class="pairs-grid">
+  
+<div class="pairs-wrap">
+  
+    <div class="pair-row good selected">
+      <div class="pair-status good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">Acme Corp</span>
+        <span class="s-id">CTR-2026-0184 · MSA</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2027-04-30</span></span>
+      </div>
+      <div class="pair-connector good">
+        <span class="lb">Back-to-back</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">PenTesters LLC</span>
+        <span class="s-id">CTR-2026-0185 · SOW</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2027-04-30</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$248,500</span>
+        <span class="lb">ENG-2026-042</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+
+  
+<div class="mismatch-warn">
+  <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+  <div class="txt"><b>Mismatched pair detected:</b> Customer contract for NovaBank continues for 6 months, but subcontractor CyberRecon contract expires in 5 days. Risk: delivery obligation without performer. Renew subcontractor or reassign.</div>
+</div>
+
+
+  
+    <div class="pair-row crit">
+      <div class="pair-status crit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">NovaBank</span>
+        <span class="s-id">CTR-2025-0712 · MSA</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2026-10-31</span></span>
+      </div>
+      <div class="pair-connector crit">
+        <span class="lb">Mismatched</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">CyberRecon GmbH</span>
+        <span class="s-id">CTR-2025-0714 · SOW</span>
+        <span class="s-stat"><span class="p-badge high">EXPIRING</span><span class="s-exp crit">exp 2026-04-27</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$412,000</span>
+        <span class="lb">ENG-2025-091</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+
+  
+    <div class="pair-row warn">
+      <div class="pair-status warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">Medix Health</span>
+        <span class="s-id">CTR-2025-0881 · MSA</span>
+        <span class="s-stat"><span class="p-badge high">EXPIRING</span><span class="s-exp urgent">exp 2026-05-18</span></span>
+      </div>
+      <div class="pair-connector warn">
+        <span class="lb">Both expiring</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">PenTesters LLC</span>
+        <span class="s-id">CTR-2025-0882 · SOW</span>
+        <span class="s-stat"><span class="p-badge high">EXPIRING</span><span class="s-exp urgent">exp 2026-05-18</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$96,750</span>
+        <span class="lb">ENG-2025-124</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+
+  
+    <div class="pair-row good">
+      <div class="pair-status good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">Horizon Retail</span>
+        <span class="s-id">CTR-2026-0102 · MSA</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2027-01-15</span></span>
+      </div>
+      <div class="pair-connector good">
+        <span class="lb">Back-to-back</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">PenTesters LLC</span>
+        <span class="s-id">CTR-2026-0103 · SOW</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2027-01-15</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$174,200</span>
+        <span class="lb">ENG-2026-018</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+
+  
+    <div class="pair-row good">
+      <div class="pair-status good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">Mercer Logistics</span>
+        <span class="s-id">CTR-2026-0067 · MSA</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2026-12-20</span></span>
+      </div>
+      <div class="pair-connector good">
+        <span class="lb">Back-to-back</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">CyberRecon GmbH</span>
+        <span class="s-id">CTR-2026-0068 · SOW</span>
+        <span class="s-stat"><span class="p-badge good">ACTIVE</span><span class="s-exp ">exp 2026-12-20</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$58,900</span>
+        <span class="lb">ENG-2026-009</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+
+  
+    <div class="pair-row warn">
+      <div class="pair-status warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div class="pair-side">
+        <span class="s-lbl">Customer</span>
+        <span class="s-party">Acme Corp</span>
+        <span class="s-id">CTR-2025-0411 · SOW</span>
+        <span class="s-stat"><span class="p-badge high">EXPIRING</span><span class="s-exp urgent">exp 2026-05-11</span></span>
+      </div>
+      <div class="pair-connector warn">
+        <span class="lb">Both expiring</span>
+        <div class="line"></div>
+      </div>
+      <div class="pair-side">
+        <span class="s-lbl">Subcontractor</span>
+        <span class="s-party">CyberRecon GmbH</span>
+        <span class="s-id">CTR-2025-0412 · SOW</span>
+        <span class="s-stat"><span class="p-badge high">EXPIRING</span><span class="s-exp urgent">exp 2026-05-11</span></span>
+      </div>
+      <div class="pair-meta">
+        <span class="val">$148,000</span>
+        <span class="lb">ENG-2025-077</span>
+      </div>
+      <div class="pair-actions">
+        <button class="icon-btn" title="Initiate renewal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <button class="icon-btn" title="Initiate amendment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
+    </div>
+    
+</div>
+
+  
+<aside class="detail">
+  <div class="dt-head">
+    <div>
+      <div class="t">Acme Corp ↔ PenTesters LLC</div>
+      <div class="sub">ENG-2026-042 · Pair status: BACK-TO-BACK</div>
+    </div>
+    <span class="p-badge good">HEALTHY</span>
+  </div>
+
+  <div class="dt-body">
+    <div class="dt-section">
+      <div class="dt-title">Contract pair</div>
+      <div class="dt-pair">
+        <div class="dt-side-card">
+          <span class="lbl">Customer</span>
+          <span class="party">Acme Corp</span>
+          <span class="id">CTR-2026-0184 · MSA v3</span>
+          <div class="meta">
+            <div class="meta-r"><span class="l">Signed</span><span class="v">2026-04-21</span></div>
+            <div class="meta-r"><span class="l">Effective</span><span class="v">2026-05-01</span></div>
+            <div class="meta-r"><span class="l">Expiry</span><span class="v">2027-04-30</span></div>
+            <div class="meta-r"><span class="l">Value</span><span class="v">$248,500</span></div>
+            <div class="meta-r"><span class="l">Signed by</span><span class="v">3 parties</span></div>
+          </div>
+        </div>
+        <div class="dt-side-card">
+          <span class="lbl">Subcontractor</span>
+          <span class="party">PenTesters LLC</span>
+          <span class="id">CTR-2026-0185 · SOW v1</span>
+          <div class="meta">
+            <div class="meta-r"><span class="l">Signed</span><span class="v">2026-04-22</span></div>
+            <div class="meta-r"><span class="l">Effective</span><span class="v">2026-05-01</span></div>
+            <div class="meta-r"><span class="l">Expiry</span><span class="v">2027-04-30</span></div>
+            <div class="meta-r"><span class="l">Cost</span><span class="v">$98,200</span></div>
+            <div class="meta-r"><span class="l">Margin</span><span class="v">60.5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dt-section">
+      <div class="dt-title">Linked engagement</div>
+      <div style="display:flex; align-items:center; gap:var(--s-2); padding:var(--s-3); background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm); cursor:pointer">
+        <span style="width:28px; height:28px; border-radius:var(--r-full); background:var(--brand-dim); color:var(--brand); display:grid; place-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+        <div style="flex:1">
+          <div style="font-size:var(--text-label); font-weight:600">ENG-2026-042</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em">Q2 Pentest · In progress</div>
+        </div>
+        <span class="p-badge neutral">OPEN</span>
+      </div>
+    </div>
+
+    <div class="dt-section">
+      <div class="dt-title">Expiry notifications (LGL-02 · dual alerts)</div>
+      <div class="notif-tl">
+        <div class="notif-ev sent">
+          <span class="lbl">30-day reminder scheduled</span>
+          <span class="ts">2027-03-31 · Legal + DM</span>
+        </div>
+        <div class="notif-ev future">
+          <span class="lbl">7-day reminder scheduled</span>
+          <span class="ts">2027-04-23 · Legal + DM</span>
+        </div>
+        <div class="notif-ev future">
+          <span class="lbl">Contract expires — no auto-renewal</span>
+          <span class="ts">2027-04-30</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dt-section">
+      <div class="dt-title">Version history</div>
+      <div style="display:flex; flex-direction:column; gap:4px">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px var(--s-3); background:var(--bg-raised); border-radius:var(--r-xs); font-size:10px">
+          <span style="font-family:var(--font-mono); font-weight:700; color:var(--ink-100)">MSA v3</span>
+          <span style="color:var(--ink-60); font-family:var(--font-mono)">2026-04-21 · current</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px var(--s-3); background:var(--bg-raised); border-radius:var(--r-xs); font-size:10px">
+          <span style="font-family:var(--font-mono); font-weight:700; color:var(--ink-80)">MSA v2 · Amendment</span>
+          <span style="color:var(--ink-60); font-family:var(--font-mono)">2025-11-14</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px var(--s-3); background:var(--bg-raised); border-radius:var(--r-xs); font-size:10px">
+          <span style="font-family:var(--font-mono); font-weight:700; color:var(--ink-80)">MSA v1 · Original</span>
+          <span style="color:var(--ink-60); font-family:var(--font-mono)">2025-05-01</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dt-foot">
+    <div class="action-row">
+      <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Renew pair</span></button>
+      <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Amend</span></button>
+    </div>
+    <div class="action-row">
+      <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg><span>Renegotiate</span></button>
+      <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export ZIP</span></button>
+    </div>
+    <button class="btn" style="background:var(--sev-critical-bg); color:var(--sev-critical); border-color:var(--sev-critical)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><span>Terminate pair</span></button>
+  </div>
+</aside>
+
+</div>
+
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  const body=document.body;
+  const btn=document.getElementById('themeBtn');
+  const pop=document.getElementById('themePop');
+  const label=document.getElementById('themeLabel');
+  let fam='coffee', mode='dark';
+  function apply(){
+    body.classList.remove('coffee','blue','dark','light');
+    body.classList.add(fam,mode);
+    label.textContent = (fam[0].toUpperCase()+fam.slice(1))+' · '+(mode[0].toUpperCase()+mode.slice(1));
+    pop.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+    pop.querySelectorAll('.mode-btn').forEach(c=>c.classList.toggle('active',c.dataset.mode===mode));
+  }
+  btn.addEventListener('click',(e)=>{e.stopPropagation();pop.classList.toggle('open')});
+  document.addEventListener('click',(e)=>{if(!pop.contains(e.target) && e.target!==btn)pop.classList.remove('open')});
+  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')pop.classList.remove('open')});
+  pop.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;apply()}));
+  pop.querySelectorAll('.mode-btn').forEach(c=>c.addEventListener('click',()=>{mode=c.dataset.mode;apply()}));
+  apply();
+})();
+
+document.querySelectorAll('.status-tabs .stab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.status-tabs .stab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+document.querySelectorAll('.pair-row').forEach(r=>{
+  r.addEventListener('click',(e)=>{
+    if(e.target.closest('.icon-btn')) return;
+    document.querySelectorAll('.pair-row').forEach(x=>x.classList.remove('selected'));
+    r.classList.add('selected');
+  });
+});
+
+</script>
+</body>
+</html>

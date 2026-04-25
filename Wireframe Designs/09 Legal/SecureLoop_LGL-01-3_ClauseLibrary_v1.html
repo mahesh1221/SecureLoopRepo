@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Clause Library Management · SecureLoop</title>
+<style>
+/* ============ FONTS ============ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ============ TOKENS ============ */
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px; --text-label:11px; --text-body:13px; --text-lg:15px;
+  --text-xl:20px; --text-2xl:28px; --text-3xl:44px;
+  --r-xs:3px; --r-sm:6px; --r-md:10px; --r-full:999px;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px; --s-12:48px;
+}
+
+/* Coffee Dark (default) */
+body.coffee.dark{
+  --bg-page:#120804; --bg-base:#1A0F08; --bg-raised:#25170D; --bg-overlay:#2B1810; --bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07); --line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2; --ink-80:#D4CBB0; --ink-60:#A69B80; --ink-40:#7A7058; --ink-20:#3D3428;
+  --brand:#F3EEE2; --brand-ink:#120804; --brand-dim:rgba(243,238,226,.12); --brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B; --sev-high:#FFB04D; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14); --sev-high-bg:rgba(255,176,77,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(143,229,179,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.coffee.light{
+  --bg-page:#F3EEE2; --bg-base:#FBF8F1; --bg-raised:#EDE7D8; --bg-overlay:#FFFDF7; --bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10); --line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810; --ink-80:#4A2E1D; --ink-60:#6B5544; --ink-40:#907D68; --ink-20:#C9C0AA;
+  --brand:#6F4E37; --brand-ink:#F3EEE2; --brand-dim:rgba(111,78,55,.14); --brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637; --sev-high:#B8651D; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.14); --sev-high-bg:rgba(184,101,29,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(43,24,16,.35);
+}
+body.blue.dark{
+  --bg-page:#0A1628; --bg-base:#0F1E35; --bg-raised:#162B48; --bg-overlay:#1C3557; --bg-hover:#22406B;
+  --line:rgba(232,244,253,.08); --line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD; --ink-80:#C0D5E8; --ink-60:#7A96B4; --ink-40:#556F8A; --ink-20:#2C4058;
+  --brand:#E8F4FD; --brand-ink:#0A1628; --brand-dim:rgba(232,244,253,.12); --brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B; --sev-high:#FFB347; --sev-medium:#FFD97A; --sev-low:#7AB8E5; --status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14); --sev-high-bg:rgba(255,179,71,.14); --sev-medium-bg:rgba(255,217,122,.14);
+  --sev-low-bg:rgba(122,184,229,.14); --status-good-bg:rgba(126,224,168,.14);
+  --modal-backdrop:rgba(0,0,0,.52);
+}
+body.blue.light{
+  --bg-page:#F2F8FD; --bg-base:#FFFFFF; --bg-raised:#E5EFF8; --bg-overlay:#FFFFFF; --bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08); --line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628; --ink-80:#1F3A5C; --ink-60:#4A6380; --ink-40:#7A8FA8; --ink-20:#B5C5D8;
+  --brand:#1E5A8A; --brand-ink:#F2F8FD; --brand-dim:rgba(30,90,138,.14); --brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A; --sev-high:#C17A1A; --sev-medium:#9E7F10; --sev-low:#2E86C1; --status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.14); --sev-high-bg:rgba(193,122,26,.14); --sev-medium-bg:rgba(158,127,16,.14);
+  --sev-low-bg:rgba(46,134,193,.14); --status-good-bg:rgba(46,139,80,.14);
+  --modal-backdrop:rgba(10,22,40,.30);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-page); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-body); font-weight:400;
+  letter-spacing:-0.003em; line-height:1.5;
+  min-height:100vh;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' seed='3'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  opacity:.025;
+}
+body.coffee.light::before,body.blue.light::before{opacity:.05}
+
+a{color:inherit}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* ============ APP SHELL ============ */
+.app{position:relative; z-index:1; display:grid; grid-template-columns:64px 1fr; min-height:100vh}
+.rail{
+  background:var(--bg-base); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center; padding:var(--s-4) 0; gap:var(--s-2);
+  position:sticky; top:0; height:100vh;
+}
+.logo{
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--brand); color:var(--brand-ink);
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:700; font-size:var(--text-lg);
+  box-shadow:0 0 16px var(--brand-glow);
+  margin-bottom:var(--s-3);
+}
+body.coffee.light .logo,body.blue.light .logo{font-weight:600}
+.rail-item{
+  width:40px; height:40px; border-radius:var(--r-sm);
+  display:grid; place-items:center; color:var(--ink-60);
+  cursor:pointer; transition:all 140ms; border:1px solid transparent;
+}
+.rail-item:hover{background:var(--bg-raised); color:var(--ink-100)}
+.rail-item.active{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line-strong)}
+.rail-item svg{width:18px; height:18px}
+
+.main{display:flex; flex-direction:column; min-width:0}
+.topbar{
+  height:56px; display:flex; align-items:center; gap:var(--s-3);
+  padding:0 var(--s-6); border-bottom:1px solid var(--line); background:var(--bg-page);
+  position:sticky; top:0; z-index:5;
+}
+.crumb{display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-label); color:var(--ink-60)}
+.crumb .sep{color:var(--ink-40)}
+.crumb .current{color:var(--ink-100); font-weight:500}
+.crumb a{cursor:pointer; text-decoration:none}
+.crumb a:hover{color:var(--ink-100)}
+
+.spacer{flex:1}
+
+.search{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px; width:260px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-60); font-size:var(--text-label);
+}
+.search input{flex:1; background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label)}
+.search svg{width:14px; height:14px}
+
+/* Theme picker */
+.theme-btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer;
+}
+.theme-btn:hover{background:var(--bg-hover)}
+.theme-btn .sw{display:flex; flex-direction:column; gap:1px}
+.theme-btn .sw span{width:14px; height:5px; border-radius:1px; border:1px solid var(--line-strong); display:block}
+.theme-btn .sw .s1{background:var(--bg-raised)}
+.theme-btn .sw .s2{background:var(--brand)}
+.theme-btn .chev{width:10px; height:10px; color:var(--ink-60)}
+
+.theme-popover{
+  position:absolute; top:52px; right:var(--s-6); z-index:20;
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  padding:var(--s-4); width:360px; display:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+.theme-popover.open{display:block}
+.theme-popover h4{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-2) 0;
+}
+.fam-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-bottom:var(--s-4)}
+.fam-card{
+  padding:var(--s-3); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); cursor:pointer; transition:all 140ms;
+}
+.fam-card:hover{border-color:var(--line-strong)}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-card .name{font-family:var(--font-display); font-size:var(--text-body); font-weight:600; margin-bottom:var(--s-1)}
+.fam-card .desc{font-size:10px; color:var(--ink-60); margin-bottom:var(--s-2)}
+.fam-swatches{display:flex; gap:3px; height:16px}
+.fam-swatches i{flex:1; border-radius:2px; display:block}
+.mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2)}
+.mode-btn{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-2);
+  padding:var(--s-2); border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--bg-raised); color:var(--ink-80); cursor:pointer; font-size:var(--text-label); font-family:inherit;
+}
+.mode-btn.active{background:var(--brand); color:var(--brand-ink); border-color:var(--brand)}
+.mode-btn svg{width:12px; height:12px}
+
+/* ============ CONTENT ============ */
+.content{flex:1; padding:var(--s-6); overflow-y:auto; min-height:0}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  padding:8px var(--s-4); height:36px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-100); font-family:var(--font-ui); font-size:var(--text-body); font-weight:500;
+  cursor:pointer; transition:all 140ms;
+}
+.btn:hover{background:var(--bg-hover); border-color:var(--line-strong)}
+.btn.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5; cursor:not-allowed}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--bg-raised)}
+.btn svg{width:14px; height:14px}
+
+.icon-btn{
+  width:36px; height:36px; display:grid; place-items:center;
+  background:transparent; border:1px solid transparent; border-radius:var(--r-sm);
+  color:var(--ink-60); cursor:pointer; transition:all 140ms;
+}
+.icon-btn:hover{background:var(--bg-raised); color:var(--ink-100); border-color:var(--line)}
+.icon-btn svg{width:16px; height:16px}
+
+/* Inputs */
+.input,.select,.textarea{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100);
+  font-family:var(--font-ui); font-size:var(--text-label); outline:none;
+  width:100%;
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-dim);
+}
+.input::placeholder{color:var(--ink-40)}
+.textarea{font-family:var(--font-ui); resize:vertical; min-height:80px}
+
+/* Cards */
+.card{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.card:hover{border-color:var(--line-strong)}
+
+/* Badges */
+.p-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  font-family:var(--font-ui); font-size:9px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;
+}
+.p-badge.crit{background:var(--sev-critical-bg); color:var(--sev-critical)}
+.p-badge.high{background:var(--sev-high-bg); color:var(--sev-high)}
+.p-badge.med{background:var(--sev-medium-bg); color:var(--sev-medium)}
+.p-badge.low{background:var(--sev-low-bg); color:var(--sev-low)}
+.p-badge.good{background:var(--status-good-bg); color:var(--status-good)}
+.p-badge.neutral{background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong)}
+
+.id-pill{
+  padding:2px 6px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono); font-size:var(--text-micro);
+  letter-spacing:0.04em; font-weight:600;
+}
+
+/* Segmented pill */
+.segmented{display:flex; gap:2px; padding:3px; background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm)}
+.seg-btn{
+  padding:4px var(--s-3); background:transparent; border:none; border-radius:var(--r-xs);
+  color:var(--ink-60); font-family:var(--font-ui); font-size:var(--text-label); font-weight:500;
+  cursor:pointer; transition:all 140ms; min-width:64px; text-align:center;
+}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base); color:var(--ink-100); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Page header */
+.page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-6); margin-bottom:var(--s-6)}
+.page-title{
+  font-family:var(--font-display); font-size:var(--text-2xl); font-weight:600;
+  letter-spacing:-0.02em; line-height:1.1; margin:0 0 var(--s-1) 0;
+}
+.page-sub{font-size:var(--text-label); color:var(--ink-60)}
+.page-head .actions{display:flex; gap:var(--s-2); align-items:center}
+
+/* Section title */
+.sec-title{
+  font-family:var(--font-ui); font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+  margin:0 0 var(--s-3) 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px; height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40)}
+
+/* Modal */
+.modal-backdrop{
+  position:fixed; inset:0; z-index:50; background:var(--modal-backdrop);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:none; align-items:flex-start; justify-content:center;
+  padding:var(--s-6) var(--s-4);
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:880px; max-width:100%; max-height:calc(100vh - 48px);
+  background:var(--bg-overlay); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  display:flex; flex-direction:column; overflow:hidden;
+  animation:riseIn 320ms cubic-bezier(.2,.7,.2,1);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--s-4) var(--s-6); border-bottom:1px solid var(--line);
+}
+.modal-head .t{font-family:var(--font-display); font-size:var(--text-xl); font-weight:600; letter-spacing:-0.015em}
+.modal-body{padding:var(--s-6); overflow-y:auto; flex:1}
+.modal-foot{
+  display:flex; justify-content:flex-end; gap:var(--s-2);
+  padding:var(--s-4) var(--s-6); border-top:1px solid var(--line);
+  background:var(--bg-base);
+}
+@keyframes riseIn{
+  from{opacity:0; transform:translateY(16px) scale(.98)}
+  to{opacity:1; transform:none}
+}
+
+/* ============ LGL-01-3 specific ============ */
+.filter-bar{
+  display:grid; grid-template-columns:1fr auto auto auto auto auto; gap:var(--s-2);
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--s-3); margin-bottom:var(--s-4); align-items:center;
+}
+.filter-bar .search-input{
+  display:flex; align-items:center; gap:var(--s-2);
+  padding:0 var(--s-3); height:32px;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink-60);
+}
+.filter-bar .search-input input{flex:1; background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label)}
+.filter-bar .search-input svg{width:14px; height:14px}
+.filter-bar .select{height:32px; width:auto; min-width:140px}
+
+.role-banner{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:12px 18px;
+  background:var(--sev-medium-bg); border:1px solid var(--sev-medium);
+  border-radius:var(--r-sm); margin-bottom:var(--s-4);
+}
+.role-banner .chip{
+  width:30px; height:30px; border-radius:var(--r-full);
+  background:var(--sev-medium); color:var(--brand-ink);
+  display:grid; place-items:center; flex-shrink:0;
+}
+.role-banner .chip svg{width:14px; height:14px}
+.role-banner .txt{font-size:var(--text-label); color:var(--ink-100)}
+.role-banner .txt b{font-weight:600}
+
+/* Two-column layout */
+.lib-grid{display:grid; grid-template-columns:65% 1fr; gap:var(--s-4); min-height:0}
+
+/* Left: categorized list */
+.cat-wrap{display:flex; flex-direction:column; gap:var(--s-3); min-width:0}
+.cat{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  overflow:hidden;
+}
+.cat-head{
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:12px var(--s-4); cursor:pointer; background:var(--bg-base);
+  border-bottom:1px solid var(--line);
+}
+.cat-head:hover{background:var(--bg-raised)}
+.cat-head .caret{width:12px; height:12px; color:var(--ink-60); transition:transform 140ms}
+.cat.collapsed .caret{transform:rotate(-90deg)}
+.cat.collapsed .cat-body{display:none}
+.cat.collapsed .cat-head{border-bottom:none}
+.cat-head .cat-name{
+  font-family:var(--font-display); font-size:var(--text-lg); font-weight:600;
+  letter-spacing:-0.01em; flex:1;
+}
+.cat-head .count{
+  font-family:var(--font-mono); font-size:var(--text-label); color:var(--ink-60);
+  font-weight:500;
+}
+
+.cat-body{display:flex; flex-direction:column}
+.clause-row{
+  display:grid; grid-template-columns:auto 1fr auto auto auto auto;
+  align-items:center; gap:var(--s-3);
+  padding:12px var(--s-4); border-bottom:1px solid var(--line);
+  cursor:pointer; transition:background 140ms;
+}
+.clause-row:last-child{border-bottom:none}
+.clause-row:hover{background:var(--bg-raised)}
+.clause-row.selected{background:var(--brand-dim)}
+
+.mand{
+  width:22px; height:22px; border-radius:var(--r-xs);
+  display:grid; place-items:center; flex-shrink:0;
+}
+.mand.required{background:var(--sev-critical-bg); color:var(--sev-critical)}
+.mand.recommended{background:var(--sev-high-bg); color:var(--sev-high)}
+.mand.optional{background:var(--bg-raised); color:var(--ink-60); border:1px solid var(--line-strong)}
+.mand svg{width:12px; height:12px}
+.mand .dot{width:6px; height:6px; border-radius:var(--r-full); background:currentColor}
+
+.cl-main{display:flex; flex-direction:column; gap:2px; min-width:0}
+.cl-title{font-size:var(--text-body); font-weight:500; color:var(--ink-100); line-height:1.3}
+.cl-meta{
+  display:flex; align-items:center; gap:var(--s-3);
+  font-size:10px; color:var(--ink-60); font-family:var(--font-mono);
+  letter-spacing:0.04em;
+}
+.cl-meta .dot{width:3px; height:3px; border-radius:var(--r-full); background:var(--ink-40)}
+
+.ver-pill{
+  font-family:var(--font-mono); font-size:10px; font-weight:600;
+  padding:2px 6px; background:var(--bg-raised); border:1px solid var(--line-strong);
+  border-radius:var(--r-xs); color:var(--ink-80); letter-spacing:0.04em;
+}
+
+.j-tags{display:flex; gap:3px; flex-wrap:nowrap}
+.j-tag{
+  padding:2px 6px; border-radius:var(--r-xs);
+  font-family:var(--font-mono); font-size:9px; font-weight:600;
+  letter-spacing:0.04em;
+  background:var(--brand-dim); color:var(--brand);
+}
+
+.used-count{
+  font-family:var(--font-mono); font-size:10px; color:var(--ink-60);
+  letter-spacing:0.04em; min-width:70px; text-align:right;
+}
+.used-count b{color:var(--ink-100); font-weight:600}
+
+.row-actions{display:flex; gap:2px}
+.row-actions .icon-btn{width:28px; height:28px}
+.row-actions .icon-btn svg{width:14px; height:14px}
+
+/* Right: editor pane */
+.editor-pane{
+  background:var(--bg-base); border:1px solid var(--line); border-radius:var(--r-md);
+  display:flex; flex-direction:column; height:fit-content;
+  position:sticky; top:calc(56px + var(--s-6));
+  max-height:calc(100vh - 56px - var(--s-6) - var(--s-6));
+}
+.ed-head{
+  padding:var(--s-4); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-3);
+}
+.ed-head .t{font-family:var(--font-display); font-size:var(--text-lg); font-weight:600; letter-spacing:-0.01em; line-height:1.2}
+.ed-head .ro-badge{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:var(--r-xs);
+  background:var(--sev-medium-bg); color:var(--sev-medium);
+  font-size:9px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+}
+.ed-head .ro-badge svg{width:10px; height:10px}
+
+.ed-body{padding:var(--s-4); overflow-y:auto; display:flex; flex-direction:column; gap:var(--s-3); flex:1}
+.ed-field{display:flex; flex-direction:column; gap:var(--s-1)}
+.ed-label{
+  font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+}
+.ed-static{
+  padding:7px var(--s-3); background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--r-xs); color:var(--ink-100); font-size:var(--text-label);
+  min-height:32px;
+}
+
+.mand-radio{display:flex; gap:var(--s-2)}
+.mand-opt{
+  flex:1; padding:var(--s-2) var(--s-3); text-align:center;
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-sm);
+  font-size:var(--text-label); color:var(--ink-60); cursor:pointer;
+}
+.mand-opt.active{background:var(--brand-dim); border-color:var(--brand); color:var(--brand)}
+
+.content-preview{
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-xs);
+  padding:var(--s-3); font-size:var(--text-label); line-height:1.55;
+  color:var(--ink-80); max-height:180px; overflow-y:auto;
+}
+.content-preview b.var{
+  background:var(--brand-dim); color:var(--brand); font-family:var(--font-mono);
+  font-size:10px; padding:1px 5px; border-radius:var(--r-xs); font-weight:600;
+  letter-spacing:0.04em;
+}
+
+.var-list{display:flex; flex-wrap:wrap; gap:4px}
+.var-list .v{
+  font-family:var(--font-mono); font-size:10px; font-weight:600;
+  padding:3px 7px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); letter-spacing:0.04em;
+}
+
+/* Usage analytics */
+.usage-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2)}
+.usage-cell{
+  padding:var(--s-2) var(--s-3); background:var(--bg-raised);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+}
+.usage-cell .n{
+  font-family:var(--font-mono); font-size:var(--text-xl); font-weight:700;
+  color:var(--ink-100); letter-spacing:-0.01em; line-height:1;
+}
+.usage-cell .l{
+  font-size:10px; color:var(--ink-60); margin-top:4px;
+  letter-spacing:0.04em; text-transform:uppercase; font-weight:600;
+}
+
+.ed-foot{
+  padding:var(--s-3) var(--s-4); border-top:1px solid var(--line);
+  background:var(--bg-base); display:flex; gap:var(--s-2); justify-content:space-between;
+}
+.ed-foot-left{display:flex; gap:var(--s-2)}
+.ed-foot-right{display:flex; gap:var(--s-2)}
+
+/* Modal specifics */
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); margin-bottom:var(--s-4)}
+.form-field{display:flex; flex-direction:column; gap:var(--s-1)}
+.form-label{
+  font-size:var(--text-micro); font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60);
+}
+.form-hint{font-size:10px; color:var(--ink-60); margin-top:2px}
+
+.j-multi{
+  display:flex; flex-wrap:wrap; gap:4px; padding:var(--s-2);
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:var(--r-xs);
+  min-height:32px;
+}
+.j-multi .tag{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 4px 3px 8px; background:var(--brand-dim); color:var(--brand);
+  border-radius:var(--r-xs); font-family:var(--font-mono); font-size:10px; font-weight:600;
+  letter-spacing:0.04em;
+}
+.j-multi .tag .x{width:14px; height:14px; border-radius:var(--r-full); background:var(--brand); color:var(--brand-ink); display:grid; place-items:center; cursor:pointer; font-size:9px; font-weight:700}
+.j-multi input{background:transparent; border:none; outline:none; color:var(--ink-100); font-family:inherit; font-size:var(--text-label); flex:1; min-width:80px}
+
+/* Version history modal content */
+.ver-list{display:flex; flex-direction:column; gap:var(--s-2)}
+.ver-row{
+  display:grid; grid-template-columns:auto 1fr auto auto;
+  align-items:center; gap:var(--s-4);
+  padding:var(--s-3) var(--s-4); background:var(--bg-raised);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+}
+.ver-row.active{border-color:var(--status-good); background:var(--status-good-bg)}
+.ver-row .ver-num{font-family:var(--font-mono); font-size:var(--text-body); font-weight:700; color:var(--ink-100); letter-spacing:0.04em}
+.ver-row .ver-sum{font-size:var(--text-label); color:var(--ink-80); line-height:1.4}
+.ver-row .ver-meta{font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em; text-align:right; white-space:nowrap}
+</style>
+</head>
+<body class="coffee dark">
+<div class="app">
+  <aside class="rail"><div class="logo">S</div>
+<div class="rail-item" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+<div class="rail-item" title="Contracts" aria-label="Contracts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+<div class="rail-item active" title="Clause Library" aria-label="Clause Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+<div class="rail-item" title="Signatures" aria-label="Signatures"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s3-3 7-3 4 2 7 2 4-2 4-2"/><path d="M3 21h18"/></svg></div>
+<div class="rail-item" title="Repository" aria-label="Repository"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+<div style="flex:1"></div>
+<div class="rail-item" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><a>SecureLoop</a> <span class="sep">/</span> <a>Legal</a> <span class="sep">/</span> <a>Contracts</a> <span class="sep">/</span> <span class="current">Clause Library</span></div>
+      <span class="id-pill">LGL-01-3</span>
+      
+      <div class="spacer"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search SecureLoop…"/></div>
+      <button class="theme-btn" id="themeBtn" aria-label="Theme picker">
+        <span class="sw"><span class="s1"></span><span class="s2"></span></span>
+        <span id="themeLabel">Coffee · Dark</span>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="theme-popover" id="themePop">
+        <h4>Palette family</h4>
+        <div class="fam-grid">
+          <div class="fam-card active" data-fam="coffee">
+            <div class="name">Coffee</div>
+            <div class="desc">Warm · Investigation</div>
+            <div class="fam-swatches"><i style="background:#120804"></i><i style="background:#25170D"></i><i style="background:#F3EEE2"></i></div>
+          </div>
+          <div class="fam-card" data-fam="blue">
+            <div class="name">Blue</div>
+            <div class="desc">Cool · Enterprise</div>
+            <div class="fam-swatches"><i style="background:#0A1628"></i><i style="background:#162B48"></i><i style="background:#E8F4FD"></i></div>
+          </div>
+        </div>
+        <h4>Appearance</h4>
+        <div class="mode-grid">
+          <button class="mode-btn" data-mode="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Light</button>
+          <button class="mode-btn active" data-mode="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+        </div>
+      </div>
+    </header>
+    <section class="content">
+      
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Clause Library Management</h1>
+    <div class="page-sub">Governed clause library · versioned · jurisdiction-tagged · LGL-01 + LGL-03</div>
+  </div>
+  <div class="actions">
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export library</span></button>
+    <button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Bulk import</span></button>
+    <button class="btn primary" id="openAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add new clause</span></button>
+  </div>
+</div>
+
+
+<div class="role-banner">
+  <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+  <div class="txt"><b>Legal Admin only</b> can create, edit, or deactivate clauses. Other Legal team members have read-only access. Role enforced at API level per LGL-03.</div>
+  <div style="margin-left:auto"><span class="p-badge neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> VIEW ONLY — Contact Legal Admin</span></div>
+</div>
+
+
+<div class="filter-bar">
+  <div class="search-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input placeholder="Search clause titles, content, jurisdictions…"/>
+  </div>
+  <select class="select">
+    <option>All categories</option><option>NDA</option><option>SoW</option><option>Liability</option>
+    <option>IP</option><option>Data Protection</option><option>Termination</option><option>Indemnification</option>
+    <option>Force Majeure</option>
+  </select>
+  <select class="select">
+    <option>All jurisdictions</option><option>GDPR</option><option>CCPA</option><option>PDPA</option>
+    <option>SAMA</option><option>NESA IAR</option><option>GLOBAL</option>
+  </select>
+  <select class="select">
+    <option>Active</option><option>Deactivated</option><option>Draft</option><option>All statuses</option>
+  </select>
+  <select class="select">
+    <option>Most used</option><option>Recently modified</option><option>A–Z</option>
+  </select>
+  <button class="btn ghost" title="Audit Log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg><span>Audit Log</span></button>
+</div>
+
+<div class="lib-grid">
+  
+<div class="cat-wrap">
+  
+    <div class="cat">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">NDA · Non-Disclosure</div>
+        <span class="count">3 clauses · 2 active</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row selected" data-title="Mutual Non-Disclosure — Standard">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Mutual Non-Disclosure — Standard</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.3</span>
+          <div class="j-tags"><span class="j-tag">GDPR</span><span class="j-tag">CCPA</span><span class="j-tag">SAMA</span></div>
+          <div class="used-count"><b>47 active</b><br/>312 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Non-Disclosure — EU Specific">
+          <div class="mand recommended" title="Recommended"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Non-Disclosure — EU Specific</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v1.4</span>
+          <div class="j-tags"><span class="j-tag">GDPR</span></div>
+          <div class="used-count"><b>12 active</b><br/>48 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+    <div class="cat">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">SoW · Scope of Work</div>
+        <span class="count">4 clauses · 4 active</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row" data-title="Scope Definition & Deliverables">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Scope Definition & Deliverables</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v3.1</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>89 active</b><br/>521 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Acceptance Criteria & Signoff">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Acceptance Criteria & Signoff</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.0</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>89 active</b><br/>519 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Change Request Process">
+          <div class="mand recommended" title="Recommended"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Change Request Process</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v1.7</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>73 active</b><br/>401 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+    <div class="cat">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">Liability · Limitation & Indemnification</div>
+        <span class="count">5 clauses · 4 active</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row" data-title="Limitation of Liability — Capped">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Limitation of Liability — Capped</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v4.2</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>81 active</b><br/>488 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Mutual Indemnification">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Mutual Indemnification</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.8</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>81 active</b><br/>487 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Third-Party IP Indemnity">
+          <div class="mand recommended" title="Recommended"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Third-Party IP Indemnity</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v1.5</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>54 active</b><br/>267 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+    <div class="cat">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">IP · Intellectual Property</div>
+        <span class="count">3 clauses · 3 active</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row" data-title="IP Ownership — Work Product">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">IP Ownership — Work Product</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v3.6</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>78 active</b><br/>452 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Pre-Existing IP Carve-Out">
+          <div class="mand recommended" title="Recommended"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Pre-Existing IP Carve-Out</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.1</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>61 active</b><br/>304 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+    <div class="cat collapsed">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">Data Protection · Privacy</div>
+        <span class="count">6 clauses · 5 active · 1 deactivated</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row" data-title="Data Processing Agreement — GDPR">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Data Processing Agreement — GDPR</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v5.0</span>
+          <div class="j-tags"><span class="j-tag">GDPR</span></div>
+          <div class="used-count"><b>34 active</b><br/>156 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Data Processing Agreement — CCPA">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Data Processing Agreement — CCPA</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.4</span>
+          <div class="j-tags"><span class="j-tag">CCPA</span></div>
+          <div class="used-count"><b>18 active</b><br/>67 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Cross-Border Data Transfer (SCC)">
+          <div class="mand recommended" title="Recommended"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Cross-Border Data Transfer (SCC)</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v3.2</span>
+          <div class="j-tags"><span class="j-tag">GDPR</span></div>
+          <div class="used-count"><b>22 active</b><br/>94 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Data Processing — SAMA / NESA">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Data Processing — SAMA / NESA</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v1.8</span>
+          <div class="j-tags"><span class="j-tag">SAMA</span><span class="j-tag">NESA</span></div>
+          <div class="used-count"><b>11 active</b><br/>38 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+    <div class="cat collapsed">
+      <div class="cat-head">
+        <span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="cat-name">Termination · Exit</div>
+        <span class="count">3 clauses · 3 active</span>
+      </div>
+      <div class="cat-body">
+        <div class="clause-row" data-title="Termination for Convenience">
+          <div class="mand optional" title="Optional"><span class="dot"></span></div>
+          <div class="cl-main">
+            <div class="cl-title">Termination for Convenience</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v2.2</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>42 active</b><br/>189 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>
+        <div class="clause-row" data-title="Termination for Material Breach">
+          <div class="mand required" title="Mandatory — cannot be removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="cl-main">
+            <div class="cl-title">Termination for Material Breach</div>
+            <div class="cl-meta"><span>Modified 2026-04-18</span><span class="dot"></span><span>Jane Reinhardt</span></div>
+          </div>
+          <span class="ver-pill">v3.0</span>
+          <div class="j-tags"><span class="j-tag">GLOBAL</span></div>
+          <div class="used-count"><b>89 active</b><br/>521 lifetime</div>
+          <div class="row-actions">
+            <button class="icon-btn" title="Edit (Legal Admin only)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <button class="icon-btn" title="Deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div></div>
+    </div>
+</div>
+
+  
+<aside class="editor-pane">
+  <div class="ed-head">
+    <div>
+      <div class="t">Mutual Non-Disclosure — Standard</div>
+      <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-60); letter-spacing:0.04em; margin-top:2px">CLAUSE-NDA-001 · Active version v2.3</div>
+    </div>
+    <span class="ro-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> READ ONLY</span>
+  </div>
+  <div class="ed-body">
+    <div class="ed-field">
+      <span class="ed-label">Category</span>
+      <div class="ed-static">NDA · Non-Disclosure</div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Jurisdictions</span>
+      <div class="j-multi">
+        <span class="tag">GDPR</span><span class="tag">CCPA</span><span class="tag">SAMA</span>
+      </div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Mandatory level</span>
+      <div class="mand-radio">
+        <div class="mand-opt active">Mandatory</div>
+        <div class="mand-opt">Recommended</div>
+        <div class="mand-opt">Optional</div>
+      </div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Content preview</span>
+      <div class="content-preview">
+        <p style="margin:0 0 8px 0"><b>1. Confidential Information.</b> Each party (the "Receiving Party") acknowledges that in connection with services provided to <b class="var">{{customer_name}}</b> (the "Disclosing Party"), it may receive Confidential Information…</p>
+        <p style="margin:0 0 8px 0"><b>2. Term.</b> This Agreement shall remain in effect for a period of <b class="var">{{nda_term_years}}</b> years from the Effective Date, unless terminated earlier…</p>
+        <p style="margin:0">Governing law shall be the laws of <b class="var">{{governing_jurisdiction}}</b>…</p>
+      </div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Variables (auto-detected)</span>
+      <div class="var-list">
+        <span class="v">{{customer_name}}</span>
+        <span class="v">{{nda_term_years}}</span>
+        <span class="v">{{governing_jurisdiction}}</span>
+        <span class="v">{{effective_date}}</span>
+      </div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Internal notes (not in contract)</span>
+      <div class="ed-static" style="min-height:48px; color:var(--ink-60)">Use this variant for standard commercial engagements. For EU-only customers, prefer the "Non-Disclosure — EU Specific" variant for enhanced data protection alignment.</div>
+    </div>
+    <div class="ed-field">
+      <span class="ed-label">Usage analytics</span>
+      <div class="usage-grid">
+        <div class="usage-cell"><div class="n">47</div><div class="l">Active contracts</div></div>
+        <div class="usage-cell"><div class="n">312</div><div class="l">Lifetime uses</div></div>
+        <div class="usage-cell" style="grid-column:1/-1">
+          <div class="n" style="font-size:var(--text-body); font-weight:600; font-family:var(--font-ui); color:var(--ink-100)">Acme Corp · 2026-04-19</div>
+          <div class="l">Most recent use</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ed-foot">
+    <div class="ed-foot-left">
+      <button class="btn ghost" title="View History"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg><span>History</span></button>
+    </div>
+    <div class="ed-foot-right">
+      <button class="btn" disabled title="Legal Admin only">Edit</button>
+      <button class="btn" disabled>Deactivate</button>
+    </div>
+  </div>
+</aside>
+
+</div>
+
+<div class="modal-backdrop" id="addModal">
+  <div class="modal" role="dialog" aria-labelledby="addTitle">
+    <div class="modal-head">
+      <div>
+        <div class="t" id="addTitle">New clause</div>
+        <div style="font-size:var(--text-label); color:var(--ink-60); margin-top:2px">Creates version 1 and sets it as Active.</div>
+      </div>
+      <button class="icon-btn" id="closeAdd" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field">
+          <span class="form-label">Title <span style="color:var(--sev-critical)">*</span></span>
+          <input class="input" placeholder="e.g. Mutual Non-Disclosure — Standard"/>
+        </div>
+        <div class="form-field">
+          <span class="form-label">Category <span style="color:var(--sev-critical)">*</span></span>
+          <select class="select">
+            <option>Select category…</option>
+            <option>NDA · Non-Disclosure</option><option>SoW · Scope of Work</option>
+            <option>Liability · Limitation & Indemnification</option><option>IP · Intellectual Property</option>
+            <option>Data Protection · Privacy</option><option>Termination · Exit</option>
+            <option>Force Majeure</option><option>Indemnification</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <span class="form-label">Mandatory level <span style="color:var(--sev-critical)">*</span></span>
+          <div class="mand-radio">
+            <div class="mand-opt">Mandatory</div>
+            <div class="mand-opt active">Recommended</div>
+            <div class="mand-opt">Optional</div>
+          </div>
+          <div class="form-hint">Mandatory clauses cannot be removed from contracts during generation.</div>
+        </div>
+        <div class="form-field">
+          <span class="form-label">Jurisdictions <span style="color:var(--sev-critical)">*</span></span>
+          <div class="j-multi">
+            <span class="tag">GDPR<span class="x">×</span></span>
+            <span class="tag">CCPA<span class="x">×</span></span>
+            <input placeholder="Add jurisdiction…"/>
+          </div>
+          <div class="form-hint">Auto-suggested based on customer record jurisdictions.</div>
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:var(--s-4)">
+        <span class="form-label">Content <span style="color:var(--sev-critical)">*</span></span>
+        <textarea class="textarea" rows="6" placeholder="Paste or type clause text. Use {{variable_name}} for values auto-replaced during contract generation (e.g. {{customer_name}}, {{effective_date}})."></textarea>
+        <div class="form-hint">Variables auto-detected on save. Rich-text toolbar available in expanded editor.</div>
+      </div>
+      <div class="form-field">
+        <span class="form-label">Internal notes (optional)</span>
+        <textarea class="textarea" rows="2" placeholder="Guidance for Legal team on when to use this clause. Not included in generated contract."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="cancelAdd">Save draft</button>
+      <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Create clause</span></button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="verModal">
+  <div class="modal" role="dialog" aria-labelledby="verTitle" style="width:720px">
+    <div class="modal-head">
+      <div>
+        <div class="t" id="verTitle">Version history · Mutual Non-Disclosure — Standard</div>
+        <div style="font-size:var(--text-label); color:var(--ink-60); margin-top:2px">All versions immutable. Previous versions never deleted per LGL-03.</div>
+      </div>
+      <button class="icon-btn" id="closeVer" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="ver-list">
+        <div class="ver-row active">
+          <span class="ver-num">v2.3</span>
+          <div>
+            <div class="ver-sum">Added SAMA jurisdiction tag. Tightened term-of-confidentiality language per 2026 regulatory guidance.</div>
+          </div>
+          <span class="p-badge good">ACTIVE</span>
+          <div class="ver-meta">2026-04-18<br/>Jane Reinhardt</div>
+        </div>
+        <div class="ver-row">
+          <span class="ver-num">v2.2</span>
+          <div><div class="ver-sum">Clarified definition of Confidential Information to include verbal disclosures. Added 72-hour written-confirmation requirement.</div></div>
+          <span class="p-badge neutral">ARCHIVED</span>
+          <div class="ver-meta">2025-11-02<br/>Marcus Chen</div>
+        </div>
+        <div class="ver-row">
+          <span class="ver-num">v2.1</span>
+          <div><div class="ver-sum">Removed outdated reference to paper-based disclosure. Updated governing-law variable name.</div></div>
+          <span class="p-badge neutral">ARCHIVED</span>
+          <div class="ver-meta">2025-07-14<br/>Jane Reinhardt</div>
+        </div>
+        <div class="ver-row">
+          <span class="ver-num">v2.0</span>
+          <div><div class="ver-sum">Major rewrite aligned with updated 2025 eIDAS enforcement. Added mutual-obligation language.</div></div>
+          <span class="p-badge neutral">ARCHIVED</span>
+          <div class="ver-meta">2025-03-08<br/>Jane Reinhardt</div>
+        </div>
+        <div class="ver-row">
+          <span class="ver-num">v1.0</span>
+          <div><div class="ver-sum">Initial version.</div></div>
+          <span class="p-badge neutral">ARCHIVED</span>
+          <div class="ver-meta">2024-09-22<br/>Marcus Chen</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost">Compare v2.3 vs v2.2</button>
+      <button class="btn primary" id="closeVer2">Close</button>
+    </div>
+  </div>
+</div>
+
+
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  const body=document.body;
+  const btn=document.getElementById('themeBtn');
+  const pop=document.getElementById('themePop');
+  const label=document.getElementById('themeLabel');
+  let fam='coffee', mode='dark';
+  function apply(){
+    body.classList.remove('coffee','blue','dark','light');
+    body.classList.add(fam,mode);
+    label.textContent = (fam[0].toUpperCase()+fam.slice(1))+' · '+(mode[0].toUpperCase()+mode.slice(1));
+    pop.querySelectorAll('.fam-card').forEach(c=>c.classList.toggle('active',c.dataset.fam===fam));
+    pop.querySelectorAll('.mode-btn').forEach(c=>c.classList.toggle('active',c.dataset.mode===mode));
+  }
+  btn.addEventListener('click',(e)=>{e.stopPropagation();pop.classList.toggle('open')});
+  document.addEventListener('click',(e)=>{if(!pop.contains(e.target) && e.target!==btn)pop.classList.remove('open')});
+  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')pop.classList.remove('open')});
+  pop.querySelectorAll('.fam-card').forEach(c=>c.addEventListener('click',()=>{fam=c.dataset.fam;apply()}));
+  pop.querySelectorAll('.mode-btn').forEach(c=>c.addEventListener('click',()=>{mode=c.dataset.mode;apply()}));
+  apply();
+})();
+
+// Category collapse
+document.querySelectorAll('.cat-head').forEach(h=>{
+  h.addEventListener('click',()=>h.parentElement.classList.toggle('collapsed'));
+});
+// Row selection
+document.querySelectorAll('.clause-row').forEach(r=>{
+  r.addEventListener('click',(e)=>{
+    if(e.target.closest('.icon-btn')) return;
+    document.querySelectorAll('.clause-row').forEach(x=>x.classList.remove('selected'));
+    r.classList.add('selected');
+  });
+});
+// Add modal
+const addModal=document.getElementById('addModal');
+document.getElementById('openAdd').addEventListener('click',()=>addModal.classList.add('open'));
+document.getElementById('closeAdd').addEventListener('click',()=>addModal.classList.remove('open'));
+document.getElementById('cancelAdd').addEventListener('click',()=>addModal.classList.remove('open'));
+addModal.addEventListener('click',(e)=>{if(e.target===addModal)addModal.classList.remove('open')});
+// Version history modal — open from any History action
+const verModal=document.getElementById('verModal');
+document.querySelectorAll('[title="View History"], [title="History"]').forEach(b=>{
+  b.addEventListener('click',(e)=>{e.stopPropagation();verModal.classList.add('open')});
+});
+document.getElementById('closeVer').addEventListener('click',()=>verModal.classList.remove('open'));
+document.getElementById('closeVer2').addEventListener('click',()=>verModal.classList.remove('open'));
+verModal.addEventListener('click',(e)=>{if(e.target===verModal)verModal.classList.remove('open')});
+// Mandatory radio
+document.querySelectorAll('.mand-radio').forEach(g=>{
+  g.querySelectorAll('.mand-opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      g.querySelectorAll('.mand-opt').forEach(x=>x.classList.remove('active'));
+      o.classList.add('active');
+    });
+  });
+});
+// Escape closes any open modal
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){addModal.classList.remove('open');verModal.classList.remove('open')}
+});
+
+</script>
+</body>
+</html>

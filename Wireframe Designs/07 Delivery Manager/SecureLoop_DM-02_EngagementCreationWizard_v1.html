@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SecureLoop · DM-02 Engagement Creation Wizard</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Theme tokens ---------- */
+:root{
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-micro:10px;--text-label:11px;--text-body:13px;--text-lg:15px;
+  --text-xl:20px;--text-2xl:28px;--text-3xl:44px;
+  --r-xs:3px;--r-sm:6px;--r-md:10px;--r-full:999px;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-6:24px;--s-8:32px;--s-12:48px;
+}
+body.coffee.dark{
+  --bg-page:#120804;--bg-base:#1A0F08;--bg-raised:#25170D;--bg-overlay:#2B1810;--bg-hover:#3D2817;
+  --line:rgba(243,238,226,.07);--line-strong:rgba(243,238,226,.14);
+  --ink-100:#F3EEE2;--ink-80:#D4CBB0;--ink-60:#A69B80;--ink-40:#7A7058;--ink-20:#3D3428;
+  --brand:#F3EEE2;--brand-ink:#120804;--brand-dim:rgba(243,238,226,.12);--brand-glow:rgba(243,238,226,.22);
+  --sev-critical:#FF6B5B;--sev-high:#FFB04D;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#8FE5B3;
+  --sev-critical-bg:rgba(255,107,91,.14);--sev-high-bg:rgba(255,176,77,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(143,229,179,.14);
+  --grain-opacity:.025;
+}
+body.coffee.light{
+  --bg-page:#F3EEE2;--bg-base:#FBF8F1;--bg-raised:#EDE7D8;--bg-overlay:#FFFDF7;--bg-hover:#E5DDC9;
+  --line:rgba(43,24,16,.10);--line-strong:rgba(43,24,16,.18);
+  --ink-100:#2B1810;--ink-80:#4A2E1D;--ink-60:#6B5544;--ink-40:#907D68;--ink-20:#C9C0AA;
+  --brand:#6F4E37;--brand-ink:#F3EEE2;--brand-dim:rgba(111,78,55,.14);--brand-glow:rgba(111,78,55,.24);
+  --sev-critical:#C94637;--sev-high:#B8651D;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(201,70,55,.14);--sev-high-bg:rgba(184,101,29,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);
+  --grain-opacity:.05;
+}
+body.blue.dark{
+  --bg-page:#0A1628;--bg-base:#0F1E35;--bg-raised:#162B48;--bg-overlay:#1C3557;--bg-hover:#22406B;
+  --line:rgba(232,244,253,.08);--line-strong:rgba(232,244,253,.15);
+  --ink-100:#E8F4FD;--ink-80:#C0D5E8;--ink-60:#7A96B4;--ink-40:#556F8A;--ink-20:#2C4058;
+  --brand:#E8F4FD;--brand-ink:#0A1628;--brand-dim:rgba(232,244,253,.12);--brand-glow:rgba(232,244,253,.22);
+  --sev-critical:#FF7A6B;--sev-high:#FFB347;--sev-medium:#FFD97A;--sev-low:#7AB8E5;--status-good:#7EE0A8;
+  --sev-critical-bg:rgba(255,122,107,.14);--sev-high-bg:rgba(255,179,71,.14);--sev-medium-bg:rgba(255,217,122,.14);--sev-low-bg:rgba(122,184,229,.14);--status-good-bg:rgba(126,224,168,.14);
+  --grain-opacity:.025;
+}
+body.blue.light{
+  --bg-page:#F2F8FD;--bg-base:#FFFFFF;--bg-raised:#E5EFF8;--bg-overlay:#FFFFFF;--bg-hover:#D5E4F1;
+  --line:rgba(10,22,40,.08);--line-strong:rgba(10,22,40,.16);
+  --ink-100:#0A1628;--ink-80:#1F3A5C;--ink-60:#4A6380;--ink-40:#7A8FA8;--ink-20:#B5C5D8;
+  --brand:#1E5A8A;--brand-ink:#F2F8FD;--brand-dim:rgba(30,90,138,.14);--brand-glow:rgba(30,90,138,.24);
+  --sev-critical:#C73E3A;--sev-high:#C17A1A;--sev-medium:#9E7F10;--sev-low:#2E86C1;--status-good:#2E8B50;
+  --sev-critical-bg:rgba(199,62,58,.14);--sev-high-bg:rgba(193,122,26,.14);--sev-medium-bg:rgba(158,127,16,.14);--sev-low-bg:rgba(46,134,193,.14);--status-good-bg:rgba(46,139,80,.14);
+  --grain-opacity:.05;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-ui);font-size:var(--text-body);font-weight:300;
+  background:var(--bg-page);color:var(--ink-100);
+  letter-spacing:-0.003em;line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.9'/></svg>");
+  opacity:var(--grain-opacity);mix-blend-mode:overlay;
+}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+button{font-family:inherit;color:inherit}
+input,select,textarea{font-family:inherit;color:inherit}
+
+/* ---------- Wizard shell (full-screen) ---------- */
+.wiz{
+  position:relative;z-index:2;min-height:100vh;
+  display:grid;grid-template-rows:64px 1fr;
+}
+
+/* Header */
+.wiz-head{
+  height:64px;padding:0 var(--s-6);background:var(--bg-base);
+  border-bottom:1px solid var(--line-strong);
+  display:flex;align-items:center;gap:var(--s-4);
+}
+.logo{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  background:var(--brand);color:var(--brand-ink);
+  display:grid;place-items:center;
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);
+  box-shadow:0 0 16px var(--brand-glow);
+}
+body.light .logo{font-weight:600}
+.wiz-crumbs{display:flex;align-items:center;gap:var(--s-2);font-size:var(--text-body);color:var(--ink-60)}
+.wiz-crumbs .sep{color:var(--ink-40);width:12px;height:12px}
+.wiz-crumbs .current{color:var(--ink-100);font-weight:500}
+.id-pill{
+  padding:2px 6px;background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-xs);font-family:var(--font-mono);
+  font-size:var(--text-micro);letter-spacing:.04em;font-weight:600;margin-left:var(--s-2);
+}
+.wiz-title{
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);
+  letter-spacing:-0.01em;margin-left:var(--s-6);color:var(--ink-100);
+}
+.wiz-title .sub{
+  margin-left:var(--s-3);font-family:var(--font-ui);font-weight:300;
+  font-size:var(--text-label);color:var(--ink-60);
+}
+.wiz-head-right{margin-left:auto;display:flex;align-items:center;gap:var(--s-3)}
+.autosave{
+  display:inline-flex;align-items:center;gap:var(--s-2);font-size:var(--text-label);
+  color:var(--ink-60);font-family:var(--font-mono);
+}
+.autosave .dot{width:6px;height:6px;border-radius:50%;background:var(--status-good);animation:pulse 2s infinite}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(143,229,179,.5)}
+  70%{box-shadow:0 0 0 6px rgba(143,229,179,0)}
+  100%{box-shadow:0 0 0 0 rgba(143,229,179,0)}
+}
+/* Theme picker (compact) */
+.theme-pick{position:relative}
+.theme-btn{
+  height:32px;padding:0 var(--s-3);display:inline-flex;align-items:center;gap:var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);font-size:var(--text-body);cursor:pointer;transition:all 140ms;
+}
+.theme-btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.theme-swatches{display:inline-flex;gap:2px}
+.theme-swatches span{width:10px;height:14px;border-radius:2px;border:1px solid var(--line-strong)}
+.theme-sw-1{background:var(--bg-base)}.theme-sw-2{background:var(--brand)}
+.chev{width:11px;height:11px;color:var(--ink-60)}
+.theme-pop{
+  position:absolute;top:40px;right:0;width:380px;padding:var(--s-4);
+  background:var(--bg-overlay);border:1px solid var(--line-strong);
+  border-radius:var(--r-md);box-shadow:0 12px 32px rgba(0,0,0,.4);
+  display:none;flex-direction:column;gap:var(--s-4);z-index:100;
+}
+.theme-pop.open{display:flex}
+.theme-pop h4{
+  margin:0;font-family:var(--font-ui);font-size:var(--text-micro);font-weight:600;
+  color:var(--ink-60);text-transform:uppercase;letter-spacing:.08em;
+}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-2)}
+.fam-card{
+  padding:var(--s-3);background:var(--bg-raised);border:1px solid var(--line);
+  border-radius:var(--r-sm);cursor:pointer;transition:all 140ms;text-align:left;
+}
+.fam-card.active{box-shadow:0 0 0 2px var(--brand),0 4px 12px rgba(0,0,0,.12)}
+.fam-swatch{display:flex;gap:3px;margin-bottom:var(--s-2)}
+.fam-swatch span{height:20px;flex:1;border-radius:var(--r-xs)}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(1){background:#120804}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(2){background:#6F4E37}
+.fam-card[data-fam="coffee"] .fam-swatch span:nth-child(3){background:#F3EEE2}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(1){background:#0A1628}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(2){background:#1E5A8A}
+.fam-card[data-fam="blue"] .fam-swatch span:nth-child(3){background:#E8F4FD}
+.fam-name{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);color:var(--ink-100)}
+.fam-sub{font-size:var(--text-label);color:var(--ink-60);margin-top:2px}
+.mode-row{display:flex;gap:var(--s-2);margin-top:var(--s-2)}
+.mode-btn{
+  flex:1;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);font-size:var(--text-body);font-weight:500;cursor:pointer;transition:all 140ms;
+}
+.mode-btn.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.mode-btn svg{width:13px;height:13px}
+
+/* × Close — sole close affordance */
+.wiz-close{
+  width:36px;height:36px;display:grid;place-items:center;
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-80);cursor:pointer;transition:all 140ms;
+}
+.wiz-close:hover{background:var(--sev-critical-bg);border-color:var(--sev-critical);color:var(--sev-critical)}
+.wiz-close svg{width:16px;height:16px}
+
+/* ---------- Wizard body: 3-column grid ---------- */
+.wiz-body{
+  display:grid;grid-template-columns:280px 1fr 380px;
+  min-height:calc(100vh - 64px);
+}
+
+/* Left nav */
+.wiz-nav{
+  background:var(--bg-base);border-right:1px solid var(--line);
+  padding:var(--s-6) var(--s-4);
+  display:flex;flex-direction:column;gap:var(--s-2);
+  position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;
+}
+.wiz-nav-head{
+  padding:0 var(--s-3) var(--s-3);
+  border-bottom:1px solid var(--line);margin-bottom:var(--s-3);
+}
+.wiz-nav-eyebrow{
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;margin-bottom:4px;
+}
+.wiz-nav-title{
+  font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100);
+  letter-spacing:-0.01em;
+}
+.step-item{
+  display:flex;align-items:flex-start;gap:var(--s-3);
+  padding:var(--s-3);border-radius:var(--r-sm);cursor:pointer;
+  transition:all 140ms;background:transparent;border:1px solid transparent;
+  text-align:left;width:100%;color:inherit;
+}
+.step-item:hover{background:var(--bg-hover)}
+.step-item.active{background:var(--brand-dim);border-color:var(--line-strong)}
+.step-num{
+  width:26px;height:26px;flex-shrink:0;border-radius:50%;
+  background:var(--bg-raised);color:var(--ink-60);
+  display:grid;place-items:center;font-family:var(--font-mono);font-weight:600;font-size:var(--text-label);
+  border:1px solid var(--line);
+}
+.step-item.active .step-num{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.step-item.done .step-num{background:var(--status-good-bg);color:var(--status-good);border-color:var(--status-good)}
+.step-item.done .step-num svg{width:12px;height:12px;stroke-width:3}
+.step-info{flex:1;min-width:0}
+.step-title{font-size:var(--text-body);font-weight:500;color:var(--ink-100);margin-bottom:2px}
+.step-item:not(.active):not(.done) .step-title{color:var(--ink-80)}
+.step-desc{font-size:var(--text-micro);color:var(--ink-60);line-height:1.5}
+.step-connector{width:2px;height:12px;background:var(--line);margin-left:13px;border-radius:1px}
+.step-item.done + .step-connector{background:var(--status-good)}
+
+/* Main content */
+.wiz-main{
+  padding:var(--s-8) var(--s-12);
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.main-head{margin-bottom:var(--s-8)}
+.main-eyebrow{
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;margin-bottom:var(--s-2);
+}
+.main-title{
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-2xl);
+  letter-spacing:-0.02em;margin:0 0 var(--s-2);color:var(--ink-100);
+}
+.main-desc{font-size:var(--text-body);color:var(--ink-60);max-width:640px}
+
+/* Step panel (show/hide) */
+.step-panel{display:none;animation:slideIn 280ms cubic-bezier(.2,.7,.2,1)}
+.step-panel.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Form elements */
+.form-row{display:flex;flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-6)}
+.form-row.row-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+.form-row.row-2 > .form-field{margin-bottom:0}
+.form-field{display:flex;flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-6)}
+.form-label{
+  font-size:var(--text-label);font-weight:600;color:var(--ink-80);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.form-label .req{color:var(--sev-critical);margin-left:4px}
+.form-label .hint{font-weight:400;color:var(--ink-60);font-size:var(--text-micro)}
+.input,.select,.textarea{
+  width:100%;padding:0 var(--s-3);height:40px;
+  background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-100);font-size:var(--text-body);font-family:var(--font-ui);
+  transition:all 140ms;
+}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--line-strong)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 3px var(--brand-dim)}
+.textarea{height:auto;min-height:96px;padding:var(--s-3);line-height:1.5;resize:vertical}
+.select{appearance:none;padding-right:32px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A69B80' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right var(--s-3) center;background-size:14px;
+}
+.valid-note{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+  font-size:var(--text-micro);color:var(--status-good);margin-top:var(--s-1);
+}
+.valid-note svg{width:11px;height:11px;stroke-width:3}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--s-2);padding:8px var(--s-4);height:36px;
+  background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  color:var(--ink-100);font-family:var(--font-ui);font-size:var(--text-body);font-weight:500;
+  cursor:pointer;transition:all 140ms;white-space:nowrap;
+}
+.btn:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--bg-hover)}
+.btn.sm{height:28px;padding:0 var(--s-3);font-size:var(--text-label)}
+.btn.lg{height:44px;padding:0 var(--s-6);font-size:var(--text-body)}
+.btn svg{width:13px;height:13px}
+.btn.lg svg{width:15px;height:15px}
+
+/* Segmented */
+.segmented{
+  display:inline-flex;gap:2px;padding:3px;background:var(--bg-raised);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+}
+.seg-btn{
+  padding:4px var(--s-3);background:transparent;border:none;border-radius:var(--r-xs);
+  color:var(--ink-60);font-family:var(--font-ui);font-size:var(--text-label);font-weight:500;
+  cursor:pointer;transition:all 140ms;min-width:96px;text-align:center;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.seg-btn:hover{color:var(--ink-100)}
+.seg-btn.active{background:var(--bg-base);color:var(--ink-100);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg-btn svg{width:11px;height:11px}
+
+/* Customer panel */
+.customer-row{display:flex;gap:var(--s-3);align-items:flex-end}
+.customer-row .form-field{flex:1;margin-bottom:0}
+
+.selected-customer{
+  margin-top:var(--s-4);padding:var(--s-4);background:var(--bg-raised);
+  border:1px solid var(--line-strong);border-radius:var(--r-sm);
+  display:flex;align-items:center;gap:var(--s-4);
+}
+.cust-avatar{
+  width:40px;height:40px;border-radius:var(--r-sm);background:var(--brand-dim);
+  display:grid;place-items:center;color:var(--brand);
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);
+}
+.cust-info{flex:1}
+.cust-name{font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+.cust-meta{font-size:var(--text-label);color:var(--ink-60);margin-top:2px;font-family:var(--font-mono)}
+
+/* Asset tabs (manual/bulk) */
+.mode-tabs{display:flex;gap:var(--s-3);margin-bottom:var(--s-6)}
+.assets-table{
+  width:100%;border-collapse:collapse;
+  background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;
+}
+.assets-table th{
+  padding:var(--s-3);text-align:left;font-size:var(--text-micro);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-60);font-weight:600;
+  border-bottom:1px solid var(--line);background:var(--bg-raised);
+}
+.assets-table td{padding:var(--s-3);border-bottom:1px solid var(--line);font-size:var(--text-body);vertical-align:middle}
+.assets-table tr:last-child td{border-bottom:none}
+.asset-name{font-weight:500;color:var(--ink-100)}
+.asset-type{color:var(--ink-80)}
+.asset-url{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-60)}
+
+.crit-pill{
+  display:inline-flex;align-items:center;gap:4px;padding:2px var(--s-2);
+  border-radius:var(--r-xs);font-size:var(--text-micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+}
+.crit-pill.crit{background:var(--sev-critical-bg);color:var(--sev-critical)}
+.crit-pill.high{background:var(--sev-high-bg);color:var(--sev-high)}
+.crit-pill.med{background:var(--sev-medium-bg);color:var(--sev-medium)}
+.crit-pill.low{background:var(--sev-low-bg);color:var(--sev-low)}
+
+.add-asset-row{
+  padding:var(--s-3);border-top:1px solid var(--line);background:var(--bg-raised);
+  display:flex;gap:var(--s-3);align-items:center;justify-content:space-between;
+}
+
+/* Framework grid (step 3) */
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.fw-card{
+  padding:var(--s-4);background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--r-sm);
+  cursor:pointer;transition:all 140ms;display:flex;flex-direction:column;gap:var(--s-2);
+  position:relative;
+}
+.fw-card:hover{background:var(--bg-hover);border-color:var(--line-strong)}
+.fw-card.selected{background:var(--brand-dim);border-color:var(--brand)}
+.fw-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s-2)}
+.fw-name{font-weight:600;color:var(--ink-100);font-size:var(--text-body);display:flex;align-items:center;gap:var(--s-2)}
+.fw-name-badge{
+  padding:1px 5px;background:var(--brand-dim);color:var(--brand);
+  border-radius:var(--r-xs);font-family:var(--font-mono);font-size:var(--text-micro);font-weight:600;
+}
+.fw-price{font-family:var(--font-mono);font-size:var(--text-label);color:var(--ink-80);font-weight:600}
+.fw-desc{font-size:var(--text-micro);color:var(--ink-60);line-height:1.5}
+.fw-check{
+  width:18px;height:18px;border-radius:var(--r-xs);
+  border:1.5px solid var(--line-strong);background:transparent;
+  flex-shrink:0;transition:all 140ms;display:grid;place-items:center;
+}
+.fw-card.selected .fw-check{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.fw-card.selected .fw-check svg{width:12px;height:12px;stroke-width:3;display:block}
+.fw-card:not(.selected) .fw-check svg{display:none}
+
+/* Step 4 workload chips */
+.workload{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-2)}
+.workload-bar{flex:1;height:6px;background:var(--bg-raised);border-radius:var(--r-full);overflow:hidden}
+.workload-fill{height:100%;border-radius:var(--r-full);transition:width 280ms}
+.workload-fill.ok{background:var(--status-good)}
+.workload-fill.warn{background:var(--sev-high)}
+.workload-val{font-family:var(--font-mono);font-size:var(--text-label);font-weight:600;min-width:56px;text-align:right}
+
+/* Step 5 review */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+.review-card{
+  background:var(--bg-base);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:var(--s-4) var(--s-6);
+}
+.review-card h3{
+  font-family:var(--font-display);font-size:var(--text-body);font-weight:600;
+  color:var(--ink-100);margin:0 0 var(--s-3);display:flex;align-items:center;justify-content:space-between;
+}
+.review-card h3 a{font-family:var(--font-ui);font-weight:500;font-size:var(--text-label);color:var(--brand);text-decoration:none;cursor:pointer}
+.kv-row{display:flex;justify-content:space-between;padding:var(--s-2) 0;font-size:var(--text-body);border-bottom:1px solid var(--line)}
+.kv-row:last-child{border-bottom:none}
+.kv-k{color:var(--ink-60)}
+.kv-v{color:var(--ink-100);font-weight:500}
+
+/* ---------- Right: live quote ---------- */
+.quote-side{
+  background:var(--bg-base);border-left:1px solid var(--line);
+  padding:var(--s-6) var(--s-4);
+  position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:var(--s-4);
+}
+.quote-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-2);padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
+.quote-eyebrow{
+  font-size:var(--text-micro);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-60);font-weight:600;margin-bottom:var(--s-1);
+}
+.quote-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--ink-100)}
+.live-dot{
+  display:inline-flex;align-items:center;gap:4px;font-size:var(--text-micro);
+  color:var(--status-good);font-family:var(--font-mono);font-weight:500;
+}
+.live-dot .d{width:6px;height:6px;border-radius:50%;background:var(--status-good);animation:pulse 2s infinite}
+
+.quote-lines{display:flex;flex-direction:column;gap:var(--s-2)}
+.qline{
+  display:flex;justify-content:space-between;gap:var(--s-3);
+  padding:var(--s-2) var(--s-3);background:var(--bg-raised);border-radius:var(--r-sm);
+  border:1px solid transparent;transition:all 180ms;
+}
+.qline.highlight{border-color:var(--brand);background:var(--brand-dim);animation:flash 1.2s ease-out}
+@keyframes flash{0%{background:var(--brand)}100%{background:var(--brand-dim)}}
+.qline-top{font-size:var(--text-body);font-weight:500;color:var(--ink-100)}
+.qline-sub{font-size:var(--text-micro);color:var(--ink-60);font-family:var(--font-mono);margin-top:2px}
+.qline-val{font-family:var(--font-mono);font-size:var(--text-body);font-weight:600;color:var(--ink-100);text-align:right;white-space:nowrap}
+
+.quote-divider{height:1px;background:var(--line);margin:var(--s-2) 0}
+
+.quote-subtotal{display:flex;justify-content:space-between;padding:var(--s-2) var(--s-3);font-size:var(--text-body)}
+.quote-subtotal .k{color:var(--ink-60)}
+.quote-subtotal .v{font-family:var(--font-mono);font-weight:600;color:var(--ink-100)}
+.quote-total{
+  padding:var(--s-4);background:var(--brand-dim);border:1px solid var(--line-strong);
+  border-radius:var(--r-sm);display:flex;justify-content:space-between;align-items:center;
+  margin-top:var(--s-2);
+}
+.quote-total .k{font-size:var(--text-label);color:var(--ink-80);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.quote-total .v{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:500;color:var(--ink-100);letter-spacing:-0.01em}
+
+.quote-meta{font-size:var(--text-micro);color:var(--ink-60);line-height:1.5;padding:var(--s-2) var(--s-3)}
+
+/* Perf badge */
+.perf-badge{
+  display:inline-flex;align-items:center;gap:4px;padding:3px var(--s-2);
+  background:var(--status-good-bg);color:var(--status-good);border-radius:var(--r-xs);
+  font-size:var(--text-micro);font-weight:600;font-family:var(--font-mono);letter-spacing:.04em;
+  align-self:flex-start;
+}
+
+/* ---------- Footer ---------- */
+.wiz-foot{
+  position:sticky;bottom:0;background:var(--bg-base);border-top:1px solid var(--line-strong);
+  padding:var(--s-3) var(--s-8);display:flex;align-items:center;justify-content:space-between;
+  z-index:5;
+}
+.wiz-foot-left{display:flex;align-items:center;gap:var(--s-3);color:var(--ink-60);font-size:var(--text-label)}
+.step-indicator{font-family:var(--font-mono);font-weight:500}
+.wiz-foot-right{display:flex;align-items:center;gap:var(--s-2)}
+
+/* Callout */
+.callout{
+  display:flex;align-items:center;gap:var(--s-3);
+  padding:var(--s-4) var(--s-6);background:var(--brand-dim);
+  border:1px solid var(--line-strong);border-radius:var(--r-md);
+  margin-top:var(--s-6);
+}
+.callout-chip{
+  width:30px;height:30px;flex-shrink:0;border-radius:50%;
+  background:var(--brand);color:var(--brand-ink);
+  display:grid;place-items:center;
+}
+.callout-chip svg{width:14px;height:14px}
+.callout-title{font-weight:600;font-size:var(--text-body);color:var(--ink-100);margin-bottom:2px}
+.callout-body{font-size:var(--text-label);color:var(--ink-80);line-height:1.5}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-full);border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-40);background-clip:content-box;border:2px solid transparent}
+</style>
+</head>
+<body class="coffee dark">
+
+<div class="wiz">
+
+  <!-- HEADER -->
+  <header class="wiz-head">
+    <div class="logo">S</div>
+    <nav class="wiz-crumbs">
+      <span>SecureLoop</span>
+      <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <span>Delivery</span>
+      <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <span class="current">New engagement</span>
+      <span class="id-pill">DM-02</span>
+    </nav>
+    <div class="wiz-title">Engagement creation wizard<span class="sub">draft saved · ENG-DRAFT-2026-047</span></div>
+
+    <div class="wiz-head-right">
+      <div class="autosave"><span class="dot"></span><span>Auto-saved 3s ago</span></div>
+      <div class="theme-pick">
+        <button class="theme-btn" id="themeBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="theme-swatches"><span class="theme-sw-1"></span><span class="theme-sw-2"></span></span>
+          <span id="themeLabel">Coffee · Dark</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-pop" id="themePop" role="menu">
+          <div>
+            <h4>Palette family</h4>
+            <div class="fam-grid">
+              <button class="fam-card active" data-fam="coffee">
+                <div class="fam-swatch"><span></span><span></span><span></span></div>
+                <div class="fam-name">Coffee</div>
+                <div class="fam-sub">Warm · investigation</div>
+              </button>
+              <button class="fam-card" data-fam="blue">
+                <div class="fam-swatch"><span></span><span></span><span></span></div>
+                <div class="fam-name">Blue</div>
+                <div class="fam-sub">Cool · enterprise</div>
+              </button>
+            </div>
+          </div>
+          <div>
+            <h4>Appearance</h4>
+            <div class="mode-row">
+              <button class="mode-btn active" data-mode="dark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark
+              </button>
+              <button class="mode-btn" data-mode="light">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Light
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="wiz-close" aria-label="Close wizard" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="wiz-body">
+
+    <!-- LEFT NAV -->
+    <aside class="wiz-nav">
+      <div class="wiz-nav-head">
+        <div class="wiz-nav-eyebrow">New engagement</div>
+        <div class="wiz-nav-title">5 steps · ~8 min</div>
+      </div>
+      <button class="step-item done" data-step="1">
+        <div class="step-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="step-info">
+          <div class="step-title">Customer</div>
+          <div class="step-desc">Aurora Financial Corp</div>
+        </div>
+      </button>
+      <button class="step-item done" data-step="2">
+        <div class="step-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="step-info">
+          <div class="step-title">Assets</div>
+          <div class="step-desc">14 assets · web, API</div>
+        </div>
+      </button>
+      <button class="step-item active" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-info">
+          <div class="step-title">Compliance scope</div>
+          <div class="step-desc">Pick frameworks</div>
+        </div>
+      </button>
+      <button class="step-item" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-info">
+          <div class="step-title">Team assignment</div>
+          <div class="step-desc">Tester · type · SLA</div>
+        </div>
+      </button>
+      <button class="step-item" data-step="5">
+        <div class="step-num">5</div>
+        <div class="step-info">
+          <div class="step-title">Review &amp; generate</div>
+          <div class="step-desc">Quote + scope document</div>
+        </div>
+      </button>
+    </aside>
+
+    <!-- MAIN -->
+    <section class="wiz-main">
+
+      <!-- Step 1 -->
+      <div class="step-panel" data-panel="1">
+        <div class="main-head">
+          <div class="main-eyebrow">Step 1 of 5</div>
+          <h1 class="main-title">Who is this engagement for?</h1>
+          <p class="main-desc">Pick an existing customer or create a new one. All fields auto-save as you move through the wizard.</p>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Customer<span class="req">*</span></label>
+          <div class="customer-row">
+            <div class="form-field" style="flex:1">
+              <select class="select">
+                <option>Aurora Financial Corp</option>
+                <option>Meridian Health Systems</option>
+                <option>Bayview Retail Group</option>
+                <option>Solaris Cloud Infrastructure</option>
+                <option>Kestrel Defense LLC</option>
+              </select>
+            </div>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add new customer</button>
+          </div>
+        </div>
+        <div class="selected-customer">
+          <div class="cust-avatar">AF</div>
+          <div class="cust-info">
+            <div class="cust-name">Aurora Financial Corp</div>
+            <div class="cust-meta">CUST-00241 · Financial services · SOC2 Type II · 4 prior engagements · DM: Priya Sharma</div>
+          </div>
+          <span class="perf-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Active contract</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-panel" data-panel="2">
+        <div class="main-head">
+          <div class="main-eyebrow">Step 2 of 5</div>
+          <h1 class="main-title">What assets are in scope?</h1>
+          <p class="main-desc">Add assets manually, or import a CSV using the template. Criticality affects the risk-score model downstream and determines the tester mix.</p>
+        </div>
+        <div class="mode-tabs">
+          <div class="segmented" role="group">
+            <button class="seg-btn active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Manual entry
+            </button>
+            <button class="seg-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Bulk CSV import
+            </button>
+          </div>
+          <button class="btn ghost sm" style="margin-left:auto">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Download CSV template
+          </button>
+        </div>
+        <table class="assets-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Type</th>
+              <th>URL / IP</th>
+              <th>Criticality</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="asset-name">aurora-portal.com</span></td>
+              <td class="asset-type">Web application</td>
+              <td class="asset-url">https://aurora-portal.com</td>
+              <td><span class="crit-pill crit">Critical</span></td>
+              <td><button class="btn ghost sm">Remove</button></td>
+            </tr>
+            <tr>
+              <td><span class="asset-name">api.aurora-portal.com</span></td>
+              <td class="asset-type">API</td>
+              <td class="asset-url">https://api.aurora-portal.com/v2</td>
+              <td><span class="crit-pill crit">Critical</span></td>
+              <td><button class="btn ghost sm">Remove</button></td>
+            </tr>
+            <tr>
+              <td><span class="asset-name">admin.aurora-portal.com</span></td>
+              <td class="asset-type">Web application</td>
+              <td class="asset-url">https://admin.aurora-portal.com</td>
+              <td><span class="crit-pill high">High</span></td>
+              <td><button class="btn ghost sm">Remove</button></td>
+            </tr>
+            <tr>
+              <td><span class="asset-name">10.44.12.0/24</span></td>
+              <td class="asset-type">Network range</td>
+              <td class="asset-url">CIDR · 256 hosts</td>
+              <td><span class="crit-pill med">Medium</span></td>
+              <td><button class="btn ghost sm">Remove</button></td>
+            </tr>
+            <tr>
+              <td style="color:var(--ink-60);font-style:italic">+ 10 more assets…</td>
+              <td colspan="4"></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="add-asset-row">
+          <span style="color:var(--ink-60);font-size:var(--text-label)">14 assets added · est. scope fits 2 testers over 3 weeks</span>
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add asset</button>
+        </div>
+      </div>
+
+      <!-- Step 3 (ACTIVE) -->
+      <div class="step-panel active" data-panel="3">
+        <div class="main-head">
+          <div class="main-eyebrow">Step 3 of 5</div>
+          <h1 class="main-title">Which compliance frameworks apply?</h1>
+          <p class="main-desc">Pick any combination of frameworks in scope. Each framework adds control-mapping effort to the report and an add-on charge to the quote. The quote on the right updates in real time as you toggle.</p>
+        </div>
+
+        <div class="fw-grid">
+          <button class="fw-card selected" data-fw="soc2" data-price="4500">
+            <div class="fw-card-head">
+              <div class="fw-name">SOC 2 Type II<span class="fw-name-badge">PHASE 1</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">Controls across security, availability, confidentiality. 64 mapped controls · TSCs CC1–CC9.</div>
+            <div class="fw-price">+ $4,500</div>
+          </button>
+
+          <button class="fw-card selected" data-fw="nist" data-price="3800">
+            <div class="fw-card-head">
+              <div class="fw-name">NIST CSF 2.0<span class="fw-name-badge">PHASE 1</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">Govern · Identify · Protect · Detect · Respond · Recover. 108 subcategories.</div>
+            <div class="fw-price">+ $3,800</div>
+          </button>
+
+          <button class="fw-card" data-fw="cis" data-price="2800">
+            <div class="fw-card-head">
+              <div class="fw-name">CIS Controls v8<span class="fw-name-badge">PHASE 1</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">18 top-level controls · implementation groups IG1 / IG2 / IG3.</div>
+            <div class="fw-price">+ $2,800</div>
+          </button>
+
+          <button class="fw-card" data-fw="owasp" data-price="2200">
+            <div class="fw-card-head">
+              <div class="fw-name">OWASP ASVS 4.0<span class="fw-name-badge">PHASE 1</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">14 chapters, 280+ requirements. Level 1/2/3 selectable during mapping.</div>
+            <div class="fw-price">+ $2,200</div>
+          </button>
+
+          <button class="fw-card" data-fw="ccm" data-price="3200">
+            <div class="fw-card-head">
+              <div class="fw-name">CSA CCM v4<span class="fw-name-badge">PHASE 1</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">Cloud Controls Matrix. 197 controls across 17 domains. Required for cloud scope.</div>
+            <div class="fw-price">+ $3,200</div>
+          </button>
+
+          <button class="fw-card" data-fw="pci" data-price="5400">
+            <div class="fw-card-head">
+              <div class="fw-name">PCI-DSS 4.0<span class="fw-name-badge">PHASE 2</span></div>
+              <div class="fw-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            </div>
+            <div class="fw-desc">12 requirements. QSA-aligned evidence pack. Available Q3 2026.</div>
+            <div class="fw-price">+ $5,400</div>
+          </button>
+        </div>
+
+        <div class="callout">
+          <div class="callout-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          </div>
+          <div>
+            <div class="callout-title">Mappings auto-apply at report time</div>
+            <div class="callout-body">Findings are tagged to the picked frameworks during testing. Security Engineer has authority to add or remove mappings post-test. Compliance add-on pricing covers mapping effort, evidence collation, and framework-specific report sections.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-panel" data-panel="4">
+        <div class="main-head">
+          <div class="main-eyebrow">Step 4 of 5</div>
+          <h1 class="main-title">Who will run this engagement?</h1>
+          <p class="main-desc">Assign a lead tester and pick an engagement type + SLA template. Tester workload updates based on current assignments.</p>
+        </div>
+
+        <div class="form-row row-2">
+          <div class="form-field">
+            <label class="form-label">Lead tester<span class="req">*</span></label>
+            <select class="select">
+              <option>Nikhil Rao · Senior · 62% utilized</option>
+              <option>Maya Ferreira · Lead · 81% utilized</option>
+              <option>Lee Kwan · Senior · 74% utilized</option>
+              <option>Sana Karim · Lead · 48% utilized</option>
+            </select>
+            <div class="workload">
+              <span style="font-size:var(--text-micro);color:var(--ink-60);text-transform:uppercase;letter-spacing:.06em;font-weight:600;min-width:80px">Workload</span>
+              <div class="workload-bar"><div class="workload-fill ok" style="width:62%"></div></div>
+              <span class="workload-val">62% / 85%</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Engagement type<span class="req">*</span></label>
+            <select class="select">
+              <option>Web application pentest</option>
+              <option>API security assessment</option>
+              <option>Network pentest</option>
+              <option>Cloud security assessment</option>
+              <option>Red team exercise</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row row-2">
+          <div class="form-field">
+            <label class="form-label">SLA template<span class="req">*</span></label>
+            <select class="select">
+              <option>Standard · Crit 3d · High 7d · Med 14d · Low 30d</option>
+              <option>Accelerated · Crit 1d · High 3d · Med 7d · Low 14d</option>
+              <option>Enterprise · Crit 2d · High 5d · Med 10d · Low 21d</option>
+              <option>Custom…</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Start date<span class="req">*</span></label>
+            <input class="input" type="date" value="2026-05-05" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Additional team members <span class="hint">optional</span></label>
+          <input class="input" type="text" placeholder="Search by name…" />
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-panel" data-panel="5">
+        <div class="main-head">
+          <div class="main-eyebrow">Step 5 of 5 · Review</div>
+          <h1 class="main-title">Review your engagement</h1>
+          <p class="main-desc">Confirm the details below. Generating the scope document creates a draft Word doc and routes it for your approval before sending to the tester.</p>
+        </div>
+
+        <div class="review-grid">
+          <div class="review-card">
+            <h3>Customer <a>Edit</a></h3>
+            <div class="kv-row"><span class="kv-k">Name</span><span class="kv-v">Aurora Financial Corp</span></div>
+            <div class="kv-row"><span class="kv-k">Customer ID</span><span class="kv-v">CUST-00241</span></div>
+            <div class="kv-row"><span class="kv-k">Industry</span><span class="kv-v">Financial services</span></div>
+          </div>
+          <div class="review-card">
+            <h3>Assets <a>Edit</a></h3>
+            <div class="kv-row"><span class="kv-k">Total assets</span><span class="kv-v">14</span></div>
+            <div class="kv-row"><span class="kv-k">Critical / High</span><span class="kv-v">3 / 6</span></div>
+            <div class="kv-row"><span class="kv-k">Asset types</span><span class="kv-v">Web, API, Network</span></div>
+          </div>
+          <div class="review-card">
+            <h3>Compliance <a>Edit</a></h3>
+            <div class="kv-row"><span class="kv-k">Frameworks</span><span class="kv-v">SOC 2, NIST CSF</span></div>
+            <div class="kv-row"><span class="kv-k">Add-on cost</span><span class="kv-v">$8,300</span></div>
+            <div class="kv-row"><span class="kv-k">Mapping authority</span><span class="kv-v">Security Engineer</span></div>
+          </div>
+          <div class="review-card">
+            <h3>Team &amp; schedule <a>Edit</a></h3>
+            <div class="kv-row"><span class="kv-k">Lead tester</span><span class="kv-v">Nikhil Rao</span></div>
+            <div class="kv-row"><span class="kv-k">Type</span><span class="kv-v">Web app pentest</span></div>
+            <div class="kv-row"><span class="kv-k">Duration</span><span class="kv-v">5 May → 26 May 2026</span></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: LIVE QUOTE -->
+    <aside class="quote-side">
+      <div class="quote-head">
+        <div>
+          <div class="quote-eyebrow">Running quote</div>
+          <div class="quote-title">ENG-DRAFT-2026-047</div>
+        </div>
+        <span class="live-dot"><span class="d"></span>LIVE</span>
+      </div>
+
+      <div class="quote-lines">
+        <div class="qline">
+          <div>
+            <div class="qline-top">Assets (14 × $850)</div>
+            <div class="qline-sub">3 critical · 6 high · 5 medium</div>
+          </div>
+          <div class="qline-val">$11,900</div>
+        </div>
+
+        <div class="qline" id="qline-soc2">
+          <div>
+            <div class="qline-top">SOC 2 Type II</div>
+            <div class="qline-sub">compliance add-on</div>
+          </div>
+          <div class="qline-val">+ $4,500</div>
+        </div>
+
+        <div class="qline" id="qline-nist">
+          <div>
+            <div class="qline-top">NIST CSF 2.0</div>
+            <div class="qline-sub">compliance add-on</div>
+          </div>
+          <div class="qline-val">+ $3,800</div>
+        </div>
+
+        <div class="qline">
+          <div>
+            <div class="qline-top">Subcontractor capacity</div>
+            <div class="qline-sub">15% markup · 1 subcontractor</div>
+          </div>
+          <div class="qline-val">+ $1,200</div>
+        </div>
+      </div>
+
+      <div class="quote-divider"></div>
+
+      <div class="quote-subtotal"><span class="k">Subtotal</span><span class="v" id="qSubtotal">$21,400</span></div>
+      <div class="quote-subtotal"><span class="k">Volume discount (−5%)</span><span class="v" style="color:var(--status-good)">− $1,070</span></div>
+
+      <div class="quote-total">
+        <span class="k">Total</span>
+        <span class="v" id="qTotal">$20,330</span>
+      </div>
+
+      <div class="quote-meta">
+        Currency USD · refreshes in &lt; 500 ms on every change. Pricing rules last updated by Finance on 14 Apr 2026.
+      </div>
+
+      <div class="callout" style="margin-top:auto">
+        <div class="callout-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <div class="callout-title">Quote is a draft</div>
+          <div class="callout-body">Final quote issued after you generate the scope document. All progress auto-saves to ENG-DRAFT-2026-047.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="wiz-foot">
+    <div class="wiz-foot-left">
+      <span class="step-indicator">Step <span id="stepCur">3</span> of 5</span>
+      <span>·</span>
+      <span>All fields auto-save · resume anytime from My drafts</span>
+    </div>
+    <div class="wiz-foot-right">
+      <button class="btn" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <button class="btn primary" id="nextBtn">
+        <span id="nextLabel">Next</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="nextIcon"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- Theme picker ---------- */
+const themeBtn = document.getElementById('themeBtn');
+const themePop = document.getElementById('themePop');
+const themeLabel = document.getElementById('themeLabel');
+
+themeBtn.addEventListener('click',(e)=>{e.stopPropagation();const o=themePop.classList.toggle('open');themeBtn.setAttribute('aria-expanded',o)});
+document.addEventListener('click',(e)=>{if(!themePop.contains(e.target)&&e.target!==themeBtn){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePop.classList.remove('open');themeBtn.setAttribute('aria-expanded','false')}});
+
+function applyTheme(){
+  const fam=document.querySelector('.fam-card.active').dataset.fam;
+  const mode=document.querySelector('.mode-btn.active').dataset.mode;
+  document.body.className='';document.body.classList.add(fam,mode);
+  themeLabel.textContent=fam[0].toUpperCase()+fam.slice(1)+' · '+mode[0].toUpperCase()+mode.slice(1);
+}
+document.querySelectorAll('.fam-card').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fam-card').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyTheme()}));
+
+/* ---------- Wizard state-switcher-sync mutator ---------- */
+// Single source of truth: current step → updates panel + sidebar + footer in ONE function
+const TOTAL_STEPS = 5;
+const STEP_CONFIG = {
+  1:{primaryLabel:'Next', showBack:false, iconArrow:true},
+  2:{primaryLabel:'Next', showBack:true,  iconArrow:true},
+  3:{primaryLabel:'Next', showBack:true,  iconArrow:true},
+  4:{primaryLabel:'Next', showBack:true,  iconArrow:true},
+  5:{primaryLabel:'Generate scope document', showBack:true, iconArrow:false}
+};
+
+const stepCurEl = document.getElementById('stepCur');
+const backBtn   = document.getElementById('backBtn');
+const nextBtn   = document.getElementById('nextBtn');
+const nextLabel = document.getElementById('nextLabel');
+const nextIcon  = document.getElementById('nextIcon');
+
+function gotoStep(n){
+  if (n < 1 || n > TOTAL_STEPS) return;
+  // Panels
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`.step-panel[data-panel="${n}"]`).classList.add('active');
+  // Sidebar
+  document.querySelectorAll('.step-item').forEach(s=>{
+    s.classList.remove('active');
+    const num=parseInt(s.dataset.step);
+    if (num < n) { s.classList.add('done'); s.querySelector('.step-num').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>'; }
+    else if (num === n) { s.classList.remove('done'); s.classList.add('active'); s.querySelector('.step-num').textContent = num; }
+    else { s.classList.remove('done'); s.querySelector('.step-num').textContent = num; }
+  });
+  // Footer
+  const cfg = STEP_CONFIG[n];
+  stepCurEl.textContent = n;
+  backBtn.style.display = cfg.showBack ? 'inline-flex' : 'none';
+  nextLabel.textContent = cfg.primaryLabel;
+  nextIcon.innerHTML = cfg.iconArrow
+    ? '<path d="M5 12h14M12 5l7 7-7 7"/>'
+    : '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/>';
+  // Scroll to top of main
+  document.querySelector('.wiz-main').scrollTo({top:0, behavior:'smooth'});
+}
+
+document.querySelectorAll('.step-item').forEach(s=>{
+  s.addEventListener('click',()=>gotoStep(parseInt(s.dataset.step)));
+});
+backBtn.addEventListener('click',()=>{
+  const cur = parseInt(stepCurEl.textContent);
+  gotoStep(cur - 1);
+});
+nextBtn.addEventListener('click',()=>{
+  const cur = parseInt(stepCurEl.textContent);
+  if (cur === TOTAL_STEPS) {
+    nextLabel.textContent = 'Generating…';
+    nextBtn.disabled = true;
+    return;
+  }
+  gotoStep(cur + 1);
+});
+
+/* ---------- Framework toggle — LIVE QUOTE ---------- */
+const basePrice = 11900;
+const subcontractor = 1200;
+function recomputeQuote(){
+  let compliance = 0;
+  document.querySelectorAll('.fw-card.selected').forEach(c=>{
+    compliance += parseInt(c.dataset.price || 0);
+  });
+  const subtotal = basePrice + compliance + subcontractor;
+  const discount = Math.round(subtotal * 0.05);
+  const total = subtotal - discount;
+  document.getElementById('qSubtotal').textContent = '$' + subtotal.toLocaleString();
+  document.getElementById('qTotal').textContent    = '$' + total.toLocaleString();
+}
+
+document.querySelectorAll('.fw-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    c.classList.toggle('selected');
+    // Highlight matching qline if exists
+    const fw = c.dataset.fw;
+    const ql = document.getElementById('qline-' + fw);
+    if (ql) {
+      ql.classList.add('highlight');
+      setTimeout(()=>ql.classList.remove('highlight'), 1200);
+    }
+    recomputeQuote();
+  });
+});
+recomputeQuote();
+
+/* ---------- Asset tab segmented ---------- */
+document.querySelectorAll('.mode-tabs .seg-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-tabs .seg-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
