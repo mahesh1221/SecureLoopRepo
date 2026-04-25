@@ -51,20 +51,6 @@
           },
           {
             "type": "agent",
-            "if": "Write(*packages/ui/*.css.ts)",
-            "prompt": "Read tool_input.file_path from $ARGUMENTS. Read the file. Verify every color value, spacing value, radius value, and font reference is sourced from @secureloop/design-system tokens (theme.*, fontSize.*, space.*, radius.*). Flag any: (1) hardcoded hex color not from theme.*; (2) px value outside allowed scale 4/8/12/16/24/32/48; (3) radius outside 3/6/10/999; (4) font not in Space Grotesk / IBM Plex Sans / JetBrains Mono; (5) type size outside 10/11/13/15/20/28/44px. Report violations as bullet points citing line numbers. Produce no output if fully compliant.",
-            "timeout": 60,
-            "statusMessage": "Validating DS token compliance..."
-          },
-          {
-            "type": "agent",
-            "if": "Write(*packages/ui/*)",
-            "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /ui-ux-pro-max:ui-ux-pro-max to assess design quality across styles, colour, and typography. Then invoke /impeccable:audit to run technical quality checks covering accessibility, performance, theming, and anti-patterns. Report findings from both.",
-            "timeout": 120,
-            "statusMessage": "Running UI/UX quality review on new screen..."
-          },
-          {
-            "type": "agent",
             "if": "Write(*services/*)",
             "prompt": "Read tool_input.file_path from $ARGUMENTS. Invoke /engineering-skills and /engineering-advanced-skills to review and enhance the implementation at this path.",
             "timeout": 120,
@@ -106,7 +92,7 @@
           {
             "type": "agent",
             "if": "Bash(git commit *)",
-            "prompt": "A git commit was just executed. Run 'git diff HEAD~1 --stat' then 'git diff HEAD~1' to see what changed. Check for: (1) exposed secrets or API keys; (2) SQL/command/XSS injection vulnerabilities; (3) missing authentication or authorization checks; (4) tenant isolation violations - any DB query missing tenant_id filter; (5) missing Zod validation at API boundaries; (6) OWASP top 10 issues. Report concrete findings as bullet points. Produce no output if clean.",
+            "prompt": "A git commit was just executed. Run 'git diff HEAD~1 --stat' then 'git diff HEAD~1' to see what changed. Check for: (1) exposed secrets or API keys; (2) SQL/command/XSS injection vulnerabilities; (3) missing authentication or authorization checks; (4) tenant isolation violations — any DB query missing tenant_id filter; (5) missing Zod validation at API boundaries; (6) OWASP top 10 issues. Report concrete findings as bullet points. Produce no output if clean.",
             "timeout": 90,
             "statusMessage": "Running security review on commit..."
           },
@@ -120,14 +106,14 @@
           {
             "type": "agent",
             "if": "Bash(git checkout *)",
-            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name - if '-b' is present the branch name follows it; otherwise it is the last non-flag argument. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
+            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name — if '-b' is present the branch name follows it; otherwise it is the last non-flag argument. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
             "timeout": 120,
             "statusMessage": "Creating implementation plan for new branch..."
           },
           {
             "type": "agent",
             "if": "Bash(git switch *)",
-            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name - if '-c' or '--create' is present the branch name follows it. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
+            "prompt": "Read tool_input.command from $ARGUMENTS. Extract the branch name — if '-c' or '--create' is present the branch name follows it. When the branch starts with 'sprint/' or 'feat/': invoke /claude-mem:make-plan to create a phased implementation plan for this branch.",
             "timeout": 120,
             "statusMessage": "Creating implementation plan for new branch..."
           },

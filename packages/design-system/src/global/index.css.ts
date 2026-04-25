@@ -101,7 +101,7 @@ export const kf = {
     '100%': { backgroundPosition: '-200% 0' },
   }),
   riseIn: keyframes({
-    from: { opacity: 0, transform: 'translateY(8px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
+    from: { opacity: 0, transform: 'translateY(8px) scale(0.98)' },
+    to: { opacity: 1, transform: 'translateY(0) scale(1)' },
   }),
 };
