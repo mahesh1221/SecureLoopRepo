@@ -34,7 +34,7 @@
     "@secureloop/db": "workspace:*",
     "@secureloop/eslint-config": "workspace:*",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.2",
     "eslint": "^9.13.0",
     "postgres": "^3.4.5",
     "prettier": "^3.3.3",
