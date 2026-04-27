@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { ThemeProvider, FontLoader } from '@secureloop/ui';
+import { Providers } from './providers';
 import '@secureloop/design-system/css';
+import '@secureloop/ui/css';
 
 export const metadata: Metadata = {
   title: 'SecureLoop PTOps Suite',
@@ -11,10 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <ThemeProvider defaultTheme="coffee-dark">
-          <FontLoader />
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

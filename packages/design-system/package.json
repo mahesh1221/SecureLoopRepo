@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "@secureloop/design-system",
   "version": "0.1.0",
   "description": "SecureLoop Design System — tokens, themes, motion, elevation, data-viz",
@@ -12,7 +12,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./css": "./dist/global.css",
+    "./css": "./dist/index.css",
     "./tokens": {
       "types": "./dist/tokens/index.d.ts",
       "import": "./dist/tokens/index.js"

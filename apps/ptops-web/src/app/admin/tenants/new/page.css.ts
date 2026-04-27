@@ -5,7 +5,7 @@ import { space, radius, fontSize, fontFamily, fontWeight } from '@secureloop/des
 // ─── Wizard body layout ───────────────────────────────────────────
 export const wizardBody = style({
   display: 'grid',
-  gridTemplateColumns: '1fr 300px',
+  gridTemplateColumns: '1fr 380px',
   gap: space.s5,
   minHeight: '420px',
 });

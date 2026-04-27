@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import {
   backdrop,
@@ -44,9 +44,12 @@ export function Wizard({
   nextLabel,
   nextDisabled = false,
 }: WizardProps) {
+  const [mounted, setMounted] = useState(false);
   const isFirst = currentStep === 0;
   const isLast = currentStep === steps.length - 1;
   const primaryLabel = nextLabel ?? (isLast ? 'Done' : 'Next');
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -64,7 +67,7 @@ export function Wizard({
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  if (!open || typeof document === 'undefined') return null;
+  if (!open || !mounted) return null;
 
   return createPortal(
     <div className={backdrop} role="presentation">

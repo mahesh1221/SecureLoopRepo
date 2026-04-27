@@ -3,8 +3,6 @@ import { theme, kf } from '@secureloop/design-system';
 import { space, radius, fontSize, fontFamily, fontWeight } from '@secureloop/design-system';
 
 export const page = style({
-  maxWidth: '1520px',
-  margin: '0 auto',
   padding: `${space.s6} ${space.s7}`,
 });
 
