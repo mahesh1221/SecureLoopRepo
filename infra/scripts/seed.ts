@@ -6,9 +6,13 @@
  *
  * Idempotent: re-running with the same env will not create duplicates.
  */
-import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+import { resolve } from 'node:path';
 import { hash as argon2Hash } from '@node-rs/argon2';
 import { eq } from 'drizzle-orm';
+
+// Always load .env from repo root regardless of cwd.
+dotenvConfig({ path: resolve(__dirname, '../../.env') });
 import { createDbClient, closeDbClient } from '@secureloop/db';
 import { users } from '../../services/auth/src/schema/users';
 import { tenants } from '../../services/tenants/src/schema/tenants';

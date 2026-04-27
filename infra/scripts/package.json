@@ -1,0 +1,6 @@
+{
+  "name": "@secureloop/infra-scripts",
+  "private": true,
+  "type": "commonjs",
+  "description": "Repo-level utility scripts (seed, dev-setup, reset). CJS-mode so tsx imports of services source resolve via Node CJS rules."
+}
