@@ -1,0 +1,27 @@
+{
+  "name": "@secureloop/ptops-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SecureLoop PTOps Suite — Next.js 15 frontend",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --port 3000",
+    "typecheck": "tsc --noEmit",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@secureloop/design-system": "workspace:*",
+    "@secureloop/ui": "workspace:*",
+    "next": "15.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vanilla-extract/css": "^1.15.0",
+    "@vanilla-extract/next-plugin": "^2.3.0",
+    "typescript": "^5.5.0"
+  }
+}
