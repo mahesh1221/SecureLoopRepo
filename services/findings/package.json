@@ -12,7 +12,7 @@
   "dependencies": {
     "@fastify/cors": "^9.0.0",
     "@secureloop/auth-client": "workspace:*",
-    "fastify": "^4.28.0",
+    "fastify": "^5.8.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
