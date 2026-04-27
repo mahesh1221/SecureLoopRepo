@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Breadcrumb, Callout, Button } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../lib/auth';
+import { platformApi, type PlatformDefaults } from '../../../lib/api';
 import * as s from './page.css';
 
 const TABS = [
@@ -72,10 +74,37 @@ const ACCESS_POLICIES = [
 ];
 
 export default function PlatformDefaultsPage() {
+  const { token, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState(0);
   const [slaValues, setSlaValues] = useState({ critical: 4, high: 24, medium: 72, low: 168 });
   const [policies, setPolicies] = useState(ACCESS_POLICIES.map((p) => p.value));
   const [hasChanges, setHasChanges] = useState(false);
+  const [loaded, setLoaded] = useState<PlatformDefaults | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (authLoading || !token) return;
+    let cancelled = false;
+    platformApi
+      .getDefaults(token)
+      .then((res) => {
+        if (cancelled) return;
+        setLoaded(res);
+        setSlaValues(res.sla);
+        setPolicies([
+          res.accessPolicies.mfaRequired ? 'Required' : 'Optional',
+          res.accessPolicies.sessionTimeout === 'strict' ? 'Strict' : 'Standard',
+          res.accessPolicies.apiAccess ? 'Allowed' : 'Restricted',
+        ]);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, authLoading]);
 
   const adjSla = (sev: keyof typeof slaValues, delta: number) => {
     setSlaValues((prev) => ({ ...prev, [sev]: Math.max(1, prev[sev] + delta) }));
@@ -89,6 +118,28 @@ export default function PlatformDefaultsPage() {
       return next;
     });
     setHasChanges(true);
+  };
+
+  const save = async () => {
+    if (!token || !loaded) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await platformApi.updateDefaults(token, {
+        sla: slaValues,
+        accessPolicies: {
+          mfaRequired: policies[0] === 'Required',
+          sessionTimeout: policies[1] === 'Strict' ? 'strict' : 'standard',
+          apiAccess: policies[2] !== 'Restricted',
+        },
+      });
+      setLoaded(updated);
+      setHasChanges(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -105,6 +156,12 @@ export default function PlatformDefaultsPage() {
         Changes to platform defaults apply to <strong>new tenants only</strong>. Existing tenant
         settings are not affected.
       </Callout>
+
+      {error && (
+        <div role="alert" style={{ padding: '12px', color: 'var(--sl-crit)', fontSize: '13px' }}>
+          {error}
+        </div>
+      )}
 
       <div style={{ marginTop: '20px' }}>
         {/* Tabs */}
@@ -268,8 +325,8 @@ export default function PlatformDefaultsPage() {
                 Preview impact
               </Button>
               <div style={{ flex: 1 }} />
-              <Button variant="primary" size="sm" disabled={!hasChanges}>
-                Save changes · new tenants only
+              <Button variant="primary" size="sm" disabled={!hasChanges || saving} onClick={save}>
+                {saving ? 'Saving…' : 'Save changes · new tenants only'}
               </Button>
             </div>
           </div>

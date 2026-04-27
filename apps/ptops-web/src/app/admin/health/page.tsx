@@ -1,9 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Breadcrumb, LiveDot, Button } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../lib/auth';
+import { platformApi } from '../../../lib/api';
 import * as s from './page.css';
+
+interface HealthSnapshot {
+  status: string;
+  uptime: number;
+  lastCheck: string;
+  nextCheck: string;
+  services: Record<string, string>;
+}
 
 type IncidentStatus = 'open' | 'investigating' | 'mitigated' | 'resolved';
 type Severity = 'crit' | 'high' | 'warn';
@@ -183,6 +193,33 @@ function Sparkline({ points, variant }: { points: number[]; variant: TileVariant
 
 export default function PlatformHealthPage() {
   const [paused, setPaused] = useState(false);
+  const { token, loading: authLoading } = useAuth();
+  const [snapshot, setSnapshot] = useState<HealthSnapshot | null>(null);
+  const [snapshotError, setSnapshotError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (authLoading || !token || paused) return;
+    let cancelled = false;
+    const fetchSnapshot = () => {
+      platformApi
+        .health(token)
+        .then((res) => {
+          if (!cancelled) {
+            setSnapshot(res);
+            setSnapshotError(null);
+          }
+        })
+        .catch((err: Error) => {
+          if (!cancelled) setSnapshotError(err.message);
+        });
+    };
+    fetchSnapshot();
+    const interval = window.setInterval(fetchSnapshot, 30_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [token, authLoading, paused]);
 
   return (
     <div className={s.page}>
@@ -204,18 +241,26 @@ export default function PlatformHealthPage() {
         </div>
       </div>
 
-      {/* Health status bar */}
+      {/* Health status bar — live data from /platform/health */}
       <div className={cn(s.healthBar, s.healthBarDegraded)}>
         <div className={s.trafficLight}>
           <div className={cn(s.trafficCircle, s.trafficCircleVariants.dimGreen)} />
           <div className={cn(s.trafficCircle, s.trafficCircleVariants.amber)} />
           <div className={cn(s.trafficCircle, s.trafficCircleVariants.dimRed)} />
         </div>
-        <div className={s.healthStatusLabel}>Degraded — integration layer impacted</div>
+        <div className={s.healthStatusLabel}>
+          {snapshotError
+            ? `Health check failed: ${snapshotError}`
+            : snapshot
+              ? `${snapshot.status === 'operational' ? 'Operational' : snapshot.status}`
+              : 'Loading…'}
+        </div>
         <div className={s.healthBarMeta}>
-          <span>Last check: 30s ago</span>
-          <span>Next: in 30s</span>
-          <span>Uptime: 99.71%</span>
+          <span>
+            Last check: {snapshot ? new Date(snapshot.lastCheck).toLocaleTimeString() : '—'}
+          </span>
+          <span>Next: {snapshot ? new Date(snapshot.nextCheck).toLocaleTimeString() : '—'}</span>
+          <span>Uptime: {snapshot ? `${snapshot.uptime.toFixed(2)}%` : '—'}</span>
         </div>
       </div>
 

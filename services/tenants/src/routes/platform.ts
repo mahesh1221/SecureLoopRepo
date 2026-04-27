@@ -1,55 +1,44 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { requireRole } from '@secureloop/auth-client';
+import type { PlatformRepository } from '../repositories/platform';
+
+const SlaSchema = z.object({
+  critical: z.number().int().positive(),
+  high: z.number().int().positive(),
+  medium: z.number().int().positive(),
+  low: z.number().int().positive(),
+});
+
+const EscalationStepSchema = z.object({
+  level: z.number().int().positive(),
+  delayHours: z.number().int().nonnegative(),
+  notifyRoles: z.array(z.string().min(1)).min(1),
+});
+
+const AccessPoliciesSchema = z.object({
+  mfaRequired: z.boolean(),
+  sessionTimeout: z.enum(['standard', 'strict']),
+  apiAccess: z.boolean(),
+});
 
 const DefaultsSchema = z.object({
-  sla: z
-    .object({
-      critical: z.number().default(4),
-      high: z.number().default(24),
-      medium: z.number().default(72),
-      low: z.number().default(168),
-    })
-    .optional(),
-  escalation: z
-    .array(
-      z.object({
-        level: z.number(),
-        delayHours: z.number(),
-        notifyRoles: z.array(z.string()),
-      }),
-    )
-    .optional(),
-  accessPolicies: z
-    .object({
-      mfaRequired: z.boolean().default(true),
-      sessionTimeout: z.enum(['standard', 'strict']).default('standard'),
-      apiAccess: z.boolean().default(true),
-    })
-    .optional(),
+  sla: SlaSchema.optional(),
+  escalation: z.array(EscalationStepSchema).optional(),
+  accessPolicies: AccessPoliciesSchema.optional(),
 });
 
 const IntegrationUpdateSchema = z.object({
+  id: z.string().min(1),
+  category: z.string().min(1),
   enabled: z.boolean(),
   config: z.record(z.unknown()).optional(),
 });
 
-export async function platformRoutes(fastify: FastifyInstance) {
+export function platformRoutes(fastify: FastifyInstance, repo: PlatformRepository) {
   fastify.get('/defaults', { preHandler: requireRole('ADMIN') }, async (_request, reply) => {
-    return reply.send({
-      sla: { critical: 4, high: 24, medium: 72, low: 168 },
-      escalation: [
-        { level: 1, delayHours: 0, notifyRoles: ['security-engineer'] },
-        { level: 2, delayHours: 24, notifyRoles: ['delivery-manager'] },
-        { level: 3, delayHours: 72, notifyRoles: ['ciso'] },
-        { level: 4, delayHours: 168, notifyRoles: ['business-owner'] },
-      ],
-      accessPolicies: {
-        mfaRequired: true,
-        sessionTimeout: 'standard',
-        apiAccess: true,
-      },
-    });
+    const row = await repo.getDefaults();
+    return reply.send(row);
   });
 
   fastify.put('/defaults', { preHandler: requireRole('ADMIN') }, async (request, reply) => {
@@ -57,14 +46,20 @@ export async function platformRoutes(fastify: FastifyInstance) {
     if (!body.success) {
       return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
     }
-    return reply.send({ ...body.data, updatedAt: new Date().toISOString() });
+    const updated = await repo.updateDefaults({
+      ...(body.data.sla ? { sla: body.data.sla } : {}),
+      ...(body.data.escalation ? { escalation: body.data.escalation } : {}),
+      ...(body.data.accessPolicies ? { accessPolicies: body.data.accessPolicies } : {}),
+    });
+    return reply.send(updated);
   });
 
   fastify.get(
     '/integrations',
     { preHandler: requireRole('ADMIN', 'IE') },
     async (_request, reply) => {
-      return reply.send({ data: [], total: 0 });
+      const data = await repo.listIntegrations();
+      return reply.send({ data, total: data.length });
     },
   );
 
@@ -76,7 +71,17 @@ export async function platformRoutes(fastify: FastifyInstance) {
       if (!body.success) {
         return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
       }
-      return reply.send({ updated: body.data.length, updatedAt: new Date().toISOString() });
+      const results = await Promise.all(
+        body.data.map((item) =>
+          repo.upsertIntegration({
+            id: item.id,
+            category: item.category,
+            enabled: item.enabled,
+            ...(item.config ? { config: item.config } : {}),
+          }),
+        ),
+      );
+      return reply.send({ updated: results.length, data: results });
     },
   );
 

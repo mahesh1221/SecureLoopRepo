@@ -10,8 +10,10 @@ import {
   TopbarSpacer,
   TopbarRight,
   Main,
+  Button,
 } from '@secureloop/ui';
 import { ThemePicker } from '@secureloop/ui';
+import { useAuth } from '../../lib/auth';
 import * as styles from './layout.css';
 
 const NAV = [
@@ -112,6 +114,7 @@ const NAV = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   return (
     <div className={styles.shell}>
@@ -148,6 +151,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <TopbarSpacer />
         <TopbarRight>
           <ThemePicker />
+          {user && (
+            <span
+              style={{
+                fontSize: '11px',
+                color: 'var(--sl-ink-60)',
+                fontFamily: 'var(--sl-font-mono)',
+                marginLeft: '12px',
+                marginRight: '8px',
+              }}
+            >
+              {user.email}
+            </span>
+          )}
+          <Button variant="ghost" size="sm" onClick={() => void logout()}>
+            Sign out
+          </Button>
         </TopbarRight>
       </Topbar>
 

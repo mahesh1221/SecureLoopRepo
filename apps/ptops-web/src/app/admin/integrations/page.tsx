@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Breadcrumb } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../lib/auth';
+import { platformApi } from '../../../lib/api';
 import * as s from './page.css';
 
 type Health = 'good' | 'warn' | 'crit' | 'off';
@@ -162,12 +164,53 @@ const KPI = [
 ];
 
 export default function GlobalIntegrationsPage() {
+  const { token, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('all');
   const [selectedId, setSelectedId] = useState<string>('jira');
   const [integrations, setIntegrations] = useState(INTEGRATIONS);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleIntegration = (id: string) => {
-    setIntegrations((prev) => prev.map((i) => (i.id === id ? { ...i, enabled: !i.enabled } : i)));
+  // Hydrate enabled flags from the platform service. The static INTEGRATIONS
+  // list above defines the visual roster; the server stores only the
+  // toggle/config rows that have ever been touched. Anything not yet in the
+  // DB stays at its compiled-in default.
+  useEffect(() => {
+    if (authLoading || !token) return;
+    let cancelled = false;
+    platformApi
+      .listIntegrations(token)
+      .then((res) => {
+        if (cancelled) return;
+        const overrides = new Map(res.data.map((i) => [i.id, i.enabled]));
+        setIntegrations((prev) =>
+          prev.map((i) => (overrides.has(i.id) ? { ...i, enabled: overrides.get(i.id)! } : i)),
+        );
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, authLoading]);
+
+  const toggleIntegration = async (id: string) => {
+    if (!token) return;
+    const target = integrations.find((i) => i.id === id);
+    if (!target) return;
+    const nextEnabled = !target.enabled;
+    setIntegrations((prev) => prev.map((i) => (i.id === id ? { ...i, enabled: nextEnabled } : i)));
+    try {
+      await platformApi.upsertIntegrations(token, [
+        { id: target.id, category: target.category, enabled: nextEnabled },
+      ]);
+    } catch (err) {
+      // Revert optimistic update on failure
+      setIntegrations((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, enabled: !nextEnabled } : i)),
+      );
+      setError(err instanceof Error ? err.message : 'Failed to toggle integration');
+    }
   };
 
   const selected = integrations.find((i) => i.id === selectedId);
@@ -183,6 +226,12 @@ export default function GlobalIntegrationsPage() {
       <p className={s.pageSubtitle}>
         Configure platform-wide integrations available to all tenants
       </p>
+
+      {error && (
+        <div role="alert" style={{ padding: '12px', color: 'var(--sl-crit)', fontSize: '13px' }}>
+          {error}
+        </div>
+      )}
 
       {/* KPI strip */}
       <div className={s.kpiRow}>

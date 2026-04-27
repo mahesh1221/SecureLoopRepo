@@ -1,118 +1,90 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button, Input, Select, Breadcrumb } from '@secureloop/ui';
-import * as s from './page.css';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../lib/auth';
+import { tenantsApi, type Tenant } from '../../../lib/api';
+import * as s from './page.css';
 
-type TenantStatus = 'active' | 'archived' | 'draft' | 'suspended';
-type Plan = 'enterprise' | 'pro' | 'starter';
+type TenantStatus = Tenant['status'];
 
-interface Tenant {
-  id: string;
-  name: string;
-  slug: string;
-  industry: string;
-  country: string;
-  plan: Plan;
-  users: number;
-  frameworks: number;
-  createdAt: string;
-  status: TenantStatus;
-  statusHint?: string;
+const PLAN_LABEL: Record<Tenant['plan'], string> = {
+  enterprise: 'ENT',
+  pro: 'PRO',
+  starter: 'STR',
+};
+
+const STATUS_TABS: { key: 'all' | TenantStatus; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'active', label: 'Active' },
+  { key: 'draft', label: 'Draft' },
+  { key: 'suspended', label: 'Suspended' },
+];
+
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    });
+  } catch {
+    return iso;
+  }
 }
 
-const MOCK_TENANTS: Tenant[] = [
-  {
-    id: '1',
-    name: 'Acme Financial Corp',
-    slug: 'acme-financial',
-    industry: 'Finance',
-    country: 'US',
-    plan: 'enterprise',
-    users: 142,
-    frameworks: 5,
-    createdAt: 'Dec 14, 2024',
-    status: 'active',
-  },
-  {
-    id: '2',
-    name: 'CyberShield Ltd',
-    slug: 'cybershield',
-    industry: 'Technology',
-    country: 'UK',
-    plan: 'pro',
-    users: 38,
-    frameworks: 3,
-    createdAt: 'Jan 03, 2025',
-    status: 'active',
-  },
-  {
-    id: '3',
-    name: 'MediTrust Hospital',
-    slug: 'meditrust',
-    industry: 'Healthcare',
-    country: 'AU',
-    plan: 'enterprise',
-    users: 89,
-    frameworks: 4,
-    createdAt: 'Nov 22, 2024',
-    status: 'active',
-  },
-  {
-    id: '4',
-    name: 'RetailMax Group',
-    slug: 'retailmax',
-    industry: 'Retail',
-    country: 'CA',
-    plan: 'starter',
-    users: 15,
-    frameworks: 1,
-    createdAt: 'Feb 11, 2025',
-    status: 'draft',
-  },
-  {
-    id: '5',
-    name: 'GlobalLogistics Inc',
-    slug: 'global-logistics',
-    industry: 'Logistics',
-    country: 'DE',
-    plan: 'pro',
-    users: 61,
-    frameworks: 2,
-    createdAt: 'Oct 05, 2024',
-    status: 'archived',
-    statusHint: '72 days remaining',
-  },
-];
-
-const TABS = [
-  { key: 'all', label: 'All', count: 55 },
-  { key: 'active', label: 'Active', count: 47 },
-  { key: 'archived', label: 'Archived', count: 5 },
-  { key: 'draft', label: 'Draft', count: 3 },
-  { key: 'suspended', label: 'Suspended', count: 1 },
-] as const;
-
-const KPI = [
-  { label: 'Active tenants', value: '47', sub: '+3 this week', variant: 'good' as const },
-  {
-    label: 'Archived · retention',
-    value: '5',
-    sub: '90-day countdown',
-    variant: 'default' as const,
-  },
-  { label: 'Draft wizards', value: '3', sub: 'Awaiting activation', variant: 'warn' as const },
-  { label: 'New this month', value: '8', sub: 'Feb 2025', variant: 'default' as const },
-];
-
 export default function TenantsPage() {
-  const [activeTab, setActiveTab] = useState<string>('active');
-  const [selectedId, setSelectedId] = useState<string>('1');
+  const { token, loading: authLoading } = useAuth();
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | TenantStatus>('active');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  const selectedTenant = MOCK_TENANTS.find((t) => t.id === selectedId);
+  useEffect(() => {
+    if (authLoading || !token) return;
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    tenantsApi
+      .list(token)
+      .then((res) => {
+        if (cancelled) return;
+        setTenants(res.data);
+        if (res.data[0]) setSelectedId((prev) => prev ?? res.data[0]!.id);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, authLoading]);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: tenants.length, active: 0, draft: 0, suspended: 0 };
+    for (const t of tenants) c[t.status] = (c[t.status] ?? 0) + 1;
+    return c;
+  }, [tenants]);
+
+  const filtered = useMemo(() => {
+    return tenants.filter((t) => {
+      if (activeTab !== 'all' && t.status !== activeTab) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        if (!t.name.toLowerCase().includes(q) && !t.slug.toLowerCase().includes(q)) return false;
+      }
+      return true;
+    });
+  }, [tenants, activeTab, search]);
+
+  const selectedTenant = filtered.find((t) => t.id === selectedId) ?? filtered[0];
 
   return (
     <div className={s.page}>
@@ -135,20 +107,33 @@ export default function TenantsPage() {
         </div>
       </div>
 
-      {/* KPI row */}
       <div className={s.kpiRow}>
-        {KPI.map((k) => (
-          <div key={k.label} className={s.kpiCard}>
-            <div className={s.kpiLabel}>{k.label}</div>
-            <div className={cn(s.kpiValue, s.kpiValueVariants[k.variant])}>{k.value}</div>
-            <div className={s.kpiSub}>{k.sub}</div>
+        <div className={s.kpiCard}>
+          <div className={s.kpiLabel}>Active tenants</div>
+          <div className={cn(s.kpiValue, s.kpiValueVariants.good)}>{counts['active'] ?? 0}</div>
+          <div className={s.kpiSub}>Out of {counts['all']}</div>
+        </div>
+        <div className={s.kpiCard}>
+          <div className={s.kpiLabel}>Draft wizards</div>
+          <div className={cn(s.kpiValue, s.kpiValueVariants.warn)}>{counts['draft'] ?? 0}</div>
+          <div className={s.kpiSub}>Awaiting activation</div>
+        </div>
+        <div className={s.kpiCard}>
+          <div className={s.kpiLabel}>Suspended</div>
+          <div className={cn(s.kpiValue, s.kpiValueVariants.default)}>
+            {counts['suspended'] ?? 0}
           </div>
-        ))}
+          <div className={s.kpiSub}>—</div>
+        </div>
+        <div className={s.kpiCard}>
+          <div className={s.kpiLabel}>Total tenants</div>
+          <div className={cn(s.kpiValue, s.kpiValueVariants.default)}>{counts['all']}</div>
+          <div className={s.kpiSub}>All statuses</div>
+        </div>
       </div>
 
-      {/* Tabs */}
       <div className={s.tabBar}>
-        {TABS.map((tab) => (
+        {STATUS_TABS.map((tab) => (
           <button
             key={tab.key}
             type="button"
@@ -156,12 +141,11 @@ export default function TenantsPage() {
             onClick={() => setActiveTab(tab.key)}
           >
             {tab.label}
-            <span className={s.tabCount}>{tab.count}</span>
+            <span className={s.tabCount}>{counts[tab.key] ?? 0}</span>
           </button>
         ))}
       </div>
 
-      {/* Filter bar */}
       <div className={s.filterBar}>
         <Input
           placeholder="Search tenants..."
@@ -174,14 +158,17 @@ export default function TenantsPage() {
         <Select options={[{ value: '', label: 'All plans' }]} value="" onChange={() => {}} />
         <Select options={[{ value: '', label: 'Any status' }]} value="" onChange={() => {}} />
         <div className={s.filterSpacer} />
-        <span className={s.recordCount}>47 records</span>
+        <span className={s.recordCount}>{filtered.length} records</span>
       </div>
 
-      {/* Body grid */}
+      {error && (
+        <div role="alert" style={{ padding: '12px', color: 'var(--sl-crit)', fontSize: '13px' }}>
+          Failed to load tenants: {error}
+        </div>
+      )}
+
       <div className={s.bodyGrid}>
-        {/* Table */}
         <div className={s.tableWrap}>
-          {/* Header */}
           <div className={s.tableHeader}>
             <div className={s.thCell} />
             <div className={s.thCell}>Tenant</div>
@@ -195,18 +182,30 @@ export default function TenantsPage() {
             <div className={s.thCell} />
           </div>
 
-          {/* Rows */}
-          {MOCK_TENANTS.map((tenant) => (
+          {loading && (
+            <div style={{ padding: '24px', color: 'var(--sl-ink-60)', fontSize: '13px' }}>
+              Loading tenants…
+            </div>
+          )}
+          {!loading && filtered.length === 0 && (
+            <div style={{ padding: '24px', color: 'var(--sl-ink-60)', fontSize: '13px' }}>
+              {tenants.length === 0
+                ? 'No tenants yet — click “Create tenant” to provision the first one.'
+                : 'No tenants match the current filters.'}
+            </div>
+          )}
+
+          {filtered.map((tenant) => (
             <div
               key={tenant.id}
               className={s.tableRow}
-              data-selected={selectedId === tenant.id ? 'true' : undefined}
+              data-selected={selectedTenant?.id === tenant.id ? 'true' : undefined}
               onClick={() => setSelectedId(tenant.id)}
             >
               <div className={s.tdCell}>
                 <input
                   type="checkbox"
-                  checked={selectedId === tenant.id}
+                  checked={selectedTenant?.id === tenant.id}
                   onChange={() => setSelectedId(tenant.id)}
                   onClick={(e) => e.stopPropagation()}
                   style={{ cursor: 'pointer' }}
@@ -216,16 +215,16 @@ export default function TenantsPage() {
                 <div className={s.tenantName}>{tenant.name}</div>
                 <div className={s.tenantUrl}>{tenant.slug}.secureloop.io</div>
               </div>
-              <div className={s.tdCell}>{tenant.industry}</div>
-              <div className={s.tdMono}>{tenant.country}</div>
+              <div className={s.tdCell}>{tenant.industry ?? '—'}</div>
+              <div className={s.tdMono}>{tenant.country ?? '—'}</div>
               <div>
                 <span className={cn(s.planBadge, s.planBadgeVariants[tenant.plan])}>
-                  {tenant.plan === 'enterprise' ? 'ENT' : tenant.plan === 'pro' ? 'PRO' : 'STR'}
+                  {PLAN_LABEL[tenant.plan]}
                 </span>
               </div>
-              <div className={s.tdMono}>{tenant.users}</div>
-              <div className={s.tdMono}>{tenant.frameworks}</div>
-              <div className={s.tdMono}>{tenant.createdAt}</div>
+              <div className={s.tdMono}>—</div>
+              <div className={s.tdMono}>—</div>
+              <div className={s.tdMono}>{formatDate(tenant.createdAt)}</div>
               <div>
                 <div className={s.statusCell}>
                   <div className={cn(s.statusDot, s.statusDotVariants[tenant.status])} />
@@ -233,7 +232,6 @@ export default function TenantsPage() {
                     <div className={s.statusLabel}>
                       {tenant.status.charAt(0).toUpperCase() + tenant.status.slice(1)}
                     </div>
-                    {tenant.statusHint && <div className={s.statusHint}>{tenant.statusHint}</div>}
                   </div>
                 </div>
               </div>
@@ -250,7 +248,6 @@ export default function TenantsPage() {
           ))}
         </div>
 
-        {/* Detail sidebar */}
         {selectedTenant ? (
           <div className={s.sidebar}>
             <div className={s.sidebarHeader}>
@@ -278,11 +275,11 @@ export default function TenantsPage() {
               <div className={s.metaGrid}>
                 <div className={s.metaItem}>
                   <span className={s.metaLabel}>Industry</span>
-                  <span className={s.metaValue}>{selectedTenant.industry}</span>
+                  <span className={s.metaValue}>{selectedTenant.industry ?? '—'}</span>
                 </div>
                 <div className={s.metaItem}>
                   <span className={s.metaLabel}>Country</span>
-                  <span className={s.metaValue}>{selectedTenant.country}</span>
+                  <span className={s.metaValue}>{selectedTenant.country ?? '—'}</span>
                 </div>
                 <div className={s.metaItem}>
                   <span className={s.metaLabel}>Plan</span>
@@ -292,55 +289,15 @@ export default function TenantsPage() {
                 </div>
                 <div className={s.metaItem}>
                   <span className={s.metaLabel}>Created</span>
-                  <span className={s.metaValue}>{selectedTenant.createdAt}</span>
+                  <span className={s.metaValue}>{formatDate(selectedTenant.createdAt)}</span>
                 </div>
-              </div>
-            </div>
-
-            <div className={s.sidebarSection}>
-              <div className={s.sidebarSectionTitle}>Usage</div>
-              <div className={s.usageGrid}>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>{selectedTenant.users}</span>
-                  <span className={s.usageLabel}>Users</span>
+                <div className={s.metaItem}>
+                  <span className={s.metaLabel}>SLA · Critical</span>
+                  <span className={s.metaValue}>{selectedTenant.slaCriticalHrs}h</span>
                 </div>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>{selectedTenant.frameworks}</span>
-                  <span className={s.usageLabel}>Frameworks</span>
-                </div>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>—</span>
-                  <span className={s.usageLabel}>Findings</span>
-                </div>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>—</span>
-                  <span className={s.usageLabel}>Engagements</span>
-                </div>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>—</span>
-                  <span className={s.usageLabel}>Assets</span>
-                </div>
-                <div className={s.usageStat}>
-                  <span className={s.usageValue}>—</span>
-                  <span className={s.usageLabel}>Reports</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={s.sidebarSection}>
-              <div className={s.sidebarSectionTitle}>Recent activity</div>
-              <div className={s.activityList}>
-                <div className={s.activityItem}>
-                  <span className={s.activityText}>Framework NIST-CSF enabled</span>
-                  <span className={s.activityTime}>2 hours ago</span>
-                </div>
-                <div className={s.activityItem}>
-                  <span className={s.activityText}>New user invited: j.doe@acme.com</span>
-                  <span className={s.activityTime}>Yesterday</span>
-                </div>
-                <div className={s.activityItem}>
-                  <span className={s.activityText}>SLA defaults updated</span>
-                  <span className={s.activityTime}>3 days ago</span>
+                <div className={s.metaItem}>
+                  <span className={s.metaLabel}>SLA · High</span>
+                  <span className={s.metaValue}>{selectedTenant.slaHighHrs}h</span>
                 </div>
               </div>
             </div>
@@ -361,14 +318,16 @@ export default function TenantsPage() {
                   Clone tenant
                 </button>
                 <button type="button" className={s.qaBtnDanger}>
-                  Archive · 90-day retention
+                  Suspend tenant
                 </button>
               </div>
             </div>
           </div>
         ) : (
           <div className={s.sidebar}>
-            <div className={s.emptyState}>Select a tenant to view details</div>
+            <div className={s.emptyState}>
+              {loading ? 'Loading…' : 'Select a tenant to view details'}
+            </div>
           </div>
         )}
       </div>

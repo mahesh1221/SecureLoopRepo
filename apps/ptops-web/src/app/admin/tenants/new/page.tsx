@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Wizard, Callout, Input, Select } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../../lib/auth';
+import { tenantsApi, ApiError } from '../../../../lib/api';
 import * as s from './page.css';
 
-const FW_P1 = ['NIST-CSF', 'CIS v8', 'SOC2 Type II', 'OWASP ASVS', 'CSA CCM'];
-const FW_P2 = ['PCI-DSS', 'ISO 27001', 'HIPAA', 'CMMC', 'FedRAMP', 'SAMA'];
+const FW_P1 = ['NIST-CSF', 'CIS-V8', 'SOC2-Type-II', 'OWASP-ASVS', 'CSA-CCM'];
+const FW_P2 = ['PCI-DSS', 'ISO-27001', 'HIPAA', 'CMMC', 'FedRAMP', 'SAMA'];
 
 const SLA_ROWS = [
   { sev: 'critical', label: 'Critical', dot: 'critical', default: 4 },
@@ -48,15 +50,37 @@ const CHECK_ICON = (
   </svg>
 );
 
+const INDUSTRY_OPTS = [
+  { value: 'finance', label: 'Finance' },
+  { value: 'technology', label: 'Technology' },
+  { value: 'healthcare', label: 'Healthcare' },
+  { value: 'retail', label: 'Retail' },
+  { value: 'logistics', label: 'Logistics' },
+];
+
+const COUNTRY_OPTS = [
+  { value: 'US', label: 'United States' },
+  { value: 'GB', label: 'United Kingdom' },
+  { value: 'AE', label: 'United Arab Emirates' },
+  { value: 'AU', label: 'Australia' },
+  { value: 'CA', label: 'Canada' },
+  { value: 'DE', label: 'Germany' },
+];
+
 export default function TenantCreationWizardPage() {
   const router = useRouter();
+  const { token, loading: authLoading } = useAuth();
   const [step, setStep] = useState(0);
-  const [cloneEnabled, setCloneEnabled] = useState(false);
-  const [selectedFw, setSelectedFw] = useState<string[]>(['NIST-CSF', 'SOC2 Type II']);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const [selectedFw, setSelectedFw] = useState<string[]>(['NIST-CSF', 'SOC2-Type-II']);
   const [slaValues, setSlaValues] = useState({ critical: 4, high: 24, medium: 72, low: 168 });
   const [orgName, setOrgName] = useState('');
   const [orgSlug, setOrgSlug] = useState('');
-  const [plan, setPlan] = useState('enterprise');
+  const [plan, setPlan] = useState<'starter' | 'pro' | 'enterprise'>('enterprise');
+  const [industry, setIndustry] = useState('finance');
+  const [country, setCountry] = useState('US');
   const [adminName, setAdminName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
 
@@ -70,6 +94,60 @@ export default function TenantCreationWizardPage() {
       [sev]: Math.max(1, prev[sev] + delta),
     }));
   };
+
+  const slugValid = /^[a-z0-9-]+$/.test(orgSlug);
+  const stepValid: boolean[] = [
+    Boolean(orgName.trim()) && slugValid,
+    selectedFw.length > 0,
+    Object.values(slaValues).every((v) => v > 0),
+    true,
+    true,
+  ];
+
+  async function activateTenant() {
+    if (!token) {
+      setSubmitError('Not authenticated. Please sign in again.');
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const created = await tenantsApi.create(token, {
+        name: orgName.trim(),
+        slug: orgSlug.trim(),
+        industry: INDUSTRY_OPTS.find((i) => i.value === industry)?.label ?? industry,
+        country,
+        plan,
+        sla: slaValues,
+      });
+
+      const fwResults = await Promise.allSettled(
+        selectedFw.map((fw) =>
+          tenantsApi.setFramework(token, created.id, fw, { enabled: true, autoMap: true }),
+        ),
+      );
+      const fwErrors = fwResults.filter((r) => r.status === 'rejected');
+      if (fwErrors.length > 0) {
+        console.warn(
+          `${fwErrors.length} framework(s) failed to enable on new tenant ${created.id}`,
+        );
+      }
+
+      router.push('/admin/tenants');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setSubmitError(
+          err.status === 409 ? 'A tenant with that slug already exists.' : err.message,
+        );
+      } else if (err instanceof Error) {
+        setSubmitError(err.message);
+      } else {
+        setSubmitError('Failed to create tenant');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   const previewSidebar = (
     <div className={s.previewSidebar}>
@@ -109,25 +187,6 @@ export default function TenantCreationWizardPage() {
       content: (
         <div className={s.wizardBody}>
           <div>
-            <div className={s.cloneBar}>
-              <span className={s.cloneLabel}>Clone existing tenant</span>
-              <div className={s.segPill}>
-                <button
-                  type="button"
-                  className={cn(s.segPillBtn, !cloneEnabled && s.segPillBtnActive)}
-                  onClick={() => setCloneEnabled(false)}
-                >
-                  Off
-                </button>
-                <button
-                  type="button"
-                  className={cn(s.segPillBtn, cloneEnabled && s.segPillBtnActive)}
-                  onClick={() => setCloneEnabled(true)}
-                >
-                  On
-                </button>
-              </div>
-            </div>
             <p className={s.stepLabel}>Step 1 of 5</p>
             <h2 className={s.stepTitle}>Organisation details</h2>
             <div className={s.formRow}>
@@ -144,7 +203,9 @@ export default function TenantCreationWizardPage() {
                 <Input
                   placeholder="acme-corp"
                   value={orgSlug}
-                  onChange={(e) => setOrgSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                  onChange={(e) =>
+                    setOrgSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))
+                  }
                 />
               </div>
             </div>
@@ -152,28 +213,17 @@ export default function TenantCreationWizardPage() {
               <div className={s.formField}>
                 <label className={s.formLabel}>Industry</label>
                 <Select
-                  options={[
-                    { value: 'finance', label: 'Finance' },
-                    { value: 'technology', label: 'Technology' },
-                    { value: 'healthcare', label: 'Healthcare' },
-                    { value: 'retail', label: 'Retail' },
-                    { value: 'logistics', label: 'Logistics' },
-                  ]}
-                  value="finance"
-                  onChange={() => {}}
+                  options={INDUSTRY_OPTS}
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
                 />
               </div>
               <div className={s.formField}>
                 <label className={s.formLabel}>Country</label>
                 <Select
-                  options={[
-                    { value: 'us', label: 'United States' },
-                    { value: 'uk', label: 'United Kingdom' },
-                    { value: 'au', label: 'Australia' },
-                    { value: 'ca', label: 'Canada' },
-                  ]}
-                  value="us"
-                  onChange={() => {}}
+                  options={COUNTRY_OPTS}
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
                 />
               </div>
             </div>
@@ -186,7 +236,7 @@ export default function TenantCreationWizardPage() {
                   { value: 'enterprise', label: 'Enterprise' },
                 ]}
                 value={plan}
-                onChange={(e) => setPlan(e.target.value)}
+                onChange={(e) => setPlan(e.target.value as typeof plan)}
               />
             </div>
           </div>
@@ -347,8 +397,9 @@ export default function TenantCreationWizardPage() {
             <p className={s.stepLabel}>Step 4 of 5</p>
             <h2 className={s.stepTitle}>Admin user</h2>
             <p style={{ fontSize: '13px', color: 'var(--sl-ink-60)', marginBottom: '16px' }}>
-              The admin user receives an invitation email and has full tenant access until
-              additional users are configured.
+              The admin user receives an invitation email and has full tenant access. Provisioning
+              the user account is pending the users service — captured for now and provisioned on
+              activation when that service ships.
             </p>
             <div className={s.adminCard}>
               <div className={s.formRow}>
@@ -392,10 +443,10 @@ export default function TenantCreationWizardPage() {
             </p>
             <div className={s.activateList}>
               {[
-                'Tenant environment provisioned',
-                `${selectedFw.length} compliance framework${selectedFw.length !== 1 ? 's' : ''} enabled and mapped`,
+                `Tenant ${orgName || '—'} (${orgSlug || '—'}) created`,
+                `${selectedFw.length} compliance framework${selectedFw.length !== 1 ? 's' : ''} enabled`,
                 'SLA configuration applied',
-                adminEmail ? `Invitation sent to ${adminEmail}` : 'Admin user invited',
+                adminEmail ? `Invitation queued for ${adminEmail}` : 'Admin user invitation queued',
                 'Audit log initialised',
               ].map((item) => (
                 <div key={item} className={s.activateItem}>
@@ -404,6 +455,21 @@ export default function TenantCreationWizardPage() {
                 </div>
               ))}
             </div>
+            {submitError && (
+              <div
+                role="alert"
+                style={{
+                  marginTop: '16px',
+                  padding: '10px 12px',
+                  borderRadius: '6px',
+                  background: 'var(--sl-crit-bg, rgba(255, 107, 91, 0.14))',
+                  color: 'var(--sl-crit, #FF6B5B)',
+                  fontSize: '13px',
+                }}
+              >
+                {submitError}
+              </div>
+            )}
           </div>
           {previewSidebar}
         </div>
@@ -412,12 +478,25 @@ export default function TenantCreationWizardPage() {
   ];
 
   const STEP_LABELS: Record<number, string> = {
-    0: 'Save as draft',
-    1: 'Next · Default SLA',
+    0: 'Next · Frameworks',
+    1: 'Next · SLA',
     2: 'Next · Admin user',
     3: 'Next · Activate',
-    4: 'Activate tenant',
+    4: submitting ? 'Activating…' : 'Activate tenant',
   };
+
+  const onPrimary = async () => {
+    if (step < steps.length - 1) {
+      if (!stepValid[step]) return;
+      setStep(step + 1);
+    } else {
+      await activateTenant();
+    }
+  };
+
+  const isFinal = step === steps.length - 1;
+  const primaryDisabled =
+    !stepValid[step] || authLoading || (isFinal && submitting) || (isFinal && !token);
 
   return (
     <Wizard
@@ -425,13 +504,11 @@ export default function TenantCreationWizardPage() {
       title="Create new tenant"
       steps={steps}
       currentStep={step}
-      onNext={() => {
-        if (step < steps.length - 1) setStep(step + 1);
-        else router.push('/admin/tenants');
-      }}
+      onNext={onPrimary}
       onBack={() => setStep(Math.max(0, step - 1))}
       onClose={() => router.push('/admin/tenants')}
       nextLabel={STEP_LABELS[step] ?? 'Next'}
+      nextDisabled={primaryDisabled}
     />
   );
 }

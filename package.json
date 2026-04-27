@@ -25,12 +25,20 @@
     "stack:logs": "docker compose logs -f",
     "stack:ps": "docker compose ps",
     "stack:reset": "bash infra/scripts/reset.sh",
-    "stack:setup": "bash infra/scripts/dev-setup.sh"
+    "stack:setup": "bash infra/scripts/dev-setup.sh",
+    "db:migrate": "pnpm -r --if-present run db:migrate",
+    "db:seed": "tsx infra/scripts/seed.ts"
   },
   "devDependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "@secureloop/db": "workspace:*",
     "@secureloop/eslint-config": "workspace:*",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.4",
     "eslint": "^9.13.0",
+    "postgres": "^3.4.5",
     "prettier": "^3.3.3",
+    "tsx": "^4.19.2",
     "typescript": "^5.5.0"
   },
   "pnpm": {

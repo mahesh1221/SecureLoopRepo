@@ -1,9 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Breadcrumb, Select } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
+import { useAuth } from '../../../lib/auth';
+import { tenantsApi, type Tenant, type TenantFramework } from '../../../lib/api';
 import * as s from './page.css';
+
+// Map server framework_id (e.g. 'NIST-CSF') to the static metadata id used by
+// the mock display so we can overlay live status onto the rich UI.
+const FW_ID_TO_DISPLAY: Record<string, string> = {
+  'NIST-CSF': 'nist',
+  'CIS-V8': 'cis',
+  'SOC2-Type-II': 'soc2',
+  'OWASP-ASVS': 'owasp',
+  'CSA-CCM': 'csa',
+  'PCI-DSS': 'pci',
+  'ISO-27001': 'iso',
+  HIPAA: 'hipaa',
+};
+const DISPLAY_TO_FW_ID = Object.fromEntries(
+  Object.entries(FW_ID_TO_DISPLAY).map(([k, v]) => [v, k]),
+) as Record<string, string>;
 
 type FwStatus = 'enabled' | 'processing' | 'disabled';
 
@@ -98,25 +116,104 @@ const FRAMEWORKS: Framework[] = [
   },
 ];
 
-const TENANTS = [
-  { value: '1', label: 'Acme Financial Corp' },
-  { value: '2', label: 'CyberShield Ltd' },
-  { value: '3', label: 'MediTrust Hospital' },
-];
-
 const QUEUE_ITEMS = [
   { name: 'CIS v8', progress: 39 },
   { name: 'Acme · NIST-CSF re-sync', progress: 74 },
 ];
 
-const p1 = FRAMEWORKS.filter((f) => f.phase === 'P1');
-const p2 = FRAMEWORKS.filter((f) => f.phase === 'P2');
-
 export default function FrameworkConfigPage() {
-  const [tenant, setTenant] = useState('1');
+  const { token, loading: authLoading } = useAuth();
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [tenant, setTenant] = useState<string>('');
+  const [serverFrameworks, setServerFrameworks] = useState<TenantFramework[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const processingCount = FRAMEWORKS.filter((f) => f.status === 'processing').length;
-  const tenantName = TENANTS.find((t) => t.value === tenant)?.label ?? '';
+  useEffect(() => {
+    if (authLoading || !token) return;
+    let cancelled = false;
+    tenantsApi
+      .list(token)
+      .then((res) => {
+        if (cancelled) return;
+        setTenants(res.data);
+        if (res.data[0] && !tenant) setTenant(res.data[0].id);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // tenant intentionally excluded: only auto-pick on first load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, authLoading]);
+
+  useEffect(() => {
+    if (!token || !tenant) return;
+    let cancelled = false;
+    tenantsApi
+      .listFrameworks(token, tenant)
+      .then((res) => {
+        if (!cancelled) setServerFrameworks(res.data);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, tenant]);
+
+  const TENANT_OPTS = useMemo(
+    () => tenants.map((t) => ({ value: t.id, label: t.name })),
+    [tenants],
+  );
+
+  // Overlay server status onto mock metadata. Frameworks not in the server
+  // response are treated as 'disabled' (their compiled-in default).
+  const liveFrameworks = useMemo(() => {
+    const byDisplayId = new Map(
+      serverFrameworks.map((sf) => [FW_ID_TO_DISPLAY[sf.frameworkId] ?? sf.frameworkId, sf]),
+    );
+    return FRAMEWORKS.map((f): Framework => {
+      const live = byDisplayId.get(f.id);
+      if (!live) return { ...f, status: 'disabled' };
+      const mapped = {
+        ...f,
+        status: live.status === 'error' ? 'disabled' : (live.status as FwStatus),
+        mappedControls: live.mappedControls,
+        totalControls: live.totalControls || f.totalControls || 0,
+      };
+      if (live.status === 'processing' && live.totalControls > 0) {
+        return {
+          ...mapped,
+          progress: Math.round((live.mappedControls / live.totalControls) * 100),
+          progressText: `${live.mappedControls}/${live.totalControls}`,
+        };
+      }
+      return mapped;
+    });
+  }, [serverFrameworks]);
+
+  const processingCount = liveFrameworks.filter((f) => f.status === 'processing').length;
+  const tenantName = tenants.find((t) => t.id === tenant)?.name ?? '';
+
+  const toggleFramework = async (displayId: string, currentlyEnabled: boolean) => {
+    if (!token || !tenant) return;
+    const fwId = DISPLAY_TO_FW_ID[displayId] ?? displayId;
+    try {
+      const updated = await tenantsApi.setFramework(token, tenant, fwId, {
+        enabled: !currentlyEnabled,
+        autoMap: true,
+      });
+      setServerFrameworks((prev) => {
+        const others = prev.filter((p) => p.frameworkId !== fwId);
+        return [...others, updated];
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to toggle framework');
+    }
+  };
 
   return (
     <div className={s.page}>
@@ -145,8 +242,8 @@ export default function FrameworkConfigPage() {
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           </svg>
         </div>
-        <span className={s.tenantBarName}>{tenantName}</span>
-        <Select options={TENANTS} value={tenant} onChange={(e) => setTenant(e.target.value)} />
+        <span className={s.tenantBarName}>{tenantName || '—'}</span>
+        <Select options={TENANT_OPTS} value={tenant} onChange={(e) => setTenant(e.target.value)} />
         {processingCount > 0 && (
           <div className={s.processingPulse}>
             <div className={s.pulseDot} />
@@ -155,10 +252,19 @@ export default function FrameworkConfigPage() {
         )}
       </div>
 
+      {error && (
+        <div role="alert" style={{ padding: '12px', color: 'var(--sl-crit)', fontSize: '13px' }}>
+          {error}
+        </div>
+      )}
+
       <div className={s.bodyGrid}>
         {/* Framework grid */}
         <div>
-          {[['P1', p1] as const, ['P2', p2] as const].map(([phase, fws]) => (
+          {[
+            ['P1', liveFrameworks.filter((f) => f.phase === 'P1')] as const,
+            ['P2', liveFrameworks.filter((f) => f.phase === 'P2')] as const,
+          ].map(([phase, fws]) => (
             <div key={phase}>
               <div className={s.phaseHead}>
                 <span className={cn(s.phaseChip, phase === 'P1' ? s.phaseChipP1 : s.phaseChipP2)}>
@@ -178,6 +284,16 @@ export default function FrameworkConfigPage() {
                       fw.status === 'processing' && s.fwCardProcessing,
                       fw.status === 'disabled' && s.fwCardDisabled,
                     )}
+                    onClick={() => toggleFramework(fw.id, fw.status === 'enabled')}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        toggleFramework(fw.id, fw.status === 'enabled');
+                      }
+                    }}
+                    style={{ cursor: tenant ? 'pointer' : 'not-allowed' }}
                   >
                     <div className={s.fwCardHeader}>
                       <span className={s.fwCardTitle}>{fw.name}</span>
@@ -230,16 +346,15 @@ export default function FrameworkConfigPage() {
             <div className={s.statRow}>
               <span className={s.statLabel}>Active frameworks</span>
               <span className={s.statValue}>
-                {FRAMEWORKS.filter((f) => f.status === 'enabled').length}
+                {liveFrameworks.filter((f) => f.status === 'enabled').length}
               </span>
             </div>
             <div className={s.statRow}>
               <span className={s.statLabel}>Controls monitored</span>
               <span className={s.statValue}>
-                {FRAMEWORKS.filter((f) => f.status === 'enabled').reduce(
-                  (a, f) => a + (f.mappedControls ?? 0),
-                  0,
-                )}
+                {liveFrameworks
+                  .filter((f) => f.status === 'enabled')
+                  .reduce((a, f) => a + (f.mappedControls ?? 0), 0)}
               </span>
             </div>
             <div className={s.statRow}>

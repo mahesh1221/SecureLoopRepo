@@ -24,3 +24,6 @@ docs/*.docx
 
 # Next.js generated
 **/next-env.d.ts
+
+# Drizzle Kit generated — leave SQL + meta JSON untouched
+**/migrations/**
