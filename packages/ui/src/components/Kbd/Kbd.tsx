@@ -44,6 +44,6 @@ export const Kbd = forwardRef<HTMLSpanElement, KbdProps>(
         ))}
       </span>
     );
-  }
+  },
 );
 Kbd.displayName = 'Kbd';

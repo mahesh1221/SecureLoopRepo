@@ -10,12 +10,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secureloop_dev}
       POSTGRES_DB: ${POSTGRES_DB:-secureloop}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./infra/scripts/postgres-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-secureloop} -d ${POSTGRES_DB:-secureloop}"]
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-secureloop} -d ${POSTGRES_DB:-secureloop}']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,13 +27,14 @@ services:
     image: redis:7-alpine
     container_name: secureloop-redis
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-secureloop_dev}"]
+    command:
+      ['redis-server', '--appendonly', 'yes', '--requirepass', '${REDIS_PASSWORD:-secureloop_dev}']
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-secureloop_dev}", "ping"]
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD:-secureloop_dev}', 'ping']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -48,12 +50,12 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-secureloop_dev}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
     ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+      - '${RABBITMQ_PORT:-5672}:5672'
+      - '${RABBITMQ_MGMT_PORT:-15672}:15672'
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
       interval: 10s
       timeout: 5s
       retries: 10
@@ -66,11 +68,11 @@ services:
     restart: unless-stopped
     environment:
       discovery.type: single-node
-      xpack.security.enabled: "false"
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      xpack.security.enabled: 'false'
+      ES_JAVA_OPTS: '-Xms512m -Xmx512m'
       cluster.name: secureloop-dev
     ports:
-      - "${ELASTICSEARCH_PORT:-9200}:9200"
+      - '${ELASTICSEARCH_PORT:-9200}:9200'
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ulimits:
@@ -78,7 +80,11 @@ services:
         soft: -1
         hard: -1
     healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -E '\"status\":\"(green|yellow)\"'"]
+      test:
+        [
+          'CMD-SHELL',
+          'curl -s http://localhost:9200/_cluster/health | grep -E ''"status":"(green|yellow)"''',
+        ]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -94,12 +100,12 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-secureloop}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-secureloop_dev}
     ports:
-      - "${MINIO_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+      - '${MINIO_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
     volumes:
       - minio-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://localhost:9000/minio/health/live"]
+      test: ['CMD-SHELL', 'curl -fs http://localhost:9000/minio/health/live']
       interval: 10s
       timeout: 5s
       retries: 10
@@ -111,10 +117,10 @@ services:
     container_name: secureloop-mailhog
     restart: unless-stopped
     ports:
-      - "${MAILHOG_SMTP_PORT:-1025}:1025"
-      - "${MAILHOG_UI_PORT:-8025}:8025"
+      - '${MAILHOG_SMTP_PORT:-1025}:1025'
+      - '${MAILHOG_UI_PORT:-8025}:8025'
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8025/"]
+      test: ['CMD', 'wget', '--quiet', '--spider', 'http://localhost:8025/']
       interval: 10s
       timeout: 5s
       retries: 5

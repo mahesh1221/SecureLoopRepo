@@ -431,7 +431,11 @@ export const qaBtnDanger = style({
   textAlign: 'left',
   transition: 'all 100ms ease',
   selectors: {
-    '&:hover': { background: theme.sev.criticalBg, color: theme.sev.critical, borderColor: theme.sev.critical },
+    '&:hover': {
+      background: theme.sev.criticalBg,
+      color: theme.sev.critical,
+      borderColor: theme.sev.critical,
+    },
   },
 });
 

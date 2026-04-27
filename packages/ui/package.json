@@ -14,12 +14,20 @@
     },
     "./css": "./dist/index.css"
   },
-  "files": ["dist", "src"],
-  "sideEffects": ["*.css", "*.css.ts"],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css",
+    "*.css.ts"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -32,12 +40,19 @@
     "@vanilla-extract/recipes": "^0.5.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vanilla-extract/esbuild-plugin": "^2.3.0",
+    "@vanilla-extract/vite-plugin": "^4.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.4"
   }
 }

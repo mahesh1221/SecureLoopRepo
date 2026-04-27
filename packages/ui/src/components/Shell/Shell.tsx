@@ -35,7 +35,7 @@ export const Rail = forwardRef<HTMLElement, RailProps>(
       {brandGlyph !== undefined && <div className={brand}>{brandGlyph}</div>}
       {children}
     </aside>
-  )
+  ),
 );
 Rail.displayName = 'Rail';
 
@@ -58,7 +58,7 @@ export const RailItem = forwardRef<HTMLButtonElement, RailItemProps>(
     >
       {children}
     </button>
-  )
+  ),
 );
 RailItem.displayName = 'RailItem';
 
@@ -74,17 +74,13 @@ export const Topbar = forwardRef<HTMLElement, TopbarProps>(
     <header ref={ref} className={cn(topbar, className)} {...rest}>
       {children}
     </header>
-  )
+  ),
 );
 Topbar.displayName = 'Topbar';
 
 export const TopbarSpacer = () => <div className={topbarSpacer} />;
 
-export const TopbarRight = ({
-  className,
-  children,
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) => (
+export const TopbarRight = ({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) => (
   <div className={cn(topbarRight, className)} {...rest}>
     {children}
   </div>
@@ -119,6 +115,6 @@ export const Main = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
     <main ref={ref} className={cn(main, className)} {...rest}>
       {children}
     </main>
-  )
+  ),
 );
 Main.displayName = 'Main';

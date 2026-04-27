@@ -20,6 +20,6 @@ export const LiveDot = forwardRef<HTMLSpanElement, LiveDotProps>(
       {label}
       {interval ? ` · ${interval}` : null}
     </span>
-  )
+  ),
 );
 LiveDot.displayName = 'LiveDot';

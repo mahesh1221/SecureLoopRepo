@@ -1,5 +1,10 @@
 import fp from 'fastify-plugin';
-import type { FastifyPluginAsync, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify';
+import type {
+  FastifyPluginAsync,
+  FastifyReply,
+  FastifyRequest,
+  preHandlerHookHandler,
+} from 'fastify';
 import { verifyAccessToken } from './jwt';
 import type { AuthPluginOptions, Role } from './types';
 
@@ -56,4 +61,3 @@ export function requireRole(...allowed: Role[]): preHandlerHookHandler {
     }
   };
 }
-

@@ -7,13 +7,13 @@
  * and preserve the --s-N contract in the generated CSS vars.
  */
 export const space = {
-  's1': '4px',
-  's2': '8px',
-  's3': '12px',
-  's4': '16px',
-  's5': '24px',
-  's6': '32px',
-  's7': '48px',
+  s1: '4px',
+  s2: '8px',
+  s3: '12px',
+  s4: '16px',
+  s5: '24px',
+  s6: '32px',
+  s7: '48px',
 } as const;
 
 export type SpaceToken = keyof typeof space;

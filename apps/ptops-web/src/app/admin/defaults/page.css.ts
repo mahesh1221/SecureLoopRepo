@@ -293,7 +293,12 @@ export const impactStat = style({
 });
 
 export const impactLabel = style({ fontSize: fontSize.body, color: theme.ink['60'] });
-export const impactValue = style({ fontFamily: fontFamily.mono, fontSize: fontSize.body, fontWeight: fontWeight.semibold, color: theme.ink['100'] });
+export const impactValue = style({
+  fontFamily: fontFamily.mono,
+  fontSize: fontSize.body,
+  fontWeight: fontWeight.semibold,
+  color: theme.ink['100'],
+});
 
 export const diffItem = style({
   padding: `${space.s2} 0`,
@@ -301,9 +306,21 @@ export const diffItem = style({
   selectors: { '&:last-child': { borderBottom: 'none' } },
 });
 
-export const diffLabel = style({ fontSize: fontSize.body, color: theme.ink['80'], marginBottom: '2px' });
-export const diffOld = style({ fontSize: fontSize.label, color: theme.ink['40'], fontFamily: fontFamily.mono });
-export const diffNew = style({ fontSize: fontSize.label, color: theme.sev.good, fontFamily: fontFamily.mono });
+export const diffLabel = style({
+  fontSize: fontSize.body,
+  color: theme.ink['80'],
+  marginBottom: '2px',
+});
+export const diffOld = style({
+  fontSize: fontSize.label,
+  color: theme.ink['40'],
+  fontFamily: fontFamily.mono,
+});
+export const diffNew = style({
+  fontSize: fontSize.label,
+  color: theme.sev.good,
+  fontFamily: fontFamily.mono,
+});
 
 export const historyItem = style({
   padding: `${space.s2} 0`,
@@ -312,7 +329,11 @@ export const historyItem = style({
 });
 
 export const historyText = style({ fontSize: fontSize.body, color: theme.ink['80'] });
-export const historyTime = style({ fontSize: fontSize.label, color: theme.ink['40'], marginTop: '2px' });
+export const historyTime = style({
+  fontSize: fontSize.label,
+  color: theme.ink['40'],
+  marginTop: '2px',
+});
 
 // ─── Footer actions ───────────────────────────────────────────────
 export const footerActions = style({

@@ -5,9 +5,7 @@ import { cn } from '../../utils/cn';
 
 type CardVariants = NonNullable<RecipeVariants<typeof card>>;
 
-export interface CardProps
-  extends HTMLAttributes<HTMLDivElement>,
-    CardVariants {
+export interface CardProps extends HTMLAttributes<HTMLDivElement>, CardVariants {
   children?: ReactNode;
 }
 
@@ -17,14 +15,10 @@ export interface CardProps
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ elevation, interactive, className, children, ...rest }, ref) => (
-    <div
-      ref={ref}
-      className={cn(card({ elevation, interactive }), className)}
-      {...rest}
-    >
+    <div ref={ref} className={cn(card({ elevation, interactive }), className)} {...rest}>
       {children}
     </div>
-  )
+  ),
 );
 Card.displayName = 'Card';
 
@@ -38,13 +32,11 @@ export interface CardHeadProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
 export const CardHead = forwardRef<HTMLDivElement, CardHeadProps>(
   ({ title, meta, className, children, ...rest }, ref) => (
     <div ref={ref} className={cn(cardHead, className)} {...rest}>
-      {title !== undefined ? (
-        <h2 className={cardTitle}>{title}</h2>
-      ) : null}
+      {title !== undefined ? <h2 className={cardTitle}>{title}</h2> : null}
       {meta !== undefined ? <span className={cardMeta}>{meta}</span> : null}
       {children}
     </div>
-  )
+  ),
 );
 CardHead.displayName = 'CardHead';
 
@@ -53,6 +45,6 @@ export const CardBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement
     <div ref={ref} className={cn(cardBody, className)} {...rest}>
       {children}
     </div>
-  )
+  ),
 );
 CardBody.displayName = 'CardBody';

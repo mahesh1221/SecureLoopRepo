@@ -23,18 +23,16 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
         return (
           <span key={`${crumb.label}-${i}`} className={itemCls}>
             {i > 0 && (
-              <span className={separator} aria-hidden="true">/</span>
+              <span className={separator} aria-hidden="true">
+                /
+              </span>
             )}
             {isLast ? (
               <span className={itemCurrent} aria-current="page">
                 {crumb.label}
               </span>
             ) : (
-              <button
-                type="button"
-                className={itemBtn}
-                onClick={crumb.onClick}
-              >
+              <button type="button" className={itemBtn} onClick={crumb.onClick}>
                 {crumb.label}
               </button>
             )}

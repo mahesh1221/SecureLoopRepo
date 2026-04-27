@@ -44,7 +44,7 @@ export const Gauge = forwardRef<HTMLDivElement, GaugeProps>(
       className,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const clamped = Math.max(min, Math.min(max, value));
     const pct = (clamped - min) / (max - min);
@@ -88,6 +88,6 @@ export const Gauge = forwardRef<HTMLDivElement, GaugeProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 Gauge.displayName = 'Gauge';

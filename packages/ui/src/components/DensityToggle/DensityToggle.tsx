@@ -49,7 +49,7 @@ export function DensityToggle({
       if (!value) setInternal(next);
       onChange?.(next);
     },
-    [value, onChange]
+    [value, onChange],
   );
 
   return (

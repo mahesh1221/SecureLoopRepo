@@ -91,16 +91,59 @@ const TILES: MetricTile[] = [
 ];
 
 const TENANT_IMPACTS: TenantImpact[] = [
-  { name: 'MediTrust Hospital', severity: 'crit', desc: 'ServiceNow sync failure — 12 open findings not synced', users: 89 },
-  { name: 'RetailMax Group', severity: 'high', desc: 'Qualys rate limit — scanner polling paused', users: 15 },
-  { name: 'CyberShield Ltd', severity: 'warn', desc: 'Azure AD auth degraded — some SSO logins slow', users: 38 },
+  {
+    name: 'MediTrust Hospital',
+    severity: 'crit',
+    desc: 'ServiceNow sync failure — 12 open findings not synced',
+    users: 89,
+  },
+  {
+    name: 'RetailMax Group',
+    severity: 'high',
+    desc: 'Qualys rate limit — scanner polling paused',
+    users: 15,
+  },
+  {
+    name: 'CyberShield Ltd',
+    severity: 'warn',
+    desc: 'Azure AD auth degraded — some SSO logins slow',
+    users: 38,
+  },
 ];
 
 const INCIDENTS: Incident[] = [
-  { id: 'INC-0041', started: 'Apr 27, 09:14', duration: 'Ongoing', service: 'ServiceNow connector', tenants: 7, status: 'open' },
-  { id: 'INC-0040', started: 'Apr 26, 22:51', duration: '1h 14m', service: 'Database · primary', tenants: 0, status: 'resolved' },
-  { id: 'INC-0039', started: 'Apr 25, 15:08', duration: '48m', service: 'Auth service', tenants: 3, status: 'resolved' },
-  { id: 'INC-0038', started: 'Apr 24, 11:33', duration: '2h 07m', service: 'Qualys poller', tenants: 12, status: 'mitigated' },
+  {
+    id: 'INC-0041',
+    started: 'Apr 27, 09:14',
+    duration: 'Ongoing',
+    service: 'ServiceNow connector',
+    tenants: 7,
+    status: 'open',
+  },
+  {
+    id: 'INC-0040',
+    started: 'Apr 26, 22:51',
+    duration: '1h 14m',
+    service: 'Database · primary',
+    tenants: 0,
+    status: 'resolved',
+  },
+  {
+    id: 'INC-0039',
+    started: 'Apr 25, 15:08',
+    duration: '48m',
+    service: 'Auth service',
+    tenants: 3,
+    status: 'resolved',
+  },
+  {
+    id: 'INC-0038',
+    started: 'Apr 24, 11:33',
+    duration: '2h 07m',
+    service: 'Qualys poller',
+    tenants: 12,
+    status: 'mitigated',
+  },
 ];
 
 function Sparkline({ points, variant }: { points: number[]; variant: TileVariant }) {
@@ -120,9 +163,20 @@ function Sparkline({ points, variant }: { points: number[]; variant: TileVariant
     crit: { stroke: 'var(--sl-status-critical)', fill: 'var(--sl-status-critical-bg)' },
   };
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className={s.sparkline} aria-hidden="true" preserveAspectRatio="none">
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className={s.sparkline}
+      aria-hidden="true"
+      preserveAspectRatio="none"
+    >
       <path d={areaPath} fill={colors[variant].fill} opacity={0.6} />
-      <path d={linePath} stroke={colors[variant].stroke} strokeWidth={1.5} fill="none" strokeLinejoin="round" />
+      <path
+        d={linePath}
+        stroke={colors[variant].stroke}
+        strokeWidth={1.5}
+        fill="none"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -132,7 +186,9 @@ export default function PlatformHealthPage() {
 
   return (
     <div className={s.page}>
-      <Breadcrumb items={[{ label: 'Platform Admin', onClick: () => {} }, { label: 'Platform Health' }]} />
+      <Breadcrumb
+        items={[{ label: 'Platform Admin', onClick: () => {} }, { label: 'Platform Health' }]}
+      />
 
       {/* Page header */}
       <div className={s.pageHeader}>
@@ -142,7 +198,9 @@ export default function PlatformHealthPage() {
           <Button variant="ghost" size="sm" onClick={() => setPaused((p) => !p)}>
             {paused ? 'Resume' : 'Pause'}
           </Button>
-          <Button variant="ghost" size="sm">Alert config</Button>
+          <Button variant="ghost" size="sm">
+            Alert config
+          </Button>
         </div>
       </div>
 
@@ -164,15 +222,28 @@ export default function PlatformHealthPage() {
       {/* Incident banner */}
       <div className={s.incidentBanner}>
         <span className={s.incidentIcon}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
         </span>
         <span className={s.incidentText}>
-          <strong>INC-0041</strong> · ServiceNow connector failing for 7 tenants — auth token rotation in progress
+          <strong>INC-0041</strong> · ServiceNow connector failing for 7 tenants — auth token
+          rotation in progress
         </span>
-        <Button variant="ghost" size="sm">View incident</Button>
+        <Button variant="ghost" size="sm">
+          View incident
+        </Button>
       </div>
 
       {/* Body grid */}
@@ -183,8 +254,17 @@ export default function PlatformHealthPage() {
             <div key={tile.id} className={s.metricTile}>
               <div className={s.tileTop}>
                 <div className={cn(s.tileIconWrap, s.tileIconVariants[tile.variant])}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                   </svg>
                 </div>
                 <div style={{ flex: 1 }}>
@@ -212,7 +292,13 @@ export default function PlatformHealthPage() {
         <div className={s.sidebar}>
           <div className={s.sidebarHeader}>
             <span>Tenant impact</span>
-            <span style={{ fontSize: '11px', color: 'var(--sl-ink-40)', fontFamily: 'var(--sl-font-mono)' }}>
+            <span
+              style={{
+                fontSize: '11px',
+                color: 'var(--sl-ink-40)',
+                fontFamily: 'var(--sl-font-mono)',
+              }}
+            >
               {TENANT_IMPACTS.length} affected
             </span>
           </div>

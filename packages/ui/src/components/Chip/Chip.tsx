@@ -5,9 +5,7 @@ import { cn } from '../../utils/cn';
 
 type ChipVariants = NonNullable<RecipeVariants<typeof chip>>;
 
-export interface ChipProps
-  extends HTMLAttributes<HTMLSpanElement>,
-    ChipVariants {
+export interface ChipProps extends HTMLAttributes<HTMLSpanElement>, ChipVariants {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   children?: ReactNode;
@@ -18,19 +16,12 @@ export interface ChipProps
  * per-tenant isolation indicators, filter pills, tenant/env tags.
  */
 export const Chip = forwardRef<HTMLSpanElement, ChipProps>(
-  (
-    { tone, clickable, leftIcon, rightIcon, className, children, ...rest },
-    ref
-  ) => (
-    <span
-      ref={ref}
-      className={cn(chip({ tone, clickable }), className)}
-      {...rest}
-    >
+  ({ tone, clickable, leftIcon, rightIcon, className, children, ...rest }, ref) => (
+    <span ref={ref} className={cn(chip({ tone, clickable }), className)} {...rest}>
       {leftIcon}
       {children}
       {rightIcon}
     </span>
-  )
+  ),
 );
 Chip.displayName = 'Chip';

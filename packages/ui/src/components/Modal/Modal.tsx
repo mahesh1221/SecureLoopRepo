@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useRef,
-  type HTMLAttributes,
-  type ReactNode,
-  type MutableRefObject,
-} from 'react';
+import { forwardRef, useEffect, useRef, type ReactNode, type MutableRefObject } from 'react';
 import { createPortal } from 'react-dom';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
 import {
@@ -48,18 +41,8 @@ export interface ModalProps extends DialogVariants {
  */
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
-    {
-      open,
-      onClose,
-      kind,
-      title,
-      hideHeader,
-      footer,
-      closeOnBackdrop = true,
-      children,
-      className,
-    },
-    ref
+    { open, onClose, kind, title, hideHeader, footer, closeOnBackdrop = true, children, className },
+    ref,
   ) => {
     const dialogRef = useRef<HTMLDivElement | null>(null);
 
@@ -109,12 +92,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           {!hideHeader && (
             <header className={headerCls}>
               {title && <h2 className={headerTitle}>{title}</h2>}
-              <button
-                type="button"
-                className={closeBtn}
-                onClick={onClose}
-                aria-label="Close"
-              >
+              <button type="button" className={closeBtn} onClick={onClose} aria-label="Close">
                 <svg
                   width="18"
                   height="18"
@@ -135,9 +113,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           {footer && <footer className={footerCls}>{footer}</footer>}
         </div>
       </div>,
-      document.body
+      document.body,
     );
-  }
+  },
 );
 Modal.displayName = 'Modal';
 

@@ -4,6 +4,7 @@
   "private": true,
   "description": "SecureLoop GRC Platform · monorepo",
   "packageManager": "pnpm@9.0.0",
+  "type": "module",
   "workspaces": [
     "packages/*",
     "apps/*",
@@ -13,6 +14,11 @@
     "build": "pnpm -r run build",
     "dev": "pnpm -r --parallel run dev",
     "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r --if-present run test",
     "clean": "pnpm -r exec rm -rf dist node_modules",
     "stack:up": "docker compose up -d",
     "stack:down": "docker compose down",
@@ -22,6 +28,9 @@
     "stack:setup": "bash infra/scripts/dev-setup.sh"
   },
   "devDependencies": {
+    "@secureloop/eslint-config": "workspace:*",
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.0"
   },
   "pnpm": {

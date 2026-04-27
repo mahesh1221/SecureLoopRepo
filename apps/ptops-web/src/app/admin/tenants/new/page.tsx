@@ -17,14 +17,34 @@ const SLA_ROWS = [
 ] as const;
 
 const INFO_ICON = (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
   </svg>
 );
 
 const CHECK_ICON = (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 );
 
@@ -41,9 +61,7 @@ export default function TenantCreationWizardPage() {
   const [adminEmail, setAdminEmail] = useState('');
 
   const toggleFw = (fw: string) => {
-    setSelectedFw((prev) =>
-      prev.includes(fw) ? prev.filter((f) => f !== fw) : [...prev, fw]
-    );
+    setSelectedFw((prev) => (prev.includes(fw) ? prev.filter((f) => f !== fw) : [...prev, fw]));
   };
 
   const adjSla = (sev: keyof typeof slaValues, delta: number) => {
@@ -98,12 +116,16 @@ export default function TenantCreationWizardPage() {
                   type="button"
                   className={cn(s.segPillBtn, !cloneEnabled && s.segPillBtnActive)}
                   onClick={() => setCloneEnabled(false)}
-                >Off</button>
+                >
+                  Off
+                </button>
                 <button
                   type="button"
                   className={cn(s.segPillBtn, cloneEnabled && s.segPillBtnActive)}
                   onClick={() => setCloneEnabled(true)}
-                >On</button>
+                >
+                  On
+                </button>
               </div>
             </div>
             <p className={s.stepLabel}>Step 1 of 5</p>
@@ -111,32 +133,48 @@ export default function TenantCreationWizardPage() {
             <div className={s.formRow}>
               <div className={s.formField}>
                 <label className={s.formLabel}>Organisation name</label>
-                <Input placeholder="Acme Corp" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
+                <Input
+                  placeholder="Acme Corp"
+                  value={orgName}
+                  onChange={(e) => setOrgName(e.target.value)}
+                />
               </div>
               <div className={s.formField}>
                 <label className={s.formLabel}>Tenant slug</label>
-                <Input placeholder="acme-corp" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))} />
+                <Input
+                  placeholder="acme-corp"
+                  value={orgSlug}
+                  onChange={(e) => setOrgSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                />
               </div>
             </div>
             <div className={s.formRow}>
               <div className={s.formField}>
                 <label className={s.formLabel}>Industry</label>
-                <Select options={[
-                  { value: 'finance', label: 'Finance' },
-                  { value: 'technology', label: 'Technology' },
-                  { value: 'healthcare', label: 'Healthcare' },
-                  { value: 'retail', label: 'Retail' },
-                  { value: 'logistics', label: 'Logistics' },
-                ]} value="finance" onChange={() => {}} />
+                <Select
+                  options={[
+                    { value: 'finance', label: 'Finance' },
+                    { value: 'technology', label: 'Technology' },
+                    { value: 'healthcare', label: 'Healthcare' },
+                    { value: 'retail', label: 'Retail' },
+                    { value: 'logistics', label: 'Logistics' },
+                  ]}
+                  value="finance"
+                  onChange={() => {}}
+                />
               </div>
               <div className={s.formField}>
                 <label className={s.formLabel}>Country</label>
-                <Select options={[
-                  { value: 'us', label: 'United States' },
-                  { value: 'uk', label: 'United Kingdom' },
-                  { value: 'au', label: 'Australia' },
-                  { value: 'ca', label: 'Canada' },
-                ]} value="us" onChange={() => {}} />
+                <Select
+                  options={[
+                    { value: 'us', label: 'United States' },
+                    { value: 'uk', label: 'United Kingdom' },
+                    { value: 'au', label: 'Australia' },
+                    { value: 'ca', label: 'Canada' },
+                  ]}
+                  value="us"
+                  onChange={() => {}}
+                />
               </div>
             </div>
             <div className={s.formField}>
@@ -164,7 +202,8 @@ export default function TenantCreationWizardPage() {
             <p className={s.stepLabel}>Step 2 of 5</p>
             <h2 className={s.stepTitle}>Compliance frameworks</h2>
             <Callout icon={INFO_ICON} tone="brand">
-              Frameworks marked P1 are auto-mapped at activation. P2 frameworks can be enabled later.
+              Frameworks marked P1 are auto-mapped at activation. P2 frameworks can be enabled
+              later.
             </Callout>
             <div style={{ marginTop: '16px' }}>
               <div className={s.phaseHead}>
@@ -235,7 +274,8 @@ export default function TenantCreationWizardPage() {
             <p className={s.stepLabel}>Step 3 of 5</p>
             <h2 className={s.stepTitle}>SLA configuration</h2>
             <Callout icon={INFO_ICON} tone="brand">
-              SLA hours define the remediation deadline after a finding is confirmed. These override platform defaults for this tenant.
+              SLA hours define the remediation deadline after a finding is confirmed. These override
+              platform defaults for this tenant.
             </Callout>
             <div style={{ marginTop: '16px' }}>
               <div className={s.slaRow}>
@@ -251,18 +291,46 @@ export default function TenantCreationWizardPage() {
                     {row.label}
                   </div>
                   <div className={s.slaStepper}>
-                    <button type="button" className={s.slaStepBtn} onClick={() => adjSla(row.sev, -1)}>−</button>
+                    <button
+                      type="button"
+                      className={s.slaStepBtn}
+                      onClick={() => adjSla(row.sev, -1)}
+                    >
+                      −
+                    </button>
                     <input
                       className={s.slaInput}
                       type="number"
                       value={slaValues[row.sev]}
-                      onChange={(e) => setSlaValues((p) => ({ ...p, [row.sev]: Number(e.target.value) }))}
+                      onChange={(e) =>
+                        setSlaValues((p) => ({ ...p, [row.sev]: Number(e.target.value) }))
+                      }
                       min={1}
                     />
-                    <button type="button" className={s.slaStepBtn} onClick={() => adjSla(row.sev, 1)}>+</button>
+                    <button
+                      type="button"
+                      className={s.slaStepBtn}
+                      onClick={() => adjSla(row.sev, 1)}
+                    >
+                      +
+                    </button>
                   </div>
-                  <Select options={[{ value: '24', label: '24h' }, { value: '48', label: '48h' }]} value="24" onChange={() => {}} />
-                  <Select options={[{ value: 'business', label: 'Business hours' }, { value: 'calendar', label: 'Calendar' }]} value="business" onChange={() => {}} />
+                  <Select
+                    options={[
+                      { value: '24', label: '24h' },
+                      { value: '48', label: '48h' },
+                    ]}
+                    value="24"
+                    onChange={() => {}}
+                  />
+                  <Select
+                    options={[
+                      { value: 'business', label: 'Business hours' },
+                      { value: 'calendar', label: 'Calendar' },
+                    ]}
+                    value="business"
+                    onChange={() => {}}
+                  />
                 </div>
               ))}
             </div>
@@ -279,17 +347,27 @@ export default function TenantCreationWizardPage() {
             <p className={s.stepLabel}>Step 4 of 5</p>
             <h2 className={s.stepTitle}>Admin user</h2>
             <p style={{ fontSize: '13px', color: 'var(--sl-ink-60)', marginBottom: '16px' }}>
-              The admin user receives an invitation email and has full tenant access until additional users are configured.
+              The admin user receives an invitation email and has full tenant access until
+              additional users are configured.
             </p>
             <div className={s.adminCard}>
               <div className={s.formRow}>
                 <div className={s.formField}>
                   <label className={s.formLabel}>Full name</label>
-                  <Input placeholder="Jane Smith" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+                  <Input
+                    placeholder="Jane Smith"
+                    value={adminName}
+                    onChange={(e) => setAdminName(e.target.value)}
+                  />
                 </div>
                 <div className={s.formField}>
                   <label className={s.formLabel}>Email address</label>
-                  <Input type="email" placeholder="jane@acme.com" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} />
+                  <Input
+                    type="email"
+                    placeholder="jane@acme.com"
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                  />
                 </div>
               </div>
               <div className={s.formField}>

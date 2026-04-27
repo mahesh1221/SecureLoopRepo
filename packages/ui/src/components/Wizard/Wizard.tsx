@@ -49,13 +49,17 @@ export function Wizard({
   const isLast = currentStep === steps.length - 1;
   const primaryLabel = nextLabel ?? (isLast ? 'Done' : 'Next');
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   useEffect(() => {
@@ -71,21 +75,11 @@ export function Wizard({
 
   return createPortal(
     <div className={backdrop} role="presentation">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className={dialog}
-      >
+      <div role="dialog" aria-modal="true" aria-label={title} className={dialog}>
         {/* Header */}
         <header className={headerCls}>
           <h2 className={headerTitle}>{title}</h2>
-          <button
-            type="button"
-            className={closeBtn}
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <button type="button" className={closeBtn} onClick={onClose} aria-label="Close">
             <svg
               width="18"
               height="18"
@@ -106,8 +100,7 @@ export function Wizard({
         {/* Step dots */}
         <div className={stepDotsRow} role="list" aria-label="Steps">
           {steps.map((step, i) => {
-            const variant =
-              i === currentStep ? 'active' : i < currentStep ? 'done' : 'upcoming';
+            const variant = i === currentStep ? 'active' : i < currentStep ? 'done' : 'upcoming';
             return (
               <div
                 key={step.label}
@@ -120,9 +113,7 @@ export function Wizard({
         </div>
 
         {/* Body */}
-        <div className={bodyCls}>
-          {steps[currentStep]?.content}
-        </div>
+        <div className={bodyCls}>{steps[currentStep]?.content}</div>
 
         {/* Footer — Back (hidden on step 0) + primary action. No Cancel. */}
         <footer className={footerCls}>
@@ -143,7 +134,7 @@ export function Wizard({
         </footer>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 

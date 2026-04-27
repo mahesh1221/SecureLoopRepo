@@ -41,7 +41,12 @@ export async function loginRoutes(fastify: FastifyInstance) {
       accessToken,
       tokenType: 'Bearer',
       expiresIn: 3600,
-      user: { id: claims.userId, email: claims.email, tenantId: claims.tenantId, roles: claims.roles },
+      user: {
+        id: claims.userId,
+        email: claims.email,
+        tenantId: claims.tenantId,
+        roles: claims.roles,
+      },
     });
   });
 
@@ -50,6 +55,9 @@ export async function loginRoutes(fastify: FastifyInstance) {
     if (!body.success) {
       return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
     }
-    return reply.status(501).send({ error: 'Not implemented', detail: 'Refresh-token rotation pending session store (Redis).' });
+    return reply.status(501).send({
+      error: 'Not implemented',
+      detail: 'Refresh-token rotation pending session store (Redis).',
+    });
   });
 }

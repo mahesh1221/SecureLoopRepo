@@ -2,7 +2,15 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { requireAuth, requireRole } from '@secureloop/auth-client';
 
-const StatusEnum = z.enum(['draft', 'quoted', 'signed', 'in-progress', 'reporting', 'delivered', 'closed']);
+const StatusEnum = z.enum([
+  'draft',
+  'quoted',
+  'signed',
+  'in-progress',
+  'reporting',
+  'delivered',
+  'closed',
+]);
 
 const CreateEngagementSchema = z.object({
   customerName: z.string().min(1),

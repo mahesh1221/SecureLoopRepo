@@ -273,7 +273,11 @@ export const impactTenantName = style({
 });
 
 export const impactDesc = style({ fontSize: fontSize.label, color: theme.ink['60'] });
-export const impactUsers = style({ fontSize: fontSize.label, color: theme.ink['40'], marginTop: '2px' });
+export const impactUsers = style({
+  fontSize: fontSize.label,
+  color: theme.ink['40'],
+  marginTop: '2px',
+});
 
 // ─── Incident timeline table ──────────────────────────────────────
 export const timelineSection = style({ marginTop: space.s2 });
@@ -318,7 +322,11 @@ export const thCell = style({
 });
 
 export const tdCell = style({ fontSize: fontSize.body, color: theme.ink['80'] });
-export const tdMono = style({ fontFamily: fontFamily.mono, fontSize: fontSize.label, color: theme.ink['60'] });
+export const tdMono = style({
+  fontFamily: fontFamily.mono,
+  fontSize: fontSize.label,
+  color: theme.ink['60'],
+});
 
 const pulseAnim = keyframes({
   '0%, 100%': { opacity: 1 },

@@ -7,19 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { RecipeVariants } from '@vanilla-extract/recipes';
-import {
-  wrap,
-  toolbar,
-  scroll,
-  table,
-  th,
-  chev,
-  td,
-  tr,
-  chk,
-  chkOn,
-  footer,
-} from './Table.css';
+import { wrap, toolbar, scroll, table, th, chev, td, tr, chk, chkOn, footer } from './Table.css';
 import { cn } from '../../utils/cn';
 
 // ─── Outer Wrap ────────────────────────────────────────────────────
@@ -32,7 +20,7 @@ export const TableWrap = forwardRef<HTMLDivElement, TableWrapProps>(
     <div ref={ref} className={cn(wrap, className)} {...rest}>
       {children}
     </div>
-  )
+  ),
 );
 TableWrap.displayName = 'TableWrap';
 
@@ -42,7 +30,7 @@ export const TableToolbar = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEle
     <div ref={ref} className={cn(toolbar, className)} {...rest}>
       {children}
     </div>
-  )
+  ),
 );
 TableToolbar.displayName = 'TableToolbar';
 
@@ -54,7 +42,7 @@ export const Table = forwardRef<HTMLTableElement, TableHTMLAttributes<HTMLTableE
         {children}
       </table>
     </div>
-  )
+  ),
 );
 Table.displayName = 'Table';
 
@@ -70,18 +58,14 @@ export const TableBody = ({ children, ...rest }: HTMLAttributes<HTMLTableSection
 type ThVariants = NonNullable<RecipeVariants<typeof th>>;
 
 export interface TableHeaderCellProps
-  extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'>,
-    ThVariants {
+  extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'>, ThVariants {
   /** Show sort chevron */
   showChevron?: boolean;
   children?: ReactNode;
 }
 
 export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
-  (
-    { align, sortable, active, numeric, showChevron, className, children, ...rest },
-    ref
-  ) => (
+  ({ align, sortable, active, numeric, showChevron, className, children, ...rest }, ref) => (
     <th
       ref={ref}
       className={cn(th({ align, sortable, active, numeric }), className)}
@@ -90,20 +74,16 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
       {...rest}
     >
       {children}
-      {(sortable || active) && showChevron !== false && (
-        <span className={chev}>▼</span>
-      )}
+      {(sortable || active) && showChevron !== false && <span className={chev}>▼</span>}
     </th>
-  )
+  ),
 );
 TableHeaderCell.displayName = 'TableHeaderCell';
 
 // ─── Row ──────────────────────────────────────────────────────────
 type TrVariants = NonNullable<RecipeVariants<typeof tr>>;
 
-export interface TableRowProps
-  extends HTMLAttributes<HTMLTableRowElement>,
-    TrVariants {
+export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement>, TrVariants {
   children?: ReactNode;
 }
 
@@ -117,29 +97,23 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     >
       {children}
     </tr>
-  )
+  ),
 );
 TableRow.displayName = 'TableRow';
 
 // ─── Cell ─────────────────────────────────────────────────────────
 type TdVariants = NonNullable<RecipeVariants<typeof td>>;
 
-export interface TableCellProps
-  extends TdHTMLAttributes<HTMLTableCellElement>,
-    TdVariants {
+export interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement>, TdVariants {
   children?: ReactNode;
 }
 
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   ({ numeric, mono, className, children, ...rest }, ref) => (
-    <td
-      ref={ref}
-      className={cn(td({ numeric, mono }), className)}
-      {...rest}
-    >
+    <td ref={ref} className={cn(td({ numeric, mono }), className)} {...rest}>
       {children}
     </td>
-  )
+  ),
 );
 TableCell.displayName = 'TableCell';
 
@@ -158,7 +132,7 @@ export const TableCheckbox = forwardRef<HTMLSpanElement, TableCheckboxProps>(
       className={cn(chk, checked && chkOn, className)}
       {...rest}
     />
-  )
+  ),
 );
 TableCheckbox.displayName = 'TableCheckbox';
 
@@ -168,6 +142,6 @@ export const TableFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
     <div ref={ref} className={cn(footer, className)} {...rest}>
       {children}
     </div>
-  )
+  ),
 );
 TableFooter.displayName = 'TableFooter';

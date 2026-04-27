@@ -1,4 +1,4 @@
-import { globalStyle, globalFontFace, keyframes } from '@vanilla-extract/css';
+import { globalStyle, keyframes } from '@vanilla-extract/css';
 import { theme } from '../themes/contract';
 import { fontFamily, lineHeight } from '../tokens/typography';
 import { density } from '../tokens/space';

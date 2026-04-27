@@ -5,11 +5,28 @@ import { Breadcrumb, Callout, Button } from '@secureloop/ui';
 import { cn } from '@secureloop/ui';
 import * as s from './page.css';
 
-const TABS = ['SLA defaults', 'Escalation chains', 'Notification templates', 'Access policies', 'Integration defaults'];
+const TABS = [
+  'SLA defaults',
+  'Escalation chains',
+  'Notification templates',
+  'Access policies',
+  'Integration defaults',
+];
 
 const INFO_ICON = (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
   </svg>
 );
 
@@ -28,10 +45,30 @@ const ESCALATION_LEVELS = [
 ];
 
 const ACCESS_POLICIES = [
-  { label: 'Multi-factor authentication', desc: 'Require MFA for all logins', options: ['Required', 'Optional'], value: 'Required' },
-  { label: 'Session timeout', desc: 'Inactivity timeout policy', options: ['Standard', 'Strict'], value: 'Standard' },
-  { label: 'API access', desc: 'Allow API key generation', options: ['Enabled', 'Disabled'], value: 'Enabled' },
-  { label: 'SSO enforcement', desc: 'Force SSO when configured', options: ['Required', 'Optional'], value: 'Optional' },
+  {
+    label: 'Multi-factor authentication',
+    desc: 'Require MFA for all logins',
+    options: ['Required', 'Optional'],
+    value: 'Required',
+  },
+  {
+    label: 'Session timeout',
+    desc: 'Inactivity timeout policy',
+    options: ['Standard', 'Strict'],
+    value: 'Standard',
+  },
+  {
+    label: 'API access',
+    desc: 'Allow API key generation',
+    options: ['Enabled', 'Disabled'],
+    value: 'Enabled',
+  },
+  {
+    label: 'SSO enforcement',
+    desc: 'Force SSO when configured',
+    options: ['Required', 'Optional'],
+    value: 'Optional',
+  },
 ];
 
 export default function PlatformDefaultsPage() {
@@ -46,18 +83,27 @@ export default function PlatformDefaultsPage() {
   };
 
   const setPolicyValue = (idx: number, val: string) => {
-    setPolicies((prev) => { const next = [...prev]; next[idx] = val; return next; });
+    setPolicies((prev) => {
+      const next = [...prev];
+      next[idx] = val;
+      return next;
+    });
     setHasChanges(true);
   };
 
   return (
     <div className={s.page}>
-      <Breadcrumb items={[{ label: 'Platform Admin', onClick: () => {} }, { label: 'Platform Defaults' }]} />
+      <Breadcrumb
+        items={[{ label: 'Platform Admin', onClick: () => {} }, { label: 'Platform Defaults' }]}
+      />
       <h1 className={s.pageTitle}>Platform Defaults</h1>
-      <p className={s.pageSubtitle}>Configure default settings applied when new tenants are provisioned</p>
+      <p className={s.pageSubtitle}>
+        Configure default settings applied when new tenants are provisioned
+      </p>
 
       <Callout icon={INFO_ICON} tone="brand">
-        Changes to platform defaults apply to <strong>new tenants only</strong>. Existing tenant settings are not affected.
+        Changes to platform defaults apply to <strong>new tenants only</strong>. Existing tenant
+        settings are not affected.
       </Callout>
 
       <div style={{ marginTop: '20px' }}>
@@ -95,18 +141,35 @@ export default function PlatformDefaultsPage() {
                         {row.label}
                       </div>
                       <div className={s.slaStepper}>
-                        <button type="button" className={s.slaStepBtn} onClick={() => adjSla(row.sev, -1)}>−</button>
+                        <button
+                          type="button"
+                          className={s.slaStepBtn}
+                          onClick={() => adjSla(row.sev, -1)}
+                        >
+                          −
+                        </button>
                         <input
                           className={s.slaInput}
                           type="number"
                           value={slaValues[row.sev]}
-                          onChange={(e) => { setSlaValues((p) => ({ ...p, [row.sev]: Number(e.target.value) })); setHasChanges(true); }}
+                          onChange={(e) => {
+                            setSlaValues((p) => ({ ...p, [row.sev]: Number(e.target.value) }));
+                            setHasChanges(true);
+                          }}
                           min={1}
                         />
-                        <button type="button" className={s.slaStepBtn} onClick={() => adjSla(row.sev, 1)}>+</button>
+                        <button
+                          type="button"
+                          className={s.slaStepBtn}
+                          onClick={() => adjSla(row.sev, 1)}
+                        >
+                          +
+                        </button>
                       </div>
                       <span style={{ fontSize: '13px', color: 'var(--sl-ink-60)' }}>24h grace</span>
-                      <span style={{ fontSize: '13px', color: 'var(--sl-ink-60)' }}>Business hours</span>
+                      <span style={{ fontSize: '13px', color: 'var(--sl-ink-60)' }}>
+                        Business hours
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -123,7 +186,15 @@ export default function PlatformDefaultsPage() {
                         <div key={lvl.level} className={s.escalationCard}>
                           <div className={s.escalationLevel}>Level {lvl.level}</div>
                           <div className={s.escalationDelay}>{lvl.delay}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--sl-ink-60)', marginTop: '4px' }}>{lvl.roles}</div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--sl-ink-60)',
+                              marginTop: '4px',
+                            }}
+                          >
+                            {lvl.roles}
+                          </div>
                         </div>
                         {i < ESCALATION_LEVELS.length - 1 && (
                           <span className={s.escalationArrow}>→</span>
@@ -139,7 +210,9 @@ export default function PlatformDefaultsPage() {
               <div className={s.card}>
                 <div className={s.cardHeader}>Notification templates</div>
                 <div className={s.cardBody}>
-                  <p style={{ color: 'var(--sl-ink-60)', fontSize: '13px' }}>Configure default email and Slack notification templates for new tenants.</p>
+                  <p style={{ color: 'var(--sl-ink-60)', fontSize: '13px' }}>
+                    Configure default email and Slack notification templates for new tenants.
+                  </p>
                 </div>
               </div>
             )}
@@ -176,16 +249,24 @@ export default function PlatformDefaultsPage() {
               <div className={s.card}>
                 <div className={s.cardHeader}>Integration defaults</div>
                 <div className={s.cardBody}>
-                  <p style={{ color: 'var(--sl-ink-60)', fontSize: '13px' }}>Configure which integrations are pre-enabled for new tenants.</p>
+                  <p style={{ color: 'var(--sl-ink-60)', fontSize: '13px' }}>
+                    Configure which integrations are pre-enabled for new tenants.
+                  </p>
                 </div>
               </div>
             )}
 
             {/* Footer actions */}
             <div className={s.footerActions}>
-              <Button variant="ghost" size="sm">Reset to defaults</Button>
-              <Button variant="ghost" size="sm">Apply to selected tenants</Button>
-              <Button variant="ghost" size="sm">Preview impact</Button>
+              <Button variant="ghost" size="sm">
+                Reset to defaults
+              </Button>
+              <Button variant="ghost" size="sm">
+                Apply to selected tenants
+              </Button>
+              <Button variant="ghost" size="sm">
+                Preview impact
+              </Button>
               <div style={{ flex: 1 }} />
               <Button variant="primary" size="sm" disabled={!hasChanges}>
                 Save changes · new tenants only
@@ -230,7 +311,9 @@ export default function PlatformDefaultsPage() {
                     </div>
                   )}
                   {!slaValues.critical && !slaValues.high && (
-                    <p style={{ fontSize: '13px', color: 'var(--sl-ink-40)' }}>Policy changes pending</p>
+                    <p style={{ fontSize: '13px', color: 'var(--sl-ink-40)' }}>
+                      Policy changes pending
+                    </p>
                   )}
                 </div>
               </div>
@@ -242,7 +325,10 @@ export default function PlatformDefaultsPage() {
                 {[
                   { text: 'Critical SLA updated: 4h → 2h', time: '3 days ago · Platform Admin' },
                   { text: 'MFA set to required', time: '1 week ago · Platform Admin' },
-                  { text: 'Grace period removed from Low SLA', time: '2 weeks ago · Platform Admin' },
+                  {
+                    text: 'Grace period removed from Low SLA',
+                    time: '2 weeks ago · Platform Admin',
+                  },
                 ].map((item) => (
                   <div key={item.text} className={s.historyItem}>
                     <div className={s.historyText}>{item.text}</div>

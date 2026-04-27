@@ -248,7 +248,12 @@ export const statRow = style({
 });
 
 export const statLabel = style({ fontSize: fontSize.body, color: theme.ink['60'] });
-export const statValue = style({ fontFamily: fontFamily.mono, fontSize: fontSize.body, color: theme.ink['100'], fontWeight: fontWeight.medium });
+export const statValue = style({
+  fontFamily: fontFamily.mono,
+  fontSize: fontSize.body,
+  color: theme.ink['100'],
+  fontWeight: fontWeight.medium,
+});
 
 export const queueItem = style({
   marginBottom: space.s3,

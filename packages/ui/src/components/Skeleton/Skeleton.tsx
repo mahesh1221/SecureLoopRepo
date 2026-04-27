@@ -5,9 +5,7 @@ import { cn } from '../../utils/cn';
 
 type SkeletonVariants = NonNullable<RecipeVariants<typeof skeleton>>;
 
-export interface SkeletonProps
-  extends HTMLAttributes<HTMLDivElement>,
-    SkeletonVariants {
+export interface SkeletonProps extends HTMLAttributes<HTMLDivElement>, SkeletonVariants {
   /** Explicit width override */
   width?: string | number;
   /** Explicit height override */
@@ -27,7 +25,7 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
       aria-hidden="true"
       {...rest}
     />
-  )
+  ),
 );
 Skeleton.displayName = 'Skeleton';
 
@@ -50,6 +48,6 @@ export const SkeletonStack = forwardRef<HTMLDivElement, SkeletonStackProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 SkeletonStack.displayName = 'SkeletonStack';

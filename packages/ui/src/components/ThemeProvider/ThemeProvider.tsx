@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import {
   DEFAULT_THEME,
   composeTheme,
@@ -61,12 +54,7 @@ export function ThemeProvider({
   useEffect(() => {
     if (!applyToBody || typeof document === 'undefined') return;
     const body = document.body;
-    body.classList.remove(
-      't-coffee-dark',
-      't-coffee-light',
-      't-blue-dark',
-      't-blue-light'
-    );
+    body.classList.remove('t-coffee-dark', 't-coffee-light', 't-blue-dark', 't-blue-light');
     body.classList.add(`t-${theme}`);
 
     if (storageKey) {
@@ -82,7 +70,7 @@ export function ThemeProvider({
         const { mode } = decomposeTheme(prev);
         return composeTheme(f, mode);
       }),
-    []
+    [],
   );
 
   const setMode = useCallback(
@@ -91,7 +79,7 @@ export function ThemeProvider({
         const { family } = decomposeTheme(prev);
         return composeTheme(family, m);
       }),
-    []
+    [],
   );
 
   const toggleMode = useCallback(
@@ -100,7 +88,7 @@ export function ThemeProvider({
         const { family, mode } = decomposeTheme(prev);
         return composeTheme(family, mode === 'dark' ? 'light' : 'dark');
       }),
-    []
+    [],
   );
 
   return (

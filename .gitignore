@@ -1,20 +1,25 @@
-node_modules
-dist
-.DS_Store
-*.log
-.env
-.env.local
-.turbo
-.cache
-coverage
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-.env
-.env.local
-*.log
-.DS_Store
-coverage/
-.turbo/
+.next/
 *.tsbuildinfo
 
+# Caches
+.turbo/
+.cache/
+coverage/
+
+# Env (secrets — never commit)
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Claude Code worktrees (transient)
 .claude/worktrees/

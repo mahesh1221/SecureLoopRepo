@@ -24,11 +24,67 @@ interface Tenant {
 }
 
 const MOCK_TENANTS: Tenant[] = [
-  { id: '1', name: 'Acme Financial Corp', slug: 'acme-financial', industry: 'Finance', country: 'US', plan: 'enterprise', users: 142, frameworks: 5, createdAt: 'Dec 14, 2024', status: 'active' },
-  { id: '2', name: 'CyberShield Ltd', slug: 'cybershield', industry: 'Technology', country: 'UK', plan: 'pro', users: 38, frameworks: 3, createdAt: 'Jan 03, 2025', status: 'active' },
-  { id: '3', name: 'MediTrust Hospital', slug: 'meditrust', industry: 'Healthcare', country: 'AU', plan: 'enterprise', users: 89, frameworks: 4, createdAt: 'Nov 22, 2024', status: 'active' },
-  { id: '4', name: 'RetailMax Group', slug: 'retailmax', industry: 'Retail', country: 'CA', plan: 'starter', users: 15, frameworks: 1, createdAt: 'Feb 11, 2025', status: 'draft' },
-  { id: '5', name: 'GlobalLogistics Inc', slug: 'global-logistics', industry: 'Logistics', country: 'DE', plan: 'pro', users: 61, frameworks: 2, createdAt: 'Oct 05, 2024', status: 'archived', statusHint: '72 days remaining' },
+  {
+    id: '1',
+    name: 'Acme Financial Corp',
+    slug: 'acme-financial',
+    industry: 'Finance',
+    country: 'US',
+    plan: 'enterprise',
+    users: 142,
+    frameworks: 5,
+    createdAt: 'Dec 14, 2024',
+    status: 'active',
+  },
+  {
+    id: '2',
+    name: 'CyberShield Ltd',
+    slug: 'cybershield',
+    industry: 'Technology',
+    country: 'UK',
+    plan: 'pro',
+    users: 38,
+    frameworks: 3,
+    createdAt: 'Jan 03, 2025',
+    status: 'active',
+  },
+  {
+    id: '3',
+    name: 'MediTrust Hospital',
+    slug: 'meditrust',
+    industry: 'Healthcare',
+    country: 'AU',
+    plan: 'enterprise',
+    users: 89,
+    frameworks: 4,
+    createdAt: 'Nov 22, 2024',
+    status: 'active',
+  },
+  {
+    id: '4',
+    name: 'RetailMax Group',
+    slug: 'retailmax',
+    industry: 'Retail',
+    country: 'CA',
+    plan: 'starter',
+    users: 15,
+    frameworks: 1,
+    createdAt: 'Feb 11, 2025',
+    status: 'draft',
+  },
+  {
+    id: '5',
+    name: 'GlobalLogistics Inc',
+    slug: 'global-logistics',
+    industry: 'Logistics',
+    country: 'DE',
+    plan: 'pro',
+    users: 61,
+    frameworks: 2,
+    createdAt: 'Oct 05, 2024',
+    status: 'archived',
+    statusHint: '72 days remaining',
+  },
 ];
 
 const TABS = [
@@ -41,7 +97,12 @@ const TABS = [
 
 const KPI = [
   { label: 'Active tenants', value: '47', sub: '+3 this week', variant: 'good' as const },
-  { label: 'Archived · retention', value: '5', sub: '90-day countdown', variant: 'default' as const },
+  {
+    label: 'Archived · retention',
+    value: '5',
+    sub: '90-day countdown',
+    variant: 'default' as const,
+  },
   { label: 'Draft wizards', value: '3', sub: 'Awaiting activation', variant: 'warn' as const },
   { label: 'New this month', value: '8', sub: 'Feb 2025', variant: 'default' as const },
 ];
@@ -63,9 +124,13 @@ export default function TenantsPage() {
           <p className={s.pageSubtitle}>Provision and manage customer tenant environments</p>
         </div>
         <div className={s.pageActions}>
-          <Button variant="ghost" size="sm">Export</Button>
+          <Button variant="ghost" size="sm">
+            Export
+          </Button>
           <Link href="/admin/tenants/new">
-            <Button variant="primary" size="sm">Create tenant</Button>
+            <Button variant="primary" size="sm">
+              Create tenant
+            </Button>
           </Link>
         </div>
       </div>
@@ -168,16 +233,16 @@ export default function TenantsPage() {
                     <div className={s.statusLabel}>
                       {tenant.status.charAt(0).toUpperCase() + tenant.status.slice(1)}
                     </div>
-                    {tenant.statusHint && (
-                      <div className={s.statusHint}>{tenant.statusHint}</div>
-                    )}
+                    {tenant.statusHint && <div className={s.statusHint}>{tenant.statusHint}</div>}
                   </div>
                 </div>
               </div>
               <div>
                 <button type="button" className={s.menuBtn} onClick={(e) => e.stopPropagation()}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                    <circle cx="12" cy="5" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="12" cy="19" r="1.5" />
                   </svg>
                 </button>
               </div>
@@ -191,11 +256,21 @@ export default function TenantsPage() {
             <div className={s.sidebarHeader}>
               <div>
                 <div className={s.sidebarTitle}>{selectedTenant.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--sl-ink-60)', fontFamily: 'var(--sl-font-mono)', marginTop: '2px' }}>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'var(--sl-ink-60)',
+                    fontFamily: 'var(--sl-font-mono)',
+                    marginTop: '2px',
+                  }}
+                >
                   {selectedTenant.slug}.secureloop.io
                 </div>
               </div>
-              <div className={cn(s.statusDot, s.statusDotVariants[selectedTenant.status])} style={{ width: '10px', height: '10px' }} />
+              <div
+                className={cn(s.statusDot, s.statusDotVariants[selectedTenant.status])}
+                style={{ width: '10px', height: '10px' }}
+              />
             </div>
 
             <div className={s.sidebarSection}>
@@ -273,11 +348,21 @@ export default function TenantsPage() {
             <div className={s.sidebarSection}>
               <div className={s.sidebarSectionTitle}>Quick actions</div>
               <div className={s.quickActions}>
-                <button type="button" className={s.qaBtn}>Configure frameworks</button>
-                <button type="button" className={s.qaBtn}>Manage users</button>
-                <button type="button" className={s.qaBtn}>View billing</button>
-                <button type="button" className={s.qaBtn}>Clone tenant</button>
-                <button type="button" className={s.qaBtnDanger}>Archive · 90-day retention</button>
+                <button type="button" className={s.qaBtn}>
+                  Configure frameworks
+                </button>
+                <button type="button" className={s.qaBtn}>
+                  Manage users
+                </button>
+                <button type="button" className={s.qaBtn}>
+                  View billing
+                </button>
+                <button type="button" className={s.qaBtn}>
+                  Clone tenant
+                </button>
+                <button type="button" className={s.qaBtnDanger}>
+                  Archive · 90-day retention
+                </button>
               </div>
             </div>
           </div>

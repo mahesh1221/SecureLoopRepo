@@ -14,8 +14,7 @@ import { cn } from '../../utils/cn';
 type FieldVariants = NonNullable<RecipeVariants<typeof field>>;
 
 export interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
-    FieldVariants {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>, FieldVariants {
   label?: ReactNode;
   help?: ReactNode;
   /** Error message — when set, border turns critical and ARIA attributes update. */
@@ -32,20 +31,7 @@ export interface InputProps
  *   - Never a green border
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      label,
-      help,
-      error,
-      showValid,
-      mono,
-      required,
-      className,
-      id,
-      ...rest
-    },
-    ref
-  ) => {
+  ({ label, help, error, showValid, mono, required, className, id, ...rest }, ref) => {
     const hasError = Boolean(error);
     const autoId = id ?? rest.name;
 
@@ -61,9 +47,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={autoId}
           aria-invalid={hasError ? 'true' : 'false'}
-          aria-describedby={
-            hasError || help ? `${autoId}-desc` : undefined
-          }
+          aria-describedby={hasError || help ? `${autoId}-desc` : undefined}
           required={required}
           className={cn(field({ mono }), className)}
           {...rest}
@@ -109,7 +93,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = 'Input';

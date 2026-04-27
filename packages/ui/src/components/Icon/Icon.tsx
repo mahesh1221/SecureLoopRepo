@@ -5,9 +5,7 @@ import { cn } from '../../utils/cn';
 
 type IconSizeVariants = NonNullable<RecipeVariants<typeof iconSize>>;
 
-export interface IconProps
-  extends Omit<SVGAttributes<SVGSVGElement>, 'color'>,
-    IconSizeVariants {
+export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, 'color'>, IconSizeVariants {
   children: ReactNode;
   /** Stroke width — default 1.8 per DS v2 icon system */
   strokeWidth?: number;
@@ -43,7 +41,7 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(
     >
       {children}
     </svg>
-  )
+  ),
 );
 Icon.displayName = 'Icon';
 

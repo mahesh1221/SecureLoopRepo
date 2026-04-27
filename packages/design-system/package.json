@@ -22,8 +22,14 @@
       "import": "./dist/themes/index.js"
     }
   },
-  "files": ["dist", "src"],
-  "sideEffects": ["*.css", "./src/global/**"],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css",
+    "./src/global/**"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

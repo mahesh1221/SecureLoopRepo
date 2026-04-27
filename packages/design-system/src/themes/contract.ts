@@ -97,7 +97,7 @@ export const theme = createGlobalThemeContract(
       focusHalo: 'focus-halo',
     },
   },
-  (_value, path) => `sl-${path.join('-')}`
+  (_value, path) => `sl-${path.join('-')}`,
 );
 
 export type Theme = typeof theme;

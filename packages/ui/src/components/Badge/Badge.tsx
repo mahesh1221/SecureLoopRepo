@@ -5,9 +5,7 @@ import { cn } from '../../utils/cn';
 
 type BadgeVariants = NonNullable<RecipeVariants<typeof badge>>;
 
-export interface BadgeProps
-  extends HTMLAttributes<HTMLSpanElement>,
-    BadgeVariants {
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement>, BadgeVariants {
   children?: ReactNode;
 }
 
@@ -17,13 +15,9 @@ export interface BadgeProps
  */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ tone, outline, className, children, ...rest }, ref) => (
-    <span
-      ref={ref}
-      className={cn(badge({ tone, outline }), className)}
-      {...rest}
-    >
+    <span ref={ref} className={cn(badge({ tone, outline }), className)} {...rest}>
       {children}
     </span>
-  )
+  ),
 );
 Badge.displayName = 'Badge';

@@ -1,0 +1,26 @@
+node_modules
+dist
+.next
+coverage
+.turbo
+pnpm-lock.yaml
+*.min.js
+*.min.css
+**/*.tsbuildinfo
+.claude/worktrees
+
+# Wireframes are hand-crafted hi-fi HTML — source of visual truth (CLAUDE.md §10).
+# Do not let Prettier touch them.
+Wireframe Designs/**
+**/*.html
+
+# Markdown source-of-truth docs are hand-written; preserve as-is.
+*.md
+**/*.md
+
+# Binary docs
+*.docx
+docs/*.docx
+
+# Next.js generated
+**/next-env.d.ts

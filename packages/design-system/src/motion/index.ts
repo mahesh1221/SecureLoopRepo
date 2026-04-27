@@ -34,7 +34,7 @@ export type EasingToken = keyof typeof easing;
 export function transition(
   property: string,
   dur: DurationToken = 'base',
-  ease: EasingToken = 'out'
+  ease: EasingToken = 'out',
 ): string {
   return `${property} ${duration[dur]} ${easing[ease]}`;
 }

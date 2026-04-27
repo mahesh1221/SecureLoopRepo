@@ -17,7 +17,7 @@ const DefaultsSchema = z.object({
         level: z.number(),
         delayHours: z.number(),
         notifyRoles: z.array(z.string()),
-      })
+      }),
     )
     .optional(),
   accessPolicies: z
@@ -60,17 +60,25 @@ export async function platformRoutes(fastify: FastifyInstance) {
     return reply.send({ ...body.data, updatedAt: new Date().toISOString() });
   });
 
-  fastify.get('/integrations', { preHandler: requireRole('ADMIN', 'IE') }, async (_request, reply) => {
-    return reply.send({ data: [], total: 0 });
-  });
+  fastify.get(
+    '/integrations',
+    { preHandler: requireRole('ADMIN', 'IE') },
+    async (_request, reply) => {
+      return reply.send({ data: [], total: 0 });
+    },
+  );
 
-  fastify.put('/integrations', { preHandler: requireRole('ADMIN', 'IE') }, async (request, reply) => {
-    const body = z.array(IntegrationUpdateSchema).safeParse(request.body);
-    if (!body.success) {
-      return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
-    }
-    return reply.send({ updated: body.data.length, updatedAt: new Date().toISOString() });
-  });
+  fastify.put(
+    '/integrations',
+    { preHandler: requireRole('ADMIN', 'IE') },
+    async (request, reply) => {
+      const body = z.array(IntegrationUpdateSchema).safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
+      }
+      return reply.send({ updated: body.data.length, updatedAt: new Date().toISOString() });
+    },
+  );
 
   fastify.get('/health', { preHandler: requireRole('ADMIN') }, async (_request, reply) => {
     return reply.send({
@@ -87,13 +95,17 @@ export async function platformRoutes(fastify: FastifyInstance) {
     });
   });
 
-  fastify.get('/health/tenants/:id', { preHandler: requireRole('ADMIN') }, async (request, reply) => {
-    const { id } = request.params as { id: string };
-    return reply.send({
-      tenantId: id,
-      status: 'operational',
-      affectedServices: [],
-      lastIncident: null,
-    });
-  });
+  fastify.get(
+    '/health/tenants/:id',
+    { preHandler: requireRole('ADMIN') },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      return reply.send({
+        tenantId: id,
+        status: 'operational',
+        affectedServices: [],
+        lastIncident: null,
+      });
+    },
+  );
 }

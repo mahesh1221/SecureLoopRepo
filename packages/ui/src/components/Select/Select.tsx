@@ -8,8 +8,7 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   /** Array of simple options, or provide children <option> nodes */
   options?: SelectOption[];
   error?: boolean;
@@ -50,6 +49,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <polyline points="6 9 12 15 18 9" />
       </svg>
     </div>
-  )
+  ),
 );
 Select.displayName = 'Select';

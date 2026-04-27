@@ -6,8 +6,7 @@ import { cn } from '../../utils/cn';
 type ButtonVariants = NonNullable<RecipeVariants<typeof button>>;
 
 export interface ButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>,
-    ButtonVariants {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>, ButtonVariants {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   disabled?: boolean;
@@ -23,22 +22,15 @@ export interface ButtonProps
  *   <Button variant="ghost" leftIcon={<RefreshIcon />}>Refresh</Button>
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { variant, size, fullWidth, leftIcon, rightIcon, className, children, ...rest },
-    ref
-  ) => {
+  ({ variant, size, fullWidth, leftIcon, rightIcon, className, children, ...rest }, ref) => {
     return (
-      <button
-        ref={ref}
-        className={cn(button({ variant, size, fullWidth }), className)}
-        {...rest}
-      >
+      <button ref={ref} className={cn(button({ variant, size, fullWidth }), className)} {...rest}>
         {leftIcon && <span className={iconSlot}>{leftIcon}</span>}
         {children}
         {rightIcon && <span className={iconSlot}>{rightIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';
