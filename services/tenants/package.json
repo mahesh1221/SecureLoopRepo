@@ -16,8 +16,8 @@
     "@secureloop/auth-client": "workspace:*",
     "@secureloop/db": "workspace:*",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.36.4",
-    "fastify": "^4.28.0",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.8.5",
     "postgres": "^3.4.5",
     "zod": "^3.23.8"
   },
