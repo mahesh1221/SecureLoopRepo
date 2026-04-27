@@ -2,9 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { authPlugin } from '@secureloop/auth-client';
 import { loadConfig } from './config';
-import { tenantRoutes } from './routes/tenants';
-import { frameworkRoutes } from './routes/frameworks';
-import { platformRoutes } from './routes/platform';
+import { findingRoutes } from './routes/findings';
 
 const config = loadConfig();
 const server = Fastify({ logger: true });
@@ -18,11 +16,9 @@ const start = async () => {
     publicPaths: ['/health'],
   });
 
-  server.get('/health', async () => ({ status: 'ok', service: 'tenants' }));
+  server.get('/health', async () => ({ status: 'ok', service: 'findings' }));
 
-  await server.register(tenantRoutes, { prefix: '/tenants' });
-  await server.register(frameworkRoutes, { prefix: '/tenants' });
-  await server.register(platformRoutes, { prefix: '/platform' });
+  await server.register(findingRoutes, { prefix: '/findings' });
 
   await server.listen({ port: config.PORT, host: '0.0.0.0' });
 };

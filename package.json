@@ -13,7 +13,13 @@
     "build": "pnpm -r run build",
     "dev": "pnpm -r --parallel run dev",
     "typecheck": "pnpm -r run typecheck",
-    "clean": "pnpm -r exec rm -rf dist node_modules"
+    "clean": "pnpm -r exec rm -rf dist node_modules",
+    "stack:up": "docker compose up -d",
+    "stack:down": "docker compose down",
+    "stack:logs": "docker compose logs -f",
+    "stack:ps": "docker compose ps",
+    "stack:reset": "bash infra/scripts/reset.sh",
+    "stack:setup": "bash infra/scripts/dev-setup.sh"
   },
   "devDependencies": {
     "typescript": "^5.5.0"

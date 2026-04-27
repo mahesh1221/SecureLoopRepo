@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import { requireRole } from '@secureloop/auth-client';
 
 const CreateTenantSchema = z.object({
   name: z.string().min(1),
@@ -32,7 +33,7 @@ const CloneTenantSchema = z.object({
 });
 
 export async function tenantRoutes(fastify: FastifyInstance) {
-  fastify.post('/', async (request, reply) => {
+  fastify.post('/', { preHandler: requireRole('ADMIN') }, async (request, reply) => {
     const body = CreateTenantSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Validation failed', issues: body.error.issues });
@@ -47,7 +48,7 @@ export async function tenantRoutes(fastify: FastifyInstance) {
     return reply.status(201).send(tenant);
   });
 
-  fastify.get('/', async (_request, reply) => {
+  fastify.get('/', { preHandler: requireRole('ADMIN', 'DM') }, async (_request, reply) => {
     return reply.send({
       data: [],
       total: 0,
@@ -56,7 +57,7 @@ export async function tenantRoutes(fastify: FastifyInstance) {
     });
   });
 
-  fastify.post('/:id/clone', async (request, reply) => {
+  fastify.post('/:id/clone', { preHandler: requireRole('ADMIN') }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const body = CloneTenantSchema.safeParse(request.body);
     if (!body.success) {

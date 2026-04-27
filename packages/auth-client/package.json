@@ -1,0 +1,26 @@
+{
+  "name": "@secureloop/auth-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JWT signing/verification, RBAC middleware, OAuth + SAML helpers — shared across services and apps",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "fastify-plugin": "^4.5.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "peerDependencies": {
+    "fastify": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.0.0",
+    "fastify": "^4.28.0",
+    "typescript": "^5.5.0"
+  }
+}

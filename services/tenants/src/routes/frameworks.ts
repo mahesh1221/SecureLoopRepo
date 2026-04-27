@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import { requireRole, requireAuth } from '@secureloop/auth-client';
 
 const UpdateFrameworkSchema = z.object({
   enabled: z.boolean(),
@@ -7,7 +8,7 @@ const UpdateFrameworkSchema = z.object({
 });
 
 export async function frameworkRoutes(fastify: FastifyInstance) {
-  fastify.patch('/:id/frameworks/:fwId', async (request, reply) => {
+  fastify.patch('/:id/frameworks/:fwId', { preHandler: requireRole('ADMIN', 'SENG') }, async (request, reply) => {
     const { id, fwId } = request.params as { id: string; fwId: string };
     const body = UpdateFrameworkSchema.safeParse(request.body);
     if (!body.success) {
@@ -22,7 +23,7 @@ export async function frameworkRoutes(fastify: FastifyInstance) {
     });
   });
 
-  fastify.get('/:id/frameworks/:fwId/status', async (request, reply) => {
+  fastify.get('/:id/frameworks/:fwId/status', { preHandler: requireAuth() }, async (request, reply) => {
     const { id, fwId } = request.params as { id: string; fwId: string };
     return reply.send({
       tenantId: id,

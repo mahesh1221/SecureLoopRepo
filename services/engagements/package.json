@@ -1,8 +1,8 @@
 {
-  "name": "@secureloop/service-tenants",
+  "name": "@secureloop/service-engagements",
   "version": "0.1.0",
   "private": true,
-  "description": "Tenant provisioning, config, and framework toggles",
+  "description": "VAPT engagement lifecycle, scope, quotes",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
