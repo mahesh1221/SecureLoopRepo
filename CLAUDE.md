@@ -51,7 +51,7 @@ pnpm clean
 - **PTOps Suite** — VAPT firms, MSSPs, freelancers
 - **SecureLoop Portal** — enterprise CISOs and security teams
 
-**Business model:** Use internally at Cybrilliant → license to VAPT firms → open to enterprise → marketplace (Phase 3). Global from day one.
+**Business model:** Use internally first → license to VAPT firms → open to enterprise → marketplace (Phase 3). Global from day one.
 
 **Scope:** All 77 user stories in Phase 1. No MVP subset.
 

@@ -19,7 +19,8 @@ import { tenants } from '../../services/tenants/src/schema/tenants';
 import { tenantFrameworks } from '../../services/tenants/src/schema/frameworks';
 
 const DEMO_TENANT_ID = '00000000-0000-4000-8000-000000000001';
-const DEMO_TENANT_SLUG = 'cybrilliant';
+const DEMO_TENANT_SLUG = 'demo-tenant';
+const DEMO_TENANT_NAME = 'Demo Tenant';
 const DEMO_ADMIN_EMAIL = 'admin@secureloop.dev';
 const DEMO_ADMIN_PASSWORD = 'SecureLoop!2026';
 
@@ -40,7 +41,7 @@ async function seedTenants(): Promise<void> {
       await client.db.insert(tenants).values({
         id: DEMO_TENANT_ID,
         slug: DEMO_TENANT_SLUG,
-        name: 'Cybrilliant (Demo)',
+        name: DEMO_TENANT_NAME,
         industry: 'Cybersecurity',
         country: 'AE',
         plan: 'enterprise',
